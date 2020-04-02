@@ -13,5 +13,3 @@ from eddington_core.fit_data import FitData
 from eddington_core.fit_result import FitResult
 
 from eddington_core.fit_util import fit_to_data
-
-__version__ = "v0.0.1"
