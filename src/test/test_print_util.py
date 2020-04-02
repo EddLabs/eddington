@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from eddington.print_util import to_relevant_precision, to_precise_string
+from eddington_core.print_util import to_relevant_precision, to_precise_string
 
 
 class PrintUtilBaseTestCase:

@@ -4,8 +4,8 @@ from typing import Callable
 from dataclasses import dataclass, InitVar, field
 import numpy as np
 
-from eddington.exceptions import FitFunctionLoadError
-from eddington.fit_functions.fit_functions_registry import FitFunctionsRegistry
+from eddington_core.exceptions import FitFunctionLoadError
+from eddington_core.fit_functions.fit_functions_registry import FitFunctionsRegistry
 
 
 @dataclass(repr=False, unsafe_hash=True)

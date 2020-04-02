@@ -1,5 +1,5 @@
 [run]
-source = src/eddington
+source = src/eddington_core
 
 [report]
 show_missing = True

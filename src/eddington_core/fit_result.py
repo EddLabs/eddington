@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 import numpy as np
 import scipy.stats as stats
 
-from eddington.print_util import to_precise_string
+from eddington_core.print_util import to_precise_string
 
 
 @dataclass(repr=False)

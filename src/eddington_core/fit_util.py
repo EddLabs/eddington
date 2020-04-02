@@ -1,9 +1,9 @@
 from scipy.odr import ODR, RealData, Model
 import numpy as np
 
-from eddington.fit_functions.fit_function import FitFunction
-from eddington.fit_data import FitData
-from eddington.fit_result import FitResult
+from eddington_core.fit_functions.fit_function import FitFunction
+from eddington_core.fit_data import FitData
+from eddington_core.fit_result import FitResult
 
 
 def fit_to_data(data: FitData, func: FitFunction, a0: np.ndarray):

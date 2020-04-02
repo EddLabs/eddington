@@ -3,8 +3,8 @@ from pathlib import Path
 from unittest import TestCase
 import numpy as np
 
-from eddington.fit_functions.fit_functions_registry import FitFunctionsRegistry
-from eddington.fit_data import FitData
+from eddington_core.fit_functions.fit_functions_registry import FitFunctionsRegistry
+from eddington_core.fit_data import FitData
 
 from integration.fitting_test_case import FitResultBaseTestCase, add_integration_tests
 

@@ -1,4 +1,4 @@
-from eddington.fit_functions.fit_functions_registry import FitFunctionsRegistry
+from eddington_core.fit_functions.fit_functions_registry import FitFunctionsRegistry
 
 
 class FitFunctionGenerator:

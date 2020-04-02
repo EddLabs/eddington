@@ -1,8 +1,8 @@
 import numpy as np
 
-from eddington.fit_data import FitData
-from eddington.fit_functions.fit_function import FitFunction
-from eddington.fit_util import fit_to_data
+from eddington_core.fit_data import FitData
+from eddington_core.fit_functions.fit_function import FitFunction
+from eddington_core.fit_util import fit_to_data
 
 
 class FitResultBaseTestCase:

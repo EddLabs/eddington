@@ -2,9 +2,9 @@ import math
 from unittest import TestCase
 from mock import patch
 
-from eddington.exceptions import FitFunctionLoadError
-from eddington.fit_functions.fit_functions_registry import FitFunctionsRegistry
-from eddington.fit_functions.fit_function import FitFunction
+from eddington_core.exceptions import FitFunctionLoadError
+from eddington_core.fit_functions.fit_functions_registry import FitFunctionsRegistry
+from eddington_core.fit_functions.fit_function import FitFunction
 
 
 class FitFunctionFromStringBaseTestCase:
@@ -14,7 +14,7 @@ class FitFunctionFromStringBaseTestCase:
     expected_name = "dummy-1234"
 
     def setUp(self):
-        uuid_patcher = patch("eddington.fit_functions.fit_function.uuid")
+        uuid_patcher = patch("eddington_core.fit_functions.fit_function.uuid")
         uuid = uuid_patcher.start()
         uuid.uuid4.return_value = self.uuid
         self.addCleanup(uuid_patcher.stop)

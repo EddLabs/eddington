@@ -1,8 +1,12 @@
 import numpy as np
-from eddington.exceptions import InvalidGeneratorInitialization
-from eddington.fit_functions.fit_function import fit_function
-from eddington.fit_functions.fit_function_generator import fit_function_generator
-from eddington.fit_functions.fit_functions_list import linear, parabolic, hyperbolic
+from eddington_core.exceptions import InvalidGeneratorInitialization
+from eddington_core.fit_functions.fit_function import fit_function
+from eddington_core.fit_functions.fit_function_generator import fit_function_generator
+from eddington_core.fit_functions.fit_functions_list import (
+    linear,
+    parabolic,
+    hyperbolic,
+)
 
 
 @fit_function_generator(parameters="n", syntax="a[0] + a[1] * x + ... + a[n] * x ^ n")

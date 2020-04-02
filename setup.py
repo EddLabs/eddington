@@ -6,7 +6,7 @@ import io
 import re
 
 with io.open(
-    Path("src") / "eddington" / "__init__.py", encoding="utf8"
+    Path("src") / "eddington_core" / "__init__.py", encoding="utf8"
 ) as version_file:
     version_match = re.search(
         r"^__version__ = ['\"]([^'\"]*)['\"]", version_file.read(), re.M

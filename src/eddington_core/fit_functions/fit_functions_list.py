@@ -1,5 +1,5 @@
 import numpy as np
-from eddington.fit_functions.fit_function import fit_function
+from eddington_core.fit_functions.fit_function import fit_function
 
 
 @fit_function(

@@ -2,7 +2,7 @@ import warnings
 from unittest import TestCase
 import numpy as np
 
-from eddington.fit_result import FitResult
+from eddington_core.fit_result import FitResult
 
 
 class FitResultBaseTestCase:

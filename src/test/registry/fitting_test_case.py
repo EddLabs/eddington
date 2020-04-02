@@ -2,7 +2,7 @@ from dataclasses import dataclass
 import numpy as np
 from typing import List, Union
 
-from eddington.fit_functions.fit_function import FitFunction
+from eddington_core.fit_functions.fit_function import FitFunction
 
 
 @dataclass()
