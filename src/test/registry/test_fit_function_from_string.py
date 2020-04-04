@@ -2,9 +2,7 @@ import math
 from unittest import TestCase
 from mock import patch
 
-from eddington_core.exceptions import FitFunctionLoadError
-from eddington_core.fit_functions.fit_functions_registry import FitFunctionsRegistry
-from eddington_core.fit_functions.fit_function import FitFunction
+from eddington_core import FitFunctionLoadError, FitFunctionsRegistry, FitFunction
 
 
 class FitFunctionFromStringBaseTestCase:

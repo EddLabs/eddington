@@ -2,7 +2,7 @@ from collections import OrderedDict
 from unittest import TestCase
 import numpy as np
 
-from eddington_core.fit_data import FitData
+from eddington_core import FitData
 
 
 class TestBuildDataFromDataFrame(TestCase):

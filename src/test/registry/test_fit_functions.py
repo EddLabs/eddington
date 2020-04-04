@@ -1,13 +1,13 @@
 from unittest import TestCase
 
-from eddington_core.fit_functions.fit_functions_list import (
+from eddington_core import (
     constant,
     linear,
     parabolic,
     hyperbolic,
     exponential,
+    FitFunctionsRegistry,
 )
-from eddington_core.fit_functions.fit_functions_registry import FitFunctionsRegistry
 from test.registry.fitting_test_case import (
     add_test_case,
     linear_case,

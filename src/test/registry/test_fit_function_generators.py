@@ -1,7 +1,15 @@
 from unittest import TestCase
 import numpy as np
 
-from eddington_core.exceptions import InvalidGeneratorInitialization
+from eddington_core import (
+    InvalidGeneratorInitialization,
+    fit_function,
+    fit_function_generator,
+    polynom,
+    straight_power,
+    inverse_power,
+    FitFunctionsRegistry,
+)
 from test.registry.fitting_test_case import (
     linear_case,
     add_test_case,
@@ -12,14 +20,6 @@ from test.registry.fitting_test_case import (
     straight_power_2_case,
     straight_power_3_case,
 )
-from eddington_core.fit_functions.fit_function import fit_function
-from eddington_core.fit_functions.fit_function_generator import fit_function_generator
-from eddington_core.fit_functions.fit_function_generators_list import (
-    polynom,
-    straight_power,
-    inverse_power,
-)
-from eddington_core.fit_functions.fit_functions_registry import FitFunctionsRegistry
 
 
 class FitFunctionGeneratorsBaseTestCase:

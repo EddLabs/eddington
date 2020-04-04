@@ -1,8 +1,10 @@
 from unittest import TestCase
 
-from eddington_core.exceptions import FitFunctionLoadError
-from eddington_core.fit_functions.fit_function import fit_function
-from eddington_core.fit_functions.fit_functions_registry import FitFunctionsRegistry
+from eddington_core import (
+    FitFunctionLoadError,
+    fit_function,
+    FitFunctionsRegistry,
+)
 
 
 class TestFitFunctionRegistryAddAndRemove(TestCase):
