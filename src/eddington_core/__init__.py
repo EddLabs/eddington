@@ -29,14 +29,6 @@ from eddington_core.fit_result import FitResult
 from eddington_core.fit_util import fit_to_data
 
 
-def get_fit_functions(module):
-    return [
-        key
-        for key, value in vars(module).items()
-        if isinstance(value, FitFunction) or isinstance(value, FitFunctionGenerator)
-    ]
-
-
 __all__ = [
     # Fit functions infrastructure
     "FitFunction",
