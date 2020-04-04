@@ -1,0 +1,110 @@
+version: 2
+jobs:
+  style:
+    docker:
+      - image: circleci/python:3.7.2
+    steps:
+      - checkout
+      - run:
+          name: Install tox
+          command: |
+              pip install tox --user
+      - run:
+          name: Run style checks
+          command: |
+            $HOME/.local/bin/tox -e black,flake
+
+  build:
+    docker:
+    - image: circleci/python:3.7.2
+    steps:
+    - checkout
+    - restore_cache:
+        keys:
+          - tox-{{ checksum "tox.ini" }}-{{ checksum "setup.cfg" }}-{{ checksum ".coveragerc" }}
+    - run:
+        name: Install tox
+        command: |
+          pip install tox --user
+    - run:
+        name: Clean coverage
+        command: |
+          $HOME/.local/bin/tox -e clean
+    - run:
+        name: Run Unit Tests
+        command: |
+          $HOME/.local/bin/tox -e unit_test
+    - run:
+        name: Run Integration Tests
+        command: |
+          $HOME/.local/bin/tox -e integration_test
+    - run:
+        name: Report Covarage
+        command: |
+          $HOME/.local/bin/tox -e report
+    - save_cache:
+        paths:
+          - ~/project/.tox
+        key: tox-{{ checksum "tox.ini" }}-{{ checksum "setup.cfg" }}-{{ checksum ".coveragerc" }}
+    - store_test_results:
+        path: test_results
+    - store_artifacts:
+        path: htmlcov
+  publish:
+    docker:
+      - image: circleci/golang:1.14-buster
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - lib-{{ checksum "setup.cfg" }}
+      - run:
+          name: "Import needed packages"
+          command: |
+            sudo apt-get install -y python3 python3-pip
+            python3 -m pip install --upgrade pip --user
+            pip3 install --upgrade setuptools wheel twine --user
+            python3 setup.py install --user
+            export SOURCE_PATH=$HOME/project/src
+            export PYTHONPATH=$PYTHONPATH:$SOURCE_PATH
+      - run:
+          name: "Create release"
+          command: |
+            python3 setup.py sdist bdist_wheel
+      - run:
+          name: "Publish Release on GitHub"
+          command: |
+            go get github.com/tcnksm/ghr
+            VERSION=$(python3 setup.py --version)
+            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ./dist
+      - run:
+          name: "Publish Package on pip"
+          command: |
+            $HOME/.local/bin/twine check ./dist/*
+            $HOME/.local/bin/twine upload ./dist/*
+      - save_cache:
+          paths:
+            - ~/.local
+          key: lib-{{ checksum "setup.cfg" }}
+workflows:
+  version: 2
+  workflow:
+    jobs:
+    - style:
+        filters:
+          tags:
+            only: /^v.*/
+    - build:
+        requires:
+          - style
+        filters:
+          tags:
+            only: /^v.*/
+    - publish:
+        requires:
+          - build
+        filters:
+          tags:
+            only: /^v.*/
+          branches:
+            ignore: /.*/
