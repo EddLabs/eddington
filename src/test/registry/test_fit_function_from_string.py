@@ -95,6 +95,23 @@ class TestLoadFunctionFromStringWithoutName(
         FitFunctionFromStringBaseTestCase.tearDown(self)
 
 
+class TestLoadFunctionFromStringWithIntegralFunction(
+    TestCase, FitFunctionFromStringBaseTestCase
+):
+    syntax = "a[0] * gamma(a[1] * x) + a[2]"
+    save = False
+    n = 3
+    a = [2, 1, 4]
+    x = 6
+    expected_value = 244
+
+    def setUp(self):
+        FitFunctionFromStringBaseTestCase.setUp(self)
+
+    def tearDown(self):
+        FitFunctionFromStringBaseTestCase.tearDown(self)
+
+
 class TestLoadFunctionFromStringWithName(TestCase, FitFunctionFromStringBaseTestCase):
     name = "a_very_cool_function"
     expected_name = name

@@ -3,6 +3,7 @@ import uuid
 from typing import Callable
 from dataclasses import dataclass, InitVar, field
 import numpy as np
+import scipy
 
 from eddington_core.exceptions import FitFunctionLoadError
 from eddington_core.fit_functions.fit_functions_registry import FitFunctionsRegistry
@@ -59,6 +60,7 @@ class FitFunction:
         globals_dict["np"] = np
         globals_dict["numpy"] = np
         globals_dict.update(vars(np))
+        globals_dict.update(vars(scipy.special))
         return globals_dict
 
     def __call__(self, a, x):
