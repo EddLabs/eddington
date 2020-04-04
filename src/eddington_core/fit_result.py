@@ -26,6 +26,10 @@ class FitResult:
         self.chi2_reduced = self.chi2 / self.degrees_of_freedom
         self.p_probability = stats.chi2.sf(self.chi2, self.degrees_of_freedom)
 
+    def export_to_file(self, file_path):
+        with open(file_path, mode="w") as output_file:
+            output_file.write(str(self))
+
     def __repr__(self):
         if self.__repr_string is None:
             self.__repr_string = self.build_repr_string()

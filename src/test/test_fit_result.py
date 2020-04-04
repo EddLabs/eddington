@@ -1,6 +1,7 @@
 import warnings
 from unittest import TestCase
 import numpy as np
+from mock import mock_open, patch
 
 from eddington_core import FitResult
 
@@ -96,6 +97,14 @@ class FitResultBaseTestCase:
             str(self.fit_result),
             msg="Representation is different than expected",
         )
+
+    def test_export_to_file(self):
+        path = "/path/to/output"
+        mock_open_obj = mock_open()
+        with patch("eddington_core.fit_result.open", mock_open_obj):
+            self.fit_result.export_to_file(path)
+            mock_open_obj.assert_called_once_with(path, mode="w")
+            mock_open_obj.return_value.write.assert_called_with(self.repr_string)
 
 
 class TestStandardFitResult(TestCase, FitResultBaseTestCase):
