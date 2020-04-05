@@ -3,6 +3,7 @@ import numpy as np
 from typing import List, Union
 
 from eddington_core import FitFunction
+from eddington_core.exceptions import FitFunctionRuntimeError
 
 
 @dataclass()
@@ -28,8 +29,8 @@ def add_test_case(
 
     def assert_raises_unfit_parameters(self, n0):
         self.assertRaisesRegex(
-            ValueError,
-            f"input length should be {case.n}, got {n0}$",
+            FitFunctionRuntimeError,
+            f"^input length should be {case.n}, got {n0}$",
             func,
             np.random.random(n0),
             np.random.random(),

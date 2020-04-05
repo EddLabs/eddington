@@ -5,7 +5,7 @@ from dataclasses import dataclass, InitVar, field
 import numpy as np
 import scipy
 
-from eddington_core.exceptions import FitFunctionLoadError
+from eddington_core.exceptions import FitFunctionLoadError, FitFunctionRuntimeError
 from eddington_core.fit_functions.fit_functions_registry import FitFunctionsRegistry
 
 
@@ -66,7 +66,9 @@ class FitFunction:
     def __call__(self, a, x):
         a_length = len(a)
         if a_length != self.n:
-            raise ValueError(f"input length should be {self.n}, got {a_length}")
+            raise FitFunctionRuntimeError(
+                f"input length should be {self.n}, got {a_length}"
+            )
         return self.fit_func(a, x)
 
     def assign(self, a):

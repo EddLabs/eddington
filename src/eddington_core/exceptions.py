@@ -8,3 +8,7 @@ class InvalidGeneratorInitialization(EddingtonException):
 
 class FitFunctionLoadError(EddingtonException):
     pass
+
+
+class FitFunctionRuntimeError(EddingtonException):
+    pass
