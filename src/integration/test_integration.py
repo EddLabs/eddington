@@ -10,7 +10,7 @@ from integration.fitting_test_case import FitResultBaseTestCase, add_integration
 
 
 class TestFittingIntegration(TestCase):
-    def compare_small(self, expected, actual, title, decimal):
+    def compare_small(self, expected, actual, decimal, msg):
         expected_copy = np.abs(expected)
         actual_copy = np.abs(actual)
         if expected_copy != 0:
@@ -18,10 +18,7 @@ class TestFittingIntegration(TestCase):
                 expected_copy *= 10
                 actual_copy *= 10
         self.assertAlmostEqual(
-            expected_copy,
-            actual_copy,
-            places=decimal,
-            msg=f"{title} is different than expected. {expected} != {actual}",
+            expected_copy, actual_copy, places=decimal, msg=msg,
         )
 
     @classmethod
@@ -51,6 +48,7 @@ class TestFittingIntegration(TestCase):
                 a=np.array(result["a"]),
                 aerr=np.array(result["aerr"]),
                 arerr=np.array(result["arerr"]),
+                acov=np.array(result["acov"]),
                 chi2=result["chi2"],
                 degrees_of_freedom=result["degrees_of_freedom"],
                 chi2_reduced=result["chi2_reduced"],

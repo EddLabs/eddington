@@ -17,6 +17,7 @@ class FitResultBaseTestCase:
         a,
         aerr,
         arerr,
+        acov,
         chi2,
         degrees_of_freedom,
         chi2_reduced,
@@ -30,6 +31,7 @@ class FitResultBaseTestCase:
         self.a = a
         self.aerr = aerr
         self.arerr = arerr
+        self.acov = acov
         self.chi2 = chi2
         self.degrees_of_freedom = degrees_of_freedom
         self.chi2_reduced = chi2_reduced
@@ -63,6 +65,28 @@ def add_integration_tests(cls, case: FitResultBaseTestCase):
             err_msg="A relative error is different than expected",
         )
 
+    def test_acov(self):
+        old_precision = np.get_printoptions()["precision"]
+        np.set_printoptions(precision=8)
+        self.assertEqual(
+            case.acov.shape,
+            case.result.acov.shape,
+            msg="Covariance matrix shape is different than expected.",
+        )
+        for i in range(case.acov.shape[0]):
+            for j in range(case.acov.shape[0]):
+                self.compare_small(
+                    case.acov[i, j],
+                    case.result.acov[i, j],
+                    decimal=case.decimal,
+                    msg=f"""Covariance matrix is different in coordinate ({i}, {j}).
+Expected matrix:
+{case.acov}
+Actual matrix:
+{case.result.acov}""",
+                )
+        np.set_printoptions(precision=old_precision)
+
     def test_chi2(self):
         self.assertAlmostEqual(
             case.chi2,
@@ -90,13 +114,15 @@ def add_integration_tests(cls, case: FitResultBaseTestCase):
         self.compare_small(
             case.p_probability,
             case.result.p_probability,
-            title="P probability",
             decimal=case.decimal,
+            msg="P probability is different than expected. "
+            f"{case.p_probability} != {case.result.p_probability}",
         )
 
     setattr(cls, f"test_a___{case.name}", test_a)
     setattr(cls, f"test_aerr___{case.name}", test_aerr)
     setattr(cls, f"test_arerr___{case.name}", test_arerr)
+    setattr(cls, f"test_acov___{case.name}", test_acov)
     setattr(cls, f"test_chi2___{case.name}", test_chi2)
     setattr(cls, f"test_degrees_of_freedom___{case.name}", test_degrees_of_freedom)
     setattr(cls, f"test_chi2_reduced___{case.name}", test_chi2_reduced)
