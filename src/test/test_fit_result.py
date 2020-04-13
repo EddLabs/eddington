@@ -109,15 +109,15 @@ class FitResultBaseTestCase:
 
 class TestStandardFitResult(TestCase, FitResultBaseTestCase):
 
-    a0 = np.array([1.0, 3.0])
-    a = np.array([1.1, 2.98])
-    aerr = np.array([0.1, 0.76])
-    acov = np.array([[0.01, 2.3], [2.3, 0.988]])
+    a0 = [1.0, 3.0]
+    a = [1.1, 2.98]
+    aerr = [0.1, 0.76]
+    acov = [[0.01, 2.3], [2.3, 0.988]]
     chi2 = 8.276
     degrees_of_freedom = 5
     chi2_reduced = 1.6552
     p_probability = 0.14167
-    arerr = np.array([9.09091, 25.50336])
+    arerr = [9.09091, 25.50336]
     repr_string = """Results:
 ========
 
@@ -141,15 +141,15 @@ P-probability: 0.1417
 
 class TestFitResultWithZeroError(TestCase, FitResultBaseTestCase):
 
-    a0 = np.array([1.0, 3.0])
-    a = np.array([1.1, 2.98])
-    aerr = np.array([0.0, 0.0])
-    acov = np.array([[0.0, 0.0], [0.0, 0.0]])
+    a0 = [1.0, 3.0]
+    a = [1.1, 2.98]
+    aerr = [0.0, 0.0]
+    acov = [[0.0, 0.0], [0.0, 0.0]]
     chi2 = 8.276
     degrees_of_freedom = 5
     chi2_reduced = 1.6552
     p_probability = 0.14167
-    arerr = np.array([0.0, 0.0])
+    arerr = [0.0, 0.0]
     repr_string = """Results:
 ========
 
@@ -173,15 +173,15 @@ P-probability: 0.1417
 
 class TestFitResultWithZeroValue(TestCase, FitResultBaseTestCase):
 
-    a0 = np.array([1.0, 3.0])
-    a = np.array([0.0, 0.0])
-    aerr = np.array([0.1, 0.76])
-    acov = np.array([[0.01, 2.3], [2.3, 0.988]])
+    a0 = [1.0, 3.0]
+    a = [0.0, 0.0]
+    aerr = [0.1, 0.76]
+    acov = [[0.01, 2.3], [2.3, 0.988]]
     chi2 = 8.276
     degrees_of_freedom = 5
     chi2_reduced = 1.6552
     p_probability = 0.14167
-    arerr = np.array([np.inf, np.inf])
+    arerr = [np.inf, np.inf]
     repr_string = """Results:
 ========
 
@@ -207,15 +207,15 @@ P-probability: 0.1417
 
 class TestFitResultWithSmallPProbability(TestCase, FitResultBaseTestCase):
 
-    a0 = np.array([1.0, 3.0])
-    a = np.array([1.1, 2.98])
-    aerr = np.array([0.1, 0.76])
-    acov = np.array([[0.01, 2.3], [2.3, 0.988]])
+    a0 = [1.0, 3.0]
+    a = [1.1, 2.98]
+    aerr = [0.1, 0.76]
+    acov = [[0.01, 2.3], [2.3, 0.988]]
     chi2 = 43.726
     degrees_of_freedom = 5
     chi2_reduced = 8.7452
     p_probability = 2.63263e-8
-    arerr = np.array([9.09091, 25.50336])
+    arerr = [9.09091, 25.50336]
     repr_string = """Results:
 ========
 

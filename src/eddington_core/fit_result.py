@@ -22,6 +22,10 @@ class FitResult:
     __repr_string: str = field(default=None, init=False, repr=False)
 
     def __post_init__(self):
+        self.aerr = np.array(self.aerr)
+        self.acov = np.array(self.acov)
+        self.a0 = np.array(self.a0)
+        self.a = np.array(self.a)
         self.arerr = np.abs(self.aerr / self.a) * 100
         self.chi2_reduced = self.chi2 / self.degrees_of_freedom
         self.p_probability = stats.chi2.sf(self.chi2, self.degrees_of_freedom)
