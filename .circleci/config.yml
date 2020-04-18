@@ -33,15 +33,7 @@ jobs:
     - run:
         name: Run Unit Tests
         command: |
-          $HOME/.local/bin/tox -e unit_test
-    - run:
-        name: Run Integration Tests
-        command: |
-          $HOME/.local/bin/tox -e integration_test
-    - run:
-        name: Report Covarage
-        command: |
-          $HOME/.local/bin/tox -e report
+          $HOME/.local/bin/tox -e unit_test,report
     - save_cache:
         paths:
           - ~/project/.tox

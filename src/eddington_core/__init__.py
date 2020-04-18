@@ -1,16 +1,3 @@
-from eddington_core.fit_functions.fit_functions_list import (
-    constant,
-    linear,
-    parabolic,
-    hyperbolic,
-    exponential,
-)
-
-from eddington_core.fit_functions.fit_function_generators_list import (
-    straight_power,
-    polynom,
-    inverse_power,
-)
 from eddington_core.fit_functions.fit_function import FitFunction, fit_function
 from eddington_core.fit_functions.fit_function_generator import (
     FitFunctionGenerator,
@@ -26,7 +13,6 @@ from eddington_core.exceptions import (
 
 from eddington_core.fit_data import FitData
 from eddington_core.fit_result import FitResult
-from eddington_core.fit_util import fit_to_data
 
 
 __all__ = [
@@ -36,16 +22,6 @@ __all__ = [
     "FitFunctionGenerator",
     "fit_function_generator",
     "FitFunctionsRegistry",
-    # Fit functions
-    "constant",
-    "linear",
-    "parabolic",
-    "hyperbolic",
-    "exponential",
-    # Fit functions generators
-    "straight_power",
-    "polynom",
-    "inverse_power",
     # Exceptions
     "FitFunctionLoadError",
     "EddingtonException",
@@ -53,6 +29,4 @@ __all__ = [
     # Data structures
     "FitData",
     "FitResult",
-    # Fitting functions
-    "fit_to_data",
 ]
