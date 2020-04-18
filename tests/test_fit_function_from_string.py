@@ -12,10 +12,10 @@ class FitFunctionFromStringBaseTestCase:
     expected_name = "dummy-1234"
 
     def setUp(self):
-        uuid_patcher = patch("eddington_core.fit_functions.fit_function.uuid")
-        uuid = uuid_patcher.start()
-        uuid.uuid4.return_value = self.uuid
-        self.addCleanup(uuid_patcher.stop)
+        uuid4_patcher = patch("uuid.uuid4")
+        uuid4 = uuid4_patcher.start()
+        uuid4.return_value = self.uuid
+        self.addCleanup(uuid4_patcher.stop)
         self.func = FitFunction.from_string(self.syntax, name=self.name, save=self.save)
 
     def tearDown(self):

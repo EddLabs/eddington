@@ -1,7 +1,7 @@
 from typing import Callable, Union, List
 from dataclasses import dataclass, field, InitVar
 
-from eddington_core.fit_functions.fit_functions_registry import FitFunctionsRegistry
+from eddington_core.fit_functions_registry import FitFunctionsRegistry
 
 
 @dataclass(repr=False, unsafe_hash=True)

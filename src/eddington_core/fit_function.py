@@ -6,7 +6,7 @@ import numpy as np
 import scipy
 
 from eddington_core.exceptions import FitFunctionLoadError, FitFunctionRuntimeError
-from eddington_core.fit_functions.fit_functions_registry import FitFunctionsRegistry
+from eddington_core.fit_functions_registry import FitFunctionsRegistry
 
 
 @dataclass(repr=False, unsafe_hash=True)
