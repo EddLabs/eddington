@@ -1,44 +1,34 @@
+from typing import Callable, Union, List
+from dataclasses import dataclass, field, InitVar
+
 from eddington_core.fit_functions.fit_functions_registry import FitFunctionsRegistry
 
 
+@dataclass(repr=False, unsafe_hash=True)
 class FitFunctionGenerator:
-    def __init__(self, generator_func, name, syntax=None, parameters=None, save=True):
-        self.__generator_func = generator_func
-        self.__name = name
-        self.__syntax = syntax
-        self.__parameters = parameters
-        self.__signature = f"{name}({FitFunctionGenerator.__param_string(parameters)})"
+    generator_func: Callable
+    name: str
+    syntax: str
+    parameters: Union[List[str], str]
+    signature: str = field(init=False)
+    save: InitVar[bool] = True
+
+    def __post_init__(self, save):
+        self.signature = f"{self.name}({self.__param_string()})"
         if save:
             FitFunctionsRegistry.add(self)
 
     def __call__(self, *args, **kwargs):
-        return self.__generator_func(*args, **kwargs)
-
-    @property
-    def name(self):
-        return self.__name
-
-    @property
-    def syntax(self):
-        return self.__syntax
-
-    @property
-    def parameters(self):
-        return self.__parameters
-
-    @property
-    def signature(self):
-        return self.__signature
+        return self.generator_func(*args, **kwargs)
 
     @classmethod
     def is_generator(cls):
         return True
 
-    @classmethod
-    def __param_string(cls, parameters):
-        if isinstance(parameters, str):
-            return parameters
-        return ", ".join(parameters)
+    def __param_string(self):
+        if isinstance(self.parameters, str):
+            return self.parameters
+        return ", ".join(self.parameters)
 
 
 def fit_function_generator(parameters, name=None, syntax=None, save=True):
