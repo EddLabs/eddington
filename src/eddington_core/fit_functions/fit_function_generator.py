@@ -2,13 +2,14 @@ from eddington_core.fit_functions.fit_functions_registry import FitFunctionsRegi
 
 
 class FitFunctionGenerator:
-    def __init__(self, generator_func, name, syntax=None, parameters=None):
+    def __init__(self, generator_func, name, syntax=None, parameters=None, save=True):
         self.__generator_func = generator_func
         self.__name = name
         self.__syntax = syntax
         self.__parameters = parameters
         self.__signature = f"{name}({FitFunctionGenerator.__param_string(parameters)})"
-        FitFunctionsRegistry.add(self)
+        if save:
+            FitFunctionsRegistry.add(self)
 
     def __call__(self, *args, **kwargs):
         return self.__generator_func(*args, **kwargs)
@@ -40,7 +41,7 @@ class FitFunctionGenerator:
         return ", ".join(parameters)
 
 
-def fit_function_generator(parameters, name=None, syntax=None):
+def fit_function_generator(parameters, name=None, syntax=None, save=True):
     def wrapper(generator):
         generator_name = generator.__name__ if name is None else name
         return FitFunctionGenerator(
@@ -48,6 +49,7 @@ def fit_function_generator(parameters, name=None, syntax=None):
             name=generator_name,
             syntax=syntax,
             parameters=parameters,
+            save=save,
         )
 
     return wrapper
