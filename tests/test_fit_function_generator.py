@@ -2,35 +2,10 @@ from unittest import TestCase
 
 import numpy as np
 
-from eddington_core import fit_function_generator, fit_function
-
-
-@fit_function_generator(
-    name="generator_with_2_parameters",
-    parameters=["p0", "p1"],
-    syntax="Some syntax",
-    save=False,
+from tests.dummy_functions import (
+    dummy_generator_with_1_parameter,
+    dummy_generator_with_2_parameters,
 )
-def dummy_generator_with_2_parameters(p0, p1):
-    @fit_function(n=2, save=False)
-    def dummy_function(a, x):
-        return p0 * a[0] + p1 * a[1] * x
-
-    return dummy_function
-
-
-@fit_function_generator(
-    name="generator_with_1_parameter",
-    parameters="p1",
-    syntax="Some syntax",
-    save=False,
-)
-def dummy_generator_with_1_parameter(p1):
-    @fit_function(n=2, save=False)
-    def dummy_function(a, x):
-        return a[0] + p1 * a[1] * x
-
-    return dummy_function
 
 
 class TestFitFunctionGenerator(TestCase):

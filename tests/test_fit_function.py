@@ -1,13 +1,8 @@
 from unittest import TestCase
 import numpy as np
 
-from eddington_core import fit_function
 from eddington_core.exceptions import FitFunctionRuntimeError
-
-
-@fit_function(n=2, save=False)
-def dummy_func1(a, x):
-    return a[0] + a[1] * x ** 2
+from tests.dummy_functions import dummy_func1
 
 
 class TestFitFunction(TestCase):
