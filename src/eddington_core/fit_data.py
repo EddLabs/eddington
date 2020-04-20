@@ -1,6 +1,8 @@
+import csv
 from collections import OrderedDict
 
 import numpy as np
+import xlrd
 
 from eddington_core.consts import (
     DEFAULT_MIN_COEFF,
@@ -14,6 +16,7 @@ from eddington_core.consts import (
 from eddington_core.exceptions import (
     ColumnExistenceError,
     ColumnIndexError,
+    InvalidDataFile,
 )
 from eddington_core.random_util import random_array, random_sigma, random_error
 
@@ -114,20 +117,6 @@ class FitData:
         return self.data[self.yerr_column]
 
     @classmethod
-    def _covert_to_index(cls, column):
-        try:
-            return int(column) - 1
-        except ValueError:
-            return None
-
-    def _validate_index(self, index, column):
-        if index is None:
-            raise ColumnExistenceError(column)
-        max_index = len(self._data_keys)
-        if index < 0 or index >= max_index:
-            raise ColumnIndexError(index + 1, max_index)
-
-    @classmethod
     def random(
         cls,
         fit_func,
@@ -149,3 +138,99 @@ class FitData:
         return FitData(
             data=OrderedDict([("x", x), ("xerr", xerr), ("y", y), ("yerr", yerr)])
         )
+
+    @classmethod
+    def read_from_excel(
+        cls,
+        filepath,
+        sheet,
+        x_column=None,
+        xerr_column=None,
+        y_column=None,
+        yerr_column=None,
+    ):
+        excel_obj = xlrd.open_workbook(filepath)
+        sheet_obj = excel_obj.sheet_by_name(sheet)
+        rows = [sheet_obj.row(i) for i in range(sheet_obj.nrows)]
+        rows = [list(map(lambda element: element.value, row)) for row in rows]
+        return cls._extract_data_from_rows(
+            rows=rows,
+            file_name=filepath.name,
+            sheet=sheet,
+            x_column=x_column,
+            xerr_column=xerr_column,
+            y_column=y_column,
+            yerr_column=yerr_column,
+        )
+
+    @classmethod
+    def read_from_csv(
+        cls, filepath, x_column=None, xerr_column=None, y_column=None, yerr_column=None,
+    ):
+        with open(filepath, mode="r") as csv_file:
+            csv_obj = csv.reader(csv_file)
+            rows = list(csv_obj)
+        return cls._extract_data_from_rows(
+            rows=rows,
+            file_name=filepath.name,
+            x_column=x_column,
+            xerr_column=xerr_column,
+            y_column=y_column,
+            yerr_column=yerr_column,
+        )
+
+    @classmethod
+    def _covert_to_index(cls, column):
+        try:
+            return int(column) - 1
+        except ValueError:
+            return None
+
+    def _validate_index(self, index, column):
+        if index is None:
+            raise ColumnExistenceError(column)
+        max_index = len(self._data_keys)
+        if index < 0 or index >= max_index:
+            raise ColumnIndexError(index + 1, max_index)
+
+    @classmethod
+    def _extract_data_from_rows(
+        cls,
+        rows,
+        file_name,
+        sheet=None,
+        x_column=None,
+        xerr_column=None,
+        y_column=None,
+        yerr_column=None,
+    ):
+        headers = rows[0]
+        if cls._is_headers(headers):
+            content = rows[1:]
+        else:
+            headers = range(len(headers))
+            content = rows
+        try:
+            content = [list(map(float, row)) for row in content]
+        except ValueError:
+            raise InvalidDataFile(file_name, sheet=sheet)
+        columns = zip(*content)
+        return FitData(
+            OrderedDict(zip(headers, columns)),
+            x_column=x_column,
+            xerr_column=xerr_column,
+            y_column=y_column,
+            yerr_column=yerr_column,
+        )
+
+    @classmethod
+    def _is_headers(cls, headers):
+        return all([header != "" and not cls._is_number(header) for header in headers])
+
+    @classmethod
+    def _is_number(cls, string):
+        try:
+            float(string)
+            return True
+        except ValueError:
+            return False

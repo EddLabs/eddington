@@ -14,6 +14,13 @@ class FitFunctionRuntimeError(EddingtonException):
     pass
 
 
+class InvalidDataFile(EddingtonException):
+    def __init__(self, file_name, sheet=None):
+        sheet_msg = "" if sheet is None else f' in sheet "{sheet}"'
+        msg = f'"{file_name}" has invalid syntax{sheet_msg}.'
+        super(InvalidDataFile, self).__init__(msg)
+
+
 # Column Errors
 
 

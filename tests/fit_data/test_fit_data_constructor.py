@@ -1,15 +1,9 @@
-from collections import OrderedDict
 from unittest import TestCase
 
 import numpy as np
 
 from eddington_core import FitData, ColumnIndexError, ColumnExistenceError
-
-
-COLUMNS_NAMES = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "k"]
-COLUMNS = OrderedDict(
-    [(column_name, np.random.uniform(size=20)) for column_name in COLUMNS_NAMES]
-)
+from tests.fit_data import COLUMNS
 
 
 class DataColumnsBaseTestCase:
