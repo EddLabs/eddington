@@ -5,9 +5,13 @@ from eddington_core.fit_function_generator import (
 )
 from eddington_core.fit_functions_registry import FitFunctionsRegistry
 from eddington_core.exceptions import (
-    FitFunctionLoadError,
     EddingtonException,
+    FitFunctionRuntimeError,
+    FitFunctionLoadError,
     InvalidGeneratorInitialization,
+    ColumnError,
+    ColumnExistenceError,
+    ColumnIndexError,
 )
 
 from eddington_core.fit_data import FitData
@@ -23,8 +27,12 @@ __all__ = [
     "FitFunctionsRegistry",
     # Exceptions
     "EddingtonException",
+    "FitFunctionRuntimeError",
     "FitFunctionLoadError",
     "InvalidGeneratorInitialization",
+    "ColumnError",
+    "ColumnExistenceError",
+    "ColumnIndexError",
     # Data structures
     "FitData",
     "FitResult",
