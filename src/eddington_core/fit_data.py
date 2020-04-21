@@ -84,6 +84,9 @@ class FitData:
     def unselect_all_records(self):
         self._record_indices = [False] * self.length
 
+    def is_selected(self, records_index):
+        return self._record_indices[records_index - 1]
+
     # Columns can be set
 
     @property

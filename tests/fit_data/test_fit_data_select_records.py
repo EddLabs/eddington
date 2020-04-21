@@ -39,9 +39,21 @@ class BaseFitDataSelectRecordTestCase:
             err_msg="Y error is different than expected",
         )
 
+    def test_is_selected(self):
+        for i in range(1, self.fit_data.length + 1):
+            if i in self.selected:
+                self.assertTrue(
+                    self.fit_data.is_selected(i), msg=f"Record {i} was not selected"
+                )
+            else:
+                self.assertFalse(
+                    self.fit_data.is_selected(i), msg=f"Record {i} was selected"
+                )
+
 
 class TestFitDataUnselectOneRecord(TestCase, BaseFitDataSelectRecordTestCase):
     setUp = BaseFitDataSelectRecordTestCase.setUp
+    selected = [1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
 
     def select_records(self):
         self.fit_data.unselect_record(2)
@@ -53,6 +65,7 @@ class TestFitDataUnselectOneRecord(TestCase, BaseFitDataSelectRecordTestCase):
 
 class TestFitDataUnselectTwoRecord(TestCase, BaseFitDataSelectRecordTestCase):
     setUp = BaseFitDataSelectRecordTestCase.setUp
+    selected = [1, 3, 4, 6, 7, 8, 9, 10, 11, 12]
 
     def select_records(self):
         self.fit_data.unselect_record(2)
@@ -65,6 +78,7 @@ class TestFitDataUnselectTwoRecord(TestCase, BaseFitDataSelectRecordTestCase):
 
 class TestFitDataUnselectMultipleRecord(TestCase, BaseFitDataSelectRecordTestCase):
     setUp = BaseFitDataSelectRecordTestCase.setUp
+    selected = [1, 4, 6, 7, 8, 9, 11, 12]
 
     def select_records(self):
         self.fit_data.unselect_record(2)
@@ -79,6 +93,7 @@ class TestFitDataUnselectMultipleRecord(TestCase, BaseFitDataSelectRecordTestCas
 
 class TestFitDataUnselectAllRecords(TestCase, BaseFitDataSelectRecordTestCase):
     setUp = BaseFitDataSelectRecordTestCase.setUp
+    selected = []
 
     def select_records(self):
         self.fit_data.unselect_all_records()
@@ -90,6 +105,7 @@ class TestFitDataUnselectAllRecords(TestCase, BaseFitDataSelectRecordTestCase):
 
 class TestFitDataSelectRecord(TestCase, BaseFitDataSelectRecordTestCase):
     setUp = BaseFitDataSelectRecordTestCase.setUp
+    selected = [2]
 
     def select_records(self):
         self.fit_data.unselect_all_records()
@@ -102,6 +118,7 @@ class TestFitDataSelectRecord(TestCase, BaseFitDataSelectRecordTestCase):
 
 class TestFitDataSelectTwoRecords(TestCase, BaseFitDataSelectRecordTestCase):
     setUp = BaseFitDataSelectRecordTestCase.setUp
+    selected = [2, 5]
 
     def select_records(self):
         self.fit_data.unselect_all_records()
@@ -115,6 +132,7 @@ class TestFitDataSelectTwoRecords(TestCase, BaseFitDataSelectRecordTestCase):
 
 class TestFitDataSelectMultipleRecords(TestCase, BaseFitDataSelectRecordTestCase):
     setUp = BaseFitDataSelectRecordTestCase.setUp
+    selected = [2, 3, 5, 10]
 
     def select_records(self):
         self.fit_data.unselect_all_records()
@@ -130,6 +148,7 @@ class TestFitDataSelectMultipleRecords(TestCase, BaseFitDataSelectRecordTestCase
 
 class TestFitDataReselectRecord(TestCase, BaseFitDataSelectRecordTestCase):
     setUp = BaseFitDataSelectRecordTestCase.setUp
+    selected = list(range(1, 13))
 
     def select_records(self):
         self.fit_data.unselect_record(2)
@@ -142,6 +161,7 @@ class TestFitDataReselectRecord(TestCase, BaseFitDataSelectRecordTestCase):
 
 class TestFitDataSelectAllRecords(TestCase, BaseFitDataSelectRecordTestCase):
     setUp = BaseFitDataSelectRecordTestCase.setUp
+    selected = list(range(1, 13))
 
     def select_records(self):
         self.fit_data.unselect_all_records()
