@@ -3,7 +3,7 @@ from unittest import TestCase
 import numpy as np
 
 from eddington_core import FitData, ColumnIndexError, ColumnExistenceError
-from tests.fit_data import COLUMNS
+from tests.fit_data import COLUMNS, COLUMNS_NAMES
 
 
 class DataColumnsBaseTestCase:
@@ -32,6 +32,26 @@ class DataColumnsBaseTestCase:
             self.fit_data.yerr,
             err_msg="Y error is different than expected",
         )
+
+    def test_all_columns(self):
+        self.assertEqual(
+            COLUMNS_NAMES,
+            self.fit_data.all_columns,
+            msg="Columns are different than expected",
+        )
+
+    def test_data(self):
+        self.assertEqual(
+            COLUMNS_NAMES,
+            list(self.fit_data.data.keys()),
+            msg="Data keys are different than expected",
+        )
+        for key, item in self.fit_data.data.items():
+            np.testing.assert_equal(
+                item,
+                COLUMNS[key],
+                err_msg=f"Value of {key} is different than expected.",
+            )
 
 
 class TestDataColumnsWithoutArgs(TestCase, DataColumnsBaseTestCase):

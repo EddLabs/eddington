@@ -28,7 +28,7 @@ class FitData:
         self._data = OrderedDict(
             [(key, np.array(value)) for key, value in data.items()]
         )
-        self._data_keys = list(self.data.keys())
+        self._all_columns = list(self.data.keys())
         self.x_column = x_column
         self.xerr_column = xerr_column
         self.y_column = y_column
@@ -41,6 +41,10 @@ class FitData:
         return self._data
 
     @property
+    def all_columns(self):
+        return self._all_columns
+
+    @property
     def x_column(self):
         return self._x_column
 
@@ -48,12 +52,12 @@ class FitData:
     def x_column(self, x_column):
         if x_column is None:
             self._x_column_index = 0
-        elif x_column in self._data_keys:
-            self._x_column_index = list(self._data_keys).index(x_column)
+        elif x_column in self.all_columns:
+            self._x_column_index = self.all_columns.index(x_column)
         else:
             self._x_column_index = self._covert_to_index(x_column)
         self._validate_index(self._x_column_index, x_column)
-        self._x_column = self._data_keys[self._x_column_index]
+        self._x_column = self.all_columns[self._x_column_index]
 
     @property
     def xerr_column(self):
@@ -63,12 +67,12 @@ class FitData:
     def xerr_column(self, xerr_column):
         if xerr_column is None:
             self._xerr_column_index = self._x_column_index + 1
-        elif xerr_column in self._data_keys:
-            self._xerr_column_index = list(self._data_keys).index(xerr_column)
+        elif xerr_column in self.all_columns:
+            self._xerr_column_index = self.all_columns.index(xerr_column)
         else:
             self._xerr_column_index = self._covert_to_index(xerr_column)
         self._validate_index(self._xerr_column_index, xerr_column)
-        self._xerr_column = self._data_keys[self._xerr_column_index]
+        self._xerr_column = self.all_columns[self._xerr_column_index]
 
     @property
     def y_column(self):
@@ -78,12 +82,12 @@ class FitData:
     def y_column(self, y_column):
         if y_column is None:
             self._y_column_index = self._xerr_column_index + 1
-        elif y_column in self._data_keys:
-            self._y_column_index = list(self._data_keys).index(y_column)
+        elif y_column in self.all_columns:
+            self._y_column_index = self.all_columns.index(y_column)
         else:
             self._y_column_index = self._covert_to_index(y_column)
         self._validate_index(self._y_column_index, y_column)
-        self._y_column = self._data_keys[self._y_column_index]
+        self._y_column = self.all_columns[self._y_column_index]
 
     @property
     def yerr_column(self):
@@ -93,12 +97,12 @@ class FitData:
     def yerr_column(self, yerr_column):
         if yerr_column is None:
             self._yerr_column_index = self._y_column_index + 1
-        elif yerr_column in self._data_keys:
-            self._yerr_column_index = list(self._data_keys).index(yerr_column)
+        elif yerr_column in self.all_columns:
+            self._yerr_column_index = self.all_columns.index(yerr_column)
         else:
             self._yerr_column_index = self._covert_to_index(yerr_column)
         self._validate_index(self._yerr_column_index, yerr_column)
-        self._yerr_column = self._data_keys[self._yerr_column_index]
+        self._yerr_column = self.all_columns[self._yerr_column_index]
 
     @property
     def x(self):
@@ -189,7 +193,7 @@ class FitData:
     def _validate_index(self, index, column):
         if index is None:
             raise ColumnExistenceError(column)
-        max_index = len(self._data_keys)
+        max_index = len(self._all_columns)
         if index < 0 or index >= max_index:
             raise ColumnIndexError(index + 1, max_index)
 
