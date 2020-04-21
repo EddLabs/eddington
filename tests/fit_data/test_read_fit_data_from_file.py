@@ -6,7 +6,7 @@ import numpy as np
 from mock import patch, mock_open, PropertyMock
 
 from eddington_core import FitData
-from eddington_core.exceptions import InvalidDataFile
+from eddington_core.exceptions import FitDataInvalidFileSyntax
 from tests.fit_data import COLUMNS
 
 
@@ -78,7 +78,7 @@ class FitDataReadFromFileBaseTestCase:
         self.rows = [list(row) for row in self.CONTENT]
         self.rows[1][0] = "f"
 
-        self.assertRaises(InvalidDataFile, self.read)
+        self.assertRaises(FitDataInvalidFileSyntax, self.read)
 
     def test_read_with_x_column(self):
         self.rows = self.ROWS

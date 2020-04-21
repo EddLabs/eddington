@@ -14,9 +14,10 @@ from eddington_core.consts import (
     DEFAULT_YSIGMA,
 )
 from eddington_core.exceptions import (
-    ColumnExistenceError,
-    ColumnIndexError,
-    InvalidDataFile,
+    FitDataColumnExistenceError,
+    FitDataColumnIndexError,
+    FitDataInvalidFileSyntax,
+    FitDataColumnsLengthError,
 )
 from eddington_core.random_util import random_array, random_sigma, random_error
 
@@ -28,6 +29,9 @@ class FitData:
         self._data = OrderedDict(
             [(key, np.array(value)) for key, value in data.items()]
         )
+        lengths = set([value.size for value in self.data.values()])
+        if len(lengths) != 1:
+            raise FitDataColumnsLengthError()
         self._all_columns = list(self.data.keys())
         self.x_column = x_column
         self.xerr_column = xerr_column
@@ -192,10 +196,10 @@ class FitData:
 
     def _validate_index(self, index, column):
         if index is None:
-            raise ColumnExistenceError(column)
+            raise FitDataColumnExistenceError(column)
         max_index = len(self._all_columns)
         if index < 0 or index >= max_index:
-            raise ColumnIndexError(index + 1, max_index)
+            raise FitDataColumnIndexError(index + 1, max_index)
 
     @classmethod
     def _extract_data_from_rows(
@@ -217,7 +221,7 @@ class FitData:
         try:
             content = [list(map(float, row)) for row in content]
         except ValueError:
-            raise InvalidDataFile(file_name, sheet=sheet)
+            raise FitDataInvalidFileSyntax(file_name, sheet=sheet)
         columns = zip(*content)
         return FitData(
             OrderedDict(zip(headers, columns)),

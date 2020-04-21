@@ -1,12 +1,13 @@
 from unittest import TestCase
-
+from copy import deepcopy
 import numpy as np
 
-from eddington_core import FitData, ColumnIndexError, ColumnExistenceError
+from eddington_core import FitData, FitDataColumnIndexError, FitDataColumnExistenceError
+from eddington_core.exceptions import FitDataColumnsLengthError
 from tests.fit_data import COLUMNS, COLUMNS_NAMES
 
 
-class DataColumnsBaseTestCase:
+class FitDataConstructorBaseTestCase:
     fit_data: FitData
 
     def test_x(self):
@@ -54,7 +55,7 @@ class DataColumnsBaseTestCase:
             )
 
 
-class TestDataColumnsWithoutArgs(TestCase, DataColumnsBaseTestCase):
+class TestFitDataConstructorWithoutArgs(TestCase, FitDataConstructorBaseTestCase):
 
     x = "a"
     xerr = "b"
@@ -63,7 +64,7 @@ class TestDataColumnsWithoutArgs(TestCase, DataColumnsBaseTestCase):
     fit_data = FitData(COLUMNS)
 
 
-class TestDataColumnsWithIntX(TestCase, DataColumnsBaseTestCase):
+class TestFitDataConstructorWithIntX(TestCase, FitDataConstructorBaseTestCase):
 
     x = "c"
     xerr = "d"
@@ -72,7 +73,7 @@ class TestDataColumnsWithIntX(TestCase, DataColumnsBaseTestCase):
     fit_data = FitData(COLUMNS, x_column=3)
 
 
-class TestDataColumnsWithStringX(TestCase, DataColumnsBaseTestCase):
+class TestFitDataConstructorWithStringX(TestCase, FitDataConstructorBaseTestCase):
 
     x = "c"
     xerr = "d"
@@ -81,7 +82,7 @@ class TestDataColumnsWithStringX(TestCase, DataColumnsBaseTestCase):
     fit_data = FitData(COLUMNS, x_column="c")
 
 
-class TestDataColumnsWithIntY(TestCase, DataColumnsBaseTestCase):
+class TestFitDataConstructorWithIntY(TestCase, FitDataConstructorBaseTestCase):
 
     x = "a"
     xerr = "b"
@@ -90,7 +91,7 @@ class TestDataColumnsWithIntY(TestCase, DataColumnsBaseTestCase):
     fit_data = FitData(COLUMNS, y_column=5)
 
 
-class TestDataColumnsWithStringY(TestCase, DataColumnsBaseTestCase):
+class TestFitDataConstructorWithStringY(TestCase, FitDataConstructorBaseTestCase):
 
     x = "a"
     xerr = "b"
@@ -99,7 +100,7 @@ class TestDataColumnsWithStringY(TestCase, DataColumnsBaseTestCase):
     fit_data = FitData(COLUMNS, y_column="e")
 
 
-class TestDataColumnsWithIntXerr(TestCase, DataColumnsBaseTestCase):
+class TestFitDataConstructorWithIntXerr(TestCase, FitDataConstructorBaseTestCase):
 
     x = "a"
     xerr = "d"
@@ -108,7 +109,7 @@ class TestDataColumnsWithIntXerr(TestCase, DataColumnsBaseTestCase):
     fit_data = FitData(COLUMNS, xerr_column=4)
 
 
-class TestDataColumnsWithStringXerr(TestCase, DataColumnsBaseTestCase):
+class TestFitDataConstructorWithStringXerr(TestCase, FitDataConstructorBaseTestCase):
 
     x = "a"
     xerr = "d"
@@ -117,7 +118,7 @@ class TestDataColumnsWithStringXerr(TestCase, DataColumnsBaseTestCase):
     fit_data = FitData(COLUMNS, xerr_column="d")
 
 
-class TestDataColumnsWithIntYerr(TestCase, DataColumnsBaseTestCase):
+class TestFitDataConstructorWithIntYerr(TestCase, FitDataConstructorBaseTestCase):
 
     x = "a"
     xerr = "b"
@@ -126,7 +127,7 @@ class TestDataColumnsWithIntYerr(TestCase, DataColumnsBaseTestCase):
     fit_data = FitData(COLUMNS, yerr_column=6)
 
 
-class TestDataColumnsWithStringYerr(TestCase, DataColumnsBaseTestCase):
+class TestFitDataConstructorWithStringYerr(TestCase, FitDataConstructorBaseTestCase):
 
     x = "a"
     xerr = "b"
@@ -135,7 +136,7 @@ class TestDataColumnsWithStringYerr(TestCase, DataColumnsBaseTestCase):
     fit_data = FitData(COLUMNS, yerr_column="f")
 
 
-class TestDataColumnsWithXAndY(TestCase, DataColumnsBaseTestCase):
+class TestFitDataConstructorWithXAndY(TestCase, FitDataConstructorBaseTestCase):
 
     x = "c"
     xerr = "d"
@@ -144,7 +145,9 @@ class TestDataColumnsWithXAndY(TestCase, DataColumnsBaseTestCase):
     fit_data = FitData(COLUMNS, x_column=3, y_column="h")
 
 
-class TestDataColumnsWithJumbledColumns(TestCase, DataColumnsBaseTestCase):
+class TestFitDataConstructorColumnsWithJumbled(
+    TestCase, FitDataConstructorBaseTestCase
+):
 
     x = "c"
     xerr = "a"
@@ -153,21 +156,21 @@ class TestDataColumnsWithJumbledColumns(TestCase, DataColumnsBaseTestCase):
     fit_data = FitData(COLUMNS, x_column=3, xerr_column=1, y_column="b", yerr_column=9,)
 
 
-class DataColumnsRaiseExceptionBaseTestCase:
+class FitDataConstructorRaiseColumnExceptionBaseTestCase:
     def check(self):
         self.assertRaisesRegex(
             self.exception_class, self.error_message, FitData, COLUMNS, **self.kwargs
         )
 
     def test_raise_exception_on_x_being_not_existing(self):
-        self.exception_class = ColumnExistenceError
+        self.exception_class = FitDataColumnExistenceError
         self.error_message = '^Could not find column "r" in data$'
         self.kwargs = {self.column: "r"}
 
         self.check()
 
     def test_raise_exception_on_x_being_zero_index(self):
-        self.exception_class = ColumnIndexError
+        self.exception_class = FitDataColumnIndexError
         self.error_message = (
             "^No column number 0 in data. index should be between 1 and 10$"
         )
@@ -176,7 +179,7 @@ class DataColumnsRaiseExceptionBaseTestCase:
         self.check()
 
     def test_raise_exception_on_x_being_larger_than_size(self):
-        self.exception_class = ColumnIndexError
+        self.exception_class = FitDataColumnIndexError
         self.error_message = (
             "^No column number 11 in data. index should be between 1 and 10$"
         )
@@ -185,29 +188,41 @@ class DataColumnsRaiseExceptionBaseTestCase:
         self.check()
 
 
-class TesDataColumnsRaiseExceptionBaseXColumnByXColumn(
-    TestCase, DataColumnsRaiseExceptionBaseTestCase
+class TesFitDataConstructorRaiseColumnExceptionBaseXColumnByXColumn(
+    TestCase, FitDataConstructorRaiseColumnExceptionBaseTestCase
 ):
 
     column = "x_column"
 
 
-class TesDataColumnsRaiseExceptionBaseXErrColumnByXColumn(
-    TestCase, DataColumnsRaiseExceptionBaseTestCase
+class TesFitDataConstructorRaiseColumnExceptionBaseXErrColumnByXColumn(
+    TestCase, FitDataConstructorRaiseColumnExceptionBaseTestCase
 ):
 
     column = "xerr_column"
 
 
-class TesDataColumnsRaiseExceptionBaseYColumnByXColumn(
-    TestCase, DataColumnsRaiseExceptionBaseTestCase
+class TesFitDataConstructorRaiseColumnExceptionBaseYColumnByXColumn(
+    TestCase, FitDataConstructorRaiseColumnExceptionBaseTestCase
 ):
 
     column = "y_column"
 
 
-class TesDataColumnsRaiseExceptionBaseYErrColumnByXColumn(
-    TestCase, DataColumnsRaiseExceptionBaseTestCase
+class TesFitDataConstructorRaiseColumnExceptionBaseYErrColumnByXColumn(
+    TestCase, FitDataConstructorRaiseColumnExceptionBaseTestCase
 ):
 
     column = "yerr_column"
+
+
+class TestFitDataConstructorGeneralExceptions(TestCase):
+    def test_exception_risen_because_of_columns_length(self):
+        data = deepcopy(COLUMNS)
+        data["a"] = data["a"][:-2]
+        self.assertRaisesRegex(
+            FitDataColumnsLengthError,
+            "^All columns in FitData should have the same length$",
+            FitData,
+            data,
+        )

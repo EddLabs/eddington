@@ -9,9 +9,9 @@ from eddington_core.exceptions import (
     FitFunctionRuntimeError,
     FitFunctionLoadError,
     InvalidGeneratorInitialization,
-    ColumnError,
-    ColumnExistenceError,
-    ColumnIndexError,
+    FitDataError,
+    FitDataColumnExistenceError,
+    FitDataColumnIndexError,
 )
 
 from eddington_core.fit_data import FitData
@@ -30,9 +30,9 @@ __all__ = [
     "FitFunctionRuntimeError",
     "FitFunctionLoadError",
     "InvalidGeneratorInitialization",
-    "ColumnError",
-    "ColumnExistenceError",
-    "ColumnIndexError",
+    "FitDataError",
+    "FitDataColumnExistenceError",
+    "FitDataColumnIndexError",
     # Data structures
     "FitData",
     "FitResult",
