@@ -2,8 +2,12 @@ from unittest import TestCase
 from copy import deepcopy
 import numpy as np
 
-from eddington_core import FitData, FitDataColumnIndexError, FitDataColumnExistenceError
-from eddington_core.exceptions import FitDataColumnsLengthError
+from eddington_core import (
+    FitData,
+    FitDataColumnIndexError,
+    FitDataColumnExistenceError,
+    FitDataColumnsLengthError,
+)
 from tests.fit_data import COLUMNS, COLUMNS_NAMES
 
 

@@ -12,6 +12,9 @@ from eddington_core.exceptions import (
     FitDataError,
     FitDataColumnExistenceError,
     FitDataColumnIndexError,
+    FitDataColumnsLengthError,
+    FitDataInvalidFile,
+    FitDataInvalidFileSyntax,
 )
 
 from eddington_core.fit_data import FitData
@@ -33,6 +36,9 @@ __all__ = [
     "FitDataError",
     "FitDataColumnExistenceError",
     "FitDataColumnIndexError",
+    "FitDataInvalidFile",
+    "FitDataColumnsLengthError",
+    "FitDataInvalidFileSyntax",
     # Data structures
     "FitData",
     "FitResult",

@@ -1,7 +1,7 @@
 from unittest import TestCase
 import numpy as np
 
-from eddington_core.exceptions import FitFunctionRuntimeError
+from eddington_core import FitFunctionRuntimeError
 from tests.dummy_functions import dummy_func1
 
 

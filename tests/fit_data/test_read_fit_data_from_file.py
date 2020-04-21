@@ -5,8 +5,7 @@ from copy import deepcopy
 import numpy as np
 from mock import patch, mock_open, PropertyMock
 
-from eddington_core import FitData
-from eddington_core.exceptions import FitDataInvalidFileSyntax
+from eddington_core import FitData, FitDataInvalidFileSyntax
 from tests.fit_data import COLUMNS, VALUES, ROWS, CONTENT
 
 
