@@ -1,20 +1,16 @@
 from collections import namedtuple
 from pathlib import Path
 from unittest import TestCase
-
+from copy import deepcopy
 import numpy as np
 from mock import patch, mock_open, PropertyMock
 
 from eddington_core import FitData
 from eddington_core.exceptions import FitDataInvalidFileSyntax
-from tests.fit_data import COLUMNS
+from tests.fit_data import COLUMNS, VALUES, ROWS, CONTENT
 
 
 class FitDataReadFromFileBaseTestCase:
-    CONTENT = np.stack(COLUMNS.values(), axis=1).tolist()
-    ROWS = [list(COLUMNS.keys()), *CONTENT]
-    VALUES = list(COLUMNS.values())
-
     @classmethod
     def check_data_by_keys(cls, actual_fit_data):
         for key, value in actual_fit_data.data.items():
@@ -29,7 +25,7 @@ class FitDataReadFromFileBaseTestCase:
         for key, value in actual_fit_data.data.items():
             np.testing.assert_equal(
                 actual_fit_data.data[key],
-                cls.VALUES[key],
+                VALUES[key],
                 err_msg="Data is different than expected",
             )
 
@@ -38,28 +34,24 @@ class FitDataReadFromFileBaseTestCase:
         cls, actual_fit_data, x_column=0, xerr_column=1, y_column=2, yerr_column=3
     ):
         np.testing.assert_equal(
-            actual_fit_data.x,
-            cls.VALUES[x_column],
-            err_msg="X is different than expected",
+            actual_fit_data.x, VALUES[x_column], err_msg="X is different than expected",
         )
         np.testing.assert_equal(
             actual_fit_data.xerr,
-            cls.VALUES[xerr_column],
+            VALUES[xerr_column],
             err_msg="X Error is different than expected",
         )
         np.testing.assert_equal(
-            actual_fit_data.y,
-            cls.VALUES[y_column],
-            err_msg="Y is different than expected",
+            actual_fit_data.y, VALUES[y_column], err_msg="Y is different than expected",
         )
         np.testing.assert_equal(
             actual_fit_data.yerr,
-            cls.VALUES[yerr_column],
+            VALUES[yerr_column],
             err_msg="Y Error is different than expected",
         )
 
     def test_read_with_headers_successful(self):
-        self.rows = self.ROWS
+        self.rows = ROWS
 
         actual_fit_data = self.read()
 
@@ -67,7 +59,7 @@ class FitDataReadFromFileBaseTestCase:
         self.check_columns(actual_fit_data)
 
     def test_read_without_headers_successful(self):
-        self.rows = self.CONTENT
+        self.rows = CONTENT
 
         actual_fit_data = self.read()
 
@@ -75,13 +67,13 @@ class FitDataReadFromFileBaseTestCase:
         self.check_columns(actual_fit_data)
 
     def test_read_without_headers_unsuccessful(self):
-        self.rows = [list(row) for row in self.CONTENT]
+        self.rows = deepcopy(CONTENT)
         self.rows[1][0] = "f"
 
         self.assertRaises(FitDataInvalidFileSyntax, self.read)
 
     def test_read_with_x_column(self):
-        self.rows = self.ROWS
+        self.rows = ROWS
 
         actual_fit_data = self.read(x_column=3)
 
@@ -90,7 +82,7 @@ class FitDataReadFromFileBaseTestCase:
         )
 
     def test_read_with_xerr_column(self):
-        self.rows = self.ROWS
+        self.rows = ROWS
 
         actual_fit_data = self.read(xerr_column=3)
 
@@ -99,7 +91,7 @@ class FitDataReadFromFileBaseTestCase:
         )
 
     def test_read_with_y_column(self):
-        self.rows = self.ROWS
+        self.rows = ROWS
 
         actual_fit_data = self.read(y_column=5)
 
@@ -108,7 +100,7 @@ class FitDataReadFromFileBaseTestCase:
         )
 
     def test_read_with_yerr_column(self):
-        self.rows = self.ROWS
+        self.rows = ROWS
 
         actual_fit_data = self.read(yerr_column=5)
 

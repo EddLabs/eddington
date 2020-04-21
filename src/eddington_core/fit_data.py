@@ -32,13 +32,19 @@ class FitData:
         lengths = set([value.size for value in self.data.values()])
         if len(lengths) != 1:
             raise FitDataColumnsLengthError()
+        self._length = next(iter(lengths))
+        self.select_all_records()
         self._all_columns = list(self.data.keys())
         self.x_column = x_column
         self.xerr_column = xerr_column
         self.y_column = y_column
         self.yerr_column = yerr_column
 
-    # Data is read-only
+    # Data properties are read-only
+
+    @property
+    def length(self):
+        return self._length
 
     @property
     def data(self):
@@ -47,6 +53,38 @@ class FitData:
     @property
     def all_columns(self):
         return self._all_columns
+
+    @property
+    def x(self):
+        return self.data[self.x_column][self._record_indices]
+
+    @property
+    def xerr(self):
+        return self.data[self.xerr_column][self._record_indices]
+
+    @property
+    def y(self):
+        return self.data[self.y_column][self._record_indices]
+
+    @property
+    def yerr(self):
+        return self.data[self.yerr_column][self._record_indices]
+
+    # Records indices methods
+
+    def select_record(self, record_index):
+        self._record_indices[record_index - 1] = True
+
+    def unselect_record(self, record_index):
+        self._record_indices[record_index - 1] = False
+
+    def select_all_records(self):
+        self._record_indices = [True] * self.length
+
+    def unselect_all_records(self):
+        self._record_indices = [False] * self.length
+
+    # Columns can be set
 
     @property
     def x_column(self):
@@ -107,22 +145,6 @@ class FitData:
             self._yerr_column_index = self._covert_to_index(yerr_column)
         self._validate_index(self._yerr_column_index, yerr_column)
         self._yerr_column = self.all_columns[self._yerr_column_index]
-
-    @property
-    def x(self):
-        return self.data[self.x_column]
-
-    @property
-    def xerr(self):
-        return self.data[self.xerr_column]
-
-    @property
-    def y(self):
-        return self.data[self.y_column]
-
-    @property
-    def yerr(self):
-        return self.data[self.yerr_column]
 
     @classmethod
     def random(
