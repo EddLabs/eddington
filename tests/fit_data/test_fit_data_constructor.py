@@ -10,6 +10,9 @@ from tests.fit_data import COLUMNS, COLUMNS_NAMES
 class FitDataConstructorBaseTestCase:
     fit_data: FitData
 
+    def setUp(self):
+        self.fit_data = FitData(COLUMNS, **self.kwargs)
+
     def test_x(self):
         np.testing.assert_equal(
             COLUMNS[self.x], self.fit_data.x, err_msg="X is different than expected",
@@ -61,7 +64,9 @@ class TestFitDataConstructorWithoutArgs(TestCase, FitDataConstructorBaseTestCase
     xerr = "b"
     y = "c"
     yerr = "d"
-    fit_data = FitData(COLUMNS)
+    kwargs = dict()
+
+    setUp = FitDataConstructorBaseTestCase.setUp
 
 
 class TestFitDataConstructorWithIntX(TestCase, FitDataConstructorBaseTestCase):
@@ -70,7 +75,9 @@ class TestFitDataConstructorWithIntX(TestCase, FitDataConstructorBaseTestCase):
     xerr = "d"
     y = "e"
     yerr = "f"
-    fit_data = FitData(COLUMNS, x_column=3)
+    kwargs = dict(x_column=3)
+
+    setUp = FitDataConstructorBaseTestCase.setUp
 
 
 class TestFitDataConstructorWithStringX(TestCase, FitDataConstructorBaseTestCase):
@@ -79,7 +86,9 @@ class TestFitDataConstructorWithStringX(TestCase, FitDataConstructorBaseTestCase
     xerr = "d"
     y = "e"
     yerr = "f"
-    fit_data = FitData(COLUMNS, x_column="c")
+    kwargs = dict(x_column="c")
+
+    setUp = FitDataConstructorBaseTestCase.setUp
 
 
 class TestFitDataConstructorWithIntY(TestCase, FitDataConstructorBaseTestCase):
@@ -88,7 +97,9 @@ class TestFitDataConstructorWithIntY(TestCase, FitDataConstructorBaseTestCase):
     xerr = "b"
     y = "e"
     yerr = "f"
-    fit_data = FitData(COLUMNS, y_column=5)
+    kwargs = dict(y_column=5)
+
+    setUp = FitDataConstructorBaseTestCase.setUp
 
 
 class TestFitDataConstructorWithStringY(TestCase, FitDataConstructorBaseTestCase):
@@ -97,7 +108,9 @@ class TestFitDataConstructorWithStringY(TestCase, FitDataConstructorBaseTestCase
     xerr = "b"
     y = "e"
     yerr = "f"
-    fit_data = FitData(COLUMNS, y_column="e")
+    kwargs = dict(y_column="e")
+
+    setUp = FitDataConstructorBaseTestCase.setUp
 
 
 class TestFitDataConstructorWithIntXerr(TestCase, FitDataConstructorBaseTestCase):
@@ -106,7 +119,9 @@ class TestFitDataConstructorWithIntXerr(TestCase, FitDataConstructorBaseTestCase
     xerr = "d"
     y = "e"
     yerr = "f"
-    fit_data = FitData(COLUMNS, xerr_column=4)
+    kwargs = dict(xerr_column=4)
+
+    setUp = FitDataConstructorBaseTestCase.setUp
 
 
 class TestFitDataConstructorWithStringXerr(TestCase, FitDataConstructorBaseTestCase):
@@ -115,7 +130,9 @@ class TestFitDataConstructorWithStringXerr(TestCase, FitDataConstructorBaseTestC
     xerr = "d"
     y = "e"
     yerr = "f"
-    fit_data = FitData(COLUMNS, xerr_column="d")
+    kwargs = dict(xerr_column="d")
+
+    setUp = FitDataConstructorBaseTestCase.setUp
 
 
 class TestFitDataConstructorWithIntYerr(TestCase, FitDataConstructorBaseTestCase):
@@ -124,7 +141,9 @@ class TestFitDataConstructorWithIntYerr(TestCase, FitDataConstructorBaseTestCase
     xerr = "b"
     y = "c"
     yerr = "f"
-    fit_data = FitData(COLUMNS, yerr_column=6)
+    kwargs = dict(yerr_column=6)
+
+    setUp = FitDataConstructorBaseTestCase.setUp
 
 
 class TestFitDataConstructorWithStringYerr(TestCase, FitDataConstructorBaseTestCase):
@@ -133,7 +152,9 @@ class TestFitDataConstructorWithStringYerr(TestCase, FitDataConstructorBaseTestC
     xerr = "b"
     y = "c"
     yerr = "f"
-    fit_data = FitData(COLUMNS, yerr_column="f")
+    kwargs = dict(yerr_column="f")
+
+    setUp = FitDataConstructorBaseTestCase.setUp
 
 
 class TestFitDataConstructorWithXAndY(TestCase, FitDataConstructorBaseTestCase):
@@ -142,7 +163,9 @@ class TestFitDataConstructorWithXAndY(TestCase, FitDataConstructorBaseTestCase):
     xerr = "d"
     y = "h"
     yerr = "i"
-    fit_data = FitData(COLUMNS, x_column=3, y_column="h")
+    kwargs = dict(x_column=3, y_column="h")
+
+    setUp = FitDataConstructorBaseTestCase.setUp
 
 
 class TestFitDataConstructorColumnsWithJumbled(
@@ -153,7 +176,9 @@ class TestFitDataConstructorColumnsWithJumbled(
     xerr = "a"
     y = "b"
     yerr = "i"
-    fit_data = FitData(COLUMNS, x_column=3, xerr_column=1, y_column="b", yerr_column=9,)
+    kwargs = dict(x_column=3, xerr_column=1, y_column="b", yerr_column=9,)
+
+    setUp = FitDataConstructorBaseTestCase.setUp
 
 
 class FitDataConstructorRaiseColumnExceptionBaseTestCase:
