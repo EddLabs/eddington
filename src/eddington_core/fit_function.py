@@ -110,6 +110,9 @@ class FitFunction:
     def __sub__(self, other):
         return self + (-other)
 
+    def __rsub__(self, other):
+        return (-self) + other
+
 
 def fit_function(
     n, name=None, syntax=None, a_derivative=None, x_derivative=None, save=True

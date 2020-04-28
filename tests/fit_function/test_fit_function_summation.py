@@ -78,3 +78,14 @@ class TestDummyFitSubtractNumberFromRight(FitFunctionBaseTestCase, TestCase):
         ([4, -0.5], 3, -5.7),
         ([9, 2], 0, 3.8),
     ]
+
+
+class TestDummyFitSubtractNumberFromLeft(FitFunctionBaseTestCase, TestCase):
+    func = 5.2 - dummy_func1
+    n = 2
+    values = [
+        ([2, 1], 3, -5.8),
+        ([-2.1, 4], 0.6, 5.86),
+        ([4, -0.5], 3, 5.7),
+        ([9, 2], 0, -3.8),
+    ]
