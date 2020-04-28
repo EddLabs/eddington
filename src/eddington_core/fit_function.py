@@ -141,6 +141,11 @@ class FitFunction:
             lambda a, x: other / self.fit_func(a, x), self.n
         )
 
+    def __pow__(self, power, modulo=None):
+        return FitFunction.anonymous_function(
+            lambda a, x: np.power(self.fit_func(a, x), power), self.n
+        )
+
 
 def fit_function(
     n, name=None, syntax=None, a_derivative=None, x_derivative=None, save=True
