@@ -96,6 +96,9 @@ class FitFunction:
     def __neg__(self):
         return FitFunction.anonymous_function(lambda a, x: -self(a, x), self.n)
 
+    def __add__(self, other):
+        return FitFunction.anonymous_function(lambda a, x: self(a, x) + other, self.n)
+
 
 def fit_function(
     n, name=None, syntax=None, a_derivative=None, x_derivative=None, save=True
