@@ -127,6 +127,11 @@ class FitFunction:
         return self * other
 
     def __truediv__(self, other):
+        if isinstance(other, FitFunction):
+            n = max(self.n, other.n)
+            return FitFunction.anonymous_function(
+                lambda a, x: self.fit_func(a, x) / other.fit_func(a, x), n
+            )
         return FitFunction.anonymous_function(
             lambda a, x: self.fit_func(a, x) / other, self.n
         )
