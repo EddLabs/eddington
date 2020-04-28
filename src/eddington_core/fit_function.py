@@ -104,6 +104,9 @@ class FitFunction:
             )
         return FitFunction.anonymous_function(lambda a, x: self(a, x) + other, self.n)
 
+    def __radd__(self, other):
+        return self + other
+
 
 def fit_function(
     n, name=None, syntax=None, a_derivative=None, x_derivative=None, save=True

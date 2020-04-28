@@ -47,6 +47,17 @@ class TestFitFunctionAddNumberFromRight(FitFunctionBaseTestCase, TestCase):
     ]
 
 
+class TestFitFunctionAddNumberFromLeft(FitFunctionBaseTestCase, TestCase):
+    func = 5.2 + dummy_func1
+    n = 2
+    values = [
+        ([2, 1], 3, 16.2),
+        ([-2.1, 4], 0.6, 4.54),
+        ([4, -0.5], 3, 4.7),
+        ([9, 2], 0, 14.2),
+    ]
+
+
 class TestFitFunctionAddFitFunction(FitFunctionBaseTestCase, TestCase):
     func = dummy_func1 + dummy_func2
     n = 2
