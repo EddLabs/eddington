@@ -123,6 +123,9 @@ class FitFunction:
             lambda a, x: other * self.fit_func(a, x), self.n
         )
 
+    def __rmul__(self, other):
+        return self * other
+
 
 def fit_function(
     n, name=None, syntax=None, a_derivative=None, x_derivative=None, save=True

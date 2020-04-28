@@ -14,6 +14,17 @@ class TestFitFunctionMultiplyByNumberFromRight(FitFunctionBaseTestCase, TestCase
     ]
 
 
+class TestFitFunctionMultiplyByNumberFromLeft(FitFunctionBaseTestCase, TestCase):
+    func = 5.2 * dummy_func1
+    n = 2
+    values = [
+        ([2, 1], 3, 57.2),
+        ([-2.1, 4], 0.6, -3.432),
+        ([4, -0.5], 3, -2.6),
+        ([9, 2], 0, 46.8),
+    ]
+
+
 class TestFitFunctionMultiplyFitFunction(FitFunctionBaseTestCase, TestCase):
     func = dummy_func1 * dummy_func2
     n = 2
