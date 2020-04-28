@@ -2,7 +2,7 @@ from unittest import TestCase
 import numpy as np
 
 from eddington_core import FitFunctionRuntimeError, FitFunction
-from tests.dummy_functions import dummy_func1
+from tests.fit_function.dummy_functions import dummy_func1
 
 
 class TestFitFunction(TestCase):

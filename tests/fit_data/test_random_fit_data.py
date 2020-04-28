@@ -13,7 +13,7 @@ from eddington_core.consts import (
     DEFAULT_YSIGMA,
     DEFAULT_MEASUREMENTS,
 )
-from tests.dummy_functions import dummy_func1
+from tests.fit_function.dummy_functions import dummy_func1
 
 
 class RandomFitDataTestCase:
