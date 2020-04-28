@@ -85,7 +85,7 @@ class TestFitFunction(TestCase):
 
     def test_fit_function_representation(self):
         self.assertEqual(
-            "FitFunction(name=dummy_func1)",
+            "FitFunction(name='dummy_func1', syntax='a[0] + a[1] * x ** 2')",
             str(dummy_func1),
             msg="Representation is different than expected",
         )

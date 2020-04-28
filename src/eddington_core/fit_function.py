@@ -9,15 +9,15 @@ from eddington_core.exceptions import FitFunctionLoadError, FitFunctionRuntimeEr
 from eddington_core.fit_functions_registry import FitFunctionsRegistry
 
 
-@dataclass(repr=False, unsafe_hash=True)
+@dataclass(unsafe_hash=True)
 class FitFunction:
-    fit_func: Callable
-    n: int
+    fit_func: Callable = field(repr=False)
+    n: int = field(repr=False)
     name: str
     syntax: str
-    a_derivative: np.ndarray = field(default=None)
-    x_derivative: np.ndarray = field(default=None)
-    title_name: str = field(init=False)
+    a_derivative: np.ndarray = field(default=None, repr=False)
+    x_derivative: np.ndarray = field(default=None, repr=False)
+    title_name: str = field(init=False, repr=False)
     costumed: InitVar[bool] = False
     save: InitVar[bool] = True
 
@@ -84,9 +84,6 @@ class FitFunction:
     @property
     def signature(self):
         return self.name
-
-    def __repr__(self):
-        return f"FitFunction(name={self.name})"
 
 
 def fit_function(
