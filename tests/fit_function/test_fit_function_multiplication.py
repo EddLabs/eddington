@@ -34,3 +34,14 @@ class TestFitFunctionMultiplyFitFunction(FitFunctionBaseTestCase, TestCase):
         ([4, -0.5], 3, -6),
         ([9, 2], 0, 0),
     ]
+
+
+class TestFitFunctionDivideByNumberFromRight(FitFunctionBaseTestCase, TestCase):
+    func = dummy_func1 / 5.2
+    n = 2
+    values = [
+        ([2, 1], 3, 2.11538),
+        ([-2.1, 4], 0.6, -0.12692),
+        ([4, -0.5], 3, -0.09615),
+        ([9, 2], 0, 1.73077),
+    ]
