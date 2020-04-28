@@ -142,6 +142,11 @@ class FitFunction:
         )
 
     def __pow__(self, power, modulo=None):
+        if isinstance(power, FitFunction):
+            n = max(self.n, power.n)
+            return FitFunction.anonymous_function(
+                lambda a, x: np.power(self.fit_func(a, x), power.fit_func(a, x)), n
+            )
         return FitFunction.anonymous_function(
             lambda a, x: np.power(self.fit_func(a, x), power), self.n
         )

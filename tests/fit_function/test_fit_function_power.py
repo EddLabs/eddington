@@ -34,3 +34,14 @@ class TestFitFunctionPowerHalf(FitFunctionBaseTestCase, TestCase):
         ([5, -0.5], 3, 0.70711),
         ([9, 2], 0, 3),
     ]
+
+
+class TestFitFunctionPowerAnotherFitFunction(FitFunctionBaseTestCase, TestCase):
+    func = dummy_func1 ** dummy_func2
+    n = 2
+    values = [
+        ([2, 1], 3, 1771561),
+        ([-1.1, 4], 0.6, 2.03809),
+        ([5, -0.5], 3, 3.05175e-5),
+        ([9, 2], 0, 1),
+    ]
