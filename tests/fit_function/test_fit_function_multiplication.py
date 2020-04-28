@@ -47,6 +47,17 @@ class TestFitFunctionDivideByNumberFromRight(FitFunctionBaseTestCase, TestCase):
     ]
 
 
+class TestFitFunctionDivideByNumberFromLeft(FitFunctionBaseTestCase, TestCase):
+    func = 5.2 / dummy_func1
+    n = 2
+    values = [
+        ([2, 1], 3, 0.47273),
+        ([-2.1, 4], 0.6, -7.87879),
+        ([4, -0.5], 3, -10.4),
+        ([9, 2], 0, 0.57778),
+    ]
+
+
 class TestFitFunctionDivideFitFunction(FitFunctionBaseTestCase, TestCase):
     func = dummy_func2 / dummy_func1
     n = 2

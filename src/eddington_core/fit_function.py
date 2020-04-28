@@ -136,6 +136,11 @@ class FitFunction:
             lambda a, x: self.fit_func(a, x) / other, self.n
         )
 
+    def __rtruediv__(self, other):
+        return FitFunction.anonymous_function(
+            lambda a, x: other / self.fit_func(a, x), self.n
+        )
+
 
 def fit_function(
     n, name=None, syntax=None, a_derivative=None, x_derivative=None, save=True
