@@ -97,6 +97,11 @@ class FitFunction:
         return FitFunction.anonymous_function(lambda a, x: -self(a, x), self.n)
 
     def __add__(self, other):
+        if isinstance(other, FitFunction):
+            n = max(self.n, other.n)
+            return FitFunction.anonymous_function(
+                lambda a, x: self.fit_func(a, x) + other.fit_func(a, x), n
+            )
         return FitFunction.anonymous_function(lambda a, x: self(a, x) + other, self.n)
 
 
