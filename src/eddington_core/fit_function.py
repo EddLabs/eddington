@@ -113,6 +113,11 @@ class FitFunction:
     def __rsub__(self, other):
         return (-self) + other
 
+    def __mul__(self, other):
+        return FitFunction.anonymous_function(
+            lambda a, x: other * self.fit_func(a, x), self.n
+        )
+
 
 def fit_function(
     n, name=None, syntax=None, a_derivative=None, x_derivative=None, save=True
