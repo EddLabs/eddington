@@ -94,7 +94,7 @@ class FitFunction:
     # Arithmetic Methods
 
     def __neg__(self):
-        return FitFunction.anonymous_function(lambda a, x: -self(a, x), self.n)
+        return FitFunction.anonymous_function(lambda a, x: -self.fit_func(a, x), self.n)
 
     def __add__(self, other):
         if isinstance(other, FitFunction):
