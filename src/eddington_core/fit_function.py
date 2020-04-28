@@ -13,8 +13,8 @@ from eddington_core.fit_functions_registry import FitFunctionsRegistry
 class FitFunction:
     fit_func: Callable = field(repr=False)
     n: int = field(repr=False)
-    name: str
-    syntax: str
+    name: str = field(default=None)
+    syntax: str = field(default=None)
     a_derivative: np.ndarray = field(default=None, repr=False)
     x_derivative: np.ndarray = field(default=None, repr=False)
     title_name: str = field(init=False, repr=False)
@@ -30,7 +30,13 @@ class FitFunction:
     def __get_title_name(self, costumed):
         if costumed:
             return "Costumed Function"
+        if self.name is None:
+            return None
         return self.name.title().replace("_", " ")
+
+    @classmethod
+    def anonymous_function(cls, fit_func, n):
+        return FitFunction(fit_func=fit_func, n=n, save=False)
 
     @classmethod
     def from_string(cls, syntax_string, name=None, save=True):

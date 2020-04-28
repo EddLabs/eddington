@@ -1,7 +1,7 @@
 from unittest import TestCase
 import numpy as np
 
-from eddington_core import FitFunctionRuntimeError
+from eddington_core import FitFunctionRuntimeError, FitFunction
 from tests.dummy_functions import dummy_func1
 
 
@@ -89,3 +89,9 @@ class TestFitFunction(TestCase):
             str(dummy_func1),
             msg="Representation is different than expected",
         )
+
+    def test_anonymous_fit_functions(self):
+        anonymous = FitFunction.anonymous_function(lambda a, x: a[0] + a[1] * x, 2)
+        self.assertIsNone(anonymous.name)
+        self.assertIsNone(anonymous.title_name)
+        self.assertEqual(7, anonymous([1, 2], 3))
