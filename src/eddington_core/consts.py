@@ -1,3 +1,4 @@
+"""List of constants used by Eddington."""
 DEFAULT_MIN_COEFF = -10.0
 DEFAULT_MAX_COEFF = 10.0
 DEFAULT_MEASUREMENTS = 20
