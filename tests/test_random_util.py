@@ -16,7 +16,7 @@ class TestRandomUtil(TestCase):
         uniform.return_value = self.returned
         min_val = 1
         max_val = 5
-        actual = random_array(min_val=min_val, max_val=max_val, n=self.n)
+        actual = random_array(min_val=min_val, max_val=max_val, size=self.n)
         np.testing.assert_equal(
             actual, self.returned, err_msg="Random array returned unexpected array"
         )
@@ -26,7 +26,7 @@ class TestRandomUtil(TestCase):
     def test_random_sigma(self, exponential):
         exponential.return_value = self.returned
         average_sigma = 0.5
-        actual = random_sigma(average_sigma=average_sigma, n=self.n)
+        actual = random_sigma(average_sigma=average_sigma, size=self.n)
         np.testing.assert_equal(
             actual, self.returned, err_msg="Random sigma returned unexpected array"
         )

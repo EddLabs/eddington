@@ -105,22 +105,22 @@ class RandomFitDataTestCase:
         self.assertEqual(self.random_array.call_count, 2)
         self.assertEqual(
             self.random_array.call_args_list[0],
-            call(min_val=self.amin, max_val=self.amax, n=self.func.n),
+            call(min_val=self.amin, max_val=self.amax, size=self.func.n),
         )
         self.assertEqual(
             self.random_array.call_args_list[1],
-            call(min_val=self.xmin, max_val=self.xmax, n=self.measurements),
+            call(min_val=self.xmin, max_val=self.xmax, size=self.measurements),
         )
 
     def test_random_sigma_calls(self):
         self.assertEqual(self.random_sigma.call_count, 2)
         self.assertEqual(
             self.random_sigma.call_args_list[0],
-            call(average_sigma=self.xsigma, n=self.measurements),
+            call(average_sigma=self.xsigma, size=self.measurements),
         )
         self.assertEqual(
             self.random_sigma.call_args_list[1],
-            call(average_sigma=self.ysigma, n=self.measurements),
+            call(average_sigma=self.ysigma, size=self.measurements),
         )
 
     def test_random_error_calls(self):
@@ -208,5 +208,5 @@ class TestDefaultRandomFitDataWithActualA(TestCase, RandomFitDataTestCase):
         self.assertEqual(self.random_array.call_count, 1)
         self.assertEqual(
             self.random_array.call_args_list[0],
-            call(min_val=self.xmin, max_val=self.xmax, n=self.measurements),
+            call(min_val=self.xmin, max_val=self.xmax, size=self.measurements),
         )

@@ -163,10 +163,10 @@ class FitData:
         measurements=DEFAULT_MEASUREMENTS,
     ):
         if a is None:
-            a = random_array(min_val=min_coeff, max_val=max_coeff, n=fit_func.n)
-        x = random_array(min_val=xmin, max_val=xmax, n=measurements)
-        xerr = random_sigma(average_sigma=xsigma, n=measurements)
-        yerr = random_sigma(average_sigma=ysigma, n=measurements)
+            a = random_array(min_val=min_coeff, max_val=max_coeff, size=fit_func.n)
+        x = random_array(min_val=xmin, max_val=xmax, size=measurements)
+        xerr = random_sigma(average_sigma=xsigma, size=measurements)
+        yerr = random_sigma(average_sigma=ysigma, size=measurements)
         y = fit_func(a, x + random_error(scales=xerr)) + random_error(scales=yerr)
         return FitData(
             data=OrderedDict([("x", x), ("xerr", xerr), ("y", y), ("yerr", yerr)])
