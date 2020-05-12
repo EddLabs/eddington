@@ -1,3 +1,4 @@
+"""Fitting data class insert the fitting algorithm."""
 import csv
 from collections import OrderedDict
 
@@ -17,19 +18,35 @@ from eddington_core.exceptions import (
     FitDataColumnExistenceError,
     FitDataColumnIndexError,
     FitDataColumnsLengthError,
+    FitDataColumnsSelectionError,
     FitDataInvalidFileSyntax,
 )
 from eddington_core.random_util import random_array, random_error, random_sigma
 
 
-class FitData:
-    def __init__(
-        self, data, x_column=None, xerr_column=None, y_column=None, yerr_column=None
+class FitData:  # pylint: disable=too-many-instance-attributes
+    """Fitting data class."""
+
+    def __init__(  # pylint: disable=too-many-arguments
+        self, data, x_column=None, xerr_column=None, y_column=None, yerr_column=None,
     ):
+        """
+        Constructor.
+
+        :param data: Numpy array which its rows are the available data records.
+        :param x_column: int or string. Indicates the which column should be used as the
+         x parameter
+        :param xerr_column: int or string. Indicates the which column should be used as
+         the x error parameter
+        :param y_column: int or string. Indicates the which column should be used as the
+         x parameter
+        :param yerr_column: int or string. Indicates the which column should be used as
+         the x error parameter
+        """
         self._data = OrderedDict(
             [(key, np.array(value)) for key, value in data.items()]
         )
-        lengths = set([value.size for value in self.data.values()])
+        lengths = {value.size for value in self.data.values()}
         if len(lengths) != 1:
             raise FitDataColumnsLengthError()
         self._length = next(iter(lengths))
@@ -44,53 +61,84 @@ class FitData:
 
     @property
     def length(self):
+        """Number of records."""
         return self._length
 
     @property
     def data(self):
+        """Data matrix."""
         return self._data
 
     @property
     def all_columns(self):
+        """Columns list."""
         return self._all_columns
 
     @property
-    def x(self):
-        return self.data[self.x_column][self._record_indices]
+    def x(self):  # pylint: disable=invalid-name
+        """X values."""
+        return self.data[self.x_column][self.records_indices]
 
     @property
     def xerr(self):
-        return self.data[self.xerr_column][self._record_indices]
+        """X error values."""
+        return self.data[self.xerr_column][self.records_indices]
 
     @property
-    def y(self):
-        return self.data[self.y_column][self._record_indices]
+    def y(self):  # pylint: disable=invalid-name
+        """Y values."""
+        return self.data[self.y_column][self.records_indices]
 
     @property
     def yerr(self):
-        return self.data[self.yerr_column][self._record_indices]
+        """Y error values."""
+        return self.data[self.yerr_column][self.records_indices]
 
     # Records indices methods
 
     def select_record(self, record_index):
-        self._record_indices[record_index - 1] = True
+        """Select a record to be used in fitting."""
+        self.records_indices[record_index - 1] = True
 
     def unselect_record(self, record_index):
-        self._record_indices[record_index - 1] = False
+        """Unselect a record to be used in fitting."""
+        self.records_indices[record_index - 1] = False
 
     def select_all_records(self):
-        self._record_indices = [True] * self.length
+        """Select all records to be used in fitting."""
+        self.records_indices = [True] * self.length
 
     def unselect_all_records(self):
-        self._record_indices = [False] * self.length
+        """Unselect all recrods from being used in fitting."""
+        self.records_indices = [False] * self.length
 
     def is_selected(self, records_index):
-        return self._record_indices[records_index - 1]
+        """Checks if a record is selected or not."""
+        return self.records_indices[records_index - 1]
+
+    @property
+    def records_indices(self):
+        """List of booleans indicating which records are selected."""
+        return self._records_indices
+
+    @records_indices.setter
+    def records_indices(self, records_indices):
+        if len(records_indices) != self.length:
+            raise FitDataColumnsSelectionError(
+                f"Should select {self.length} records,"
+                f" only {len(records_indices)} selected."
+            )
+        if not all([isinstance(element, bool) for element in records_indices]):
+            raise FitDataColumnsSelectionError(
+                "When setting record indices, all values should be booleans."
+            )
+        self._records_indices = records_indices
 
     # Columns can be set
 
     @property
     def x_column(self):
+        """Name of the x column."""
         return self._x_column
 
     @x_column.setter
@@ -100,12 +148,13 @@ class FitData:
         elif x_column in self.all_columns:
             self._x_column_index = self.all_columns.index(x_column)
         else:
-            self._x_column_index = self._covert_to_index(x_column)
-        self._validate_index(self._x_column_index, x_column)
+            self._x_column_index = self.__covert_to_index(x_column)
+        self.__validate_index(self._x_column_index, x_column)
         self._x_column = self.all_columns[self._x_column_index]
 
     @property
     def xerr_column(self):
+        """Name of the x error column."""
         return self._xerr_column
 
     @xerr_column.setter
@@ -115,12 +164,13 @@ class FitData:
         elif xerr_column in self.all_columns:
             self._xerr_column_index = self.all_columns.index(xerr_column)
         else:
-            self._xerr_column_index = self._covert_to_index(xerr_column)
-        self._validate_index(self._xerr_column_index, xerr_column)
+            self._xerr_column_index = self.__covert_to_index(xerr_column)
+        self.__validate_index(self._xerr_column_index, xerr_column)
         self._xerr_column = self.all_columns[self._xerr_column_index]
 
     @property
     def y_column(self):
+        """Name of the y column."""
         return self._y_column
 
     @y_column.setter
@@ -130,12 +180,13 @@ class FitData:
         elif y_column in self.all_columns:
             self._y_column_index = self.all_columns.index(y_column)
         else:
-            self._y_column_index = self._covert_to_index(y_column)
-        self._validate_index(self._y_column_index, y_column)
+            self._y_column_index = self.__covert_to_index(y_column)
+        self.__validate_index(self._y_column_index, y_column)
         self._y_column = self.all_columns[self._y_column_index]
 
     @property
     def yerr_column(self):
+        """Name of the y error column."""
         return self._yerr_column
 
     @yerr_column.setter
@@ -145,12 +196,12 @@ class FitData:
         elif yerr_column in self.all_columns:
             self._yerr_column_index = self.all_columns.index(yerr_column)
         else:
-            self._yerr_column_index = self._covert_to_index(yerr_column)
-        self._validate_index(self._yerr_column_index, yerr_column)
+            self._yerr_column_index = self.__covert_to_index(yerr_column)
+        self.__validate_index(self._yerr_column_index, yerr_column)
         self._yerr_column = self.all_columns[self._yerr_column_index]
 
     @classmethod
-    def random(
+    def random(  # pylint: disable=invalid-name,too-many-arguments
         cls,
         fit_func,
         a=None,
@@ -162,6 +213,21 @@ class FitData:
         ysigma=DEFAULT_YSIGMA,
         measurements=DEFAULT_MEASUREMENTS,
     ):
+        """
+        Generate a random fit data.
+
+        :param fit_func: Fit function to evaluate with the fit data
+        :param a: Optional. the actual parameters that should be returned by the fitting
+         algorithm. If not given, generated randomly.
+        :param xmin: Minimum value for x.
+        :param xmax: Maximum value for x.
+        :param min_coeff: Minimum value for :ref:`a` coefficient.
+        :param max_coeff: Maximum value for :ref:`a` coefficient.
+        :param xsigma: Standard deviation for x.
+        :param ysigma: Standard deviation for y.
+        :param measurements: Number of measurements
+        :return: random :class:`FitData` object
+        """
         if a is None:
             a = random_array(min_val=min_coeff, max_val=max_coeff, size=fit_func.n)
         x = random_array(min_val=xmin, max_val=xmax, size=measurements)
@@ -173,7 +239,7 @@ class FitData:
         )
 
     @classmethod
-    def read_from_excel(
+    def read_from_excel(  # pylint: disable=too-many-arguments
         cls,
         filepath,
         sheet,
@@ -182,11 +248,22 @@ class FitData:
         y_column=None,
         yerr_column=None,
     ):
+        """
+        Read :class:`FitData` from excel file.
+
+        :param filepath: str or Path. Path to location of excel file
+        :param sheet: str. The name of the seet to exctract the data from.
+        :param x_column: int or str. Column for the x values.
+        :param xerr_column: int or str. Column for the x error values.
+        :param y_column: int or str. Column for the y values.
+        :param yerr_column: int or str. Column for the y error values.
+        :return: :class:`FitData` read from the excel file.
+        """
         excel_obj = xlrd.open_workbook(filepath)
         sheet_obj = excel_obj.sheet_by_name(sheet)
         rows = [sheet_obj.row(i) for i in range(sheet_obj.nrows)]
         rows = [list(map(lambda element: element.value, row)) for row in rows]
-        return cls._extract_data_from_rows(
+        return cls.__extract_data_from_rows(
             rows=rows,
             file_name=filepath.name,
             sheet=sheet,
@@ -197,13 +274,23 @@ class FitData:
         )
 
     @classmethod
-    def read_from_csv(
+    def read_from_csv(  # pylint: disable=too-many-arguments
         cls, filepath, x_column=None, xerr_column=None, y_column=None, yerr_column=None,
     ):
+        """
+        Read :class:`FitData` from csv file.
+
+        :param filepath: str or Path. Path to location of csv file
+        :param x_column: int or str. Column for the x values.
+        :param xerr_column: int or str. Column for the x error values.
+        :param y_column: int or str. Column for the y values.
+        :param yerr_column: int or str. Column for the y error values.
+        :return: :class:`FitData` read from the csv file.
+        """
         with open(filepath, mode="r") as csv_file:
             csv_obj = csv.reader(csv_file)
             rows = list(csv_obj)
-        return cls._extract_data_from_rows(
+        return cls.__extract_data_from_rows(
             rows=rows,
             file_name=filepath.name,
             x_column=x_column,
@@ -213,13 +300,13 @@ class FitData:
         )
 
     @classmethod
-    def _covert_to_index(cls, column):
+    def __covert_to_index(cls, column):
         try:
             return int(column) - 1
         except ValueError:
             return None
 
-    def _validate_index(self, index, column):
+    def __validate_index(self, index, column):
         if index is None:
             raise FitDataColumnExistenceError(column)
         max_index = len(self._all_columns)
@@ -227,7 +314,7 @@ class FitData:
             raise FitDataColumnIndexError(index + 1, max_index)
 
     @classmethod
-    def _extract_data_from_rows(
+    def __extract_data_from_rows(  # pylint: disable=too-many-arguments
         cls,
         rows,
         file_name,
@@ -238,7 +325,7 @@ class FitData:
         yerr_column=None,
     ):
         headers = rows[0]
-        if cls._is_headers(headers):
+        if cls.__is_headers(headers):
             content = rows[1:]
         else:
             headers = range(len(headers))
@@ -257,11 +344,11 @@ class FitData:
         )
 
     @classmethod
-    def _is_headers(cls, headers):
-        return all([header != "" and not cls._is_number(header) for header in headers])
+    def __is_headers(cls, headers):
+        return all([header != "" and not cls.__is_number(header) for header in headers])
 
     @classmethod
-    def _is_number(cls, string):
+    def __is_number(cls, string):
         try:
             float(string)
             return True

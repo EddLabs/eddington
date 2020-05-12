@@ -55,3 +55,7 @@ class FitDataColumnExistenceError(FitDataError):
         super(FitDataColumnExistenceError, self).__init__(
             f'Could not find column "{column}" in data'
         )
+
+
+class FitDataColumnsSelectionError(FitDataError):
+    pass

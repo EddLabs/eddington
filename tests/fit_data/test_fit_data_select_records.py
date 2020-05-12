@@ -3,7 +3,8 @@ from unittest import TestCase
 import numpy as np
 
 from eddington_core import FitData
-from tests.fit_data import COLUMNS, VALUES
+from eddington_core.exceptions import FitDataColumnsSelectionError
+from tests.fit_data import COLUMNS, VALUES, NUMBER_OF_RECORDS
 
 
 class BaseFitDataSelectRecordTestCase:
@@ -14,6 +15,10 @@ class BaseFitDataSelectRecordTestCase:
         self.expected_xerr = self.extract_values(VALUES[1])
         self.expected_y = self.extract_values(VALUES[2])
         self.expected_yerr = self.extract_values(VALUES[3])
+
+    @classmethod
+    def extract_values(cls, column):
+        return [column[i - 1] for i in cls.selected]
 
     def test_x(self):
         np.testing.assert_equal(
@@ -53,42 +58,30 @@ class BaseFitDataSelectRecordTestCase:
 
 class TestFitDataUnselectOneRecord(TestCase, BaseFitDataSelectRecordTestCase):
     setUp = BaseFitDataSelectRecordTestCase.setUp
-    selected = [1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+    selected = [1] + list(range(3, NUMBER_OF_RECORDS + 1))
 
     def select_records(self):
         self.fit_data.unselect_record(2)
 
-    @classmethod
-    def extract_values(cls, column):
-        return np.concatenate([column[:1], column[2:]])
-
 
 class TestFitDataUnselectTwoRecord(TestCase, BaseFitDataSelectRecordTestCase):
     setUp = BaseFitDataSelectRecordTestCase.setUp
-    selected = [1, 3, 4, 6, 7, 8, 9, 10, 11, 12]
+    selected = [1, 3, 4] + list(range(6, NUMBER_OF_RECORDS + 1))
 
     def select_records(self):
         self.fit_data.unselect_record(2)
         self.fit_data.unselect_record(5)
 
-    @classmethod
-    def extract_values(cls, column):
-        return np.concatenate([column[:1], column[2:4], column[5:]])
-
 
 class TestFitDataUnselectMultipleRecord(TestCase, BaseFitDataSelectRecordTestCase):
     setUp = BaseFitDataSelectRecordTestCase.setUp
-    selected = [1, 4, 6, 7, 8, 9, 11, 12]
+    selected = [1, 4, 6, 7, 8, 9] + list(range(11, NUMBER_OF_RECORDS + 1))
 
     def select_records(self):
         self.fit_data.unselect_record(2)
         self.fit_data.unselect_record(5)
         self.fit_data.unselect_record(3)
         self.fit_data.unselect_record(10)
-
-    @classmethod
-    def extract_values(cls, column):
-        return np.concatenate([column[:1], column[3:4], column[5:9], column[10:]])
 
 
 class TestFitDataUnselectAllRecords(TestCase, BaseFitDataSelectRecordTestCase):
@@ -97,10 +90,6 @@ class TestFitDataUnselectAllRecords(TestCase, BaseFitDataSelectRecordTestCase):
 
     def select_records(self):
         self.fit_data.unselect_all_records()
-
-    @classmethod
-    def extract_values(cls, column):
-        return np.array([])
 
 
 class TestFitDataSelectRecord(TestCase, BaseFitDataSelectRecordTestCase):
@@ -111,10 +100,6 @@ class TestFitDataSelectRecord(TestCase, BaseFitDataSelectRecordTestCase):
         self.fit_data.unselect_all_records()
         self.fit_data.select_record(2)
 
-    @classmethod
-    def extract_values(cls, column):
-        return np.array([column[1]])
-
 
 class TestFitDataSelectTwoRecords(TestCase, BaseFitDataSelectRecordTestCase):
     setUp = BaseFitDataSelectRecordTestCase.setUp
@@ -124,10 +109,6 @@ class TestFitDataSelectTwoRecords(TestCase, BaseFitDataSelectRecordTestCase):
         self.fit_data.unselect_all_records()
         self.fit_data.select_record(2)
         self.fit_data.select_record(5)
-
-    @classmethod
-    def extract_values(cls, column):
-        return np.array([column[1], column[4]])
 
 
 class TestFitDataSelectMultipleRecords(TestCase, BaseFitDataSelectRecordTestCase):
@@ -141,27 +122,19 @@ class TestFitDataSelectMultipleRecords(TestCase, BaseFitDataSelectRecordTestCase
         self.fit_data.select_record(3)
         self.fit_data.select_record(10)
 
-    @classmethod
-    def extract_values(cls, column):
-        return np.array([column[1], column[2], column[4], column[9]])
-
 
 class TestFitDataReselectRecord(TestCase, BaseFitDataSelectRecordTestCase):
     setUp = BaseFitDataSelectRecordTestCase.setUp
-    selected = list(range(1, 13))
+    selected = list(range(1, NUMBER_OF_RECORDS + 1))
 
     def select_records(self):
         self.fit_data.unselect_record(2)
         self.fit_data.select_record(2)
 
-    @classmethod
-    def extract_values(cls, column):
-        return column
-
 
 class TestFitDataSelectAllRecords(TestCase, BaseFitDataSelectRecordTestCase):
     setUp = BaseFitDataSelectRecordTestCase.setUp
-    selected = list(range(1, 13))
+    selected = list(range(1, NUMBER_OF_RECORDS + 1))
 
     def select_records(self):
         self.fit_data.unselect_all_records()
@@ -169,6 +142,43 @@ class TestFitDataSelectAllRecords(TestCase, BaseFitDataSelectRecordTestCase):
         self.fit_data.select_record(5)
         self.fit_data.select_all_records()
 
-    @classmethod
-    def extract_values(cls, column):
-        return column
+
+class TestFitDataSetSelectedRecordsIndices(TestCase, BaseFitDataSelectRecordTestCase):
+    setUp = BaseFitDataSelectRecordTestCase.setUp
+    selected = [2, 5]
+
+    def select_records(self):
+        # fmt: off
+        self.fit_data.records_indices = \
+            [False, True, False, False, True] + [False] * (NUMBER_OF_RECORDS - 5)
+        # fmt: on
+
+
+class TestFitDataSelectRaiseError(TestCase):
+    fit_data = FitData(COLUMNS)
+
+    def test_set_selection_with_different_size(self):
+        def set_records_indices():
+            # fmt: off
+            self.fit_data.records_indices = \
+                [False, False, True]
+            # fmt: on
+
+        self.assertRaisesRegex(
+            FitDataColumnsSelectionError,
+            f"^Should select {NUMBER_OF_RECORDS} records, only 3 selected.$",
+            set_records_indices,
+        )
+
+    def test_set_selection_with_non_boolean_values(self):
+        def set_records_indices():
+            # fmt: off
+            self.fit_data.records_indices = \
+                [False, False, "dummy"] + [True] * (NUMBER_OF_RECORDS - 3)
+            # fmt: on
+
+        self.assertRaisesRegex(
+            FitDataColumnsSelectionError,
+            "^When setting record indices, all values should be booleans.$",
+            set_records_indices,
+        )
