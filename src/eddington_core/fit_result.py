@@ -1,3 +1,4 @@
+"""Fitting result class that will be returned by the fitting algorithm."""
 from dataclasses import dataclass, field
 
 import numpy as np
@@ -6,11 +7,25 @@ import scipy.stats as stats
 from eddington_core.print_util import to_precise_string
 
 
-@dataclass(repr=False)
+@dataclass(repr=False)  # pylint: disable=too-many-instance-attributes
 class FitResult:
+    """
+    Dataclass that contains the relevant parameters returned by a fitting algorithm.
 
-    a0: np.ndarray
-    a: np.ndarray
+    :param a0: The initial guess for the fit function parameters.
+    :param a: The result for the fitting parameters.
+    :param aerr: Estimated errors of a.
+    :param arerr: Estimated relative errors of a (equivilant to aerr/a).
+    :param acov: Covarance matrix of a.
+    :param degrees_of_freedom: How many degrees of freedom of the fittings.
+    :param chi2: Optimization evaluation for the fit.
+    :param chi2_reduced: Reduced chi2.
+    :param p_probability: P-probability (p-value) of the fitting, evaluated from
+     chi2_reduced.
+    """
+
+    a0: np.ndarray  # pylint: disable=invalid-name
+    a: np.ndarray  # pylint: disable=invalid-name
     aerr: np.ndarray
     arerr: np.ndarray = field(init=False)
     acov: np.ndarray
@@ -23,6 +38,7 @@ class FitResult:
     __repr_string: str = field(default=None, init=False, repr=False)
 
     def __post_init__(self):
+        """Post init methods."""
         self.aerr = np.array(self.aerr)
         self.acov = np.array(self.acov)
         self.a0 = np.array(self.a0)
@@ -32,15 +48,21 @@ class FitResult:
         self.p_probability = stats.chi2.sf(self.chi2, self.degrees_of_freedom)
 
     def export_to_file(self, file_path):
+        """
+        Write the result to a file.
+
+        :param file_path: path to write the result in.
+        """
         with open(file_path, mode="w") as output_file:
             output_file.write(str(self))
 
     def __repr__(self):
+        """Representation string."""
         if self.__repr_string is None:
-            self.__repr_string = self.build_repr_string()
+            self.__repr_string = self.__build_repr_string()
         return self.__repr_string
 
-    def build_repr_string(self):
+    def __build_repr_string(self):
         old_precision = np.get_printoptions()["precision"]
         np.set_printoptions(precision=self.precision)
         a_value_string = "\n".join(
@@ -66,7 +88,7 @@ P-probability: {to_precise_string(self.p_probability, self.precision)}
         np.set_printoptions(precision=old_precision)
         return repr_string
 
-    def __a_value_string(self, i, a, aerr, arerr):
+    def __a_value_string(self, i, a, aerr, arerr):  # pylint: disable=invalid-name
         a_string = to_precise_string(a, self.precision)
         aerr_string = to_precise_string(aerr, self.precision)
         arerr_string = to_precise_string(arerr, self.precision)
