@@ -1,3 +1,4 @@
+"""Core functionalities of the Eddington platform."""
 from eddington_core.exceptions import (
     EddingtonException,
     FitDataColumnExistenceError,
