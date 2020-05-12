@@ -3,6 +3,7 @@ from collections import OrderedDict
 
 import numpy as np
 import xlrd
+
 from eddington_core.consts import (
     DEFAULT_MAX_COEFF,
     DEFAULT_MEASUREMENTS,
