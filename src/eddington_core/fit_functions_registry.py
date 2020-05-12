@@ -1,6 +1,5 @@
-from prettytable import PrettyTable
-
 from eddington_core.exceptions import FitFunctionLoadError
+from prettytable import PrettyTable
 
 
 class FitFunctionsRegistry:

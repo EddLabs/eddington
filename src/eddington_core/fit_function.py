@@ -1,10 +1,10 @@
 import re
 import uuid
+from dataclasses import InitVar, dataclass, field
 from typing import Callable
-from dataclasses import dataclass, InitVar, field
+
 import numpy as np
 import scipy
-
 from eddington_core.exceptions import FitFunctionLoadError, FitFunctionRuntimeError
 from eddington_core.fit_functions_registry import FitFunctionsRegistry
 

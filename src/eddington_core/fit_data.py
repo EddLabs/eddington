@@ -3,23 +3,22 @@ from collections import OrderedDict
 
 import numpy as np
 import xlrd
-
 from eddington_core.consts import (
-    DEFAULT_MIN_COEFF,
     DEFAULT_MAX_COEFF,
-    DEFAULT_XMIN,
-    DEFAULT_XMAX,
     DEFAULT_MEASUREMENTS,
+    DEFAULT_MIN_COEFF,
+    DEFAULT_XMAX,
+    DEFAULT_XMIN,
     DEFAULT_XSIGMA,
     DEFAULT_YSIGMA,
 )
 from eddington_core.exceptions import (
     FitDataColumnExistenceError,
     FitDataColumnIndexError,
-    FitDataInvalidFileSyntax,
     FitDataColumnsLengthError,
+    FitDataInvalidFileSyntax,
 )
-from eddington_core.random_util import random_array, random_sigma, random_error
+from eddington_core.random_util import random_array, random_error, random_sigma
 
 
 class FitData:

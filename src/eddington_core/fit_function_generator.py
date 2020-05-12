@@ -1,5 +1,5 @@
-from typing import Callable, Union, List
-from dataclasses import dataclass, field, InitVar
+from dataclasses import InitVar, dataclass, field
+from typing import Callable, List, Union
 
 from eddington_core.fit_functions_registry import FitFunctionsRegistry
 
