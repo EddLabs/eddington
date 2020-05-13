@@ -8,7 +8,7 @@ class FitFunctionsRegistry:  # noqa: D415,D213,D205
     :class:`FitFunctionGenerator` isntances.
     """
 
-    __name_to_func_dict = dict()
+    __name_to_func_dict = dict()  # type: ignore
 
     @classmethod
     def add(cls, func):

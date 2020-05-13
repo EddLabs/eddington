@@ -1,5 +1,6 @@
 """Fitting result class that will be returned by the fitting algorithm."""
 from dataclasses import dataclass, field
+from typing import Union
 
 import numpy as np
 import scipy.stats as stats
@@ -34,7 +35,7 @@ class FitResult:
     p_probability: float = field(init=False)
     precision: int = 3
 
-    __repr_string: str = field(default=None, init=False, repr=False)
+    __repr_string: Union[str, None] = field(default=None, init=False, repr=False)
 
     def __post_init__(self):
         """Post init methods."""
@@ -60,6 +61,10 @@ class FitResult:
         if self.__repr_string is None:
             self.__repr_string = self.__build_repr_string()
         return self.__repr_string
+
+    @property
+    def repr_string(self):
+        return
 
     def __build_repr_string(self):
         old_precision = np.get_printoptions()["precision"]

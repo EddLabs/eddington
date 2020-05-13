@@ -2,7 +2,7 @@
 import re
 import uuid
 from dataclasses import InitVar, dataclass, field
-from typing import Callable
+from typing import Callable, Optional
 
 import numpy as np
 import scipy
@@ -35,8 +35,8 @@ class FitFunction:  # pylint: disable=invalid-name,too-many-instance-attributes
 
     fit_func: Callable = field(repr=False)
     n: int = field(repr=False)
-    name: str = field(default=None)
-    syntax: str = field(default=None)
+    name: Optional[str] = field(default=None)
+    syntax: Optional[str] = field(default=None)
     a_derivative: np.ndarray = field(default=None, repr=False)
     x_derivative: np.ndarray = field(default=None, repr=False)
     title_name: str = field(init=False, repr=False)
