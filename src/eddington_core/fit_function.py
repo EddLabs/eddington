@@ -6,7 +6,6 @@ from typing import Callable
 
 import numpy as np
 import scipy
-
 from eddington_core.exceptions import FitFunctionLoadError, FitFunctionRuntimeError
 from eddington_core.fit_functions_registry import FitFunctionsRegistry
 
