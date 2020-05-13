@@ -62,10 +62,6 @@ class FitResult:
             self.__repr_string = self.__build_repr_string()
         return self.__repr_string
 
-    @property
-    def repr_string(self):
-        return
-
     def __build_repr_string(self):
         old_precision = np.get_printoptions()["precision"]
         np.set_printoptions(precision=self.precision)
