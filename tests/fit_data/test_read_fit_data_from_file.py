@@ -13,7 +13,7 @@ from tests.fit_data import COLUMNS, CONTENT, ROWS, VALUES
 class FitDataReadFromFileBaseTestCase:
     @classmethod
     def check_data_by_keys(cls, actual_fit_data):
-        for key, value in actual_fit_data.data.items():
+        for key in actual_fit_data.data.keys():
             np.testing.assert_equal(
                 actual_fit_data.data[key],
                 COLUMNS[key],
@@ -22,7 +22,7 @@ class FitDataReadFromFileBaseTestCase:
 
     @classmethod
     def check_data_by_indexes(cls, actual_fit_data):
-        for key, value in actual_fit_data.data.items():
+        for key in actual_fit_data.data.keys():
             np.testing.assert_equal(
                 actual_fit_data.data[key],
                 VALUES[key],

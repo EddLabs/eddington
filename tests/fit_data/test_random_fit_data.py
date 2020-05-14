@@ -53,7 +53,10 @@ class RandomFitDataTestCase:
         self.yerr = np.random.normal(size=self.measurements)
         self.real_xerr = np.random.normal(size=self.measurements)
         self.real_yerr = np.random.normal(size=self.measurements)
-        self.y = self.func(self.a, self.x + self.real_xerr) + self.real_yerr
+        self.y = (
+            self.func(self.a, self.x + self.real_xerr)  # pylint: disable=E1121
+            + self.real_yerr
+        )
 
         self.set_random_array_side_effect()
         self.set_random_sigma_side_effect()

@@ -33,7 +33,7 @@ class TestFitFunctionRegistryAddAndRemove(TestCase):
             syntax=f"syntax_dummy_function{value}",
             save=save,
         )
-        def dummy_func(a, x):
+        def dummy_func(a, x):  # pylint: disable=W0613
             return value
 
         return dummy_func
@@ -52,7 +52,7 @@ class TestFitFunctionRegistryAddAndRemove(TestCase):
                 syntax=f"syntax_generated_dummy_function{param}_value{value}",
                 save=save,
             )
-            def dummy_func(a, x):
+            def dummy_func(a, x):  # pylint: disable=W0613
                 return param * value
 
             return dummy_func

@@ -4,7 +4,7 @@ import numpy as np
 from eddington_core import fit_function, fit_function_generator
 
 
-@fit_function_generator(
+@fit_function_generator(  # pylint: disable=E1123
     name="generator_with_2_parameters",
     parameters=["p0", "p1"],
     syntax="Some syntax",
@@ -18,7 +18,7 @@ def dummy_generator_with_2_parameters(p0, p1):
     return dummy_function
 
 
-@fit_function_generator(
+@fit_function_generator(  # pylint: disable=E1123
     name="generator_with_1_parameter",
     parameters="p1",
     syntax="Some syntax",
