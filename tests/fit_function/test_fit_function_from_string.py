@@ -5,11 +5,31 @@ from eddington_core import FitFunction, FitFunctionLoadError, FitFunctionsRegist
 from mock import patch
 
 
-class FitFunctionFromStringBaseTestCase:
+class FitFunctionFromStringBaseTestCase(type):
     decimal = 5
     uuid = "1234"
     name = None
     expected_name = "dummy-1234"
+
+    def __new__(mcs, name, bases, dct):
+        dct.update(
+            dict(
+                decimal=mcs.decimal,
+                uuid=mcs.uuid,
+                name=mcs.name,
+                expected_name=mcs.expected_name,
+                setUp=mcs.setUp,
+                tearDown=mcs.tearDown,
+                test_name=mcs.test_name,
+                test_title_name=mcs.test_title_name,
+                test_parameters_number=mcs.test_parameters_number,
+                test_syntax=mcs.test_syntax,
+                test_value=mcs.test_value,
+                test_save=mcs.test_save,
+                test_is_costumed=mcs.test_is_costumed,
+            )
+        )
+        return type(name, (TestCase, *bases), dct)
 
     def setUp(self):
         uuid4_patcher = patch("uuid.uuid4")
@@ -77,7 +97,7 @@ class FitFunctionFromStringBaseTestCase:
 
 
 class TestLoadFunctionFromStringWithoutName(
-    TestCase, FitFunctionFromStringBaseTestCase
+    metaclass=FitFunctionFromStringBaseTestCase
 ):
     syntax = "a[0] + a[2] * x + sin(a[1] * x)"
     save = False
@@ -86,15 +106,9 @@ class TestLoadFunctionFromStringWithoutName(
     x = 2
     expected_value = 5
 
-    def setUp(self):
-        FitFunctionFromStringBaseTestCase.setUp(self)
-
-    def tearDown(self):
-        FitFunctionFromStringBaseTestCase.tearDown(self)
-
 
 class TestLoadFunctionFromStringWithIntegralFunction(
-    TestCase, FitFunctionFromStringBaseTestCase
+    metaclass=FitFunctionFromStringBaseTestCase
 ):
     syntax = "a[0] * gamma(a[1] * x) + a[2]"
     save = False
@@ -103,14 +117,8 @@ class TestLoadFunctionFromStringWithIntegralFunction(
     x = 6
     expected_value = 244
 
-    def setUp(self):
-        FitFunctionFromStringBaseTestCase.setUp(self)
 
-    def tearDown(self):
-        FitFunctionFromStringBaseTestCase.tearDown(self)
-
-
-class TestLoadFunctionFromStringWithName(TestCase, FitFunctionFromStringBaseTestCase):
+class TestLoadFunctionFromStringWithName(metaclass=FitFunctionFromStringBaseTestCase):
     name = "a_very_cool_function"
     expected_name = name
     syntax = "a[0] * exp(a[1] * x)"
@@ -120,26 +128,14 @@ class TestLoadFunctionFromStringWithName(TestCase, FitFunctionFromStringBaseTest
     x = 1
     expected_value = 5 * math.e
 
-    def setUp(self):
-        FitFunctionFromStringBaseTestCase.setUp(self)
 
-    def tearDown(self):
-        FitFunctionFromStringBaseTestCase.tearDown(self)
-
-
-class TestLoadFunctionFromStringWithSave(TestCase, FitFunctionFromStringBaseTestCase):
+class TestLoadFunctionFromStringWithSave(metaclass=FitFunctionFromStringBaseTestCase):
     syntax = "a[0] * cos(a[1] * x + a[2]) + a[3]"
     save = True
     n = 4
     a = [2, 0.5 * math.pi, math.pi, 2]
     x = 3
     expected_value = 2
-
-    def setUp(self):
-        FitFunctionFromStringBaseTestCase.setUp(self)
-
-    def tearDown(self):
-        FitFunctionFromStringBaseTestCase.tearDown(self)
 
 
 class TestLoadFunctionFromStringWithSyntaxError(TestCase):
