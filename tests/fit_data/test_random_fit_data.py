@@ -1,3 +1,4 @@
+from typing import Dict
 from unittest import TestCase
 
 import numpy as np
@@ -27,7 +28,7 @@ class RandomFitDataTestCase:
     xsigma = DEFAULT_XSIGMA
     ysigma = DEFAULT_YSIGMA
     measurements = DEFAULT_MEASUREMENTS
-    args = {}
+    args: Dict = {}
 
     a = None
 
