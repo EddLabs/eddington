@@ -1,3 +1,4 @@
+from typing import List
 from unittest import TestCase
 
 import numpy as np
@@ -7,7 +8,21 @@ from eddington_core.exceptions import FitDataColumnsSelectionError
 from tests.fit_data import COLUMNS, NUMBER_OF_RECORDS, VALUES
 
 
-class BaseFitDataSelectRecordTestCase:
+class BaseFitDataSelectRecordTestCase(type):
+    def __new__(mcs, name, bases, dct):
+        dct.update(
+            dict(
+                setUp=mcs.setUp,
+                extract_values=mcs.extract_values,
+                test_x=mcs.test_x,
+                test_xerr=mcs.test_xerr,
+                test_y=mcs.test_y,
+                test_yerr=mcs.test_yerr,
+                test_is_selected=mcs.test_is_selected,
+            )
+        )
+        return type(name, (TestCase, *bases), dct)
+
     def setUp(self):
         self.fit_data = FitData(COLUMNS)
         self.select_records()
@@ -16,9 +31,8 @@ class BaseFitDataSelectRecordTestCase:
         self.expected_y = self.extract_values(VALUES[2])
         self.expected_yerr = self.extract_values(VALUES[3])
 
-    @classmethod
-    def extract_values(cls, column):
-        return [column[i - 1] for i in cls.selected]
+    def extract_values(self, column):
+        return [column[i - 1] for i in self.selected]
 
     def test_x(self):
         np.testing.assert_equal(
@@ -56,16 +70,14 @@ class BaseFitDataSelectRecordTestCase:
                 )
 
 
-class TestFitDataUnselectOneRecord(TestCase, BaseFitDataSelectRecordTestCase):
-    setUp = BaseFitDataSelectRecordTestCase.setUp
+class TestFitDataUnselectOneRecord(metaclass=BaseFitDataSelectRecordTestCase):
     selected = [1] + list(range(3, NUMBER_OF_RECORDS + 1))
 
     def select_records(self):
         self.fit_data.unselect_record(2)
 
 
-class TestFitDataUnselectTwoRecord(TestCase, BaseFitDataSelectRecordTestCase):
-    setUp = BaseFitDataSelectRecordTestCase.setUp
+class TestFitDataUnselectTwoRecord(metaclass=BaseFitDataSelectRecordTestCase):
     selected = [1, 3, 4] + list(range(6, NUMBER_OF_RECORDS + 1))
 
     def select_records(self):
@@ -73,8 +85,7 @@ class TestFitDataUnselectTwoRecord(TestCase, BaseFitDataSelectRecordTestCase):
         self.fit_data.unselect_record(5)
 
 
-class TestFitDataUnselectMultipleRecord(TestCase, BaseFitDataSelectRecordTestCase):
-    setUp = BaseFitDataSelectRecordTestCase.setUp
+class TestFitDataUnselectMultipleRecord(metaclass=BaseFitDataSelectRecordTestCase):
     selected = [1, 4, 6, 7, 8, 9] + list(range(11, NUMBER_OF_RECORDS + 1))
 
     def select_records(self):
@@ -84,16 +95,14 @@ class TestFitDataUnselectMultipleRecord(TestCase, BaseFitDataSelectRecordTestCas
         self.fit_data.unselect_record(10)
 
 
-class TestFitDataUnselectAllRecords(TestCase, BaseFitDataSelectRecordTestCase):
-    setUp = BaseFitDataSelectRecordTestCase.setUp
-    selected = []
+class TestFitDataUnselectAllRecords(metaclass=BaseFitDataSelectRecordTestCase):
+    selected: List = []
 
     def select_records(self):
         self.fit_data.unselect_all_records()
 
 
-class TestFitDataSelectRecord(TestCase, BaseFitDataSelectRecordTestCase):
-    setUp = BaseFitDataSelectRecordTestCase.setUp
+class TestFitDataSelectRecord(metaclass=BaseFitDataSelectRecordTestCase):
     selected = [2]
 
     def select_records(self):
@@ -101,8 +110,7 @@ class TestFitDataSelectRecord(TestCase, BaseFitDataSelectRecordTestCase):
         self.fit_data.select_record(2)
 
 
-class TestFitDataSelectTwoRecords(TestCase, BaseFitDataSelectRecordTestCase):
-    setUp = BaseFitDataSelectRecordTestCase.setUp
+class TestFitDataSelectTwoRecords(metaclass=BaseFitDataSelectRecordTestCase):
     selected = [2, 5]
 
     def select_records(self):
@@ -111,8 +119,7 @@ class TestFitDataSelectTwoRecords(TestCase, BaseFitDataSelectRecordTestCase):
         self.fit_data.select_record(5)
 
 
-class TestFitDataSelectMultipleRecords(TestCase, BaseFitDataSelectRecordTestCase):
-    setUp = BaseFitDataSelectRecordTestCase.setUp
+class TestFitDataSelectMultipleRecords(metaclass=BaseFitDataSelectRecordTestCase):
     selected = [2, 3, 5, 10]
 
     def select_records(self):
@@ -123,8 +130,7 @@ class TestFitDataSelectMultipleRecords(TestCase, BaseFitDataSelectRecordTestCase
         self.fit_data.select_record(10)
 
 
-class TestFitDataReselectRecord(TestCase, BaseFitDataSelectRecordTestCase):
-    setUp = BaseFitDataSelectRecordTestCase.setUp
+class TestFitDataReselectRecord(metaclass=BaseFitDataSelectRecordTestCase):
     selected = list(range(1, NUMBER_OF_RECORDS + 1))
 
     def select_records(self):
@@ -132,8 +138,7 @@ class TestFitDataReselectRecord(TestCase, BaseFitDataSelectRecordTestCase):
         self.fit_data.select_record(2)
 
 
-class TestFitDataSelectAllRecords(TestCase, BaseFitDataSelectRecordTestCase):
-    setUp = BaseFitDataSelectRecordTestCase.setUp
+class TestFitDataSelectAllRecords(metaclass=BaseFitDataSelectRecordTestCase):
     selected = list(range(1, NUMBER_OF_RECORDS + 1))
 
     def select_records(self):
@@ -143,8 +148,7 @@ class TestFitDataSelectAllRecords(TestCase, BaseFitDataSelectRecordTestCase):
         self.fit_data.select_all_records()
 
 
-class TestFitDataSetSelectedRecordsIndices(TestCase, BaseFitDataSelectRecordTestCase):
-    setUp = BaseFitDataSelectRecordTestCase.setUp
+class TestFitDataSetSelectedRecordsIndices(metaclass=BaseFitDataSelectRecordTestCase):
     selected = [2, 5]
 
     def select_records(self):
