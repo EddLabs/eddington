@@ -1,4 +1,5 @@
 from copy import deepcopy
+from typing import Dict
 from unittest import TestCase
 
 import numpy as np
@@ -12,8 +13,22 @@ from eddington_core import (
 from tests.fit_data import COLUMNS, COLUMNS_NAMES
 
 
-class FitDataConstructorBaseTestCase:
+class FitDataConstructorBaseTestCase(type):
     fit_data: FitData
+
+    def __new__(mcs, name, bases, dct):
+        dct.update(
+            dict(
+                setUp=mcs.setUp,
+                test_x=mcs.test_x,
+                test_x_err=mcs.test_x_err,
+                test_y=mcs.test_y,
+                test_y_err=mcs.test_y_err,
+                test_all_columns=mcs.test_all_columns,
+                test_data=mcs.test_data,
+            )
+        )
+        return type(name, (TestCase, *bases), dct)
 
     def setUp(self):
         self.fit_data = FitData(COLUMNS, **self.kwargs)
@@ -63,18 +78,16 @@ class FitDataConstructorBaseTestCase:
             )
 
 
-class TestFitDataConstructorWithoutArgs(TestCase, FitDataConstructorBaseTestCase):
+class TestFitDataConstructorWithoutArgs(metaclass=FitDataConstructorBaseTestCase):
 
     x = "a"
     xerr = "b"
     y = "c"
     yerr = "d"
-    kwargs = dict()
-
-    setUp = FitDataConstructorBaseTestCase.setUp
+    kwargs: Dict = dict()
 
 
-class TestFitDataConstructorWithIntX(TestCase, FitDataConstructorBaseTestCase):
+class TestFitDataConstructorWithIntX(metaclass=FitDataConstructorBaseTestCase):
 
     x = "c"
     xerr = "d"
@@ -82,10 +95,8 @@ class TestFitDataConstructorWithIntX(TestCase, FitDataConstructorBaseTestCase):
     yerr = "f"
     kwargs = dict(x_column=3)
 
-    setUp = FitDataConstructorBaseTestCase.setUp
 
-
-class TestFitDataConstructorWithStringX(TestCase, FitDataConstructorBaseTestCase):
+class TestFitDataConstructorWithStringX(metaclass=FitDataConstructorBaseTestCase):
 
     x = "c"
     xerr = "d"
@@ -93,10 +104,8 @@ class TestFitDataConstructorWithStringX(TestCase, FitDataConstructorBaseTestCase
     yerr = "f"
     kwargs = dict(x_column="c")
 
-    setUp = FitDataConstructorBaseTestCase.setUp
 
-
-class TestFitDataConstructorWithIntY(TestCase, FitDataConstructorBaseTestCase):
+class TestFitDataConstructorWithIntY(metaclass=FitDataConstructorBaseTestCase):
 
     x = "a"
     xerr = "b"
@@ -104,10 +113,8 @@ class TestFitDataConstructorWithIntY(TestCase, FitDataConstructorBaseTestCase):
     yerr = "f"
     kwargs = dict(y_column=5)
 
-    setUp = FitDataConstructorBaseTestCase.setUp
 
-
-class TestFitDataConstructorWithStringY(TestCase, FitDataConstructorBaseTestCase):
+class TestFitDataConstructorWithStringY(metaclass=FitDataConstructorBaseTestCase):
 
     x = "a"
     xerr = "b"
@@ -115,10 +122,8 @@ class TestFitDataConstructorWithStringY(TestCase, FitDataConstructorBaseTestCase
     yerr = "f"
     kwargs = dict(y_column="e")
 
-    setUp = FitDataConstructorBaseTestCase.setUp
 
-
-class TestFitDataConstructorWithIntXerr(TestCase, FitDataConstructorBaseTestCase):
+class TestFitDataConstructorWithIntXerr(metaclass=FitDataConstructorBaseTestCase):
 
     x = "a"
     xerr = "d"
@@ -126,10 +131,8 @@ class TestFitDataConstructorWithIntXerr(TestCase, FitDataConstructorBaseTestCase
     yerr = "f"
     kwargs = dict(xerr_column=4)
 
-    setUp = FitDataConstructorBaseTestCase.setUp
 
-
-class TestFitDataConstructorWithStringXerr(TestCase, FitDataConstructorBaseTestCase):
+class TestFitDataConstructorWithStringXerr(metaclass=FitDataConstructorBaseTestCase):
 
     x = "a"
     xerr = "d"
@@ -137,10 +140,8 @@ class TestFitDataConstructorWithStringXerr(TestCase, FitDataConstructorBaseTestC
     yerr = "f"
     kwargs = dict(xerr_column="d")
 
-    setUp = FitDataConstructorBaseTestCase.setUp
 
-
-class TestFitDataConstructorWithIntYerr(TestCase, FitDataConstructorBaseTestCase):
+class TestFitDataConstructorWithIntYerr(metaclass=FitDataConstructorBaseTestCase):
 
     x = "a"
     xerr = "b"
@@ -148,10 +149,8 @@ class TestFitDataConstructorWithIntYerr(TestCase, FitDataConstructorBaseTestCase
     yerr = "f"
     kwargs = dict(yerr_column=6)
 
-    setUp = FitDataConstructorBaseTestCase.setUp
 
-
-class TestFitDataConstructorWithStringYerr(TestCase, FitDataConstructorBaseTestCase):
+class TestFitDataConstructorWithStringYerr(metaclass=FitDataConstructorBaseTestCase):
 
     x = "a"
     xerr = "b"
@@ -159,10 +158,8 @@ class TestFitDataConstructorWithStringYerr(TestCase, FitDataConstructorBaseTestC
     yerr = "f"
     kwargs = dict(yerr_column="f")
 
-    setUp = FitDataConstructorBaseTestCase.setUp
 
-
-class TestFitDataConstructorWithXAndY(TestCase, FitDataConstructorBaseTestCase):
+class TestFitDataConstructorWithXAndY(metaclass=FitDataConstructorBaseTestCase):
 
     x = "c"
     xerr = "d"
@@ -170,11 +167,9 @@ class TestFitDataConstructorWithXAndY(TestCase, FitDataConstructorBaseTestCase):
     yerr = "i"
     kwargs = dict(x_column=3, y_column="h")
 
-    setUp = FitDataConstructorBaseTestCase.setUp
-
 
 class TestFitDataConstructorColumnsWithJumbled(
-    TestCase, FitDataConstructorBaseTestCase
+    metaclass=FitDataConstructorBaseTestCase
 ):
 
     x = "c"
@@ -183,23 +178,32 @@ class TestFitDataConstructorColumnsWithJumbled(
     yerr = "i"
     kwargs = dict(x_column=3, xerr_column=1, y_column="b", yerr_column=9,)
 
-    setUp = FitDataConstructorBaseTestCase.setUp
 
+class FitDataConstructorRaiseColumnExceptionBaseTestCase(type):
+    def __new__(mcs, name, bases, dct):
+        dct.update(
+            dict(
+                check=mcs.check,
+                test_x_not_existing=mcs.test_x_not_existing,
+                test_x_zero_index=mcs.test_x_zero_index,
+                test_x_larger_than_size=mcs.test_x_larger_than_size,
+            )
+        )
+        return type(name, (TestCase, *bases), dct)
 
-class FitDataConstructorRaiseColumnExceptionBaseTestCase:
     def check(self):
         self.assertRaisesRegex(
             self.exception_class, self.error_message, FitData, COLUMNS, **self.kwargs
         )
 
-    def test_raise_exception_on_x_being_not_existing(self):
+    def test_x_not_existing(self):
         self.exception_class = FitDataColumnExistenceError
         self.error_message = '^Could not find column "r" in data$'
         self.kwargs = {self.column: "r"}
 
         self.check()
 
-    def test_raise_exception_on_x_being_zero_index(self):
+    def test_x_zero_index(self):
         self.exception_class = FitDataColumnIndexError
         self.error_message = (
             "^No column number 0 in data. index should be between 1 and 10$"
@@ -208,7 +212,7 @@ class FitDataConstructorRaiseColumnExceptionBaseTestCase:
 
         self.check()
 
-    def test_raise_exception_on_x_being_larger_than_size(self):
+    def test_x_larger_than_size(self):
         self.exception_class = FitDataColumnIndexError
         self.error_message = (
             "^No column number 11 in data. index should be between 1 and 10$"
@@ -218,31 +222,27 @@ class FitDataConstructorRaiseColumnExceptionBaseTestCase:
         self.check()
 
 
-class TesFitDataConstructorRaiseColumnExceptionBaseXColumnByXColumn(
-    TestCase, FitDataConstructorRaiseColumnExceptionBaseTestCase
+class TestFitDataConstructorRaiseColumnExceptionBaseXColumnByXColumn(
+    metaclass=FitDataConstructorRaiseColumnExceptionBaseTestCase
 ):
-
     column = "x_column"
 
 
-class TesFitDataConstructorRaiseColumnExceptionBaseXErrColumnByXColumn(
-    TestCase, FitDataConstructorRaiseColumnExceptionBaseTestCase
+class TestFitDataConstructorRaiseColumnExceptionBaseXErrColumnByXColumn(
+    metaclass=FitDataConstructorRaiseColumnExceptionBaseTestCase
 ):
-
     column = "xerr_column"
 
 
-class TesFitDataConstructorRaiseColumnExceptionBaseYColumnByXColumn(
-    TestCase, FitDataConstructorRaiseColumnExceptionBaseTestCase
+class TestFitDataConstructorRaiseColumnExceptionBaseYColumnByXColumn(
+    metaclass=FitDataConstructorRaiseColumnExceptionBaseTestCase
 ):
-
     column = "y_column"
 
 
-class TesFitDataConstructorRaiseColumnExceptionBaseYErrColumnByXColumn(
-    TestCase, FitDataConstructorRaiseColumnExceptionBaseTestCase
+class TestFitDataConstructorRaiseColumnExceptionBaseYErrColumnByXColumn(
+    metaclass=FitDataConstructorRaiseColumnExceptionBaseTestCase
 ):
-
     column = "yerr_column"
 
 
