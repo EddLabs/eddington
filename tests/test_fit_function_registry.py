@@ -2,8 +2,8 @@ from unittest import TestCase
 
 from eddington_core import (
     FitFunctionLoadError,
-    fit_function,
     FitFunctionsRegistry,
+    fit_function,
     fit_function_generator,
 )
 

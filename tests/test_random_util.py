@@ -1,9 +1,8 @@
 from unittest import TestCase
 
 import numpy as np
+from eddington_core.random_util import random_array, random_error, random_sigma
 from mock import patch
-
-from eddington_core.random_util import random_array, random_sigma, random_error
 
 
 class TestRandomUtil(TestCase):

@@ -1,12 +1,13 @@
 from collections import namedtuple
+from copy import deepcopy
 from pathlib import Path
 from unittest import TestCase
-from copy import deepcopy
-import numpy as np
-from mock import patch, mock_open, PropertyMock
 
+import numpy as np
 from eddington_core import FitData, FitDataInvalidFileSyntax
-from tests.fit_data import COLUMNS, VALUES, ROWS, CONTENT
+from mock import PropertyMock, mock_open, patch
+
+from tests.fit_data import COLUMNS, CONTENT, ROWS, VALUES
 
 
 class FitDataReadFromFileBaseTestCase:

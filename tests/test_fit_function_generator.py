@@ -1,7 +1,7 @@
 from unittest import TestCase
-import numpy as np
 
-from eddington_core import fit_function_generator, fit_function
+import numpy as np
+from eddington_core import fit_function, fit_function_generator
 
 
 @fit_function_generator(

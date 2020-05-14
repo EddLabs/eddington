@@ -1,9 +1,9 @@
 import warnings
 from unittest import TestCase
-import numpy as np
-from mock import mock_open, patch
 
+import numpy as np
 from eddington_core import FitResult
+from mock import mock_open, patch
 
 
 class FitResultBaseTestCase:

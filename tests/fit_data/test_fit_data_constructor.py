@@ -1,13 +1,14 @@
-from unittest import TestCase
 from copy import deepcopy
-import numpy as np
+from unittest import TestCase
 
+import numpy as np
 from eddington_core import (
     FitData,
-    FitDataColumnIndexError,
     FitDataColumnExistenceError,
+    FitDataColumnIndexError,
     FitDataColumnsLengthError,
 )
+
 from tests.fit_data import COLUMNS, COLUMNS_NAMES
 
 

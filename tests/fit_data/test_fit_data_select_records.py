@@ -1,10 +1,10 @@
 from unittest import TestCase
 
 import numpy as np
-
 from eddington_core import FitData
 from eddington_core.exceptions import FitDataColumnsSelectionError
-from tests.fit_data import COLUMNS, VALUES, NUMBER_OF_RECORDS
+
+from tests.fit_data import COLUMNS, NUMBER_OF_RECORDS, VALUES
 
 
 class BaseFitDataSelectRecordTestCase:

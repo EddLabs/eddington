@@ -1,4 +1,5 @@
 from unittest import TestCase
+
 from tests.fit_function.dummy_functions import dummy_func1, dummy_func2
 from tests.fit_function.fit_function_base_test_case import FitFunctionBaseTestCase
 

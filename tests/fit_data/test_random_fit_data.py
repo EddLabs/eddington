@@ -1,18 +1,18 @@
 from unittest import TestCase
 
 import numpy as np
-from mock import patch, DEFAULT, call
-
 from eddington_core import FitData
 from eddington_core.consts import (
-    DEFAULT_MIN_COEFF,
     DEFAULT_MAX_COEFF,
-    DEFAULT_XMIN,
+    DEFAULT_MEASUREMENTS,
+    DEFAULT_MIN_COEFF,
     DEFAULT_XMAX,
+    DEFAULT_XMIN,
     DEFAULT_XSIGMA,
     DEFAULT_YSIGMA,
-    DEFAULT_MEASUREMENTS,
 )
+from mock import DEFAULT, call, patch
+
 from tests.fit_function.dummy_functions import dummy_func1
 
 

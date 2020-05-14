@@ -1,8 +1,8 @@
 import math
 from unittest import TestCase
-from mock import patch
 
-from eddington_core import FitFunctionLoadError, FitFunctionsRegistry, FitFunction
+from eddington_core import FitFunction, FitFunctionLoadError, FitFunctionsRegistry
+from mock import patch
 
 
 class FitFunctionFromStringBaseTestCase:

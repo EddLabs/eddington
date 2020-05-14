@@ -1,7 +1,8 @@
 from unittest import TestCase
-import numpy as np
 
-from eddington_core import FitFunctionRuntimeError, FitFunction
+import numpy as np
+from eddington_core import FitFunction, FitFunctionRuntimeError
+
 from tests.fit_function.dummy_functions import dummy_func1
 
 
