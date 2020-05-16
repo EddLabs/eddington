@@ -4,6 +4,7 @@ from typing import Union
 
 import numpy as np
 import scipy.stats as stats
+
 from eddington_core.print_util import to_precise_string
 
 
