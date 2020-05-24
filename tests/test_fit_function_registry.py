@@ -6,6 +6,7 @@ from eddington_core import (
     fit_function,
     fit_function_generator,
 )
+from eddington_core.exceptions import FitFunctionSaveError
 
 
 class TestFitFunctionRegistryAddAndRemove(TestCase):
@@ -195,4 +196,24 @@ class TestFitFunctionRegistryAddAndRemove(TestCase):
             self.func1.name,
             1,
             2,
+        )
+
+    def test_saving_two_fit_functions_with_the_same_name(self):
+        self.assertRaisesRegex(
+            FitFunctionSaveError,
+            '^Cannot save "dummy_function2" to registry '
+            "since there is another fit function or generator with this name$",
+            self.dummy_function,
+            value=2,
+            save=True,
+        )
+
+    def test_saving_two_fit_function_generators_with_the_same_name(self):
+        self.assertRaisesRegex(
+            FitFunctionSaveError,
+            '^Cannot save "dummy_generator1" to registry '
+            "since there is another fit function or generator with this name$",
+            self.dummy_function_generator,
+            value=1,
+            save=True,
         )

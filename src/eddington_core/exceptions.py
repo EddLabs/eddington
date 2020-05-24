@@ -17,6 +17,10 @@ class FitFunctionLoadError(EddingtonException):  # noqa: D101
     pass
 
 
+class FitFunctionSaveError(EddingtonException):  # noqa: D101
+    pass
+
+
 class FitFunctionRuntimeError(EddingtonException):  # noqa: D101
     pass
 

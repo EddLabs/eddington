@@ -1,7 +1,7 @@
 """Registry containing predefined fit functions and fit functions generators."""
 from prettytable import PrettyTable
 
-from eddington_core.exceptions import FitFunctionLoadError
+from eddington_core.exceptions import FitFunctionLoadError, FitFunctionSaveError
 
 
 class FitFunctionsRegistry:  # noqa: D415,D213,D205
@@ -14,6 +14,11 @@ class FitFunctionsRegistry:  # noqa: D415,D213,D205
     @classmethod
     def add(cls, func):
         """Add a fit function or generator."""
+        if func.name in cls.__name_to_func_dict:
+            raise FitFunctionSaveError(
+                f'Cannot save "{func.name}" to registry'
+                " since there is another fit function or generator with this name"
+            )
         cls.__name_to_func_dict[func.name] = func
 
     @classmethod
