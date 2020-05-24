@@ -1,10 +1,8 @@
-from unittest import TestCase
-
 from tests.fit_function.dummy_functions import dummy_func1, dummy_func2
-from tests.fit_function.fit_function_base_test_case import FitFunctionBaseTestCase
+from tests.fit_function.fit_function_base_test_case import FitFunctionMetaTestCase
 
 
-class TestFitFunctionMultiplyByNumberFromRight(FitFunctionBaseTestCase, TestCase):
+class TestFitFunctionMultiplyByNumberFromRight(metaclass=FitFunctionMetaTestCase,):
     func = dummy_func1 * 5.2
     n = 2
     values = [
@@ -15,7 +13,7 @@ class TestFitFunctionMultiplyByNumberFromRight(FitFunctionBaseTestCase, TestCase
     ]
 
 
-class TestFitFunctionMultiplyByNumberFromLeft(FitFunctionBaseTestCase, TestCase):
+class TestFitFunctionMultiplyByNumberFromLeft(metaclass=FitFunctionMetaTestCase,):
     func = 5.2 * dummy_func1
     n = 2
     values = [
@@ -26,7 +24,7 @@ class TestFitFunctionMultiplyByNumberFromLeft(FitFunctionBaseTestCase, TestCase)
     ]
 
 
-class TestFitFunctionMultiplyFitFunction(FitFunctionBaseTestCase, TestCase):
+class TestFitFunctionMultiplyFitFunction(metaclass=FitFunctionMetaTestCase,):
     func = dummy_func1 * dummy_func2
     n = 2
     values = [
@@ -37,7 +35,7 @@ class TestFitFunctionMultiplyFitFunction(FitFunctionBaseTestCase, TestCase):
     ]
 
 
-class TestFitFunctionDivideByNumberFromRight(FitFunctionBaseTestCase, TestCase):
+class TestFitFunctionDivideByNumberFromRight(metaclass=FitFunctionMetaTestCase,):
     func = dummy_func1 / 5.2
     n = 2
     values = [
@@ -48,7 +46,7 @@ class TestFitFunctionDivideByNumberFromRight(FitFunctionBaseTestCase, TestCase):
     ]
 
 
-class TestFitFunctionDivideByNumberFromLeft(FitFunctionBaseTestCase, TestCase):
+class TestFitFunctionDivideByNumberFromLeft(metaclass=FitFunctionMetaTestCase,):
     func = 5.2 / dummy_func1
     n = 2
     values = [
@@ -59,7 +57,7 @@ class TestFitFunctionDivideByNumberFromLeft(FitFunctionBaseTestCase, TestCase):
     ]
 
 
-class TestFitFunctionDivideFitFunction(FitFunctionBaseTestCase, TestCase):
+class TestFitFunctionDivideFitFunction(metaclass=FitFunctionMetaTestCase,):
     func = dummy_func2 / dummy_func1
     n = 2
     values = [

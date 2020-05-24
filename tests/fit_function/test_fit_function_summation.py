@@ -1,10 +1,8 @@
-from unittest import TestCase
-
 from tests.fit_function.dummy_functions import dummy_func1, dummy_func2
-from tests.fit_function.fit_function_base_test_case import FitFunctionBaseTestCase
+from tests.fit_function.fit_function_base_test_case import FitFunctionMetaTestCase
 
 
-class TestDummyFitFunction1(FitFunctionBaseTestCase, TestCase):
+class TestDummyFitFunction1(metaclass=FitFunctionMetaTestCase,):
     func = dummy_func1
     n = 2
     values = [
@@ -15,7 +13,7 @@ class TestDummyFitFunction1(FitFunctionBaseTestCase, TestCase):
     ]
 
 
-class TestDummyFitFunction2(FitFunctionBaseTestCase, TestCase):
+class TestDummyFitFunction2(metaclass=FitFunctionMetaTestCase,):
     func = dummy_func2
     n = 1
     values = [
@@ -26,7 +24,7 @@ class TestDummyFitFunction2(FitFunctionBaseTestCase, TestCase):
     ]
 
 
-class TestFitFunctionNegative(FitFunctionBaseTestCase, TestCase):
+class TestFitFunctionNegative(metaclass=FitFunctionMetaTestCase,):
     func = -dummy_func1
     n = 2
     values = [
@@ -37,7 +35,7 @@ class TestFitFunctionNegative(FitFunctionBaseTestCase, TestCase):
     ]
 
 
-class TestFitFunctionAddNumberFromRight(FitFunctionBaseTestCase, TestCase):
+class TestFitFunctionAddNumberFromRight(metaclass=FitFunctionMetaTestCase,):
     func = dummy_func1 + 5.2
     n = 2
     values = [
@@ -48,7 +46,7 @@ class TestFitFunctionAddNumberFromRight(FitFunctionBaseTestCase, TestCase):
     ]
 
 
-class TestFitFunctionAddNumberFromLeft(FitFunctionBaseTestCase, TestCase):
+class TestFitFunctionAddNumberFromLeft(metaclass=FitFunctionMetaTestCase,):
     func = 5.2 + dummy_func1
     n = 2
     values = [
@@ -59,7 +57,7 @@ class TestFitFunctionAddNumberFromLeft(FitFunctionBaseTestCase, TestCase):
     ]
 
 
-class TestFitFunctionAddFitFunction(FitFunctionBaseTestCase, TestCase):
+class TestFitFunctionAddFitFunction(metaclass=FitFunctionMetaTestCase,):
     func = dummy_func1 + dummy_func2
     n = 2
     values = [
@@ -70,7 +68,7 @@ class TestFitFunctionAddFitFunction(FitFunctionBaseTestCase, TestCase):
     ]
 
 
-class TestDummyFitSubtractNumberFromRight(FitFunctionBaseTestCase, TestCase):
+class TestDummyFitSubtractNumberFromRight(metaclass=FitFunctionMetaTestCase,):
     func = dummy_func1 - 5.2
     n = 2
     values = [
@@ -81,7 +79,7 @@ class TestDummyFitSubtractNumberFromRight(FitFunctionBaseTestCase, TestCase):
     ]
 
 
-class TestDummyFitSubtractNumberFromLeft(FitFunctionBaseTestCase, TestCase):
+class TestDummyFitSubtractNumberFromLeft(metaclass=FitFunctionMetaTestCase,):
     func = 5.2 - dummy_func1
     n = 2
     values = [
@@ -92,7 +90,7 @@ class TestDummyFitSubtractNumberFromLeft(FitFunctionBaseTestCase, TestCase):
     ]
 
 
-class TestFitFunctionSubtractFitFunction(FitFunctionBaseTestCase, TestCase):
+class TestFitFunctionSubtractFitFunction(metaclass=FitFunctionMetaTestCase,):
     func = dummy_func1 - dummy_func2
     n = 2
     values = [

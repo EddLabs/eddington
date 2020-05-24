@@ -1,4 +1,7 @@
-class FitFunctionBaseTestCase:
+from eddington_test import MetaTestCase
+
+
+class FitFunctionMetaTestCase(MetaTestCase):
     decimal = 5
 
     def test_n(self):
