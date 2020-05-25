@@ -1,12 +1,11 @@
-import warnings
-from unittest import TestCase
-
 import numpy as np
+from eddington_test import MetaTestCase
+
 from eddington_core import FitResult
 from mock import mock_open, patch
 
 
-class FitResultBaseTestCase:
+class FitResultMetaTestCase(MetaTestCase):
 
     decimal = 5
 
@@ -107,7 +106,7 @@ class FitResultBaseTestCase:
             mock_open_obj.return_value.write.assert_called_with(self.repr_string)
 
 
-class TestStandardFitResult(TestCase, FitResultBaseTestCase):
+class TestStandardFitResult(metaclass=FitResultMetaTestCase):
 
     a0 = [1.0, 3.0]
     a = [1.1, 2.98]
@@ -135,11 +134,8 @@ Chi squared reduced: 1.655
 P-probability: 0.1417
 """
 
-    def setUp(self):
-        FitResultBaseTestCase.setUp(self)
 
-
-class TestFitResultWithZeroError(TestCase, FitResultBaseTestCase):
+class TestFitResultWithZeroError(metaclass=FitResultMetaTestCase):
 
     a0 = [1.0, 3.0]
     a = [1.1, 2.98]
@@ -167,11 +163,8 @@ Chi squared reduced: 1.655
 P-probability: 0.1417
 """
 
-    def setUp(self):
-        FitResultBaseTestCase.setUp(self)
 
-
-class TestFitResultWithZeroValue(TestCase, FitResultBaseTestCase):
+class TestFitResultWithZeroValue(metaclass=FitResultMetaTestCase):
 
     a0 = [1.0, 3.0]
     a = [0.0, 0.0]
@@ -199,13 +192,8 @@ Chi squared reduced: 1.655
 P-probability: 0.1417
 """
 
-    def setUp(self):
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore", category=RuntimeWarning)
-            FitResultBaseTestCase.setUp(self)
 
-
-class TestFitResultWithSmallPProbability(TestCase, FitResultBaseTestCase):
+class TestFitResultWithSmallPProbability(metaclass=FitResultMetaTestCase):
 
     a0 = [1.0, 3.0]
     a = [1.1, 2.98]
@@ -232,6 +220,3 @@ Degrees of freedom: 5
 Chi squared reduced: 8.745
 P-probability: 2.633e-08
 """
-
-    def setUp(self):
-        FitResultBaseTestCase.setUp(self)
