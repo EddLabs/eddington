@@ -1,7 +1,7 @@
 from unittest import TestCase
 
 import numpy as np
-from eddington_core import FitFunction, FitFunctionRuntimeError
+from eddington_core import FitFunctionRuntimeError
 
 from tests.fit_function.dummy_functions import dummy_func1
 
@@ -12,12 +12,6 @@ class TestFitFunction(TestCase):
     def test_is_generator(self):
         self.assertFalse(
             dummy_func1.is_generator(), msg="Fit function is not a generator"
-        )
-
-    def test_is_costumed(self):
-        self.assertFalse(
-            dummy_func1.is_costumed(),
-            msg="Fit function created with fit_function decorator is not a generator",
         )
 
     def test_name(self):
@@ -108,9 +102,3 @@ class TestFitFunction(TestCase):
             str(dummy_func1),
             msg="Representation is different than expected",
         )
-
-    def test_anonymous_fit_functions(self):
-        anonymous = FitFunction.anonymous_function(lambda a, x: a[0] + a[1] * x, 2)
-        self.assertIsNone(anonymous.name)
-        self.assertIsNone(anonymous.title_name)
-        self.assertEqual(7, anonymous([1, 2], 3))

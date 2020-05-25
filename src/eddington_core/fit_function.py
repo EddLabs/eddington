@@ -1,13 +1,10 @@
 """Fitting function to evaluate with the fitting algorithm."""
-import re
-import uuid
 from dataclasses import InitVar, dataclass, field
 from typing import Callable, Optional
 
 import numpy as np
-import scipy
 
-from eddington_core.exceptions import FitFunctionLoadError, FitFunctionRuntimeError
+from eddington_core.exceptions import FitFunctionRuntimeError
 from eddington_core.fit_functions_registry import FitFunctionsRegistry
 
 
@@ -41,19 +38,15 @@ class FitFunction:  # pylint: disable=invalid-name,too-many-instance-attributes
     a_derivative: np.ndarray = field(default=None, repr=False)
     x_derivative: np.ndarray = field(default=None, repr=False)
     title_name: str = field(init=False, repr=False)
-    costumed: InitVar[bool] = False
     save: InitVar[bool] = True
 
-    def __post_init__(self, costumed, save):
+    def __post_init__(self, save):
         """Post init methods."""
-        self.title_name = self.__get_title_name(costumed=costumed)
-        self.__costumed = costumed
+        self.title_name = self.__get_title_name()
         if save:
             FitFunctionsRegistry.add(self)
 
-    def __get_title_name(self, costumed):
-        if costumed:
-            return "Costumed Function"
+    def __get_title_name(self):
         if self.name is None:
             return None
         return self.name.title().replace("_", " ")
@@ -64,45 +57,6 @@ class FitFunction:  # pylint: disable=invalid-name,too-many-instance-attributes
             raise FitFunctionRuntimeError(
                 f"input length should be {self.n}, got {a_length}"
             )
-
-    @classmethod
-    def anonymous_function(cls, fit_func, n):
-        """Creates a function without a name."""
-        return FitFunction(fit_func=fit_func, n=n, save=False)
-
-    @classmethod
-    def from_string(cls, syntax_string, name=None, save=True):
-        """Creates a :class:`FitFunction` from a string."""
-        if name is None:
-            name = f"dummy-{uuid.uuid4()}"
-        n = max([int(a) for a in re.findall(r"a\[(\d+?)\]", syntax_string)]) + 1
-        locals_dict = {}
-        globals_dict = cls.__get_costumed_globals()
-        try:
-            exec(  # pylint: disable=exec-used
-                f"func = lambda a, x: {syntax_string}", globals_dict, locals_dict
-            )
-        except SyntaxError:
-            raise FitFunctionLoadError(f'"{syntax_string}" has invalid syntax')
-        func = locals_dict["func"]
-        return FitFunction(
-            fit_func=func,
-            n=n,
-            name=name,
-            syntax=syntax_string,
-            save=save,
-            costumed=True,
-        )
-
-    @classmethod
-    def __get_costumed_globals(cls):
-        globals_dict = globals().copy()
-        globals_dict["math"] = np.math
-        globals_dict["np"] = np
-        globals_dict["numpy"] = np
-        globals_dict.update(vars(np))
-        globals_dict.update(vars(scipy.special))
-        return globals_dict
 
     def __call__(self, a, x):
         """Call the fit function as a regular callable."""
@@ -119,84 +73,10 @@ class FitFunction:  # pylint: disable=invalid-name,too-many-instance-attributes
         """Indicates that this is not a :class:`FitFunctionGenerator`."""
         return False
 
-    def is_costumed(self):
-        """Indicates if this function is costumed."""
-        return self.__costumed
-
     @property
     def signature(self):
         """Same as name."""
         return self.name
-
-    # Arithmetic Methods
-
-    def __neg__(self):
-        """Implementing negative operator."""
-        return FitFunction.anonymous_function(lambda a, x: -self.fit_func(a, x), self.n)
-
-    def __add__(self, other):
-        """Implementing add operator."""
-        if isinstance(other, FitFunction):
-            n = max(self.n, other.n)
-            return FitFunction.anonymous_function(
-                lambda a, x: self.fit_func(a, x) + other.fit_func(a, x), n
-            )
-        return FitFunction.anonymous_function(lambda a, x: self(a, x) + other, self.n)
-
-    def __radd__(self, other):
-        """Implementing reverse add operator."""
-        return self + other
-
-    def __sub__(self, other):
-        """Implementing subtract operator."""
-        return self + (-other)
-
-    def __rsub__(self, other):
-        """Implementing reverse subtract operator."""
-        return (-self) + other
-
-    def __mul__(self, other):
-        """Implementing multiplication operator."""
-        if isinstance(other, FitFunction):
-            n = max(self.n, other.n)
-            return FitFunction.anonymous_function(
-                lambda a, x: self.fit_func(a, x) * other.fit_func(a, x), n
-            )
-        return FitFunction.anonymous_function(
-            lambda a, x: other * self.fit_func(a, x), self.n
-        )
-
-    def __rmul__(self, other):
-        """Implementing reverse multiplication operator."""
-        return self * other
-
-    def __truediv__(self, other):
-        """Implementing division operator."""
-        if isinstance(other, FitFunction):
-            n = max(self.n, other.n)
-            return FitFunction.anonymous_function(
-                lambda a, x: self.fit_func(a, x) / other.fit_func(a, x), n
-            )
-        return FitFunction.anonymous_function(
-            lambda a, x: self.fit_func(a, x) / other, self.n
-        )
-
-    def __rtruediv__(self, other):
-        """Implementing reverse division operator."""
-        return FitFunction.anonymous_function(
-            lambda a, x: other / self.fit_func(a, x), self.n
-        )
-
-    def __pow__(self, power, modulo=None):
-        """Implementing power operator."""
-        if isinstance(power, FitFunction):
-            n = max(self.n, power.n)
-            return FitFunction.anonymous_function(
-                lambda a, x: np.power(self.fit_func(a, x), power.fit_func(a, x)), n
-            )
-        return FitFunction.anonymous_function(
-            lambda a, x: np.power(self.fit_func(a, x), power), self.n
-        )
 
 
 def fit_function(  # pylint: disable=invalid-name,too-many-arguments
