@@ -1,9 +1,9 @@
-from unittest import TestCase
+from eddington_test import MetaTestCase
 
 from eddington_core.print_util import to_precise_string, to_relevant_precision
 
 
-class PrintUtilBaseTestCase:
+class PrintUtilMetaTestCase(MetaTestCase):
     def test_relevant_precision(self):
         _, actual_relevant_precision = to_relevant_precision(self.a)
         self.assertEqual(
@@ -20,70 +20,70 @@ class PrintUtilBaseTestCase:
         )
 
 
-class TestPrintUtilWithPositiveInteger(TestCase, PrintUtilBaseTestCase):
+class TestPrintUtilWithPositiveInteger(metaclass=PrintUtilMetaTestCase):
     a = 14
     n = 2
     relevant_precision = 0
     precise_string = "14.00"
 
 
-class TestPrintUtilWithSmallInteger(TestCase, PrintUtilBaseTestCase):
+class TestPrintUtilWithSmallInteger(metaclass=PrintUtilMetaTestCase):
     a = 3
     n = 4
     relevant_precision = 0
     precise_string = "3.0000"
 
 
-class TestPrintUtilWithNegativeInteger(TestCase, PrintUtilBaseTestCase):
+class TestPrintUtilWithNegativeInteger(metaclass=PrintUtilMetaTestCase):
     a = -14
     n = 2
     relevant_precision = 0
     precise_string = "-14.00"
 
 
-class TestPrintUtilWithOne(TestCase, PrintUtilBaseTestCase):
+class TestPrintUtilWithOne(metaclass=PrintUtilMetaTestCase):
     a = 1
     n = 3
     relevant_precision = 0
     precise_string = "1.000"
 
 
-class TestPrintUtilWithNegativeOne(TestCase, PrintUtilBaseTestCase):
+class TestPrintUtilWithNegativeOne(metaclass=PrintUtilMetaTestCase):
     a = -1
     n = 3
     relevant_precision = 0
     precise_string = "-1.000"
 
 
-class TestPrintUtilWithZero(TestCase, PrintUtilBaseTestCase):
+class TestPrintUtilWithZero(metaclass=PrintUtilMetaTestCase):
     a = 0
     n = 3
     relevant_precision = 0
     precise_string = "0.000"
 
 
-class TestPrintUtilWithFloatBiggerThanOneAndSmallN(TestCase, PrintUtilBaseTestCase):
+class TestPrintUtilWithFloatBiggerThanOneAndSmallN(metaclass=PrintUtilMetaTestCase):
     a = 3.141592
     n = 2
     relevant_precision = 0
     precise_string = "3.14"
 
 
-class TestPrintUtilWithFloatBiggerThanOneAndBigN(TestCase, PrintUtilBaseTestCase):
+class TestPrintUtilWithFloatBiggerThanOneAndBigN(metaclass=PrintUtilMetaTestCase):
     a = 3.52
     n = 5
     relevant_precision = 0
     precise_string = "3.52000"
 
 
-class TestPrintUtilWithFloatLessThanOneAndSmallN(TestCase, PrintUtilBaseTestCase):
+class TestPrintUtilWithFloatLessThanOneAndSmallN(metaclass=PrintUtilMetaTestCase):
     a = 0.3289
     n = 1
     relevant_precision = 1
     precise_string = "0.33"
 
 
-class TestPrintUtilWithFloatLessThanOneAndBigN(TestCase, PrintUtilBaseTestCase):
+class TestPrintUtilWithFloatLessThanOneAndBigN(metaclass=PrintUtilMetaTestCase):
     a = 0.52
     n = 3
     relevant_precision = 1
@@ -91,7 +91,7 @@ class TestPrintUtilWithFloatLessThanOneAndBigN(TestCase, PrintUtilBaseTestCase):
 
 
 class TestPrintUtilWithVerySmallFloatLessThanOneAndSmallN(
-    TestCase, PrintUtilBaseTestCase
+    metaclass=PrintUtilMetaTestCase
 ):
     a = 3.289e-5
     n = 1
@@ -100,7 +100,7 @@ class TestPrintUtilWithVerySmallFloatLessThanOneAndSmallN(
 
 
 class TestPrintUtilWithVerySmallFloatLessThanOneAndBigN(
-    TestCase, PrintUtilBaseTestCase
+    metaclass=PrintUtilMetaTestCase
 ):
     a = 3.289e-5
     n = 4
