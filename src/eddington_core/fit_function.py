@@ -24,9 +24,9 @@ class FitFunction:  # pylint: disable=invalid-name,too-many-instance-attributes
     :param name: The name of the function.
     :param syntax: The syntax of the fitting function
     :param a_derivative: a function representing the derivative of fit_func according
+     to the "a" array
     :param x_derivative: a function representing the derivative of fit_func according
      to x
-     to the "a" array
     :param title_name: same as "name" but in title case
     :param costumed: Is this fit functioned made from a string.
      This will be deprecated soon.
