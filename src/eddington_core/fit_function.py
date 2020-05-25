@@ -58,6 +58,13 @@ class FitFunction:  # pylint: disable=invalid-name,too-many-instance-attributes
             return None
         return self.name.title().replace("_", " ")
 
+    def __validate_parameters_number(self, a):
+        a_length = len(a)
+        if a_length != self.n:
+            raise FitFunctionRuntimeError(
+                f"input length should be {self.n}, got {a_length}"
+            )
+
     @classmethod
     def anonymous_function(cls, fit_func, n):
         """Creates a function without a name."""
@@ -99,15 +106,12 @@ class FitFunction:  # pylint: disable=invalid-name,too-many-instance-attributes
 
     def __call__(self, a, x):
         """Call the fit function as a regular callable."""
-        a_length = len(a)
-        if a_length != self.n:
-            raise FitFunctionRuntimeError(
-                f"input length should be {self.n}, got {a_length}"
-            )
+        self.__validate_parameters_number(a)
         return self.fit_func(a, x)
 
     def assign(self, a):
         """Assign the function parameters."""
+        self.__validate_parameters_number(a)
         return lambda x: self(a, x)
 
     @classmethod

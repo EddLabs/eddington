@@ -50,18 +50,6 @@ class TestFitFunction(TestCase):
             msg="Execution result is different than expected",
         )
 
-    def test_assign(self):
-        a = np.array([1, 2])
-        x = 3
-        assign_func = dummy_func1.assign(a)
-        result = assign_func(x)
-        self.assertAlmostEqual(
-            19,
-            result,
-            places=self.decimal,
-            msg="Execution result is different than expected",
-        )
-
     def test_call_failure_because_of_not_enough_parameters(self):
         a = np.array([1])
         x = 3
@@ -82,6 +70,36 @@ class TestFitFunction(TestCase):
             dummy_func1,
             a,
             x,
+        )
+
+    def test_assign(self):
+        a = np.array([1, 2])
+        x = 3
+        assign_func = dummy_func1.assign(a)
+        result = assign_func(x)
+        self.assertAlmostEqual(
+            19,
+            result,
+            places=self.decimal,
+            msg="Execution result is different than expected",
+        )
+
+    def test_assign_failure_because_of_not_enough_parameters(self):
+        a = np.array([1])
+        self.assertRaisesRegex(
+            FitFunctionRuntimeError,
+            "^input length should be 2, got 1$",
+            dummy_func1.assign,
+            a,
+        )
+
+    def test_assign_failure_because_of_too_many_parameters(self):
+        a = np.array([1, 2, 3])
+        self.assertRaisesRegex(
+            FitFunctionRuntimeError,
+            "^input length should be 2, got 3$",
+            dummy_func1.assign,
+            a,
         )
 
     def test_fit_function_representation(self):
