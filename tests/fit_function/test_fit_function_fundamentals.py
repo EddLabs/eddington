@@ -81,7 +81,7 @@ class TestFitFunction(TestCase):
             msg="Execution result is different than expected",
         )
 
-    def test_fix_value(self):
+    def test_call_func_with_fix_value(self):
         a = np.array([7, 2, 1])
         x = 2
         dummy_func2.fix(1, 3)
@@ -91,6 +91,30 @@ class TestFitFunction(TestCase):
             result,
             places=self.decimal,
             msg="Execution result is different than expected",
+        )
+
+    def test_call_x_derivative_with_fix_value(self):
+        a = np.array([7, 2, 1])
+        x = 2
+        dummy_func2.fix(1, 3)
+        result = dummy_func2.x_derivative(a, x)
+        self.assertAlmostEqual(
+            23,
+            result,
+            places=self.decimal,
+            msg="x derivative execution result is different than expected",
+        )
+
+    def test_call_a_derivative_with_fix_value(self):
+        a = np.array([7, 2, 1])
+        x = 2
+        dummy_func2.fix(1, 3)
+        result = dummy_func2.a_derivative(a, x)
+        np.testing.assert_almost_equal(
+            result,
+            np.array([1, 4, 8]),
+            decimal=self.decimal,
+            err_msg="a derivative execution result is different than expected",
         )
 
     def test_override_fix_value(self):

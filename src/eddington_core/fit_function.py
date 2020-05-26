@@ -1,4 +1,5 @@
 """Fitting function to evaluate with the fitting algorithm."""
+import functools
 from dataclasses import InitVar, dataclass, field
 from typing import Callable, Optional, Dict
 
@@ -35,8 +36,8 @@ class FitFunction:  # pylint: disable=invalid-name,too-many-instance-attributes
     n: int = field(repr=False)
     name: Optional[str] = field()
     syntax: Optional[str] = field(default=None)
-    a_derivative: np.ndarray = field(default=None, repr=False)
-    x_derivative: np.ndarray = field(default=None, repr=False)
+    a_derivative: Optional[Callable] = field(default=None, repr=False)
+    x_derivative: Optional[Callable] = field(default=None, repr=False)
     title_name: str = field(init=False, repr=False)
     fixed: Dict[int, float] = field(init=False, repr=False)
     save: InitVar[bool] = True
@@ -45,6 +46,8 @@ class FitFunction:  # pylint: disable=invalid-name,too-many-instance-attributes
         """Post init methods."""
         self.title_name = self.__get_title_name()
         self.fixed = dict()
+        self.x_derivative = self.__wrap_x_derivative(self.x_derivative)
+        self.a_derivative = self.__wrap_a_derivative(self.a_derivative)
         if save:
             FitFunctionsRegistry.add(self)
 
@@ -60,17 +63,7 @@ class FitFunction:  # pylint: disable=invalid-name,too-many-instance-attributes
 
     def __call__(self, *args):
         """Call the fit function as a regular callable."""
-        if len(args) == 0:
-            raise FitFunctionRuntimeError(
-                f'No parameters has been given to "{self.name}"'
-            )
-        if len(args) == 1:
-            a = [self.fixed[i] for i in sorted(self.fixed.keys())]
-            x = args[0]
-        else:
-            a = args[0]
-            a = self.__add_fixed_values(a)
-            x = args[1]
+        a, x = self.__extract_a_and_x(args)
         self.__validate_parameters_number(a)
         return self.fit_func(a, x)
 
@@ -105,6 +98,44 @@ class FitFunction:  # pylint: disable=invalid-name,too-many-instance-attributes
         """Same as name."""
         return self.name
 
+    def __wrap_x_derivative(self, method):
+        if method is None:
+            return None
+
+        @functools.wraps(method)
+        def wrapper(*args):
+            a, x = self.__extract_a_and_x(args)
+            self.__validate_parameters_number(a)
+            return method(a, x)
+
+        return wrapper
+
+    def __wrap_a_derivative(self, method):
+        if method is None:
+            return None
+
+        @functools.wraps(method)
+        def wrapper(*args):
+            a, x = self.__extract_a_and_x(args)
+            self.__validate_parameters_number(a)
+            result = method(a, x)
+            return np.delete(result, list(self.fixed.keys()), axis=0)
+
+        return wrapper
+
+    def __extract_a_and_x(self, args):
+        if len(args) == 0:
+            raise FitFunctionRuntimeError(
+                f'No parameters has been given to "{self.name}"'
+            )
+        if len(args) == 1:
+            a = [self.fixed[i] for i in sorted(self.fixed.keys())]
+            x = args[0]
+        else:
+            a = self.__add_fixed_values(args[0])
+            x = args[1]
+        return a, x
+
     def __add_fixed_values(self, a):
         for i in sorted(self.fixed.keys()):
             a = np.insert(a, i, self.fixed[i])
@@ -131,14 +162,16 @@ def fit_function(  # pylint: disable=invalid-name,too-many-arguments
 
     def wrapper(func):
         func_name = func.__name__ if name is None else name
-        return FitFunction(
-            fit_func=func,
-            n=n,
-            name=func_name,
-            syntax=syntax,
-            a_derivative=a_derivative,
-            x_derivative=x_derivative,
-            save=save,
+        return functools.wraps(func)(
+            FitFunction(
+                fit_func=func,
+                n=n,
+                name=func_name,
+                syntax=syntax,
+                a_derivative=a_derivative,
+                x_derivative=x_derivative,
+                save=save,
+            )
         )
 
     return wrapper
