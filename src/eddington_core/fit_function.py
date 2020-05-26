@@ -78,6 +78,7 @@ class FitFunction:  # pylint: disable=invalid-name,too-many-instance-attributes
         """Assign the function parameters."""
         self.__validate_parameters_number(a)
         self.fixed = dict(enumerate(a))
+        return self
 
     def fix(self, index, value):
         if index < 0 or index >= self.n:
@@ -86,6 +87,7 @@ class FitFunction:  # pylint: disable=invalid-name,too-many-instance-attributes
                 f"Indices should be between 0 and {self.n - 1}"
             )
         self.fixed[index] = value
+        return self
 
     def unfix(self, index):
         del self.fixed[index]
