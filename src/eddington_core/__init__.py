@@ -12,13 +12,24 @@ from eddington_core.exceptions import (
     InvalidGeneratorInitialization,
 )
 from eddington_core.fit_data import FitData
-from eddington_core.fit_function import FitFunction, fit_function
+from eddington_core.fit_function_class import FitFunction, fit_function
 from eddington_core.fit_function_generator import (
     FitFunctionGenerator,
     fit_function_generator,
 )
 from eddington_core.fit_functions_registry import FitFunctionsRegistry
 from eddington_core.fit_result import FitResult
+from eddington_core.fit_functions_list import (
+    constant,
+    exponential,
+    hyperbolic,
+    linear,
+    parabolic,
+    cos,
+    sin,
+    straight_power,
+    inverse_power,
+)
 
 __all__ = [
     # Fit functions infrastructure
@@ -27,6 +38,16 @@ __all__ = [
     "FitFunctionGenerator",
     "fit_function_generator",
     "FitFunctionsRegistry",
+    # Fit functions
+    "constant",
+    "exponential",
+    "hyperbolic",
+    "linear",
+    "parabolic",
+    "cos",
+    "sin",
+    "straight_power",
+    "inverse_power",
     # Exceptions
     "EddingtonException",
     "FitFunctionRuntimeError",

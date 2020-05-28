@@ -11,7 +11,8 @@ from eddington_core.exceptions import FitFunctionSaveError
 
 class TestFitFunctionRegistryAddAndRemove(TestCase):
     def setUp(self):
-        self.backup = frozenset(FitFunctionsRegistry.all())
+        self.backup = list(FitFunctionsRegistry.all())
+        FitFunctionsRegistry.clear()
         self.func1 = self.dummy_function(1)
         self.func2 = self.dummy_function(2)
         self.func3 = self.dummy_function(3)

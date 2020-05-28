@@ -1,0 +1,175 @@
+"""List of common fit functions."""
+import numpy as np
+
+from eddington_core.fit_function_class import fit_function
+
+
+@fit_function(
+    n=2,
+    syntax="a[0] + a[1] * x",
+    x_derivative=lambda a, x: np.full(shape=x.shape, fill_value=a[1]),
+    a_derivative=lambda a, x: np.stack((np.ones(shape=x.shape), x)),
+)  # pylint: disable=C0103
+def linear(a, x):
+    """
+    Simple linear fit function.
+
+    :param a: Coefficients array of length 2
+    :param x: free parameter
+    :return: float
+    """
+    return a[0] + a[1] * x
+
+
+@fit_function(
+    n=1,
+    syntax="a[0]",
+    x_derivative=lambda a, x: np.zeros(shape=x.shape),
+    a_derivative=lambda a, x: np.ones(shape=x.shape),
+)  # pylint: disable=C0103
+def constant(a, x):
+    """
+    Constant fit function.
+
+    :param a: Coefficients array of length 1
+    :param x: free parameter
+    :return: float
+    """
+    return np.full(fill_value=a[0], shape=x.shape)
+
+
+@fit_function(
+    n=3,
+    syntax="a[0] + a[1] * x + a[2] * x ^ 2",
+    x_derivative=lambda a, x: a[1] + 2 * a[2] * x,
+    a_derivative=lambda a, x: np.stack([np.ones(shape=x.shape), x, x ** 2]),
+)  # pylint: disable=C0103
+def parabolic(a, x):
+    """
+    Parabolic fit function.
+
+    :param a: Coefficients array of length 3
+    :param x: free parameter
+    :return: float
+    """
+    return a[0] + a[1] * x + a[2] * x ** 2
+
+
+@fit_function(
+    n=4,
+    name="straight_power",
+    x_derivative=lambda a, x: a[2] * a[0] * (x + a[1]) ** (a[2] - 1),
+    a_derivative=lambda a, x: np.stack(
+        [
+            (x + a[1]) ** a[2],
+            a[2] * a[0] * (x + a[1]) ** (a[2] - 1),
+            a[0] * np.log(x + a[1]) * (x + a[1]) ** a[2],
+            np.ones(shape=x.shape),
+        ]
+    ),
+)  # pylint: disable=C0103
+def straight_power(a, x):  # pylint: disable=C0103
+    return a[0] * (x + a[1]) ** a[2] + a[3]
+
+
+@fit_function(
+    n=4,
+    name="inverse_power",
+    x_derivative=lambda a, x: -a[2] * a[0] / (x + a[1]) ** (a[2] + 1),
+    a_derivative=lambda a, x: np.stack(
+        [
+            1 / (x + a[1]) ** a[2],
+            -a[2] * a[0] / (x + a[1]) ** (a[2] + 1),
+            -a[0] * np.log(x + a[1]) * (x + a[1]) ** a[2],
+            np.ones(shape=x.shape),
+        ]
+    ),
+)  # pylint: disable=C0103
+def inverse_power(a, x):  # pylint: disable=C0103
+    return a[0] / (x + a[1]) ** a[2] + a[3]
+
+
+@fit_function(
+    n=3,
+    syntax="a[0] / (x + a[1]) + a[2]",
+    x_derivative=lambda a, x: -a[0] / ((x + a[1]) ** 2),
+    a_derivative=lambda a, x: np.stack(
+        [1 / (x + a[1]), -a[0] / ((x + a[1]) ** 2), np.ones(shape=x.shape)]
+    ),
+)  # pylint: disable=C0103
+def hyperbolic(a, x):
+    """
+    Hyperbolic fit function.
+
+    :param a: Coefficients array of length 3
+    :param x: free parameter
+    :return: float
+    """
+    return a[0] / (x + a[1]) + a[2]
+
+
+@fit_function(
+    n=3,
+    syntax="a[0] * exp(a[1] * x) + a[2]",
+    x_derivative=lambda a, x: a[0] * a[1] * np.exp(a[1] * x),
+    a_derivative=lambda a, x: np.stack(
+        [np.exp(a[1] * x), a[0] * x * np.exp(a[1] * x), np.ones(x.shape)]
+    ),
+)  # pylint: disable=C0103
+def exponential(a, x):
+    """
+    Exponential fit function.
+
+    :param a: Coefficients array of length 3
+    :param x: free parameter
+    :return: float
+    """
+    return a[0] * np.exp(a[1] * x) + a[2]
+
+
+@fit_function(
+    n=4,
+    syntax="a[0] * cos(a[1] * x + a[2]) + a[3]",
+    x_derivative=lambda a, x: -a[0] * a[1] * np.sin(a[1] * x + a[2]),
+    a_derivative=lambda a, x: np.stack(
+        [
+            np.cos(a[1] * x + a[2]),
+            -a[0] * x * np.sin(a[1] * x + a[2]),
+            -a[0] * np.sin(a[1] * x + a[2]),
+            np.ones(shape=x.shape),
+        ]
+    ),
+)  # pylint: disable=C0103
+def cos(a, x):
+    """
+    Cosines fit function.
+
+    :param a: Coefficients array of length 4
+    :param x: free parameter
+    :return: float
+    """
+    return a[0] * np.cos(a[1] * x + a[2]) + a[3]
+
+
+@fit_function(
+    n=4,
+    syntax="a[0] * sin(a[1] * x + a[2]) + a[3]",
+    x_derivative=lambda a, x: a[0] * a[1] * np.cos(a[1] * x + a[2]),
+    a_derivative=lambda a, x: np.stack(
+        [
+            np.sin(a[1] * x + a[2]),
+            a[0] * x * np.cos(a[1] * x + a[2]),
+            a[0] * np.cos(a[1] * x + a[2]),
+            np.ones(shape=x.shape),
+        ]
+    ),
+)  # pylint: disable=C0103
+def sin(a, x):
+    """
+    Sine fit function.
+
+    :param a: Coefficients array of length 4
+    :param x: free parameter
+    :return: float
+    """
+    return a[0] * np.sin(a[1] * x + a[2]) + a[3]

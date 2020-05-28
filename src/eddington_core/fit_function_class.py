@@ -119,6 +119,8 @@ class FitFunction:  # pylint: disable=invalid-name,too-many-instance-attributes
             a, x = self.__extract_a_and_x(args)
             self.__validate_parameters_number(a)
             result = method(a, x)
+            if len(self.fixed) == 0:
+                return result
             return np.delete(result, list(self.fixed.keys()), axis=0)
 
         return wrapper
