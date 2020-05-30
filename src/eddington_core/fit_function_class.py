@@ -69,6 +69,7 @@ class FitFunction:  # pylint: disable=invalid-name,too-many-instance-attributes
 
     def assign(self, a):
         """Assign the function parameters."""
+        a = self.__add_fixed_values(a)
         self.__validate_parameters_number(a)
         self.fixed = dict(enumerate(a))
         return self

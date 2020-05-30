@@ -1,6 +1,7 @@
 """List of common fit functions."""
 import numpy as np
 
+from eddington_core.exceptions import FitFunctionLoadError
 from eddington_core.fit_function_class import fit_function
 
 
@@ -87,6 +88,40 @@ def straight_power(a, x):  # pylint: disable=C0103
 )  # pylint: disable=C0103
 def inverse_power(a, x):  # pylint: disable=C0103
     return a[0] / (x + a[1]) ** a[2] + a[3]
+
+
+def polynom(n):  # pylint: disable=C0103
+    """
+    Creates a polynomial fit function with parameters as coefficients.
+
+    :param n: Degree of the polynom.
+    :return: :class:`FitFunction`
+    """
+    n = int(n)
+    if n <= 0:
+        raise FitFunctionLoadError(f"n must be positive, got {n}")
+
+    if n == 1:
+        return linear
+
+    arange = np.arange(1, n + 1)
+
+    syntax = "a[0] + a[1] * x + " + " + ".join(
+        [f"a[{i}] * x ^ {i}" for i in arange[1:]]
+    )
+
+    @fit_function(
+        n=n + 1,
+        name=f"polynom_{n}",
+        syntax=syntax,
+        x_derivative=lambda a, x: polynom(n - 1)(arange * a[1:], x),
+        a_derivative=lambda a, x: np.stack([x ** i for i in range(n + 1)]),
+        save=False,
+    )  # pylint: disable=C0103
+    def func(a, x):
+        return sum([a[i] * x ** i for i in range(n + 1)])
+
+    return func
 
 
 @fit_function(
