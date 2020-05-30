@@ -141,4 +141,3 @@ class TestFitFunctionRegistryAddAndRemove(TestCase):
             value=2,
             save=True,
         )
-

@@ -12,7 +12,6 @@ class TestFitFunction(TestCase):
     def setUp(self):
         dummy_func1.clear_fixed()
 
-
     def test_name(self):
         self.assertEqual(
             "dummy_func1", dummy_func1.name, msg="Name is different than expected",
