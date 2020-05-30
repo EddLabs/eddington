@@ -1,9 +1,8 @@
 from dataclasses import dataclass
 from typing import List, Union
-
 import numpy as np
 
-from eddington_core.fit_functions_list import polynom
+from eddington_test import MetaTestCase, TestCase
 
 from eddington_core import (
     constant,
@@ -11,6 +10,7 @@ from eddington_core import (
     hyperbolic,
     linear,
     parabolic,
+    polynom,
     cos,
     sin,
     straight_power,
@@ -19,7 +19,6 @@ from eddington_core import (
     FitFunctionLoadError,
     FitFunctionsRegistry,
 )
-from eddington_test import MetaTestCase, TestCase
 
 
 class FitFunctionMetaTestCase(MetaTestCase):

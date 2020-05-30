@@ -6,7 +6,7 @@ from eddington_core import FitFunctionRuntimeError
 from tests.fit_function.dummy_functions import dummy_func1, dummy_func2
 
 
-class TestFitFunction(TestCase):
+class TestFitFunction(TestCase):  # pylint: disable=R0904
     decimal = 5
 
     def setUp(self):

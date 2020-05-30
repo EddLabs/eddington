@@ -1,7 +1,8 @@
 from typing import Dict
 from unittest import TestCase
-
+from mock import DEFAULT, call, patch
 import numpy as np
+
 from eddington_core import FitData
 from eddington_core.consts import (
     DEFAULT_MAX_COEFF,
@@ -12,7 +13,6 @@ from eddington_core.consts import (
     DEFAULT_XSIGMA,
     DEFAULT_YSIGMA,
 )
-from mock import DEFAULT, call, patch
 
 from tests.fit_function.dummy_functions import dummy_func1
 

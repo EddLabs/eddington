@@ -2,11 +2,10 @@ from collections import namedtuple
 from copy import deepcopy
 from pathlib import Path
 from unittest import TestCase
-
 import numpy as np
-from eddington_core import FitData, FitDataInvalidFileSyntax
 from mock import PropertyMock, mock_open, patch
 
+from eddington_core import FitData, FitDataInvalidFileSyntax
 from tests.fit_data import COLUMNS, CONTENT, ROWS, VALUES
 
 

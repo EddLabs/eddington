@@ -1,8 +1,8 @@
 import numpy as np
-from eddington_test import MetaTestCase
-
-from eddington_core import FitResult
 from mock import mock_open, patch
+
+from eddington_test import MetaTestCase
+from eddington_core import FitResult
 
 
 class FitResultMetaTestCase(MetaTestCase):
