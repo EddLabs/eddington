@@ -70,6 +70,13 @@ def parabolic(a, x):
     ),
 )  # pylint: disable=C0103
 def straight_power(a, x):  # pylint: disable=C0103
+    """
+    Represent fitting of y ~ x^n.
+
+    :param a: Coefficients array of length 4
+    :param x: free parameter
+    :return: float
+    """
     return a[0] * (x + a[1]) ** a[2] + a[3]
 
 
@@ -87,6 +94,13 @@ def straight_power(a, x):  # pylint: disable=C0103
     ),
 )  # pylint: disable=C0103
 def inverse_power(a, x):  # pylint: disable=C0103
+    """
+    Represent fitting of y ~ x^(-n).
+
+    :param a: Coefficients array of length 4
+    :param x: free parameter
+    :return: float
+    """
     return a[0] / (x + a[1]) ** a[2] + a[3]
 
 

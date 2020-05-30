@@ -75,6 +75,13 @@ class FitFunction:  # pylint: disable=invalid-name,too-many-instance-attributes
         return self
 
     def fix(self, index, value):
+        """
+        Fix parameter with predefined value.
+
+        :param index: The index of the parameter to fix. Starting from 0
+        :param value: The value to fix
+        :return: self
+        """
         if index < 0 or index >= self.n:
             raise FitFunctionRuntimeError(
                 f"Cannot fix index {index}. "
@@ -84,9 +91,21 @@ class FitFunction:  # pylint: disable=invalid-name,too-many-instance-attributes
         return self
 
     def unfix(self, index):
+        """
+        Unfix a fixed parameter.
+
+        :param index: The index of the parameter to unfix
+        :return: self
+        """
         del self.fixed[index]
+        return self
 
     def clear_fixed(self):
+        """
+        Clear all fixed parameters.
+
+        :return: self
+        """
         self.fixed.clear()
 
     @property
@@ -96,6 +115,7 @@ class FitFunction:  # pylint: disable=invalid-name,too-many-instance-attributes
 
     @property
     def active_parameters(self):
+        """Number of active parameters (aka, unfixed)."""
         return self.n - len(self.fixed)
 
     def __wrap_x_derivative(self, method):
