@@ -86,9 +86,12 @@ class FittingAlgorithmMetaTestCase(MetaTestCase):
         )
 
     def test_a(self):  # pylint: disable=W0613
-        np.testing.assert_almost_equal(
-            self.result.a,
-            self.expected_result["a"],
-            decimal=self.decimal,
-            err_msg="A is different than expected",
-        )
+        for i, (actual_a, expected_a) in enumerate(
+            zip(self.result.a, self.expected_result["a"])
+        ):
+            self.assertSmallEqual(
+                expected_a,
+                actual_a,
+                places=self.decimal,
+                msg=f"A is different than expected in the {i}th parameter",
+            )
