@@ -70,6 +70,7 @@ jobs:
             pip3 install eddington-static --user
             $HOME/.local/bin/eddington-static src
             $HOME/.local/bin/eddington-static tests --filter test
+            $HOME/.local/bin/eddington-static fitting_tests --filter test
       - run:
           name: "Import needed packages for release"
           command: |
