@@ -25,6 +25,7 @@ from eddington_core.fit_functions_list import (
     straight_power,
     inverse_power,
 )
+from eddington_core.fitting import fit_to_data
 
 __all__ = [
     # Fit functions infrastructure
@@ -41,6 +42,8 @@ __all__ = [
     "sin",
     "straight_power",
     "inverse_power",
+    # Fitting algorithm
+    "fit_to_data",
     # Exceptions
     "EddingtonException",
     "FitFunctionRuntimeError",
