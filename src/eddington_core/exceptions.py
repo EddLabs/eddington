@@ -9,10 +9,6 @@ class EddingtonException(Exception):  # noqa: D101
 # Fit Function Errors
 
 
-class InvalidGeneratorInitialization(EddingtonException):  # noqa: D101
-    pass
-
-
 class FitFunctionLoadError(EddingtonException):  # noqa: D101
     pass
 

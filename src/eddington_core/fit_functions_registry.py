@@ -13,17 +13,17 @@ class FitFunctionsRegistry:  # noqa: D415,D213,D205
 
     @classmethod
     def add(cls, func):
-        """Add a fit function or generator."""
+        """Add a fit function."""
         if func.name in cls.__name_to_func_dict:
             raise FitFunctionSaveError(
                 f'Cannot save "{func.name}" to registry'
-                " since there is another fit function or generator with this name"
+                " since there is another fit function with this name"
             )
         cls.__name_to_func_dict[func.name] = func
 
     @classmethod
     def remove(cls, func_name):
-        """Remove a fit function or generator."""
+        """Remove a fit function."""
         del cls.__name_to_func_dict[func_name]
 
     @classmethod
@@ -42,29 +42,15 @@ class FitFunctionsRegistry:  # noqa: D415,D213,D205
         return cls.__name_to_func_dict.keys()
 
     @classmethod
-    def get(cls, name):
-        """Get a fit function and generators or generator by name."""
+    def load(cls, name):
+        """Get a fit function and generators by name."""
         if not cls.exists(name):
-            raise FitFunctionLoadError(f"No fit function or generator named {name}")
+            raise FitFunctionLoadError(f"No fit function named {name}")
         return cls.__name_to_func_dict[name]
 
     @classmethod
-    def load(cls, name, *args):  # noqa: D415,D213,D205
-        """Get a :class:`FitFunction` by loading the function by name or initializing
-        it with a :class:`FitFunctionGenerator`.
-        """
-        func = cls.get(name)
-        if func.is_generator():
-            return func(*args)
-        if len(args) != 0:
-            raise FitFunctionLoadError(
-                f"{name} is not a generator and should not get parameters"
-            )
-        return func
-
-    @classmethod
     def exists(cls, func_name):
-        """Checks whether a fit function or generator exist."""
+        """Checks whether a fit function exist."""
         return func_name in cls.__name_to_func_dict
 
     @classmethod
@@ -81,6 +67,6 @@ class FitFunctionsRegistry:  # noqa: D415,D213,D205
         table = PrettyTable(field_names=["Function", "Syntax"])
         for func_name in functions:
             if cls.exists(func_name):
-                func = cls.get(func_name)
+                func = cls.load(func_name)
                 table.add_row([func.signature, func.syntax])
         return table

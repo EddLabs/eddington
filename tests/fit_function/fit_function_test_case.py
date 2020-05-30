@@ -132,11 +132,6 @@ class FitFunctionMetaTestCase(MetaTestCase):
                 f"on value {i}",
             )
 
-    def test_is_generator(self):
-        self.assertFalse(
-            self.func.is_generator(), msg="Fit function should not be a generator"
-        )
-
 
 @dataclass()
 class FittingFunctionTestCase:

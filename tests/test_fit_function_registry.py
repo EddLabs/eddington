@@ -4,7 +4,6 @@ from eddington_core import (
     FitFunctionLoadError,
     FitFunctionsRegistry,
     fit_function,
-    fit_function_generator,
 )
 from eddington_core.exceptions import FitFunctionSaveError
 
@@ -18,9 +17,7 @@ class TestFitFunctionRegistryAddAndRemove(TestCase):
         self.func3 = self.dummy_function(3)
         self.func4 = self.dummy_function(4, save=False)
 
-        self.generator1 = self.dummy_function_generator(1)
-
-        self.funcs = [self.func1, self.func2, self.func3, self.generator1]
+        self.funcs = [self.func1, self.func2, self.func3]
 
     def tearDown(self):
         FitFunctionsRegistry.clear()
@@ -40,57 +37,12 @@ class TestFitFunctionRegistryAddAndRemove(TestCase):
 
         return dummy_func
 
-    @classmethod
-    def dummy_function_generator(cls, value, save=True):
-        @fit_function_generator(
-            parameters="p",
-            name=f"dummy_generator{value}",
-            syntax=f"syntax_dummy_generator{value}",
-        )
-        def dummy_generator(param):
-            @fit_function(
-                n=2,
-                name=f"generated_dummy_function{param}_value{value}",
-                syntax=f"syntax_generated_dummy_function{param}_value{value}",
-                save=save,
-            )
-            def dummy_func(a, x):  # pylint: disable=W0613
-                return param * value
-
-            return dummy_func
-
-        return dummy_generator
-
-    def test_get_function(self):
-        actual_func = FitFunctionsRegistry.get(self.func1.name)
-        self.assertEqual(
-            self.func1,
-            actual_func,
-            msg="Registry get function returns different function than expected.",
-        )
-
-    def test_get_function_generator(self):
-        actual_generator = FitFunctionsRegistry.get(self.generator1.name)
-        self.assertEqual(
-            self.generator1,
-            actual_generator,
-            msg="Registry get function returns different generator than expected.",
-        )
-
     def test_load_function(self):
         actual_func = FitFunctionsRegistry.load(self.func1.name)
         self.assertEqual(
             self.func1,
             actual_func,
             msg="Registry get name function returns different function than expected.",
-        )
-
-    def test_load_generator(self):
-        actual_func = FitFunctionsRegistry.load(self.generator1.name, 2)
-        self.assertEqual(
-            "generated_dummy_function2_value1",
-            actual_func.name,
-            msg="Returned function is different than expected",
         )
 
     def test_exists(self):
@@ -153,17 +105,16 @@ class TestFitFunctionRegistryAddAndRemove(TestCase):
     def test_list(self):
         syntax = FitFunctionsRegistry.list()
         expected_string = """
-+---------------------+-------------------------+
-|       Function      |          Syntax         |
-+---------------------+-------------------------+
-|   dummy_function1   |  syntax_dummy_function1 |
-|   dummy_function2   |  syntax_dummy_function2 |
-|   dummy_function3   |  syntax_dummy_function3 |
-| dummy_generator1(p) | syntax_dummy_generator1 |
-+---------------------+-------------------------+"""
++-----------------+------------------------+
+|     Function    |         Syntax         |
++-----------------+------------------------+
+| dummy_function1 | syntax_dummy_function1 |
+| dummy_function2 | syntax_dummy_function2 |
+| dummy_function3 | syntax_dummy_function3 |
++-----------------+------------------------+"""
         self.assertEqual(
-            expected_string[1:],
-            str(syntax),
+            expected_string.strip(),
+            str(syntax).strip(),
             msg="Syntax of two functions is different than expected.",
         )
 
@@ -173,48 +124,21 @@ class TestFitFunctionRegistryAddAndRemove(TestCase):
             msg="Function was saved, even though it wasn't supposed to",
         )
 
-    def test_get_non_existing_function(self):
-        self.assertRaisesRegex(
-            FitFunctionLoadError,
-            f"^No fit function or generator named {self.func4.name}$",
-            FitFunctionsRegistry.get,
-            self.func4.name,
-        )
-
     def test_load_non_existing_function(self):
         self.assertRaisesRegex(
             FitFunctionLoadError,
-            f"^No fit function or generator named {self.func4.name}$",
+            f"^No fit function named {self.func4.name}$",
             FitFunctionsRegistry.load,
             self.func4.name,
-        )
-
-    def test_load_fit_function_with_parameters(self):
-        self.assertRaisesRegex(
-            FitFunctionLoadError,
-            f"^{self.func1.name} is not a generator and should not get parameters$",
-            FitFunctionsRegistry.load,
-            self.func1.name,
-            1,
-            2,
         )
 
     def test_saving_two_fit_functions_with_the_same_name(self):
         self.assertRaisesRegex(
             FitFunctionSaveError,
             '^Cannot save "dummy_function2" to registry '
-            "since there is another fit function or generator with this name$",
+            "since there is another fit function with this name$",
             self.dummy_function,
             value=2,
             save=True,
         )
 
-    def test_saving_two_fit_function_generators_with_the_same_name(self):
-        self.assertRaisesRegex(
-            FitFunctionSaveError,
-            '^Cannot save "dummy_generator1" to registry '
-            "since there is another fit function or generator with this name$",
-            self.dummy_function_generator,
-            value=1,
-            save=True,
-        )

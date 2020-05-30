@@ -88,11 +88,6 @@ class FitFunction:  # pylint: disable=invalid-name,too-many-instance-attributes
     def clear_fixed(self):
         self.fixed.clear()
 
-    @classmethod
-    def is_generator(cls):
-        """Indicates that this is not a :class:`FitFunctionGenerator`."""
-        return False
-
     @property
     def signature(self):
         """Same as name."""

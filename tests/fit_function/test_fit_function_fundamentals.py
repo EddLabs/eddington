@@ -12,10 +12,6 @@ class TestFitFunction(TestCase):
     def setUp(self):
         dummy_func1.clear_fixed()
 
-    def test_is_generator(self):
-        self.assertFalse(
-            dummy_func1.is_generator(), msg="Fit function is not a generator"
-        )
 
     def test_name(self):
         self.assertEqual(
