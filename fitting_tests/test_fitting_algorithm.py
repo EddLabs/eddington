@@ -1,9 +1,6 @@
 import json
 from collections import OrderedDict
 from pathlib import Path
-from unittest import TestCase
-
-import numpy as np
 
 from eddington_core import FitData, FitFunctionsRegistry
 from fitting_tests.fitting_test_case import FittingAlgorithmMetaTestCase
