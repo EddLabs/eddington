@@ -348,7 +348,7 @@ class TestPolynomInitializtion(TestCase):
             FitFunctionLoadError, "^n must be positive, got 0$", polynom, 0
         )
 
-    def test_initialize_polynom_with_negat_degree_raises_error(self):
+    def test_initialize_polynom_with_negative_degree_raises_error(self):
         self.assertRaisesRegex(
             FitFunctionLoadError, "^n must be positive, got -1$", polynom, -1
         )
