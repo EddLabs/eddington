@@ -27,13 +27,13 @@ def fit_to_data(
             func, use_x_derivative=use_x_derivative, use_a_derivative=use_a_derivative,
         )
     )
-    a0 = __get_a0(n=func.n, a0=a0)
+    a0 = __get_a0(n=func.active_parameters, a0=a0)
     real_data = RealData(x=data.x, y=data.y, sx=data.xerr, sy=data.yerr)
     odr = ODR(data=real_data, model=model, beta0=a0)
     output = odr.run()
     a = output.beta
     chi2 = output.sum_square  # pylint: disable=E1101
-    degrees_of_freedom = len(data.x) - func.n
+    degrees_of_freedom = len(data.x) - func.active_parameters
     return FitResult(
         a0=a0,
         a=a,

@@ -94,6 +94,10 @@ class FitFunction:  # pylint: disable=invalid-name,too-many-instance-attributes
         """Same as name."""
         return self.name
 
+    @property
+    def active_parameters(self):
+        return self.n - len(self.fixed)
+
     def __wrap_x_derivative(self, method):
         if method is None:
             return None
