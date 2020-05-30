@@ -87,7 +87,10 @@ jobs:
           command: |
             go get github.com/tcnksm/ghr
             VERSION=v$(python3 setup.py --version)
-            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ./dist
+            if [[ ${VERSION} == *"dev"* ]]; then
+               PRERELEASE="-prerelease"
+            fi
+            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${PRERELEASE} ${VERSION} ./dist
       - run:
           name: "Publish Package on pip"
           command: |
