@@ -25,7 +25,7 @@ jobs:
     - checkout
     - restore_cache:
         keys:
-          - tox-{{ checksum "tox.ini" }}-{{ checksum "setup.cfg" }}-{{ checksum ".coveragerc" }}
+          - tox-{{ .Environment.CACHE_VERSION }}-{{ checksum "tox.ini" }}-{{ checksum "setup.cfg" }}-{{ checksum ".coveragerc" }}
     - run:
         name: Install tox
         command: |
@@ -46,7 +46,7 @@ jobs:
     - save_cache:
         paths:
           - ~/project/.tox
-        key: tox-{{ checksum "tox.ini" }}-{{ checksum "setup.cfg" }}-{{ checksum ".coveragerc" }}
+        key: tox-{{ .Environment.CACHE_VERSION }}-{{ checksum "tox.ini" }}-{{ checksum "setup.cfg" }}-{{ checksum ".coveragerc" }}
     - store_test_results:
         path: test_results
     - store_artifacts:
@@ -58,7 +58,7 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - lib-{{ checksum "setup.cfg" }}
+            - lib-{{ .Environment.CACHE_VERSION }}-{{ checksum "setup.cfg" }}
       - run:
           name: "Install python and pip"
           command: |
@@ -99,7 +99,7 @@ jobs:
       - save_cache:
           paths:
             - ~/.local
-          key: lib-{{ checksum "setup.cfg" }}
+          key: lib-{{ .Environment.CACHE_VERSION }}-{{ checksum "setup.cfg" }}
 workflows:
   version: 2
   workflow:
