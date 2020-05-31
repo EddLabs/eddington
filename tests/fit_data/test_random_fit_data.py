@@ -55,7 +55,7 @@ class RandomFitDataTestCase:
         self.real_yerr = np.random.normal(size=self.measurements)
         self.y = (
             self.func(self.a, self.x + self.real_xerr)  # pylint: disable=E1121
-            + self.real_yerr
+            + self.real_yerr  # noqa: W503
         )
 
         self.set_random_array_side_effect()
