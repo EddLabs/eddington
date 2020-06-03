@@ -62,12 +62,13 @@ class FitResult:
 
     @property
     def pretty_string(self):
-        """Representation string."""
+        """Pretty representation string."""
         if self.__pretty_string is None:
             self.__pretty_string = self.__build_pretty_string()
         return self.__pretty_string
 
     def __repr__(self):
+        """Representation string."""
         return self.pretty_string
 
     def __build_pretty_string(self):
