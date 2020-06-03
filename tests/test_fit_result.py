@@ -1,5 +1,5 @@
 import numpy as np
-from mock import mock_open, patch
+from mock import mock_open, patch, call
 
 from eddington_test import MetaTestCase
 from eddington_core import FitResult
@@ -101,9 +101,14 @@ class FitResultMetaTestCase(MetaTestCase):
         path = "/path/to/output"
         mock_open_obj = mock_open()
         with patch("eddington_core.fit_result.open", mock_open_obj):
-            self.fit_result.export_to_file(path)
+            self.fit_result.print_or_export(path)
             mock_open_obj.assert_called_once_with(path, mode="w")
             mock_open_obj.return_value.write.assert_called_with(self.repr_string)
+
+    def test_print(self):
+        with patch("sys.stdout") as mock_print:
+            self.fit_result.print_or_export()
+            self.assertEqual(mock_print.write.call_args_list[0], call(self.repr_string))
 
 
 class TestStandardFitResult(metaclass=FitResultMetaTestCase):

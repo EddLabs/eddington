@@ -1,6 +1,6 @@
 """Fitting result class that will be returned by the fitting algorithm."""
 from dataclasses import dataclass, field
-from typing import Union
+from typing import Optional
 
 import numpy as np
 import scipy.stats as stats
@@ -34,9 +34,8 @@ class FitResult:
     chi2: float
     chi2_reduced: float = field(init=False)
     p_probability: float = field(init=False)
-    precision: int = 3
-
-    __repr_string: Union[str, None] = field(default=None, init=False, repr=False)
+    precision: int = field(default=3)
+    __pretty_string: Optional[str] = field(default=None, init=False)
 
     def __post_init__(self):
         """Post init methods."""
@@ -48,22 +47,30 @@ class FitResult:
         self.chi2_reduced = self.chi2 / self.degrees_of_freedom
         self.p_probability = stats.chi2.sf(self.chi2, self.degrees_of_freedom)
 
-    def export_to_file(self, file_path):
+    def print_or_export(self, file_path=None):
         """
-        Write the result to a file.
+        Write the result to a file or print it to console.
 
-        :param file_path: path to write the result in.
+        :param file_path: str ot None. Path to write the result in. if None, prints
+         to console.
         """
+        if file_path is None:
+            print(self.pretty_string)
+            return
         with open(file_path, mode="w") as output_file:
-            output_file.write(str(self))
+            output_file.write(self.pretty_string)
+
+    @property
+    def pretty_string(self):
+        """Representation string."""
+        if self.__pretty_string is None:
+            self.__pretty_string = self.__build_pretty_string()
+        return self.__pretty_string
 
     def __repr__(self):
-        """Representation string."""
-        if self.__repr_string is None:
-            self.__repr_string = self.__build_repr_string()
-        return self.__repr_string
+        return self.pretty_string
 
-    def __build_repr_string(self):
+    def __build_pretty_string(self):
         old_precision = np.get_printoptions()["precision"]
         np.set_printoptions(precision=self.precision)
         a_value_string = "\n".join(
