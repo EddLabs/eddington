@@ -62,6 +62,6 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install tox
-      - name: Run tests
+      - name: Run static code analysis
         run: |
           tox -e static
