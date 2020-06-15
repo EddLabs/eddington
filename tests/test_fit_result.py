@@ -277,4 +277,4 @@ def test_print(case_data):
     expected, fit_result = case_data.get()
     with mock.patch("sys.stdout") as mock_print:
         fit_result.print_or_export()
-        assert (mock_print.write.call_args_list[0], mock.call(expected["repr_string"]))
+        assert mock_print.write.call_args_list[0] == mock.call(expected["repr_string"])
