@@ -1,108 +1,92 @@
-from eddington_test import MetaTestCase
+from pytest_cases import cases_data, THIS_MODULE
 
 from eddington_core.print_util import to_precise_string, to_relevant_precision
 
 
-class PrintUtilMetaTestCase(MetaTestCase):
-    def test_relevant_precision(self):
-        _, actual_relevant_precision = to_relevant_precision(self.a)
-        self.assertEqual(
-            self.relevant_precision,
-            actual_relevant_precision,
-            msg="Relevant precision is different than expected",
-        )
-
-    def test_precise_string(self):
-        self.assertEqual(
-            self.precise_string,
-            to_precise_string(self.a, self.n),
-            msg="Relevant precision is different than expected",
-        )
+def case_int_with_2_zeroes():
+    inp = dict(a=14, n=2)
+    out = dict(relevant_precision=0, precise_string="14.00")
+    return inp, out
 
 
-class TestPrintUtilWithPositiveInteger(metaclass=PrintUtilMetaTestCase):
-    a = 14
-    n = 2
-    relevant_precision = 0
-    precise_string = "14.00"
+def case_int_with_4_zeroes():
+    inp = dict(a=3, n=4)
+    out = dict(relevant_precision=0, precise_string="3.0000")
+    return inp, out
 
 
-class TestPrintUtilWithSmallInteger(metaclass=PrintUtilMetaTestCase):
-    a = 3
-    n = 4
-    relevant_precision = 0
-    precise_string = "3.0000"
+def case_negative_int_with_2_zeroes():
+    inp = dict(a=-14, n=2)
+    out = dict(relevant_precision=0, precise_string="-14.00")
+    return inp, out
 
 
-class TestPrintUtilWithNegativeInteger(metaclass=PrintUtilMetaTestCase):
-    a = -14
-    n = 2
-    relevant_precision = 0
-    precise_string = "-14.00"
+def case_one_with_3_zeroes():
+    inp = dict(a=1, n=3)
+    out = dict(relevant_precision=0, precise_string="1.000")
+    return inp, out
 
 
-class TestPrintUtilWithOne(metaclass=PrintUtilMetaTestCase):
-    a = 1
-    n = 3
-    relevant_precision = 0
-    precise_string = "1.000"
+def case_negative_one_with_3_zeroes():
+    inp = dict(a=-1, n=3)
+    out = dict(relevant_precision=0, precise_string="-1.000")
+    return inp, out
 
 
-class TestPrintUtilWithNegativeOne(metaclass=PrintUtilMetaTestCase):
-    a = -1
-    n = 3
-    relevant_precision = 0
-    precise_string = "-1.000"
+def case_zero_with_3_zeroes():
+    inp = dict(a=0, n=3)
+    out = dict(relevant_precision=0, precise_string="0.000")
+    return inp, out
 
 
-class TestPrintUtilWithZero(metaclass=PrintUtilMetaTestCase):
-    a = 0
-    n = 3
-    relevant_precision = 0
-    precise_string = "0.000"
+def case_float_bigger_than_one_reduce_digits():
+    inp = dict(a=3.141592, n=2)
+    out = dict(relevant_precision=0, precise_string="3.14")
+    return inp, out
 
 
-class TestPrintUtilWithFloatBiggerThanOneAndSmallN(metaclass=PrintUtilMetaTestCase):
-    a = 3.141592
-    n = 2
-    relevant_precision = 0
-    precise_string = "3.14"
+def case_float_bigger_than_one_add_zeroes():
+    inp = dict(a=3.52, n=5)
+    out = dict(relevant_precision=0, precise_string="3.52000")
+    return inp, out
 
 
-class TestPrintUtilWithFloatBiggerThanOneAndBigN(metaclass=PrintUtilMetaTestCase):
-    a = 3.52
-    n = 5
-    relevant_precision = 0
-    precise_string = "3.52000"
+def case_float_smaller_than_one_reduce_digits():
+    inp = dict(a=0.3289, n=1)
+    out = dict(relevant_precision=1, precise_string="0.33")
+    return inp, out
 
 
-class TestPrintUtilWithFloatLessThanOneAndSmallN(metaclass=PrintUtilMetaTestCase):
-    a = 0.3289
-    n = 1
-    relevant_precision = 1
-    precise_string = "0.33"
+def case_float_smaller_than_one_add_zeroes():
+    inp = dict(a=0.52, n=3)
+    out = dict(relevant_precision=1, precise_string="0.5200")
+    return inp, out
 
 
-class TestPrintUtilWithFloatLessThanOneAndBigN(metaclass=PrintUtilMetaTestCase):
-    a = 0.52
-    n = 3
-    relevant_precision = 1
-    precise_string = "0.5200"
+def case_small_float_reduce_digits():
+    inp = dict(a=3.289e-5, n=1)
+    out = dict(relevant_precision=5, precise_string="3.3e-05")
+    return inp, out
 
 
-class TestPrintUtilWithVerySmallFloatLessThanOneAndSmallN(
-    metaclass=PrintUtilMetaTestCase
-):
-    a = 3.289e-5
-    n = 1
-    relevant_precision = 5
-    precise_string = "3.3e-05"
+def case_small_float_add_zeroes():
+    inp = dict(a=3.289e-5, n=4)
+    out = dict(relevant_precision=5, precise_string="3.2890e-05")
+    return inp, out
 
 
-class TestPrintUtilWithVerySmallFloatLessThanOneAndBigN(
-    metaclass=PrintUtilMetaTestCase
-):
-    a = 3.289e-5
-    n = 4
-    relevant_precision = 5
-    precise_string = "3.2890e-05"
+@cases_data(module=THIS_MODULE)
+def test_relevant_precision(case_data):
+    inp, out = case_data.get()
+    _, actual_relevant_precision = to_relevant_precision(inp["a"])
+    assert (
+        actual_relevant_precision == out["relevant_precision"]
+    ), "Relevant precision is different than expected"
+
+
+@cases_data(module=THIS_MODULE)
+def test_precise_string(case_data):
+    inp, out = case_data.get()
+    assert (
+        to_precise_string(inp["a"], inp["n"]) == out["precise_string"]
+    ), "Relevant precision is different than expected"
