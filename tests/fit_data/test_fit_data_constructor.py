@@ -1,6 +1,5 @@
 import pytest
-from pytest_cases import cases_data, THIS_MODULE, case_tags
-from collections import namedtuple
+from pytest_cases import cases_data, THIS_MODULE
 from copy import deepcopy
 
 from eddington_core import (
@@ -10,9 +9,7 @@ from eddington_core import (
     FitDataColumnsLengthError,
 )
 
-from tests.fit_data import COLUMNS, COLUMNS_NAMES
-
-ColumnsResult = namedtuple("ColumnsResult", ["x", "y", "xerr", "yerr"])
+from tests.fit_data import COLUMNS, COLUMNS_NAMES, ColumnsResult
 
 COLUMNS_OPTIONS = ["x_column", "xerr_column", "y_column", "yerr_column"]
 
