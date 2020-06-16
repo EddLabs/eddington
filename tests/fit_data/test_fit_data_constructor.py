@@ -1,8 +1,8 @@
+import pytest
+from pytest_cases import cases_data, THIS_MODULE, case_tags
+from collections import namedtuple
 from copy import deepcopy
-from typing import Dict
-from unittest import TestCase
 
-import numpy as np
 from eddington_core import (
     FitData,
     FitDataColumnExistenceError,
@@ -12,247 +12,158 @@ from eddington_core import (
 
 from tests.fit_data import COLUMNS, COLUMNS_NAMES
 
+ColumnsResult = namedtuple("ColumnsResult", ["x", "y", "xerr", "yerr"])
 
-class FitDataConstructorBaseTestCase(type):
-    fit_data: FitData
-
-    def __new__(mcs, name, bases, dct):
-        dct.update(
-            dict(
-                setUp=mcs.setUp,
-                test_x=mcs.test_x,
-                test_x_err=mcs.test_x_err,
-                test_y=mcs.test_y,
-                test_y_err=mcs.test_y_err,
-                test_all_columns=mcs.test_all_columns,
-                test_data=mcs.test_data,
-            )
-        )
-        return type(name, (TestCase, *bases), dct)
-
-    def setUp(self):
-        self.fit_data = FitData(COLUMNS, **self.kwargs)
-
-    def test_x(self):
-        np.testing.assert_equal(
-            COLUMNS[self.x], self.fit_data.x, err_msg="X is different than expected",
-        )
-
-    def test_x_err(self):
-        np.testing.assert_equal(
-            COLUMNS[self.xerr],
-            self.fit_data.xerr,
-            err_msg="X error is different than expected",
-        )
-
-    def test_y(self):
-        np.testing.assert_equal(
-            COLUMNS[self.y], self.fit_data.y, err_msg="Y is different than expected",
-        )
-
-    def test_y_err(self):
-        np.testing.assert_equal(
-            COLUMNS[self.yerr],
-            self.fit_data.yerr,
-            err_msg="Y error is different than expected",
-        )
-
-    def test_all_columns(self):
-        self.assertEqual(
-            COLUMNS_NAMES,
-            self.fit_data.all_columns,
-            msg="Columns are different than expected",
-        )
-
-    def test_data(self):
-        self.assertEqual(
-            COLUMNS_NAMES,
-            list(self.fit_data.data.keys()),
-            msg="Data keys are different than expected",
-        )
-        for key, item in self.fit_data.data.items():
-            np.testing.assert_equal(
-                item,
-                COLUMNS[key],
-                err_msg=f"Value of {key} is different than expected.",
-            )
+COLUMNS_OPTIONS = ["x_column", "xerr_column", "y_column", "yerr_column"]
 
 
-class TestFitDataConstructorWithoutArgs(metaclass=FitDataConstructorBaseTestCase):
-
-    x = "a"
-    xerr = "b"
-    y = "c"
-    yerr = "d"
-    kwargs: Dict = dict()
+def case_default():
+    fit_data = FitData(COLUMNS)
+    result = ColumnsResult(x="a", xerr="b", y="c", yerr="d")
+    return fit_data, result
 
 
-class TestFitDataConstructorWithIntX(metaclass=FitDataConstructorBaseTestCase):
-
-    x = "c"
-    xerr = "d"
-    y = "e"
-    yerr = "f"
-    kwargs = dict(x_column=3)
+def case_int_x_column():
+    fit_data = FitData(COLUMNS, x_column=3)
+    result = ColumnsResult(x="c", xerr="d", y="e", yerr="f",)
+    return fit_data, result
 
 
-class TestFitDataConstructorWithStringX(metaclass=FitDataConstructorBaseTestCase):
-
-    x = "c"
-    xerr = "d"
-    y = "e"
-    yerr = "f"
-    kwargs = dict(x_column="c")
+def case_string_x_column():
+    fit_data = FitData(COLUMNS, x_column="c")
+    result = ColumnsResult(x="c", xerr="d", y="e", yerr="f",)
+    return fit_data, result
 
 
-class TestFitDataConstructorWithIntY(metaclass=FitDataConstructorBaseTestCase):
-
-    x = "a"
-    xerr = "b"
-    y = "e"
-    yerr = "f"
-    kwargs = dict(y_column=5)
+def case_int_y_column():
+    fit_data = FitData(COLUMNS, y_column=5)
+    result = ColumnsResult(x="a", xerr="b", y="e", yerr="f")
+    return fit_data, result
 
 
-class TestFitDataConstructorWithStringY(metaclass=FitDataConstructorBaseTestCase):
-
-    x = "a"
-    xerr = "b"
-    y = "e"
-    yerr = "f"
-    kwargs = dict(y_column="e")
+def case_string_y_column():
+    fit_data = FitData(COLUMNS, y_column="e")
+    result = ColumnsResult(x="a", xerr="b", y="e", yerr="f")
+    return fit_data, result
 
 
-class TestFitDataConstructorWithIntXerr(metaclass=FitDataConstructorBaseTestCase):
-
-    x = "a"
-    xerr = "d"
-    y = "e"
-    yerr = "f"
-    kwargs = dict(xerr_column=4)
+def case_int_xerr_column():
+    fit_data = FitData(COLUMNS, xerr_column=4)
+    result = ColumnsResult(x="a", xerr="d", y="e", yerr="f",)
+    return fit_data, result
 
 
-class TestFitDataConstructorWithStringXerr(metaclass=FitDataConstructorBaseTestCase):
-
-    x = "a"
-    xerr = "d"
-    y = "e"
-    yerr = "f"
-    kwargs = dict(xerr_column="d")
+def case_string_xerr_column():
+    fit_data = FitData(COLUMNS, xerr_column="d")
+    result = ColumnsResult(x="a", xerr="d", y="e", yerr="f",)
+    return fit_data, result
 
 
-class TestFitDataConstructorWithIntYerr(metaclass=FitDataConstructorBaseTestCase):
-
-    x = "a"
-    xerr = "b"
-    y = "c"
-    yerr = "f"
-    kwargs = dict(yerr_column=6)
+def case_int_yerr_column():
+    fit_data = FitData(COLUMNS, yerr_column=6)
+    result = ColumnsResult(x="a", xerr="b", y="c", yerr="f")
+    return fit_data, result
 
 
-class TestFitDataConstructorWithStringYerr(metaclass=FitDataConstructorBaseTestCase):
-
-    x = "a"
-    xerr = "b"
-    y = "c"
-    yerr = "f"
-    kwargs = dict(yerr_column="f")
+def case_string_yerr_column():
+    fit_data = FitData(COLUMNS, yerr_column="f")
+    result = ColumnsResult(x="a", xerr="b", y="c", yerr="f")
+    return fit_data, result
 
 
-class TestFitDataConstructorWithXAndY(metaclass=FitDataConstructorBaseTestCase):
-
-    x = "c"
-    xerr = "d"
-    y = "h"
-    yerr = "i"
-    kwargs = dict(x_column=3, y_column="h")
+def case_x_and_y_column():
+    fit_data = FitData(COLUMNS, x_column=3, y_column="h")
+    result = ColumnsResult(x="c", xerr="d", y="h", yerr="i")
+    return fit_data, result
 
 
-class TestFitDataConstructorColumnsWithJumbled(
-    metaclass=FitDataConstructorBaseTestCase
-):
-
-    x = "c"
-    xerr = "a"
-    y = "b"
-    yerr = "i"
-    kwargs = dict(x_column=3, xerr_column=1, y_column="b", yerr_column=9,)
+def case_jumbled_columns():
+    fit_data = FitData(COLUMNS, x_column=3, xerr_column=1, y_column="b", yerr_column=9)
+    result = ColumnsResult(x="c", xerr="a", y="b", yerr="i")
+    return fit_data, result
 
 
-class FitDataConstructorRaiseColumnExceptionBaseTestCase(type):
-    def __new__(mcs, name, bases, dct):
-        dct.update(
-            dict(
-                check=mcs.check,
-                test_x_not_existing=mcs.test_x_not_existing,
-                test_x_zero_index=mcs.test_x_zero_index,
-                test_x_larger_than_size=mcs.test_x_larger_than_size,
-            )
-        )
-        return type(name, (TestCase, *bases), dct)
-
-    def check(self):
-        self.assertRaisesRegex(
-            self.exception_class, self.error_message, FitData, COLUMNS, **self.kwargs
-        )
-
-    def test_x_not_existing(self):
-        self.exception_class = FitDataColumnExistenceError
-        self.error_message = '^Could not find column "r" in data$'
-        self.kwargs = {self.column: "r"}
-
-        self.check()
-
-    def test_x_zero_index(self):
-        self.exception_class = FitDataColumnIndexError
-        self.error_message = (
-            "^No column number 0 in data. index should be between 1 and 10$"
-        )
-        self.kwargs = {self.column: 0}
-
-        self.check()
-
-    def test_x_larger_than_size(self):
-        self.exception_class = FitDataColumnIndexError
-        self.error_message = (
-            "^No column number 11 in data. index should be between 1 and 10$"
-        )
-        self.kwargs = {self.column: 11}
-
-        self.check()
+@cases_data(module=THIS_MODULE)
+def test_x(case_data):
+    fit_data, result = case_data.get()
+    assert COLUMNS[result.x] == pytest.approx(
+        fit_data.x
+    ), "X is different than expected"
 
 
-class TestFitDataConstructorRaiseColumnExceptionBaseXColumnByXColumn(
-    metaclass=FitDataConstructorRaiseColumnExceptionBaseTestCase
-):
-    column = "x_column"
+@cases_data(module=THIS_MODULE)
+def test_x_err(case_data):
+    fit_data, result = case_data.get()
+    assert COLUMNS[result.xerr] == pytest.approx(
+        fit_data.xerr
+    ), "X error is different than expected"
 
 
-class TestFitDataConstructorRaiseColumnExceptionBaseXErrColumnByXColumn(
-    metaclass=FitDataConstructorRaiseColumnExceptionBaseTestCase
-):
-    column = "xerr_column"
+@cases_data(module=THIS_MODULE)
+def test_y(case_data):
+    fit_data, result = case_data.get()
+    assert COLUMNS[result.y] == pytest.approx(
+        fit_data.y
+    ), "Y is different than expected"
 
 
-class TestFitDataConstructorRaiseColumnExceptionBaseYColumnByXColumn(
-    metaclass=FitDataConstructorRaiseColumnExceptionBaseTestCase
-):
-    column = "y_column"
+@cases_data(module=THIS_MODULE)
+def test_y_err(case_data):
+    fit_data, result = case_data.get()
+    assert COLUMNS[result.yerr] == pytest.approx(
+        fit_data.yerr
+    ), "Y error is different than expected"
 
 
-class TestFitDataConstructorRaiseColumnExceptionBaseYErrColumnByXColumn(
-    metaclass=FitDataConstructorRaiseColumnExceptionBaseTestCase
-):
-    column = "yerr_column"
+@cases_data(module=THIS_MODULE)
+def test_all_columns(case_data):
+    fit_data, result = case_data.get()
+    assert COLUMNS_NAMES == fit_data.all_columns, "Columns are different than expected"
 
 
-class TestFitDataConstructorGeneralExceptions(TestCase):
-    def test_exception_risen_because_of_columns_length(self):
-        data = deepcopy(COLUMNS)
-        data["a"] = data["a"][:-2]
-        self.assertRaisesRegex(
-            FitDataColumnsLengthError,
-            "^All columns in FitData should have the same length$",
-            FitData,
-            data,
-        )
+@cases_data(module=THIS_MODULE)
+def test_data(case_data):
+    fit_data, result = case_data.get()
+    assert (
+        COLUMNS_NAMES == list(fit_data.data.keys()),
+    ), "Data keys are different than expected"
+    for key, item in fit_data.data.items():
+        assert item == pytest.approx(
+            COLUMNS[key]
+        ), f"Value of {key} is different than expected."
+
+
+@pytest.mark.parametrize("column", COLUMNS_OPTIONS)
+def test_x_not_existing(column):
+    with pytest.raises(
+        FitDataColumnExistenceError, match='^Could not find column "r" in data$'
+    ):
+        FitData(COLUMNS, **{column: "r"})
+
+
+@pytest.mark.parametrize("column", COLUMNS_OPTIONS)
+def test_x_zero_index(column):
+    with pytest.raises(
+        FitDataColumnIndexError,
+        match="^No column number 0 in data. index should be between 1 and 10$",
+    ):
+        FitData(COLUMNS, **{column: 0})
+
+
+@pytest.mark.parametrize("column", COLUMNS_OPTIONS)
+def test_x_larger_than_size(column):
+    with pytest.raises(
+        FitDataColumnIndexError,
+        match="^No column number 11 in data. index should be between 1 and 10$",
+    ):
+        FitData(COLUMNS, **{column: 11})
+
+
+def test_exception_risen_because_of_columns_length():
+    data = deepcopy(COLUMNS)
+    data["a"] = data["a"][:-2]
+    with pytest.raises(
+        FitDataColumnsLengthError,
+        match="^All columns in FitData should have the same length$",
+    ):
+        FitData(data=data)
