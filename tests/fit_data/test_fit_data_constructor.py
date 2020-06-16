@@ -114,15 +114,15 @@ def test_y_err(case_data):
 
 @cases_data(module=THIS_MODULE)
 def test_all_columns(case_data):
-    fit_data, result = case_data.get()
+    fit_data, _ = case_data.get()
     assert COLUMNS_NAMES == fit_data.all_columns, "Columns are different than expected"
 
 
 @cases_data(module=THIS_MODULE)
 def test_data(case_data):
-    fit_data, result = case_data.get()
-    assert (
-        COLUMNS_NAMES == list(fit_data.data.keys()),
+    fit_data, _ = case_data.get()
+    assert COLUMNS_NAMES == list(
+        fit_data.data.keys()
     ), "Data keys are different than expected"
     for key, item in fit_data.data.items():
         assert item == pytest.approx(
