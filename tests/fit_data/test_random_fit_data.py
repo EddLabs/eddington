@@ -21,7 +21,6 @@ xerr = np.random.normal(size=DEFAULT_MEASUREMENTS)
 yerr = np.random.normal(size=DEFAULT_MEASUREMENTS)
 real_xerr = np.random.normal(size=DEFAULT_MEASUREMENTS)
 real_yerr = np.random.normal(size=DEFAULT_MEASUREMENTS)
-y = dummy_func1(a, x + real_xerr) + real_yerr  # pylint: disable=E1121  # noqa: W503
 delta = 10e-5
 
 
@@ -71,35 +70,38 @@ def random_fit_data(request, mocker, random_sigma_mock, random_error_mock):
 
 
 def test_x_data(random_fit_data):
-    data, expected = random_fit_data
+    data, _ = random_fit_data
     assert data.x == pytest.approx(
         x, rel=delta
     ), "Random x value of data is different than expected"
 
 
 def test_xerr_data(random_fit_data):
-    data, expected = random_fit_data
-    assert (
-        data.xerr == pytest.approx(xerr, rel=delta),
+    data, _ = random_fit_data
+    assert data.xerr == pytest.approx(
+        xerr, rel=delta
     ), "Random x error value of data is different than expected"
 
 
 def test_y_data(random_fit_data):
     data, expected = random_fit_data
-    assert (
-        data.y == pytest.approx(y, rel=delta),
+    params = expected["params"]
+    actual_a = params.get("a", a)
+    y = dummy_func1(actual_a, x + real_xerr) + real_yerr
+    assert data.y == pytest.approx(
+        y, rel=delta
     ), "Random y value of data is different than expected"
 
 
 def test_yerr_data(random_fit_data):
-    data, expected = random_fit_data
-    assert (
-        data.yerr == pytest.approx(yerr, rel=delta),
+    data, _ = random_fit_data
+    assert data.yerr == pytest.approx(
+        yerr, rel=delta
     ), "Random y error value of data is different than expected"
 
 
 def test_random_array_calls(random_fit_data):
-    data, expected = random_fit_data
+    _, expected = random_fit_data
     random_array = expected["random_array"]
     params = expected["params"]
     amin = params.get("min_coeff", DEFAULT_MIN_COEFF)
@@ -124,7 +126,7 @@ def test_random_array_calls(random_fit_data):
 
 
 def test_random_sigma_calls(random_fit_data):
-    data, expected = random_fit_data
+    _, expected = random_fit_data
     random_sigma = expected["random_sigma"]
     params = expected["params"]
     xsigma = params.get("xsigma", DEFAULT_XSIGMA)
@@ -140,7 +142,7 @@ def test_random_sigma_calls(random_fit_data):
 
 
 def test_random_error_calls(random_fit_data):
-    data, expected = random_fit_data
+    _, expected = random_fit_data
     random_error = expected["random_error"]
     assert random_error.call_count == 2
     assert random_error.call_args_list[0] == call(scales=xerr)
