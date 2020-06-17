@@ -1,154 +1,171 @@
 from collections import namedtuple
 from copy import deepcopy
 from pathlib import Path
-from unittest import TestCase
 import numpy as np
+import pytest
 from mock import PropertyMock, mock_open, patch
+from pytest_cases import parametrize_plus, fixture_ref
 
 from eddington_core import FitData, FitDataInvalidFileSyntax
 from tests.fit_data import COLUMNS, CONTENT, ROWS, VALUES
 
+DummyCell = namedtuple("DummyCell", "value")
+file_name = "file"
+filepath = Path("path/to") / file_name
+sheet_name = "sheet"
 
-class FitDataReadFromFileBaseTestCase:
-    @classmethod
-    def check_data_by_keys(cls, actual_fit_data):
-        for key in actual_fit_data.data.keys():
-            np.testing.assert_equal(
-                actual_fit_data.data[key],
-                COLUMNS[key],
-                err_msg="Data is different than expected",
-            )
 
-    @classmethod
-    def check_data_by_indexes(cls, actual_fit_data):
-        for key in actual_fit_data.data.keys():
-            np.testing.assert_equal(
-                actual_fit_data.data[key],
-                VALUES[key],
-                err_msg="Data is different than expected",
-            )
-
-    @classmethod
-    def check_columns(
-        cls, actual_fit_data, x_column=0, xerr_column=1, y_column=2, yerr_column=3
-    ):
+def check_data_by_keys(actual_fit_data):
+    for key in actual_fit_data.data.keys():
         np.testing.assert_equal(
-            actual_fit_data.x, VALUES[x_column], err_msg="X is different than expected",
+            actual_fit_data.data[key],
+            COLUMNS[key],
+            err_msg="Data is different than expected",
         )
+
+
+def check_data_by_indexes(actual_fit_data):
+    for key in actual_fit_data.data.keys():
         np.testing.assert_equal(
-            actual_fit_data.xerr,
-            VALUES[xerr_column],
-            err_msg="X Error is different than expected",
-        )
-        np.testing.assert_equal(
-            actual_fit_data.y, VALUES[y_column], err_msg="Y is different than expected",
-        )
-        np.testing.assert_equal(
-            actual_fit_data.yerr,
-            VALUES[yerr_column],
-            err_msg="Y Error is different than expected",
-        )
-
-    def test_read_with_headers_successful(self):
-        self.rows = ROWS
-
-        actual_fit_data = self.read()
-
-        self.check_data_by_keys(actual_fit_data)
-        self.check_columns(actual_fit_data)
-
-    def test_read_without_headers_successful(self):
-        self.rows = CONTENT
-
-        actual_fit_data = self.read()
-
-        self.check_data_by_indexes(actual_fit_data)
-        self.check_columns(actual_fit_data)
-
-    def test_read_without_headers_unsuccessful(self):
-        self.rows = deepcopy(CONTENT)
-        self.rows[1][0] = "f"
-
-        self.assertRaises(FitDataInvalidFileSyntax, self.read)
-
-    def test_read_with_x_column(self):
-        self.rows = ROWS
-
-        actual_fit_data = self.read(x_column=3)
-
-        self.check_columns(
-            actual_fit_data, x_column=2, xerr_column=3, y_column=4, yerr_column=5
-        )
-
-    def test_read_with_xerr_column(self):
-        self.rows = ROWS
-
-        actual_fit_data = self.read(xerr_column=3)
-
-        self.check_columns(
-            actual_fit_data, x_column=0, xerr_column=2, y_column=3, yerr_column=4
-        )
-
-    def test_read_with_y_column(self):
-        self.rows = ROWS
-
-        actual_fit_data = self.read(y_column=5)
-
-        self.check_columns(
-            actual_fit_data, x_column=0, xerr_column=1, y_column=4, yerr_column=5
-        )
-
-    def test_read_with_yerr_column(self):
-        self.rows = ROWS
-
-        actual_fit_data = self.read(yerr_column=5)
-
-        self.check_columns(
-            actual_fit_data, x_column=0, xerr_column=1, y_column=2, yerr_column=4
+            actual_fit_data.data[key],
+            VALUES[key],
+            err_msg="Data is different than expected",
         )
 
 
-class TestReadFitDataFromCSV(TestCase, FitDataReadFromFileBaseTestCase):
+def check_columns(
+    actual_fit_data, x_column=0, xerr_column=1, y_column=2, yerr_column=3
+):
+    np.testing.assert_equal(
+        actual_fit_data.x, VALUES[x_column], err_msg="X is different than expected",
+    )
+    np.testing.assert_equal(
+        actual_fit_data.xerr,
+        VALUES[xerr_column],
+        err_msg="X Error is different than expected",
+    )
+    np.testing.assert_equal(
+        actual_fit_data.y, VALUES[y_column], err_msg="Y is different than expected",
+    )
+    np.testing.assert_equal(
+        actual_fit_data.yerr,
+        VALUES[yerr_column],
+        err_msg="Y Error is different than expected",
+    )
 
-    file_name = "file"
-    filepath = Path("path/to") / file_name
 
-    def setUp(self):
-        csv_reader_patcher = patch("csv.reader")
-        self.reader = csv_reader_patcher.start()
-        self.addCleanup(csv_reader_patcher.stop)
+def set_csv_rows(reader, rows):
+    reader.return_value = rows
 
-    def read(self, **kwargs):
-        self.reader.return_value = self.rows
-        m_open = mock_open()
+
+@pytest.fixture
+def read_csv(mocker):
+    reader = mocker.patch("csv.reader")
+    m_open = mock_open()
+
+    def actual_read(**kwargs):
         with patch("eddington_core.fit_data.open", m_open):
-            actual_fit_data = FitData.read_from_csv(self.filepath, **kwargs)
+            actual_fit_data = FitData.read_from_csv(filepath, **kwargs)
         return actual_fit_data
 
+    return actual_read, dict(reader=reader, row_setter=set_csv_rows)
 
-class TestReadFitDataFromExcel(TestCase, FitDataReadFromFileBaseTestCase):
-    DummyCell = namedtuple("DummyCell", "value")
-    file_name = "file"
-    filepath = Path("path/to") / file_name
-    sheet_name = "sheet"
 
-    def setUp(self):
-        open_workbook_patcher = patch("xlrd.open_workbook")
-        self.open_workbook = open_workbook_patcher.start()
-        self.sheet = self.open_workbook.return_value.sheet_by_name.return_value
-        self.addCleanup(open_workbook_patcher.stop)
+def set_excel_rows(reader, rows):
+    def nrows():
+        return len(rows)
 
-        type(self.sheet).nrows = PropertyMock(side_effect=self.nrows)
-        self.sheet.row.side_effect = self.get_row
+    def get_row(i):
+        return [DummyCell(value=element) for element in rows[i]]
 
-    def nrows(self):
-        return len(self.rows)
+    sheet = reader.return_value.sheet_by_name.return_value
 
-    def get_row(self, i):
-        return [
-            TestReadFitDataFromExcel.DummyCell(value=element)
-            for element in self.rows[i]
-        ]
+    type(sheet).nrows = PropertyMock(side_effect=nrows)
+    sheet.row.side_effect = get_row
 
-    def read(self, **kwargs):
-        return FitData.read_from_excel(self.filepath, self.sheet_name, **kwargs)
+
+@pytest.fixture
+def mock_open_workbook(mocker):
+    open_workbook = mocker.patch("xlrd.open_workbook")
+    return open_workbook
+
+
+@pytest.fixture
+def read_excel(mock_open_workbook):
+    def actual_read(**kwargs):
+        return FitData.read_from_excel(filepath, sheet_name, **kwargs)
+
+    return actual_read, dict(reader=mock_open_workbook, row_setter=set_excel_rows)
+
+
+@parametrize_plus(["case"], [fixture_ref(read_csv), fixture_ref(read_excel)])
+def test_read_with_headers_successful(case):
+    read, mocks = case
+    mocks["row_setter"](mocks["reader"], ROWS)
+
+    actual_fit_data = read()
+
+    check_data_by_keys(actual_fit_data)
+    check_columns(actual_fit_data)
+
+
+@parametrize_plus(["case"], [fixture_ref(read_csv), fixture_ref(read_excel)])
+def test_read_without_headers_successful(case):
+    read, mocks = case
+    mocks["row_setter"](mocks["reader"], CONTENT)
+
+    actual_fit_data = read()
+
+    check_data_by_indexes(actual_fit_data)
+    check_columns(actual_fit_data)
+
+
+@parametrize_plus(["case"], [fixture_ref(read_csv), fixture_ref(read_excel)])
+def test_read_without_headers_unsuccessful(case):
+    read, mocks = case
+    rows = deepcopy(CONTENT)
+    rows[1][0] = "f"
+    mocks["row_setter"](mocks["reader"], rows)
+
+    with pytest.raises(FitDataInvalidFileSyntax):
+        read()
+
+
+@parametrize_plus(["case"], [fixture_ref(read_csv), fixture_ref(read_excel)])
+def test_read_with_x_column(case):
+    read, mocks = case
+    mocks["row_setter"](mocks["reader"], ROWS)
+
+    actual_fit_data = read(x_column=3)
+
+    check_columns(actual_fit_data, x_column=2, xerr_column=3, y_column=4, yerr_column=5)
+
+
+@parametrize_plus(["case"], [fixture_ref(read_csv), fixture_ref(read_excel)])
+def test_read_with_xerr_column(case):
+    read, mocks = case
+    mocks["row_setter"](mocks["reader"], ROWS)
+
+    actual_fit_data = read(xerr_column=3)
+
+    check_columns(actual_fit_data, x_column=0, xerr_column=2, y_column=3, yerr_column=4)
+
+
+@parametrize_plus(["case"], [fixture_ref(read_csv), fixture_ref(read_excel)])
+def test_read_with_y_column(case):
+    read, mocks = case
+    mocks["row_setter"](mocks["reader"], ROWS)
+
+    actual_fit_data = read(y_column=5)
+
+    check_columns(actual_fit_data, x_column=0, xerr_column=1, y_column=4, yerr_column=5)
+
+
+@parametrize_plus(["case"], [fixture_ref(read_csv), fixture_ref(read_excel)])
+def test_read_with_yerr_column(case):
+    read, mocks = case
+    mocks["row_setter"](mocks["reader"], ROWS)
+
+    actual_fit_data = read(yerr_column=5)
+
+    check_columns(actual_fit_data, x_column=0, xerr_column=1, y_column=2, yerr_column=4)
