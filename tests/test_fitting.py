@@ -1,10 +1,15 @@
-from typing import Dict
+import pytest
+from argparse import Namespace
 
 import numpy as np
-from eddington_test import MetaTestCase
-from mock import DEFAULT, patch
 
 from eddington_core import FitData, fit_function, fit_to_data
+
+a0 = np.array([8, 5])
+a = np.array([3, 4])
+aerr = np.array([0.1, 0.2])
+acov = np.array([[0.1, 0.2], [0.2, 0.3]])
+chi2 = 1.5
 
 
 def dummy_func_x_derivative(a, x):
@@ -40,140 +45,116 @@ def dummy_func_with_both_derivatives(a, x):
     return a[0] * x ** 2 + a[1]
 
 
-class FittingBaseTestCase(MetaTestCase):
-    a0 = np.array([8, 5])
-    a = np.array([3, 4])
-    aerr = np.array([0.1, 0.2])
-    acov = np.array([[0.1, 0.2], [0.2, 0.3]])
-    chi2 = 1.5
+@pytest.fixture
+def odr_mock(mocker):
+    odr = mocker.patch("eddington_core.fitting.ODR")
+    real_data = mocker.patch("eddington_core.fitting.RealData")
+    model = mocker.patch("eddington_core.fitting.Model")
+    odr.return_value.run.return_value = Namespace(
+        beta=a, sum_square=chi2, sd_beta=aerr, cov_beta=acov
+    )
+    return dict(odr=odr, real_data=real_data, model=model)
 
-    kwargs: Dict = {}
-    model_extra_kwargs: Dict = {}
 
-    def setUp(self):
-        odr_patcher = patch.multiple(
-            "eddington_core.fitting", ODR=DEFAULT, RealData=DEFAULT, Model=DEFAULT
-        )
-        odr_patches_dict = odr_patcher.start()
-        self.data = FitData.random(self.func)
-        self.model = odr_patches_dict["Model"]
-        self.real_data = odr_patches_dict["RealData"]
-        self.odr = odr_patches_dict["ODR"]
-
-        self.addCleanup(odr_patcher.stop)
-
-        self.odr.return_value.run.return_value = type(
-            "",
-            (object,),
-            dict(
-                beta=self.a,
-                sum_square=self.chi2,
-                sd_beta=self.aerr,
-                cov_beta=self.acov,
+@pytest.fixture(
+    params=[
+        dict(func=dummy_func),
+        dict(
+            func=dummy_func_with_x_derivative,
+            model_extra_kwargs=dict(fjacd=dummy_func_with_x_derivative.x_derivative),
+        ),
+        dict(
+            func=dummy_func_with_a_derivative,
+            model_extra_kwargs=dict(fjacb=dummy_func_with_a_derivative.a_derivative),
+        ),
+        dict(
+            func=dummy_func_with_both_derivatives,
+            model_extra_kwargs=dict(
+                fjacd=dummy_func_with_both_derivatives.x_derivative,
+                fjacb=dummy_func_with_both_derivatives.a_derivative,
             ),
-        )()
-
-        self.result = fit_to_data(
-            data=self.data, func=self.func, a0=self.a0, **self.kwargs
-        )
-
-    def test_fit_result(self):
-        np.testing.assert_equal(
-            self.result.a, self.a, err_msg="Result is different than expected"
-        )
-
-    def test_model(self):
-        self.model.assert_called_once_with(fcn=self.func, **self.model_extra_kwargs)
-
-    def test_real_data(self):
-        self.assertEqual(
-            self.real_data.call_args_list[0].kwargs.keys(),
-            {"x", "y", "sx", "sy"},
-            msg="Real data arguments are different than expected",
-        )
-        np.testing.assert_equal(
-            self.real_data.call_args_list[0].kwargs["x"],
-            self.data.x,
-            err_msg="X is different than expected",
-        )
-        np.testing.assert_equal(
-            self.real_data.call_args_list[0].kwargs["sx"],
-            self.data.xerr,
-            err_msg="X error is different than expected",
-        )
-        np.testing.assert_equal(
-            self.real_data.call_args_list[0].kwargs["y"],
-            self.data.y,
-            err_msg="Y is different than expected",
-        )
-        np.testing.assert_equal(
-            self.real_data.call_args_list[0].kwargs["sy"],
-            self.data.yerr,
-            err_msg="Y error is different than expected",
-        )
-
-    def test_odr(self):
-        self.odr.assert_called_once_with(
-            data=self.real_data.return_value,
-            model=self.model.return_value,
-            beta0=self.a0,
-        )
+        ),
+        dict(
+            func=dummy_func_with_both_derivatives,
+            kwargs=dict(use_x_derivative=False),
+            model_extra_kwargs=dict(
+                fjacb=dummy_func_with_both_derivatives.a_derivative,
+            ),
+        ),
+        dict(
+            func=dummy_func_with_both_derivatives,
+            kwargs=dict(use_a_derivative=False),
+            model_extra_kwargs=dict(
+                fjacd=dummy_func_with_both_derivatives.x_derivative,
+            ),
+        ),
+        dict(func=dummy_func, a0=None),
+    ]
+)
+def function_cases(odr_mock, request):
+    func, kwargs, model_extra_kwargs, fit_a0 = (
+        request.param["func"],
+        request.param.get("kwargs", {}),
+        request.param.get("model_extra_kwargs", {}),
+        request.param.get("a0", a0),
+    )
+    data = FitData.random(fit_func=func)
+    result = fit_to_data(data=data, func=func, a0=fit_a0, **kwargs)
+    return dict(
+        func=func,
+        data=data,
+        result=result,
+        model_extra_kwargs=model_extra_kwargs,
+        a0=fit_a0,
+        mocks=odr_mock,
+    )
 
 
-class TestFittingWithoutDerivatives(metaclass=FittingBaseTestCase):
-    func = dummy_func
+def test_fit_result(function_cases):
+    assert function_cases["result"].a == pytest.approx(
+        a
+    ), "Result is different than expected"
 
 
-class TestFittingWithXDerivative(metaclass=FittingBaseTestCase):
-    func = dummy_func_with_x_derivative
-    model_extra_kwargs = dict(fjacd=func.x_derivative)
+def test_model(function_cases):
+    model_extra_kwargs = function_cases["model_extra_kwargs"]
+    function_cases["mocks"]["model"].assert_called_once_with(
+        fcn=function_cases["func"], **model_extra_kwargs
+    )
 
 
-class TestFittingWithADerivative(metaclass=FittingBaseTestCase):
-    func = dummy_func_with_a_derivative
-    model_extra_kwargs = dict(fjacb=func.a_derivative)
+def test_real_data(function_cases):
+    real_data = function_cases["mocks"]["real_data"]
+    data = function_cases["data"]
+    assert real_data.call_args[1].keys() == {
+        "sx",
+        "sy",
+        "y",
+        "x",
+    }, "Real data arguments are different than expected"
+    assert real_data.call_args[1]["x"] == pytest.approx(
+        data.x
+    ), "X is different than expected"
+    assert real_data.call_args[1]["sx"] == pytest.approx(
+        data.xerr
+    ), "X error is different than expected"
+
+    assert real_data.call_args[1]["y"] == pytest.approx(
+        data.y
+    ), "Y is different than expected"
+    assert real_data.call_args[1]["sy"] == pytest.approx(
+        data.yerr
+    ), "Y error is different than expected"
 
 
-class TestFittingWithBothDerivatives(metaclass=FittingBaseTestCase):
-    func = dummy_func_with_both_derivatives
-    model_extra_kwargs = dict(fjacd=func.x_derivative, fjacb=func.a_derivative)
-
-
-class TestFittingWithoutUseXDerivative(metaclass=FittingBaseTestCase):
-    func = dummy_func_with_both_derivatives
-    kwargs = dict(use_x_derivative=False)
-    model_extra_kwargs = dict(fjacb=func.a_derivative)
-
-
-class TestFittingWithoutUseADerivative(metaclass=FittingBaseTestCase):
-    func = dummy_func_with_both_derivatives
-    kwargs = dict(use_a_derivative=False)
-    model_extra_kwargs = dict(fjacd=func.x_derivative)
-
-
-class TestFittingWithA0None(metaclass=FittingBaseTestCase):
-    a0 = None
-    func = dummy_func
-
-    def test_odr(self):
-        self.odr.assert_called_once()
-        self.assertEqual(
-            list(self.odr.call_args.kwargs.keys()),
-            ["data", "model", "beta0"],
-            msg="Kwargs keys are different than expected",
-        )
-        self.assertEqual(
-            self.real_data.return_value,
-            self.odr.call_args.kwargs["data"],
-            msg="Data is different than expected",
-        )
-        self.assertEqual(
-            self.model.return_value,
-            self.odr.call_args.kwargs["model"],
-            msg="Model is different than expected",
-        )
-        np.testing.assert_equal(
-            self.odr.call_args.kwargs["beta0"],
-            np.array([1, 1]),
-            err_msg="beta0 is different than expected",
-        )
+def test_odr(function_cases):
+    model = function_cases["mocks"]["model"]
+    real_data = function_cases["mocks"]["real_data"]
+    odr = function_cases["mocks"]["odr"]
+    fit_a0 = function_cases["a0"]
+    if fit_a0 is None:
+        fit_a0 = np.ones(shape=2)
+    assert odr.call_args[1].keys() == {"data", "model", "beta0"}
+    assert odr.call_args[1]["data"] == real_data.return_value
+    assert odr.call_args[1]["model"] == model.return_value
+    assert odr.call_args[1]["beta0"] == pytest.approx(fit_a0)

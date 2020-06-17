@@ -1,124 +1,21 @@
+import mock
+import pytest
+from pytest_cases import cases_data, THIS_MODULE
 import numpy as np
-from mock import mock_open, patch, call
 
-from eddington_test import MetaTestCase
 from eddington_core import FitResult
 
 
-class FitResultMetaTestCase(MetaTestCase):
+def case_standard():
 
-    decimal = 5
-
-    def setUp(self):
-        self.fit_result = FitResult(
-            a0=self.a0,
-            a=self.a,
-            aerr=self.aerr,
-            acov=self.acov,
-            chi2=self.chi2,
-            degrees_of_freedom=self.degrees_of_freedom,
-        )
-
-    def test_a0(self):
-        np.testing.assert_almost_equal(
-            self.fit_result.a0,
-            self.a0,
-            decimal=self.decimal,
-            err_msg="Initial Guess is different than expected",
-        )
-
-    def test_a(self):
-        np.testing.assert_almost_equal(
-            self.fit_result.a,
-            self.a,
-            decimal=self.decimal,
-            err_msg="Calculated parameters are different than expected",
-        )
-
-    def test_aerr(self):
-        np.testing.assert_almost_equal(
-            self.fit_result.aerr,
-            self.aerr,
-            decimal=self.decimal,
-            err_msg="Parameters errors are different than expected",
-        )
-
-    def test_arerr(self):
-        np.testing.assert_almost_equal(
-            self.fit_result.arerr,
-            self.arerr,
-            decimal=self.decimal,
-            err_msg="Parameters relative errors are different than expected",
-        )
-
-    def test_acov(self):
-        np.testing.assert_almost_equal(
-            self.fit_result.acov,
-            self.acov,
-            decimal=self.decimal,
-            err_msg="Parameters covariance is different than expected",
-        )
-
-    def test_chi2(self):
-        self.assertAlmostEqual(
-            self.fit_result.chi2,
-            self.chi2,
-            places=self.decimal,
-            msg="Chi2 is different than expected",
-        )
-
-    def test_chi2_reduced(self):
-        self.assertAlmostEqual(
-            self.fit_result.chi2_reduced,
-            self.chi2_reduced,
-            places=self.decimal,
-            msg="Chi2 reduced is different than expected",
-        )
-
-    def test_degrees_of_freedom(self):
-        self.assertEqual(
-            self.fit_result.degrees_of_freedom,
-            self.degrees_of_freedom,
-            msg="Degrees of freedom are different than expected",
-        )
-
-    def test_p_probability(self):
-        self.assertAlmostEqual(
-            self.fit_result.p_probability,
-            self.p_probability,
-            places=self.decimal,
-            msg="Chi2 reduced is different than expected",
-        )
-
-    def test_representation(self):
-        self.assertEqual(
-            self.repr_string,
-            str(self.fit_result),
-            msg="Representation is different than expected",
-        )
-
-    def test_export_to_file(self):
-        path = "/path/to/output"
-        mock_open_obj = mock_open()
-        with patch("eddington_core.fit_result.open", mock_open_obj):
-            self.fit_result.print_or_export(path)
-            mock_open_obj.assert_called_once_with(path, mode="w")
-            mock_open_obj.return_value.write.assert_called_with(self.repr_string)
-
-    def test_print(self):
-        with patch("sys.stdout") as mock_print:
-            self.fit_result.print_or_export()
-            self.assertEqual(mock_print.write.call_args_list[0], call(self.repr_string))
-
-
-class TestStandardFitResult(metaclass=FitResultMetaTestCase):
-
-    a0 = [1.0, 3.0]
-    a = [1.1, 2.98]
-    aerr = [0.1, 0.76]
-    acov = [[0.01, 2.3], [2.3, 0.988]]
-    chi2 = 8.276
-    degrees_of_freedom = 5
+    kwargs = dict(
+        a0=[1.0, 3.0],
+        a=[1.1, 2.98],
+        aerr=[0.1, 0.76],
+        acov=[[0.01, 2.3], [2.3, 0.988]],
+        chi2=8.276,
+        degrees_of_freedom=5,
+    )
     chi2_reduced = 1.6552
     p_probability = 0.14167
     arerr = [9.09091, 25.50336]
@@ -138,16 +35,29 @@ Degrees of freedom: 5
 Chi squared reduced: 1.655
 P-probability: 0.1417
 """
+    fit_result = FitResult(**kwargs)
+    return (
+        dict(
+            chi2_reduced=chi2_reduced,
+            p_probability=p_probability,
+            arerr=arerr,
+            repr_string=repr_string,
+            delta=10e-5,
+            **kwargs,
+        ),
+        fit_result,
+    )
 
 
-class TestFitResultWithZeroError(metaclass=FitResultMetaTestCase):
-
-    a0 = [1.0, 3.0]
-    a = [1.1, 2.98]
-    aerr = [0.0, 0.0]
-    acov = [[0.0, 0.0], [0.0, 0.0]]
-    chi2 = 8.276
-    degrees_of_freedom = 5
+def case_with_zero_error():
+    kwargs = dict(
+        a0=[1.0, 3.0],
+        a=[1.1, 2.98],
+        aerr=[0.0, 0.0],
+        acov=[[0.0, 0.0], [0.0, 0.0]],
+        chi2=8.276,
+        degrees_of_freedom=5,
+    )
     chi2_reduced = 1.6552
     p_probability = 0.14167
     arerr = [0.0, 0.0]
@@ -167,16 +77,30 @@ Degrees of freedom: 5
 Chi squared reduced: 1.655
 P-probability: 0.1417
 """
+    fit_result = FitResult(**kwargs)
+    return (
+        dict(
+            chi2_reduced=chi2_reduced,
+            p_probability=p_probability,
+            arerr=arerr,
+            repr_string=repr_string,
+            delta=10e-5,
+            **kwargs,
+        ),
+        fit_result,
+    )
 
 
-class TestFitResultWithZeroValue(metaclass=FitResultMetaTestCase):
+def case_with_zero_value():
 
-    a0 = [1.0, 3.0]
-    a = [0.0, 0.0]
-    aerr = [0.1, 0.76]
-    acov = [[0.01, 2.3], [2.3, 0.988]]
-    chi2 = 8.276
-    degrees_of_freedom = 5
+    kwargs = dict(
+        a0=[1.0, 3.0],
+        a=[0.0, 0.0],
+        aerr=[0.1, 0.76],
+        acov=[[0.01, 2.3], [2.3, 0.988]],
+        chi2=8.276,
+        degrees_of_freedom=5,
+    )
     chi2_reduced = 1.6552
     p_probability = 0.14167
     arerr = [np.inf, np.inf]
@@ -196,16 +120,30 @@ Degrees of freedom: 5
 Chi squared reduced: 1.655
 P-probability: 0.1417
 """
+    fit_result = FitResult(**kwargs)
+    return (
+        dict(
+            chi2_reduced=chi2_reduced,
+            p_probability=p_probability,
+            arerr=arerr,
+            repr_string=repr_string,
+            delta=10e-5,
+            **kwargs,
+        ),
+        fit_result,
+    )
 
 
-class TestFitResultWithSmallPProbability(metaclass=FitResultMetaTestCase):
+def case_with_small_p_probability():
 
-    a0 = [1.0, 3.0]
-    a = [1.1, 2.98]
-    aerr = [0.1, 0.76]
-    acov = [[0.01, 2.3], [2.3, 0.988]]
-    chi2 = 43.726
-    degrees_of_freedom = 5
+    kwargs = dict(
+        a0=[1.0, 3.0],
+        a=[1.1, 2.98],
+        aerr=[0.1, 0.76],
+        acov=[[0.01, 2.3], [2.3, 0.988]],
+        chi2=43.726,
+        degrees_of_freedom=5,
+    )
     chi2_reduced = 8.7452
     p_probability = 2.63263e-8
     arerr = [9.09091, 25.50336]
@@ -225,3 +163,118 @@ Degrees of freedom: 5
 Chi squared reduced: 8.745
 P-probability: 2.633e-08
 """
+    fit_result = FitResult(**kwargs)
+    return (
+        dict(
+            chi2_reduced=chi2_reduced,
+            p_probability=p_probability,
+            arerr=arerr,
+            repr_string=repr_string,
+            delta=10e-5,
+            **kwargs,
+        ),
+        fit_result,
+    )
+
+
+@cases_data(module=THIS_MODULE)
+def test_a0(case_data):
+    expected, fit_result = case_data.get()
+    assert fit_result.a0 == pytest.approx(
+        expected["a0"], rel=expected["delta"]
+    ), "Initial Guess is different than expected"
+
+
+@cases_data(module=THIS_MODULE)
+def test_a(case_data):
+    expected, fit_result = case_data.get()
+    assert fit_result.a == pytest.approx(
+        expected["a"], rel=expected["delta"]
+    ), "Calculated parameters are different than expected"
+
+
+@cases_data(module=THIS_MODULE)
+def test_aerr(case_data):
+    expected, fit_result = case_data.get()
+    assert fit_result.aerr == pytest.approx(
+        expected["aerr"], rel=expected["delta"]
+    ), "Parameters errors are different than expected"
+
+
+@cases_data(module=THIS_MODULE)
+def test_arerr(case_data):
+    expected, fit_result = case_data.get()
+    assert fit_result.arerr == pytest.approx(
+        expected["arerr"], rel=expected["delta"]
+    ), "Parameters relative errors are different than expected"
+
+
+@cases_data(module=THIS_MODULE)
+def test_acov(case_data):
+    expected, fit_result = case_data.get()
+    expected_acov = np.array(expected["acov"])
+    actual_acov = fit_result.acov
+    assert actual_acov.shape == expected_acov.shape
+    for i in range(actual_acov.shape[0]):
+        assert actual_acov[i, :] == pytest.approx(
+            expected_acov[i, :], rel=expected["delta"]
+        ), f"Parameters covariance are different than expected in row {i}"
+
+
+@cases_data(module=THIS_MODULE)
+def test_chi2(case_data):
+    expected, fit_result = case_data.get()
+    assert fit_result.chi2 == pytest.approx(
+        expected["chi2"], rel=expected["delta"]
+    ), "Chi2 is different than expected"
+
+
+@cases_data(module=THIS_MODULE)
+def test_chi2_reduced(case_data):
+    expected, fit_result = case_data.get()
+    assert fit_result.chi2_reduced == pytest.approx(
+        expected["chi2_reduced"], rel=expected["delta"]
+    ), "Chi2 reduced is different than expected"
+
+
+@cases_data(module=THIS_MODULE)
+def test_degrees_of_freedom(case_data):
+    expected, fit_result = case_data.get()
+    assert (
+        fit_result.degrees_of_freedom == expected["degrees_of_freedom"]
+    ), "Degrees of freedom are different than expected"
+
+
+@cases_data(module=THIS_MODULE)
+def test_p_probability(case_data):
+    expected, fit_result = case_data.get()
+    assert fit_result.p_probability == pytest.approx(
+        expected["p_probability"], rel=expected["delta"]
+    ), "Chi2 reduced is different than expected"
+
+
+@cases_data(module=THIS_MODULE)
+def test_representation(case_data):
+    expected, fit_result = case_data.get()
+    assert expected["repr_string"] == str(
+        fit_result
+    ), "Representation is different than expected"
+
+
+@cases_data(module=THIS_MODULE)
+def test_export_to_file(case_data):
+    expected, fit_result = case_data.get()
+    path = "/path/to/output"
+    mock_open_obj = mock.mock_open()
+    with mock.patch("eddington_core.fit_result.open", mock_open_obj):
+        fit_result.print_or_export(path)
+        mock_open_obj.assert_called_once_with(path, mode="w")
+        mock_open_obj.return_value.write.assert_called_with(expected["repr_string"])
+
+
+@cases_data(module=THIS_MODULE)
+def test_print(case_data):
+    expected, fit_result = case_data.get()
+    with mock.patch("sys.stdout") as mock_print:
+        fit_result.print_or_export()
+        assert mock_print.write.call_args_list[0] == mock.call(expected["repr_string"])

@@ -1,4 +1,4 @@
-from unittest import TestCase
+import pytest
 
 from eddington_core import (
     FitFunctionLoadError,
@@ -8,136 +8,140 @@ from eddington_core import (
 from eddington_core.exceptions import FitFunctionSaveError
 
 
-class TestFitFunctionRegistryAddAndRemove(TestCase):
-    def setUp(self):
-        self.backup = list(FitFunctionsRegistry.all())
-        FitFunctionsRegistry.clear()
-        self.func1 = self.dummy_function(1)
-        self.func2 = self.dummy_function(2)
-        self.func3 = self.dummy_function(3)
-        self.func4 = self.dummy_function(4, save=False)
+def dummy_function(value, save=True):
+    @fit_function(
+        n=2,
+        name=f"dummy_function{value}",
+        syntax=f"syntax_dummy_function{value}",
+        save=save,
+    )
+    def dummy_func(a, x):  # pylint: disable=W0613
+        return value
 
-        self.funcs = [self.func1, self.func2, self.func3]
+    return dummy_func
 
-    def tearDown(self):
-        FitFunctionsRegistry.clear()
-        for func in self.backup:
-            FitFunctionsRegistry.add(func)
 
-    @classmethod
-    def dummy_function(cls, value, save=True):
-        @fit_function(
-            n=2,
-            name=f"dummy_function{value}",
-            syntax=f"syntax_dummy_function{value}",
-            save=save,
-        )
-        def dummy_func(a, x):  # pylint: disable=W0613
-            return value
+@pytest.fixture
+def dummy_functions():
+    backup = list(FitFunctionsRegistry.all())
+    FitFunctionsRegistry.clear()
+    func1 = dummy_function(1)
+    func2 = dummy_function(2, save=False)
+    func3 = dummy_function(3)
+    func4 = dummy_function(4)
+    func5 = dummy_function(5, save=False)
 
-        return dummy_func
+    yield dict(
+        saved_funcs=dict(func1=func1, func3=func3, func4=func4),
+        unsaved_funcs=[func2, func5],
+    )
 
-    def test_load_function(self):
-        actual_func = FitFunctionsRegistry.load(self.func1.name)
-        self.assertEqual(
-            self.func1,
-            actual_func,
-            msg="Registry get name function returns different function than expected.",
-        )
+    FitFunctionsRegistry.clear()
+    for func in backup:
+        FitFunctionsRegistry.add(func)
 
-    def test_exists(self):
-        for func in self.funcs:
-            self.assertTrue(
-                FitFunctionsRegistry.exists(func.name),
-                msg=f"Expected {func.name} to exists. It does not.",
-            )
 
-    def test_remove(self):
-        FitFunctionsRegistry.remove(self.func1.name)
-        self.assertFalse(
-            FitFunctionsRegistry.exists(self.func1.name),
-            msg=f"Expected {self.func1.name} to not exist. It does.",
-        )
+def test_load_function(dummy_functions):
+    for func in dummy_functions["saved_funcs"].values():
+        actual_func = FitFunctionsRegistry.load(func.name)
+        assert (
+            func == actual_func
+        ), "Registry get name function returns different function than expected."
 
-    def test_all(self):
-        self.assertEqual(
-            self.funcs,
-            list(FitFunctionsRegistry.all()),
-            msg="Functions are different than expected",
-        )
 
-    def test_names(self):
-        self.assertEqual(
-            [func.name for func in self.funcs],
-            list(FitFunctionsRegistry.names()),
-            msg="Functions names are different than expected",
-        )
+def test_exists(dummy_functions):
+    for func in dummy_functions["saved_funcs"].values():
+        assert FitFunctionsRegistry.exists(
+            func.name
+        ), f"Expected {func.name} to exists. It does not."
 
-    def test_syntax_of_one_function(self):
-        syntax = FitFunctionsRegistry.syntax([self.func1.name])
-        expected_string = """
+
+def test_remove(dummy_functions):
+    for func in dummy_functions["saved_funcs"].values():
+        FitFunctionsRegistry.remove(func.name)
+        assert not FitFunctionsRegistry.exists(
+            func.name
+        ), f"Expected {func.name} to not exist. It does."
+
+
+def test_all(dummy_functions):
+    assert list(dummy_functions["saved_funcs"].values()) == list(
+        FitFunctionsRegistry.all()
+    ), "Functions are different than expected"
+
+
+def test_names(dummy_functions):
+    assert [func.name for func in dummy_functions["saved_funcs"].values()] == list(
+        FitFunctionsRegistry.names()
+    ), "Functions names are different than expected"
+
+
+def test_syntax_of_one_function(dummy_functions):
+    syntax = FitFunctionsRegistry.syntax([dummy_functions["saved_funcs"]["func1"].name])
+    expected_string = """
 +-----------------+------------------------+
 |     Function    |         Syntax         |
 +-----------------+------------------------+
 | dummy_function1 | syntax_dummy_function1 |
 +-----------------+------------------------+"""
-        self.assertEqual(
-            expected_string[1:],
-            str(syntax),
-            msg="Syntax of one function is different than expected.",
-        )
+    assert expected_string[1:] == str(
+        syntax
+    ), "Syntax of one function is different than expected."
 
-    def test_syntax_of_two_functions(self):
-        syntax = FitFunctionsRegistry.syntax([self.func1.name, self.func3.name])
-        expected_string = """
+
+def test_syntax_of_two_functions(dummy_functions):
+    syntax = FitFunctionsRegistry.syntax(
+        [
+            dummy_functions["saved_funcs"]["func1"].name,
+            dummy_functions["saved_funcs"]["func3"].name,
+        ]
+    )
+    expected_string = """
 +-----------------+------------------------+
 |     Function    |         Syntax         |
 +-----------------+------------------------+
 | dummy_function1 | syntax_dummy_function1 |
 | dummy_function3 | syntax_dummy_function3 |
 +-----------------+------------------------+"""
-        self.assertEqual(
-            expected_string[1:],
-            str(syntax),
-            msg="Syntax of two functions is different than expected.",
-        )
+    assert expected_string[1:] == str(
+        syntax
+    ), "Syntax of two functions is different than expected."
 
-    def test_list(self):
-        syntax = FitFunctionsRegistry.list()
-        expected_string = """
+
+def test_list(dummy_functions):
+    syntax = FitFunctionsRegistry.list()
+    expected_string = """
 +-----------------+------------------------+
 |     Function    |         Syntax         |
 +-----------------+------------------------+
 | dummy_function1 | syntax_dummy_function1 |
-| dummy_function2 | syntax_dummy_function2 |
 | dummy_function3 | syntax_dummy_function3 |
+| dummy_function4 | syntax_dummy_function4 |
 +-----------------+------------------------+"""
-        self.assertEqual(
-            expected_string.strip(),
-            str(syntax).strip(),
-            msg="Syntax of two functions is different than expected.",
-        )
+    assert (
+        expected_string.strip() == str(syntax).strip()
+    ), "Syntax of two functions is different than expected."
 
-    def test_add_dummy_function_without_saving(self):
-        self.assertFalse(
-            FitFunctionsRegistry.exists(self.func4.name),
-            msg="Function was saved, even though it wasn't supposed to",
-        )
 
-    def test_load_non_existing_function(self):
-        self.assertRaisesRegex(
-            FitFunctionLoadError,
-            f"^No fit function named {self.func4.name}$",
-            FitFunctionsRegistry.load,
-            self.func4.name,
-        )
+def test_add_dummy_function_without_saving(dummy_functions):
+    for func in dummy_functions["unsaved_funcs"]:
+        assert not FitFunctionsRegistry.exists(
+            func.name
+        ), "Function was saved, even though it wasn't supposed to"
 
-    def test_saving_two_fit_functions_with_the_same_name(self):
-        self.assertRaisesRegex(
-            FitFunctionSaveError,
-            '^Cannot save "dummy_function2" to registry '
-            "since there is another fit function with this name$",
-            self.dummy_function,
-            value=2,
-            save=True,
-        )
+
+def test_load_non_existing_function(dummy_functions):
+    for func in dummy_functions["unsaved_funcs"]:
+        with pytest.raises(
+            FitFunctionLoadError, match=f"^No fit function named {func.name}$"
+        ):
+            FitFunctionsRegistry.load(func.name)
+
+
+def test_saving_two_fit_functions_with_the_same_name(dummy_functions):
+    with pytest.raises(
+        FitFunctionSaveError,
+        match='^Cannot save "dummy_function3" to registry '
+        "since there is another fit function with this name$",
+    ):
+        dummy_function(value=3, save=True)
