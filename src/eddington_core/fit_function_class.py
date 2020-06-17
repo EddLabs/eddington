@@ -58,7 +58,8 @@ class FitFunction:  # pylint: disable=invalid-name,too-many-instance-attributes
         a_length = len(a)
         if a_length != self.n:
             raise FitFunctionRuntimeError(
-                f"Input length should be {self.n}, got {a_length}"
+                f"Input length should be {self.active_parameters}, "
+                f"got {a_length - len(self.fixed)}"
             )
 
     def __call__(self, *args):

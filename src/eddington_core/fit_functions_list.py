@@ -26,7 +26,7 @@ def linear(a, x):
     n=1,
     syntax="a[0]",
     x_derivative=lambda a, x: np.zeros(shape=x.shape),
-    a_derivative=lambda a, x: np.ones(shape=x.shape),
+    a_derivative=lambda a, x: np.stack([np.ones(shape=x.shape)]),
 )  # pylint: disable=C0103
 def constant(a, x):
     """
