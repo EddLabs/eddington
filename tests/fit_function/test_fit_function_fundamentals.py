@@ -21,18 +21,18 @@ def dummy_func2_fixture():
 
 
 def test_name(dummy_func1_fixture):
-    assert "dummy_func1" == dummy_func1_fixture.name, "Name is different than expected"
+    assert dummy_func1_fixture.name == "dummy_func1", "Name is different than expected"
 
 
 def test_signature(dummy_func1_fixture):
     assert (
-        "dummy_func1" == dummy_func1_fixture.signature
+        dummy_func1_fixture.signature == "dummy_func1"
     ), "Signature is different than expected"
 
 
 def test_title_name(dummy_func1_fixture):
     assert (
-        "Dummy Func1" == dummy_func1_fixture.title_name
+        dummy_func1_fixture.title_name == "Dummy Func1"
     ), "Title name is different than expected"
 
 
@@ -40,8 +40,8 @@ def test_call_success(dummy_func1_fixture):
     a = np.array([1, 2])
     x = 3
     result = dummy_func1_fixture(a, x)
-    assert 19 == pytest.approx(
-        result, rel=delta
+    assert (
+        pytest.approx(result, rel=delta) == 19
     ), "Execution result is different than expected"
 
 
@@ -68,8 +68,8 @@ def test_assign(dummy_func1_fixture):
     x = 3
     dummy_func1_fixture.assign(a)
     result = dummy_func1_fixture(x)
-    assert 19 == pytest.approx(
-        result, rel=delta
+    assert (
+        pytest.approx(result, rel=delta) == 19
     ), "Execution result is different than expected"
 
 
@@ -78,8 +78,8 @@ def test_call_func_with_fix_value(dummy_func2_fixture):
     x = 2
     dummy_func2_fixture.fix(1, 3)
     result = dummy_func2_fixture(a, x)
-    assert 29 == pytest.approx(
-        result, rel=delta
+    assert (
+        pytest.approx(result, rel=delta) == 29
     ), "Execution result is different than expected"
 
 
@@ -88,8 +88,8 @@ def test_call_x_derivative_with_fix_value(dummy_func2_fixture):
     x = 2
     dummy_func2_fixture.fix(1, 3)
     result = dummy_func2_fixture.x_derivative(a, x)
-    assert 23 == pytest.approx(
-        result, rel=delta
+    assert (
+        pytest.approx(result, rel=delta) == 23
     ), "x derivative execution result is different than expected"
 
 
@@ -109,8 +109,8 @@ def test_override_fix_value(dummy_func2_fixture):
     dummy_func2_fixture.fix(1, 9)
     dummy_func2_fixture.fix(1, 3)
     result = dummy_func2(a, x)
-    assert 29 == pytest.approx(
-        result, rel=delta
+    assert (
+        pytest.approx(result, rel=delta) == 29
     ), "Execution result is different than expected"
 
 
@@ -120,8 +120,8 @@ def test_unfix_value(dummy_func2_fixture):
     a = np.array([7, 3, 2, 1])
     x = 2
     result = dummy_func2(a, x)
-    assert 29 == pytest.approx(
-        result, rel=delta
+    assert (
+        pytest.approx(result, rel=delta) == 29
     ), "Execution result is different than expected"
 
 
@@ -132,8 +132,8 @@ def test_clear_fixed(dummy_func2_fixture):
     a = np.array([7, 3, 2, 1])
     x = 2
     result = dummy_func2(a, x)
-    assert 29 == pytest.approx(
-        result, rel=delta
+    assert (
+        pytest.approx(result, rel=delta) == 29
     ), "Execution result is different than expected"
 
 
@@ -201,6 +201,6 @@ def test_call_failure_when_trying_to_run_without_arguments(dummy_func2_fixture):
 
 
 def test_fit_function_representation(dummy_func1_fixture):
-    assert "FitFunction(name='dummy_func1', syntax='a[0] + a[1] * x ** 2')" == str(
-        dummy_func1_fixture
+    assert str(dummy_func1_fixture) == (
+        "FitFunction(name='dummy_func1', syntax='a[0] + a[1] * x ** 2')"
     ), "Representation is different than expected"

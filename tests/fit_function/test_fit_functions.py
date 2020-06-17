@@ -18,7 +18,6 @@ from eddington_core import (
     inverse_power,
     FitFunctionRuntimeError,
     FitFunctionLoadError,
-    FitFunctionsRegistry,
     FitFunction,
 )
 
@@ -354,9 +353,8 @@ def test_execute_x_derivative_on_single_value(case_data):
 def test_execute_x_derivative_on_array(case_data):  # pylint: disable=W0613
     case = case_data.get()
     x_derivative_array_calculation = case.func.x_derivative(case.a, case.x)
-    assert (
-        x_derivative_array_calculation,
-        pytest.approx(case.x_derivatives, rel=case.eps),
+    assert x_derivative_array_calculation == pytest.approx(
+        case.x_derivatives, rel=case.eps
     ), "Array calculation of x derivative is different than expected"
 
 
