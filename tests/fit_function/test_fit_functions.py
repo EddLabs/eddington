@@ -69,6 +69,21 @@ def case_linear():
     )
 
 
+def case_polynom_1():
+    return FittingFunctionTestCase(
+        func=polynom(1),
+        func_name="linear",
+        title="Linear",
+        n=2,
+        syntax="a[0] + a[1] * x",
+        a=np.array([-7, 2]),
+        x=np.arange(5),
+        y=[-7, -5, -3, -1, 1],
+        x_derivatives=[2, 2, 2, 2, 2],
+        a_derivatives=[[1, 0], [1, 1], [1, 2], [1, 3], [1, 4]],
+    )
+
+
 def case_parabolic():
     return FittingFunctionTestCase(
         func=parabolic,
