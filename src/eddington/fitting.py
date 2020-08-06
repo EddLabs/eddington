@@ -2,7 +2,7 @@
 import numpy as np
 from scipy.odr import ODR, Model, RealData
 
-from eddington_core import FitData, FitFunction, FitResult
+from eddington import FitData, FitFunction, FitResult
 
 
 def fit_to_data(

@@ -3,7 +3,7 @@ from argparse import Namespace
 
 import numpy as np
 
-from eddington_core import FitData, fit_function, fit_to_data
+from eddington import FitData, fit_function, fit_to_data
 
 a0 = np.array([8, 5])
 a = np.array([3, 4])
@@ -47,9 +47,9 @@ def dummy_func_with_both_derivatives(a, x):
 
 @pytest.fixture
 def odr_mock(mocker):
-    odr = mocker.patch("eddington_core.fitting.ODR")
-    real_data = mocker.patch("eddington_core.fitting.RealData")
-    model = mocker.patch("eddington_core.fitting.Model")
+    odr = mocker.patch("eddington.fitting.ODR")
+    real_data = mocker.patch("eddington.fitting.RealData")
+    model = mocker.patch("eddington.fitting.Model")
     odr.return_value.run.return_value = Namespace(
         beta=a, sum_square=chi2, sd_beta=aerr, cov_beta=acov
     )

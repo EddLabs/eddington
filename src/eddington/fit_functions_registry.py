@@ -1,7 +1,7 @@
 """Registry containing predefined fit functions and fit functions generators."""
 from prettytable import PrettyTable
 
-from eddington_core.exceptions import FitFunctionLoadError, FitFunctionSaveError
+from eddington.exceptions import FitFunctionLoadError, FitFunctionSaveError
 
 
 class FitFunctionsRegistry:  # noqa: D415,D213,D205

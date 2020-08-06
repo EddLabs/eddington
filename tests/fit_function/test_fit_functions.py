@@ -5,7 +5,7 @@ import pytest
 from pytest_cases import cases_data, THIS_MODULE
 
 
-from eddington_core import (
+from eddington import (
     constant,
     exponential,
     hyperbolic,

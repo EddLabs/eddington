@@ -5,8 +5,8 @@ from typing import Callable, Optional, Dict
 
 import numpy as np
 
-from eddington_core.exceptions import FitFunctionRuntimeError
-from eddington_core.fit_functions_registry import FitFunctionsRegistry
+from eddington.exceptions import FitFunctionRuntimeError
+from eddington.fit_functions_registry import FitFunctionsRegistry
 
 
 @dataclass(unsafe_hash=True)

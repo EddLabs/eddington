@@ -5,7 +5,7 @@ from collections import OrderedDict
 import numpy as np
 import xlrd
 
-from eddington_core.consts import (
+from eddington.consts import (
     DEFAULT_MAX_COEFF,
     DEFAULT_MEASUREMENTS,
     DEFAULT_MIN_COEFF,
@@ -14,14 +14,14 @@ from eddington_core.consts import (
     DEFAULT_XSIGMA,
     DEFAULT_YSIGMA,
 )
-from eddington_core.exceptions import (
+from eddington.exceptions import (
     FitDataColumnExistenceError,
     FitDataColumnIndexError,
     FitDataColumnsLengthError,
     FitDataColumnsSelectionError,
     FitDataInvalidFileSyntax,
 )
-from eddington_core.random_util import random_array, random_error, random_sigma
+from eddington.random_util import random_array, random_error, random_sigma
 
 
 class FitData:  # pylint: disable=too-many-instance-attributes

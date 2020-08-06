@@ -6,7 +6,7 @@ import pytest
 from mock import PropertyMock, mock_open, patch
 from pytest_cases import parametrize_plus, fixture_ref
 
-from eddington_core import FitData, FitDataInvalidFileSyntax
+from eddington import FitData, FitDataInvalidFileSyntax
 from tests.fit_data import COLUMNS, CONTENT, ROWS, VALUES
 
 DummyCell = namedtuple("DummyCell", "value")
@@ -64,7 +64,7 @@ def read_csv(mocker):
     m_open = mock_open()
 
     def actual_read(**kwargs):
-        with patch("eddington_core.fit_data.open", m_open):
+        with patch("eddington.fit_data.open", m_open):
             actual_fit_data = FitData.read_from_csv(filepath, **kwargs)
         return actual_fit_data
 

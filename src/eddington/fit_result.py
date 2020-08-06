@@ -5,7 +5,7 @@ from typing import Optional
 import numpy as np
 import scipy.stats as stats
 
-from eddington_core.print_util import to_precise_string
+from eddington.print_util import to_precise_string
 
 
 @dataclass(repr=False)  # pylint: disable=too-many-instance-attributes
