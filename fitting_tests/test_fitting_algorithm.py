@@ -6,7 +6,7 @@ from pytest_cases import cases_generator, cases_data, THIS_MODULE
 from collections import OrderedDict
 from pathlib import Path
 
-from eddington_core import FitData, FitFunctionsRegistry, fit_to_data
+from eddington import FitData, FitFunctionsRegistry, fit_to_data
 
 
 def cases_paths():

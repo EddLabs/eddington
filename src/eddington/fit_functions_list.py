@@ -1,8 +1,8 @@
 """List of common fit functions."""
 import numpy as np
 
-from eddington_core.exceptions import FitFunctionLoadError
-from eddington_core.fit_function_class import fit_function
+from eddington.exceptions import FitFunctionLoadError
+from eddington.fit_function_class import fit_function
 
 
 @fit_function(

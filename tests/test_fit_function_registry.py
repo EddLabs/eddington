@@ -1,11 +1,11 @@
 import pytest
 
-from eddington_core import (
+from eddington import (
     FitFunctionLoadError,
     FitFunctionsRegistry,
     fit_function,
 )
-from eddington_core.exceptions import FitFunctionSaveError
+from eddington.exceptions import FitFunctionSaveError
 
 
 def dummy_function(value, save=True):

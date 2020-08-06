@@ -3,7 +3,7 @@ import pytest
 from pytest_cases import cases_data, THIS_MODULE
 import numpy as np
 
-from eddington_core import FitResult
+from eddington import FitResult
 
 
 def case_standard():
@@ -266,7 +266,7 @@ def test_export_to_file(case_data):
     expected, fit_result = case_data.get()
     path = "/path/to/output"
     mock_open_obj = mock.mock_open()
-    with mock.patch("eddington_core.fit_result.open", mock_open_obj):
+    with mock.patch("eddington.fit_result.open", mock_open_obj):
         fit_result.print_or_export(path)
         mock_open_obj.assert_called_once_with(path, mode="w")
         mock_open_obj.return_value.write.assert_called_with(expected["repr_string"])

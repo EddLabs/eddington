@@ -1,6 +1,6 @@
 from pytest_cases import cases_data, THIS_MODULE
 
-from eddington_core.print_util import to_precise_string, to_relevant_precision
+from eddington.print_util import to_precise_string, to_relevant_precision
 
 
 def case_int_with_2_zeroes():

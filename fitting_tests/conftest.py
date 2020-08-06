@@ -1,5 +1,5 @@
 import pytest
-from eddington_core import FitFunctionsRegistry
+from eddington import FitFunctionsRegistry
 
 
 @pytest.fixture

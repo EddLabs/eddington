@@ -2,8 +2,8 @@ import pytest
 from mock import call
 import numpy as np
 
-from eddington_core import FitData
-from eddington_core.consts import (
+from eddington import FitData
+from eddington.consts import (
     DEFAULT_MAX_COEFF,
     DEFAULT_MEASUREMENTS,
     DEFAULT_MIN_COEFF,
@@ -26,14 +26,14 @@ delta = 10e-5
 
 @pytest.fixture
 def random_sigma_mock(mocker):
-    random_sigma = mocker.patch("eddington_core.fit_data.random_sigma")
+    random_sigma = mocker.patch("eddington.fit_data.random_sigma")
     random_sigma.side_effect = [xerr, yerr]
     return random_sigma
 
 
 @pytest.fixture
 def random_error_mock(mocker):
-    random_error = mocker.patch("eddington_core.fit_data.random_error")
+    random_error = mocker.patch("eddington.fit_data.random_error")
     random_error.side_effect = [real_xerr, real_yerr]
     return random_error
 
@@ -53,7 +53,7 @@ def random_error_mock(mocker):
 )
 def random_fit_data(request, mocker, random_sigma_mock, random_error_mock):
     params = request.param
-    random_array_mock = mocker.patch("eddington_core.fit_data.random_array")
+    random_array_mock = mocker.patch("eddington.fit_data.random_array")
     if "a" in params:
         random_array_mock.side_effect = [x]
     else:

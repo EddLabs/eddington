@@ -1,6 +1,6 @@
 import numpy as np
 
-from eddington_core import fit_function
+from eddington import fit_function
 
 
 @fit_function(n=2, syntax="a[0] + a[1] * x ** 2", save=False)

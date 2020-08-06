@@ -1,7 +1,7 @@
 import pytest
 import numpy as np
 
-from eddington_core.random_util import random_array, random_error, random_sigma
+from eddington.random_util import random_array, random_error, random_sigma
 
 
 n = 35

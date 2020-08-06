@@ -2,8 +2,8 @@ import pytest
 from pytest_cases import cases_data, THIS_MODULE
 
 import numpy as np
-from eddington_core import FitData
-from eddington_core.exceptions import FitDataColumnsSelectionError
+from eddington import FitData
+from eddington.exceptions import FitDataColumnsSelectionError
 
 from tests.fit_data import COLUMNS, NUMBER_OF_RECORDS, VALUES
 
