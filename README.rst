@@ -1,5 +1,5 @@
 .. image:: docs/_static/images/eddington.jpg
-   :width: 72px
+   :width: 40px
 
 Eddington
 =========
