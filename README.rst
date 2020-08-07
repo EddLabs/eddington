@@ -21,7 +21,7 @@ Eddington
    :alt: License
 
 .. image:: https://github.com/EddLabs/eddington/workflows/CI/badge.svg?branch=master
-   :target: https://github.com/beeware/eddington/actions
+   :target: https://github.com/EddLabs/eddington/actions
    :alt: Build Status
 
 .. image:: https://codecov.io/gh/EddLabs/eddington/branch/master/graph/badge.svg
