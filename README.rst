@@ -1,4 +1,4 @@
-.. image:: docs/_static/images/eddington.png
+.. image:: docs/_static/images/eddington.jpg
    :width: 72px
 
 Eddington
