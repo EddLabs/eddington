@@ -223,15 +223,17 @@ def sin(a, x):
     """
     return a[0] * np.sin(a[1] * x + a[2]) + a[3]
 
+
 @fit_function(
     n=4,
-    syntax="a[0] * exp(-((x - a[1])/a[2])**2) + a[3]",
-    x_derivative=lambda a, x: a[0] * np.exp(-((x - a[1])/a[2])**2) * (-2 * (x - a[1]) / a[2]),
+    syntax="a[0] * exp( - ((x - a[1]) /\
+         a[2]) ** 2) + a[3]",
+    x_derivative=lambda a, x: a[0] * np.exp( - ((x - a[1]) / a[2]) ** 2) * (-2 * (x - a[1]) / a[2]),
     a_derivative=lambda a, x: np.stack(
         [
-            np.exp(-((x - a[1])/a[2])**2),
-            a[0] * np.exp(-((x - a[1])/a[2])**2) * (2 * (x - a[1]) / a[2]),
-            a[0] * np.exp(-((x - a[1])/a[2])**2) * (2 * (x - a[1]) / (a[2] ** 2)),
+            np.exp(-((x - a[1]) / a[2]) ** 2),
+            a[0] * np.exp( - ((x - a[1]) / a[2]) ** 2) * (2 * (x - a[1]) / a[2]),
+            a[0] * np.exp( - ((x - a[1]) / a[2]) ** 2) * (2 * (x - a[1]) / (a[2] ** 2)),
             np.ones(shape=x.shape),
         ]
     ),
