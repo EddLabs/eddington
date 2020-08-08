@@ -19,6 +19,7 @@ from eddington import (
     FitFunctionRuntimeError,
     FitFunctionLoadError,
     FitFunction,
+    normal,
 )
 
 
@@ -262,6 +263,26 @@ def case_inverse_power_2():
             [0.1111111, -0.1481481, -19.77502, 1],
             [0.0625, -0.0625, -44.36142, 1],
             [0.04, -0.032, -80.4719, 1],
+        ],
+    )
+
+def case_normal():
+    return FittingFunctionTestCase(
+        func=normal,
+        func_name="normal",
+        title="Normal",
+        syntax=None,
+        n=4,
+        a=np.array([3, 0, 2, 1]),
+        x=np.arange(5),
+        y=[4.0, 3.336402349, 2.103638, 1.316197, 1.054946916],
+        x_derivatives=[0, -3.3364023, -4.2072766, -3.9485930, -4.21978766],
+        a_derivatives=[
+            [1, 0, 0, 1],
+            [0.7788007, 3.336402349, 1.66820117, 1],
+            [0.36787944, 4.207276647, 2.10363832, 1],
+            [0.10539922, 3.948593021, 1.97429651, 1],
+            [0.01831563, 4.219787666, 2.10989383, 1],
         ],
     )
 
