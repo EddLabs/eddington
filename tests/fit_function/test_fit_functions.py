@@ -271,7 +271,7 @@ def case_normal():
         func=normal,
         func_name="normal",
         title="Normal",
-        syntax="a[0] * exp(-((x - a[1])/a[2])**2) + a[3]",
+        syntax="a[0] * exp( - ((x - a[1]) / a[2]) ** 2) + a[3]",
         n=4,
         a=np.array([3, 0, 2, 1]),
         x=np.arange(5),

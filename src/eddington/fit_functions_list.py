@@ -226,8 +226,7 @@ def sin(a, x):
 
 @fit_function(
     n=4,
-    syntax="a[0] * exp( - ((x - a[1]) /\
-         a[2]) ** 2) + a[3]",
+    syntax="a[0] * exp( - ((x - a[1]) / a[2]) ** 2) + a[3]",
     x_derivative=lambda a, x: a[0] * np.exp( - ((x - a[1]) / a[2]) ** 2) * (-2 * (x - a[1]) / a[2]),
     a_derivative=lambda a, x: np.stack(
         [
