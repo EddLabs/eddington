@@ -245,4 +245,4 @@ def normal(a, x):
     :param x: free parameter
     :return: float
     """
-    return a[0] * np.exp(- ((x - a[1])/a[2])**2) + a[3]
+    return a[0] * np.exp(- ((x - a[1])/a[2]) **2 ) + a[3]
