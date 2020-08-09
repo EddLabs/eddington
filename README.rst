@@ -1,5 +1,5 @@
-.. image:: docs/_static/images/eddington.jpg
-   :width: 40px
+.. image:: https://raw.githubusercontent.com/EddLabs/eddington/master/docs/_static/images/eddington.png
+   :width: 72px
 
 Eddington
 =========
