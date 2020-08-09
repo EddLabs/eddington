@@ -16,3 +16,7 @@ Professional Advisory
 * Avia Raviv
 * Itai Silber
 * Sivan Trajtenberg Mills
+
+Contributors
+------------
+* Assaf Zohar
