@@ -1,4 +1,4 @@
-.. image:: https://raw.githubusercontent.com/EddLabs/eddington/master/docs/_static/images/eddington.png
+.. image:: https://github.com/EddLabs.png
    :width: 72px
 
 Eddington
