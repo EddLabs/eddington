@@ -25,6 +25,7 @@ from eddington.fit_functions_list import (
     sin,
     straight_power,
     inverse_power,
+    normal,
 )
 from eddington.fitting import fit_to_data
 
@@ -44,6 +45,7 @@ __all__ = [
     "sin",
     "straight_power",
     "inverse_power",
+    "normal",
     # Fitting algorithm
     "fit_to_data",
     # Exceptions
