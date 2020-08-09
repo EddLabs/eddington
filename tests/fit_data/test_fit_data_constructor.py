@@ -8,106 +8,139 @@ from eddington import (
     FitDataColumnIndexError,
     FitDataColumnsLengthError,
 )
+from eddington.fit_data import Columns
 
-from tests.fit_data import COLUMNS, COLUMNS_NAMES, ColumnsResult
+from tests.fit_data import COLUMNS, COLUMNS_NAMES
 
 COLUMNS_OPTIONS = ["x_column", "xerr_column", "y_column", "yerr_column"]
 
 
 def case_default():
     fit_data = FitData(COLUMNS)
-    result = ColumnsResult(x="a", xerr="b", y="c", yerr="d")
-    return fit_data, result
+    expected_columns = Columns(x="a", xerr="b", y="c", yerr="d")
+    return fit_data, expected_columns
 
 
 def case_int_x_column():
     fit_data = FitData(COLUMNS, x_column=3)
-    result = ColumnsResult(x="c", xerr="d", y="e", yerr="f",)
-    return fit_data, result
+    expected_columns = Columns(x="c", xerr="d", y="e", yerr="f",)
+    return fit_data, expected_columns
 
 
 def case_string_x_column():
     fit_data = FitData(COLUMNS, x_column="c")
-    result = ColumnsResult(x="c", xerr="d", y="e", yerr="f",)
-    return fit_data, result
+    expected_columns = Columns(x="c", xerr="d", y="e", yerr="f",)
+    return fit_data, expected_columns
 
 
 def case_int_y_column():
     fit_data = FitData(COLUMNS, y_column=5)
-    result = ColumnsResult(x="a", xerr="b", y="e", yerr="f")
-    return fit_data, result
+    expected_columns = Columns(x="a", xerr="b", y="e", yerr="f")
+    return fit_data, expected_columns
 
 
 def case_string_y_column():
     fit_data = FitData(COLUMNS, y_column="e")
-    result = ColumnsResult(x="a", xerr="b", y="e", yerr="f")
-    return fit_data, result
+    expected_columns = Columns(x="a", xerr="b", y="e", yerr="f")
+    return fit_data, expected_columns
 
 
 def case_int_xerr_column():
     fit_data = FitData(COLUMNS, xerr_column=4)
-    result = ColumnsResult(x="a", xerr="d", y="e", yerr="f",)
-    return fit_data, result
+    expected_columns = Columns(x="a", xerr="d", y="e", yerr="f",)
+    return fit_data, expected_columns
 
 
 def case_string_xerr_column():
     fit_data = FitData(COLUMNS, xerr_column="d")
-    result = ColumnsResult(x="a", xerr="d", y="e", yerr="f",)
-    return fit_data, result
+    expected_columns = Columns(x="a", xerr="d", y="e", yerr="f",)
+    return fit_data, expected_columns
 
 
 def case_int_yerr_column():
     fit_data = FitData(COLUMNS, yerr_column=6)
-    result = ColumnsResult(x="a", xerr="b", y="c", yerr="f")
-    return fit_data, result
+    expected_columns = Columns(x="a", xerr="b", y="c", yerr="f")
+    return fit_data, expected_columns
 
 
 def case_string_yerr_column():
     fit_data = FitData(COLUMNS, yerr_column="f")
-    result = ColumnsResult(x="a", xerr="b", y="c", yerr="f")
-    return fit_data, result
+    expected_columns = Columns(x="a", xerr="b", y="c", yerr="f")
+    return fit_data, expected_columns
 
 
 def case_x_and_y_column():
     fit_data = FitData(COLUMNS, x_column=3, y_column="h")
-    result = ColumnsResult(x="c", xerr="d", y="h", yerr="i")
-    return fit_data, result
+    expected_columns = Columns(x="c", xerr="d", y="h", yerr="i")
+    return fit_data, expected_columns
 
 
 def case_jumbled_columns():
     fit_data = FitData(COLUMNS, x_column=3, xerr_column=1, y_column="b", yerr_column=9)
-    result = ColumnsResult(x="c", xerr="a", y="b", yerr="i")
-    return fit_data, result
+    expected_columns = Columns(x="c", xerr="a", y="b", yerr="i")
+    return fit_data, expected_columns
 
 
 @cases_data(module=THIS_MODULE)
-def test_x(case_data):
-    fit_data, result = case_data.get()
-    assert COLUMNS[result.x] == pytest.approx(
+def test_x_column(case_data):
+    fit_data, expected_columns = case_data.get()
+    assert (
+        expected_columns.x == fit_data.x_column
+    ), "X column name is different than expected"
+
+
+@cases_data(module=THIS_MODULE)
+def test_x_data(case_data):
+    fit_data, expected_columns = case_data.get()
+    assert COLUMNS[expected_columns.x] == pytest.approx(
         fit_data.x
     ), "X is different than expected"
 
 
 @cases_data(module=THIS_MODULE)
-def test_x_err(case_data):
-    fit_data, result = case_data.get()
-    assert COLUMNS[result.xerr] == pytest.approx(
+def test_xerr_column(case_data):
+    fit_data, expected_columns = case_data.get()
+    assert (
+        expected_columns.xerr == fit_data.xerr_column
+    ), "X error column name is different than expected"
+
+
+@cases_data(module=THIS_MODULE)
+def test_xerr_data(case_data):
+    fit_data, expected_columns = case_data.get()
+    assert COLUMNS[expected_columns.xerr] == pytest.approx(
         fit_data.xerr
     ), "X error is different than expected"
 
 
 @cases_data(module=THIS_MODULE)
-def test_y(case_data):
-    fit_data, result = case_data.get()
-    assert COLUMNS[result.y] == pytest.approx(
+def test_y_column(case_data):
+    fit_data, expected_columns = case_data.get()
+    assert (
+        expected_columns.y == fit_data.y_column
+    ), "Y column name is different than expected"
+
+
+@cases_data(module=THIS_MODULE)
+def test_y_data(case_data):
+    fit_data, expected_columns = case_data.get()
+    assert COLUMNS[expected_columns.y] == pytest.approx(
         fit_data.y
     ), "Y is different than expected"
 
 
 @cases_data(module=THIS_MODULE)
-def test_y_err(case_data):
-    fit_data, result = case_data.get()
-    assert COLUMNS[result.yerr] == pytest.approx(
+def test_yerr_column(case_data):
+    fit_data, expected_columns = case_data.get()
+    assert (
+        expected_columns.yerr == fit_data.yerr_column
+    ), "Y error column name is different than expected"
+
+
+@cases_data(module=THIS_MODULE)
+def test_yerr_data(case_data):
+    fit_data, expected_columns = case_data.get()
+    assert COLUMNS[expected_columns.yerr] == pytest.approx(
         fit_data.yerr
     ), "Y error is different than expected"
 
@@ -116,6 +149,14 @@ def test_y_err(case_data):
 def test_all_columns(case_data):
     fit_data, _ = case_data.get()
     assert COLUMNS_NAMES == fit_data.all_columns, "Columns are different than expected"
+
+
+@cases_data(module=THIS_MODULE)
+def test_used_columns(case_data):
+    fit_data, expected_columns = case_data.get()
+    assert (
+        fit_data.used_columns == expected_columns
+    ), "Used columns are different than expected"
 
 
 @cases_data(module=THIS_MODULE)

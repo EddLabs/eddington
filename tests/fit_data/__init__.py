@@ -1,4 +1,4 @@
-from collections import OrderedDict, namedtuple
+from collections import OrderedDict
 
 import numpy as np
 
@@ -13,5 +13,3 @@ COLUMNS = OrderedDict(
 CONTENT = np.stack(COLUMNS.values(), axis=1).tolist()
 ROWS = [list(COLUMNS.keys()), *CONTENT]
 VALUES = list(COLUMNS.values())
-
-ColumnsResult = namedtuple("ColumnsResult", ["x", "y", "xerr", "yerr"])
