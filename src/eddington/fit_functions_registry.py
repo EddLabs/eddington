@@ -1,6 +1,4 @@
 """Registry containing predefined fit functions and fit functions generators."""
-from prettytable import PrettyTable
-
 from eddington.exceptions import FitFunctionLoadError, FitFunctionSaveError
 
 
@@ -51,21 +49,3 @@ class FitFunctionsRegistry:  # noqa: D415,D213,D205
     def exists(cls, func_name):
         """Checks whether a fit function exist."""
         return func_name in cls.__name_to_func_dict
-
-    @classmethod
-    def list(cls):
-        """Prints all fit functions and generators in a pretty table."""
-        table = PrettyTable(field_names=["Function", "Syntax"])
-        for func in FitFunctionsRegistry.all():
-            table.add_row([func.signature, func.syntax])
-        return table
-
-    @classmethod
-    def syntax(cls, functions):
-        """Prints chosen fit functions and generators in a pretty table."""
-        table = PrettyTable(field_names=["Function", "Syntax"])
-        for func_name in functions:
-            if cls.exists(func_name):
-                func = cls.load(func_name)
-                table.add_row([func.signature, func.syntax])
-        return table

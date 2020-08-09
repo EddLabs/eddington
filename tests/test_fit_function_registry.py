@@ -76,53 +76,6 @@ def test_names(dummy_functions):
     ), "Functions names are different than expected"
 
 
-def test_syntax_of_one_function(dummy_functions):
-    syntax = FitFunctionsRegistry.syntax([dummy_functions["saved_funcs"]["func1"].name])
-    expected_string = """
-+-----------------+------------------------+
-|     Function    |         Syntax         |
-+-----------------+------------------------+
-| dummy_function1 | syntax_dummy_function1 |
-+-----------------+------------------------+"""
-    assert expected_string[1:] == str(
-        syntax
-    ), "Syntax of one function is different than expected."
-
-
-def test_syntax_of_two_functions(dummy_functions):
-    syntax = FitFunctionsRegistry.syntax(
-        [
-            dummy_functions["saved_funcs"]["func1"].name,
-            dummy_functions["saved_funcs"]["func3"].name,
-        ]
-    )
-    expected_string = """
-+-----------------+------------------------+
-|     Function    |         Syntax         |
-+-----------------+------------------------+
-| dummy_function1 | syntax_dummy_function1 |
-| dummy_function3 | syntax_dummy_function3 |
-+-----------------+------------------------+"""
-    assert expected_string[1:] == str(
-        syntax
-    ), "Syntax of two functions is different than expected."
-
-
-def test_list(dummy_functions):
-    syntax = FitFunctionsRegistry.list()
-    expected_string = """
-+-----------------+------------------------+
-|     Function    |         Syntax         |
-+-----------------+------------------------+
-| dummy_function1 | syntax_dummy_function1 |
-| dummy_function3 | syntax_dummy_function3 |
-| dummy_function4 | syntax_dummy_function4 |
-+-----------------+------------------------+"""
-    assert (
-        expected_string.strip() == str(syntax).strip()
-    ), "Syntax of two functions is different than expected."
-
-
 def test_add_dummy_function_without_saving(dummy_functions):
     for func in dummy_functions["unsaved_funcs"]:
         assert not FitFunctionsRegistry.exists(
