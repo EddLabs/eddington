@@ -27,7 +27,7 @@ from eddington.random_util import random_array, random_error, random_sigma
 Columns = namedtuple("ColumnsResult", ["x", "y", "xerr", "yerr"])
 
 
-class FitData:  # pylint: disable=too-many-instance-attributes
+class FitData:  # pylint: disable=too-many-instance-attributes,too-many-public-methods
     """Fitting data class."""
 
     def __init__(  # pylint: disable=too-many-arguments
