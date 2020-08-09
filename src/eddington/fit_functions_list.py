@@ -58,7 +58,7 @@ def parabolic(a, x):
 
 @fit_function(
     n=4,
-    name="straight_power",
+    syntax="a[0] * (x + a[1]) ^ a[2] + a[3]",
     x_derivative=lambda a, x: a[2] * a[0] * (x + a[1]) ** (a[2] - 1),
     a_derivative=lambda a, x: np.stack(
         [
@@ -82,7 +82,7 @@ def straight_power(a, x):  # pylint: disable=C0103
 
 @fit_function(
     n=4,
-    name="inverse_power",
+    syntax="a[0] / (x + a[1]) ^ a[2] + a[3]",
     x_derivative=lambda a, x: -a[2] * a[0] / (x + a[1]) ** (a[2] + 1),
     a_derivative=lambda a, x: np.stack(
         [
@@ -226,7 +226,7 @@ def sin(a, x):
 
 @fit_function(
     n=4,
-    syntax="a[0] * exp( - ((x - a[1]) / a[2]) ** 2) + a[3]",
+    syntax="a[0] * exp( - ((x - a[1]) / a[2]) ^ 2) + a[3]",
     x_derivative=lambda a, x: a[0]
     * np.exp(-(((x - a[1]) / a[2]) ** 2))  # noqa: W503
     * (-2 * (x - a[1]) / a[2]),  # noqa: W503
