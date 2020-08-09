@@ -3,8 +3,7 @@ from eddington.exceptions import FitFunctionLoadError, FitFunctionSaveError
 
 
 class FitFunctionsRegistry:  # noqa: D415,D213,D205
-    """A singleton class containing all saved :class:`FitFunction` instances.
-    """
+    """A singleton class containing all saved :class:`FitFunction` instances."""
 
     __name_to_func_dict = dict()  # type: ignore
 
