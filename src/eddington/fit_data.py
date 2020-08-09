@@ -1,6 +1,6 @@
 """Fitting data class insert the fitting algorithm."""
 import csv
-from collections import OrderedDict
+from collections import OrderedDict, namedtuple
 
 import numpy as np
 import xlrd
@@ -24,7 +24,10 @@ from eddington.exceptions import (
 from eddington.random_util import random_array, random_error, random_sigma
 
 
-class FitData:  # pylint: disable=too-many-instance-attributes
+Columns = namedtuple("ColumnsResult", ["x", "y", "xerr", "yerr"])
+
+
+class FitData:  # pylint: disable=too-many-instance-attributes,too-many-public-methods
     """Fitting data class."""
 
     def __init__(  # pylint: disable=too-many-arguments
@@ -73,6 +76,16 @@ class FitData:  # pylint: disable=too-many-instance-attributes
     def all_columns(self):
         """Columns list."""
         return self._all_columns
+
+    @property
+    def used_columns(self):
+        """Dictionary of columns in use."""
+        return Columns(
+            x=self.x_column,
+            xerr=self.xerr_column,
+            y=self.y_column,
+            yerr=self.yerr_column,
+        )
 
     @property
     def x(self):  # pylint: disable=invalid-name
