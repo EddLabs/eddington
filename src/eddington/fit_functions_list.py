@@ -8,8 +8,8 @@ from eddington.fit_function_class import fit_function
 @fit_function(
     n=2,
     syntax="a[0] + a[1] * x",
-    x_derivative=lambda a, x: np.full(shape=x.shape, fill_value=a[1]),
-    a_derivative=lambda a, x: np.stack((np.ones(shape=x.shape), x)),
+    x_derivative=lambda a, x: np.full(shape=np.shape(x), fill_value=a[1]),
+    a_derivative=lambda a, x: np.stack([np.ones(shape=np.shape(x)), x]),
 )  # pylint: disable=C0103
 def linear(a, x):
     """
@@ -25,8 +25,8 @@ def linear(a, x):
 @fit_function(
     n=1,
     syntax="a[0]",
-    x_derivative=lambda a, x: np.zeros(shape=x.shape),
-    a_derivative=lambda a, x: np.stack([np.ones(shape=x.shape)]),
+    x_derivative=lambda a, x: np.zeros(shape=np.shape(x)),
+    a_derivative=lambda a, x: np.stack([np.ones(shape=np.shape(x))]),
 )  # pylint: disable=C0103
 def constant(a, x):
     """
@@ -36,14 +36,14 @@ def constant(a, x):
     :param x: free parameter
     :return: float
     """
-    return np.full(fill_value=a[0], shape=x.shape)
+    return np.full(fill_value=a[0], shape=np.shape(x))
 
 
 @fit_function(
     n=3,
     syntax="a[0] + a[1] * x + a[2] * x ^ 2",
     x_derivative=lambda a, x: a[1] + 2 * a[2] * x,
-    a_derivative=lambda a, x: np.stack([np.ones(shape=x.shape), x, x ** 2]),
+    a_derivative=lambda a, x: np.stack([np.ones(shape=np.shape(x)), x, x ** 2]),
 )  # pylint: disable=C0103
 def parabolic(a, x):
     """
@@ -65,7 +65,7 @@ def parabolic(a, x):
             (x + a[1]) ** a[2],
             a[2] * a[0] * (x + a[1]) ** (a[2] - 1),
             a[0] * np.log(x + a[1]) * (x + a[1]) ** a[2],
-            np.ones(shape=x.shape),
+            np.ones(shape=np.shape(x)),
         ]
     ),
 )  # pylint: disable=C0103
@@ -89,7 +89,7 @@ def straight_power(a, x):  # pylint: disable=C0103
             1 / (x + a[1]) ** a[2],
             -a[2] * a[0] / (x + a[1]) ** (a[2] + 1),
             -a[0] * np.log(x + a[1]) * (x + a[1]) ** a[2],
-            np.ones(shape=x.shape),
+            np.ones(shape=np.shape(x)),
         ]
     ),
 )  # pylint: disable=C0103
@@ -143,7 +143,7 @@ def polynom(n):  # pylint: disable=C0103
     syntax="a[0] / (x + a[1]) + a[2]",
     x_derivative=lambda a, x: -a[0] / ((x + a[1]) ** 2),
     a_derivative=lambda a, x: np.stack(
-        [1 / (x + a[1]), -a[0] / ((x + a[1]) ** 2), np.ones(shape=x.shape)]
+        [1 / (x + a[1]), -a[0] / ((x + a[1]) ** 2), np.ones(shape=np.shape(x))]
     ),
 )  # pylint: disable=C0103
 def hyperbolic(a, x):
@@ -162,7 +162,7 @@ def hyperbolic(a, x):
     syntax="a[0] * exp(a[1] * x) + a[2]",
     x_derivative=lambda a, x: a[0] * a[1] * np.exp(a[1] * x),
     a_derivative=lambda a, x: np.stack(
-        [np.exp(a[1] * x), a[0] * x * np.exp(a[1] * x), np.ones(x.shape)]
+        [np.exp(a[1] * x), a[0] * x * np.exp(a[1] * x), np.ones(np.shape(x))]
     ),
 )  # pylint: disable=C0103
 def exponential(a, x):
@@ -185,7 +185,7 @@ def exponential(a, x):
             np.cos(a[1] * x + a[2]),
             -a[0] * x * np.sin(a[1] * x + a[2]),
             -a[0] * np.sin(a[1] * x + a[2]),
-            np.ones(shape=x.shape),
+            np.ones(shape=np.shape(x)),
         ]
     ),
 )  # pylint: disable=C0103
@@ -209,7 +209,7 @@ def cos(a, x):
             np.sin(a[1] * x + a[2]),
             a[0] * x * np.cos(a[1] * x + a[2]),
             a[0] * np.cos(a[1] * x + a[2]),
-            np.ones(shape=x.shape),
+            np.ones(shape=np.shape(x)),
         ]
     ),
 )  # pylint: disable=C0103
@@ -235,7 +235,7 @@ def sin(a, x):
             np.exp(-(((x - a[1]) / a[2]) ** 2)),
             a[0] * np.exp(-(((x - a[1]) / a[2]) ** 2)) * (2 * (x - a[1]) / a[2]),
             a[0] * np.exp(-(((x - a[1]) / a[2]) ** 2)) * (2 * (x - a[1]) / (a[2] ** 2)),
-            np.ones(shape=x.shape),
+            np.ones(shape=np.shape(x)),
         ]
     ),
 )  # pylint: disable=C0103

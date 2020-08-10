@@ -1,4 +1,4 @@
-from pytest_cases import cases_data, THIS_MODULE
+from pytest_cases import THIS_MODULE, parametrize_with_cases
 
 from eddington.print_util import to_precise_string, to_relevant_precision
 
@@ -75,18 +75,16 @@ def case_small_float_add_zeroes():
     return inp, out
 
 
-@cases_data(module=THIS_MODULE)
-def test_relevant_precision(case_data):
-    inp, out = case_data.get()
+@parametrize_with_cases(argnames="inp, out", cases=THIS_MODULE)
+def test_relevant_precision(inp, out):
     _, actual_relevant_precision = to_relevant_precision(inp["a"])
     assert (
         actual_relevant_precision == out["relevant_precision"]
     ), "Relevant precision is different than expected"
 
 
-@cases_data(module=THIS_MODULE)
-def test_precise_string(case_data):
-    inp, out = case_data.get()
+@parametrize_with_cases(argnames="inp, out", cases=THIS_MODULE)
+def test_precise_string(inp, out):
     assert (
         to_precise_string(inp["a"], inp["n"]) == out["precise_string"]
     ), "Relevant precision is different than expected"

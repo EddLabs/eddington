@@ -1,6 +1,6 @@
 import mock
 import pytest
-from pytest_cases import cases_data, THIS_MODULE
+from pytest_cases import THIS_MODULE, parametrize_with_cases
 import numpy as np
 
 from eddington import FitResult
@@ -177,41 +177,36 @@ P-probability: 2.633e-08
     )
 
 
-@cases_data(module=THIS_MODULE)
-def test_a0(case_data):
-    expected, fit_result = case_data.get()
+@parametrize_with_cases(argnames="expected, fit_result", cases=THIS_MODULE)
+def test_a0(expected, fit_result):
     assert fit_result.a0 == pytest.approx(
         expected["a0"], rel=expected["delta"]
     ), "Initial Guess is different than expected"
 
 
-@cases_data(module=THIS_MODULE)
-def test_a(case_data):
-    expected, fit_result = case_data.get()
+@parametrize_with_cases(argnames="expected, fit_result", cases=THIS_MODULE)
+def test_a(expected, fit_result):
     assert fit_result.a == pytest.approx(
         expected["a"], rel=expected["delta"]
     ), "Calculated parameters are different than expected"
 
 
-@cases_data(module=THIS_MODULE)
-def test_aerr(case_data):
-    expected, fit_result = case_data.get()
+@parametrize_with_cases(argnames="expected, fit_result", cases=THIS_MODULE)
+def test_aerr(expected, fit_result):
     assert fit_result.aerr == pytest.approx(
         expected["aerr"], rel=expected["delta"]
     ), "Parameters errors are different than expected"
 
 
-@cases_data(module=THIS_MODULE)
-def test_arerr(case_data):
-    expected, fit_result = case_data.get()
+@parametrize_with_cases(argnames="expected, fit_result", cases=THIS_MODULE)
+def test_arerr(expected, fit_result):
     assert fit_result.arerr == pytest.approx(
         expected["arerr"], rel=expected["delta"]
     ), "Parameters relative errors are different than expected"
 
 
-@cases_data(module=THIS_MODULE)
-def test_acov(case_data):
-    expected, fit_result = case_data.get()
+@parametrize_with_cases(argnames="expected, fit_result", cases=THIS_MODULE)
+def test_acov(expected, fit_result):
     expected_acov = np.array(expected["acov"])
     actual_acov = fit_result.acov
     assert actual_acov.shape == expected_acov.shape
@@ -221,49 +216,43 @@ def test_acov(case_data):
         ), f"Parameters covariance are different than expected in row {i}"
 
 
-@cases_data(module=THIS_MODULE)
-def test_chi2(case_data):
-    expected, fit_result = case_data.get()
+@parametrize_with_cases(argnames="expected, fit_result", cases=THIS_MODULE)
+def test_chi2(expected, fit_result):
     assert fit_result.chi2 == pytest.approx(
         expected["chi2"], rel=expected["delta"]
     ), "Chi2 is different than expected"
 
 
-@cases_data(module=THIS_MODULE)
-def test_chi2_reduced(case_data):
-    expected, fit_result = case_data.get()
+@parametrize_with_cases(argnames="expected, fit_result", cases=THIS_MODULE)
+def test_chi2_reduced(expected, fit_result):
     assert fit_result.chi2_reduced == pytest.approx(
         expected["chi2_reduced"], rel=expected["delta"]
     ), "Chi2 reduced is different than expected"
 
 
-@cases_data(module=THIS_MODULE)
-def test_degrees_of_freedom(case_data):
-    expected, fit_result = case_data.get()
+@parametrize_with_cases(argnames="expected, fit_result", cases=THIS_MODULE)
+def test_degrees_of_freedom(expected, fit_result):
     assert (
         fit_result.degrees_of_freedom == expected["degrees_of_freedom"]
     ), "Degrees of freedom are different than expected"
 
 
-@cases_data(module=THIS_MODULE)
-def test_p_probability(case_data):
-    expected, fit_result = case_data.get()
+@parametrize_with_cases(argnames="expected, fit_result", cases=THIS_MODULE)
+def test_p_probability(expected, fit_result):
     assert fit_result.p_probability == pytest.approx(
         expected["p_probability"], rel=expected["delta"]
     ), "Chi2 reduced is different than expected"
 
 
-@cases_data(module=THIS_MODULE)
-def test_representation(case_data):
-    expected, fit_result = case_data.get()
+@parametrize_with_cases(argnames="expected, fit_result", cases=THIS_MODULE)
+def test_representation(expected, fit_result):
     assert expected["repr_string"] == str(
         fit_result
     ), "Representation is different than expected"
 
 
-@cases_data(module=THIS_MODULE)
-def test_export_to_file(case_data):
-    expected, fit_result = case_data.get()
+@parametrize_with_cases(argnames="expected, fit_result", cases=THIS_MODULE)
+def test_export_to_file(expected, fit_result):
     path = "/path/to/output"
     mock_open_obj = mock.mock_open()
     with mock.patch("eddington.fit_result.open", mock_open_obj):
@@ -272,9 +261,8 @@ def test_export_to_file(case_data):
         mock_open_obj.return_value.write.assert_called_with(expected["repr_string"])
 
 
-@cases_data(module=THIS_MODULE)
-def test_print(case_data):
-    expected, fit_result = case_data.get()
+@parametrize_with_cases(argnames="expected, fit_result", cases=THIS_MODULE)
+def test_print(expected, fit_result):
     with mock.patch("sys.stdout") as mock_print:
         fit_result.print_or_export()
         assert mock_print.write.call_args_list[0] == mock.call(expected["repr_string"])

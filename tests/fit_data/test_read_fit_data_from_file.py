@@ -98,9 +98,8 @@ def read_excel(mock_open_workbook):
     return actual_read, dict(reader=mock_open_workbook, row_setter=set_excel_rows)
 
 
-@parametrize_plus(["case"], [fixture_ref(read_csv), fixture_ref(read_excel)])
-def test_read_with_headers_successful(case):
-    read, mocks = case
+@parametrize_plus("read, mocks", [fixture_ref(read_csv), fixture_ref(read_excel)])
+def test_read_with_headers_successful(read, mocks):
     mocks["row_setter"](mocks["reader"], ROWS)
 
     actual_fit_data = read()
@@ -109,9 +108,8 @@ def test_read_with_headers_successful(case):
     check_columns(actual_fit_data)
 
 
-@parametrize_plus(["case"], [fixture_ref(read_csv), fixture_ref(read_excel)])
-def test_read_without_headers_successful(case):
-    read, mocks = case
+@parametrize_plus("read, mocks", [fixture_ref(read_csv), fixture_ref(read_excel)])
+def test_read_without_headers_successful(read, mocks):
     mocks["row_setter"](mocks["reader"], CONTENT)
 
     actual_fit_data = read()
@@ -120,9 +118,8 @@ def test_read_without_headers_successful(case):
     check_columns(actual_fit_data)
 
 
-@parametrize_plus(["case"], [fixture_ref(read_csv), fixture_ref(read_excel)])
-def test_read_without_headers_unsuccessful(case):
-    read, mocks = case
+@parametrize_plus("read, mocks", [fixture_ref(read_csv), fixture_ref(read_excel)])
+def test_read_without_headers_unsuccessful(read, mocks):
     rows = deepcopy(CONTENT)
     rows[1][0] = "f"
     mocks["row_setter"](mocks["reader"], rows)
@@ -131,9 +128,8 @@ def test_read_without_headers_unsuccessful(case):
         read()
 
 
-@parametrize_plus(["case"], [fixture_ref(read_csv), fixture_ref(read_excel)])
-def test_read_with_x_column(case):
-    read, mocks = case
+@parametrize_plus("read, mocks", [fixture_ref(read_csv), fixture_ref(read_excel)])
+def test_read_with_x_column(read, mocks):
     mocks["row_setter"](mocks["reader"], ROWS)
 
     actual_fit_data = read(x_column=3)
@@ -141,9 +137,8 @@ def test_read_with_x_column(case):
     check_columns(actual_fit_data, x_column=2, xerr_column=3, y_column=4, yerr_column=5)
 
 
-@parametrize_plus(["case"], [fixture_ref(read_csv), fixture_ref(read_excel)])
-def test_read_with_xerr_column(case):
-    read, mocks = case
+@parametrize_plus("read, mocks", [fixture_ref(read_csv), fixture_ref(read_excel)])
+def test_read_with_xerr_column(read, mocks):
     mocks["row_setter"](mocks["reader"], ROWS)
 
     actual_fit_data = read(xerr_column=3)
@@ -151,9 +146,8 @@ def test_read_with_xerr_column(case):
     check_columns(actual_fit_data, x_column=0, xerr_column=2, y_column=3, yerr_column=4)
 
 
-@parametrize_plus(["case"], [fixture_ref(read_csv), fixture_ref(read_excel)])
-def test_read_with_y_column(case):
-    read, mocks = case
+@parametrize_plus("read, mocks", [fixture_ref(read_csv), fixture_ref(read_excel)])
+def test_read_with_y_column(read, mocks):
     mocks["row_setter"](mocks["reader"], ROWS)
 
     actual_fit_data = read(y_column=5)
@@ -161,9 +155,8 @@ def test_read_with_y_column(case):
     check_columns(actual_fit_data, x_column=0, xerr_column=1, y_column=4, yerr_column=5)
 
 
-@parametrize_plus(["case"], [fixture_ref(read_csv), fixture_ref(read_excel)])
-def test_read_with_yerr_column(case):
-    read, mocks = case
+@parametrize_plus("read, mocks", [fixture_ref(read_csv), fixture_ref(read_excel)])
+def test_read_with_yerr_column(read, mocks):
     mocks["row_setter"](mocks["reader"], ROWS)
 
     actual_fit_data = read(yerr_column=5)

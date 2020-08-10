@@ -1,9 +1,6 @@
-from dataclasses import dataclass
-from typing import List, Union
 import numpy as np
 import pytest
-from pytest_cases import cases_data, THIS_MODULE
-
+from pytest_cases import THIS_MODULE, parametrize_with_cases
 
 from eddington import (
     constant,
@@ -18,29 +15,12 @@ from eddington import (
     inverse_power,
     FitFunctionRuntimeError,
     FitFunctionLoadError,
-    FitFunction,
     normal,
 )
 
 
-@dataclass()
-class FittingFunctionTestCase:
-    func: FitFunction
-    func_name: str
-    title: str
-    n: int
-    syntax: Union[str, None]
-    a: np.ndarray
-    x: np.ndarray
-    y: List[float]
-    x_derivatives: List[float]
-    a_derivatives: List[List[float]]
-    eps: float = 1e-5
-    decimal: int = 5
-
-
 def case_constant():
-    return FittingFunctionTestCase(
+    return dict(
         func=constant,
         func_name="constant",
         title="Constant",
@@ -55,7 +35,7 @@ def case_constant():
 
 
 def case_linear():
-    return FittingFunctionTestCase(
+    return dict(
         func=linear,
         func_name="linear",
         title="Linear",
@@ -70,7 +50,7 @@ def case_linear():
 
 
 def case_polynom_1():
-    return FittingFunctionTestCase(
+    return dict(
         func=polynom(1),
         func_name="linear",
         title="Linear",
@@ -85,7 +65,7 @@ def case_polynom_1():
 
 
 def case_parabolic():
-    return FittingFunctionTestCase(
+    return dict(
         func=parabolic,
         func_name="parabolic",
         title="Parabolic",
@@ -100,7 +80,7 @@ def case_parabolic():
 
 
 def case_hyperbolic():
-    return FittingFunctionTestCase(
+    return dict(
         func=hyperbolic,
         func_name="hyperbolic",
         title="Hyperbolic",
@@ -121,7 +101,7 @@ def case_hyperbolic():
 
 
 def case_exponential():
-    return FittingFunctionTestCase(
+    return dict(
         func=exponential,
         func_name="exponential",
         title="Exponential",
@@ -142,7 +122,7 @@ def case_exponential():
 
 
 def case_cos():
-    return FittingFunctionTestCase(
+    return dict(
         func=cos,
         func_name="cos",
         title="Cos",
@@ -163,7 +143,7 @@ def case_cos():
 
 
 def case_sin():
-    return FittingFunctionTestCase(
+    return dict(
         func=sin,
         func_name="sin",
         title="Sin",
@@ -184,7 +164,7 @@ def case_sin():
 
 
 def case_polynom_3():
-    return FittingFunctionTestCase(
+    return dict(
         func=polynom(3),
         func_name="polynom_3",
         title="Polynom 3",
@@ -205,7 +185,7 @@ def case_polynom_3():
 
 
 def case_straight_power_2():
-    return FittingFunctionTestCase(
+    return dict(
         func=straight_power,
         func_name="straight_power",
         title="Straight Power",
@@ -226,7 +206,7 @@ def case_straight_power_2():
 
 
 def case_straight_power_3():
-    return FittingFunctionTestCase(
+    return dict(
         func=straight_power,
         func_name="straight_power",
         title="Straight Power",
@@ -247,7 +227,7 @@ def case_straight_power_3():
 
 
 def case_inverse_power_2():
-    return FittingFunctionTestCase(
+    return dict(
         func=inverse_power,
         func_name="inverse_power",
         title="Inverse Power",
@@ -268,7 +248,7 @@ def case_inverse_power_2():
 
 
 def case_normal():
-    return FittingFunctionTestCase(
+    return dict(
         func=normal,
         func_name="normal",
         title="Normal",
@@ -296,125 +276,123 @@ def case_normal():
 
 def assert_raises_unfit_parameters(case, n0):
     with pytest.raises(
-        FitFunctionRuntimeError, match=f"^Input length should be {case.n}, got {n0}$"
+        FitFunctionRuntimeError, match=f"^Input length should be {case['n']}, got {n0}$"
     ):
-        case.func(np.random.random(n0), np.random.random())
+        case["func"](np.random.random(n0), np.random.random())
 
 
-@cases_data(module=THIS_MODULE)
-def test_number_of_parameters(case_data):
-    case = case_data.get()
-    assert case.n == case.func.n, "Func gets unexpected number of parameters"
-    if case.n > 1:
-        assert_raises_unfit_parameters(case, case.n - 1)
-    assert_raises_unfit_parameters(case, case.n + 1)
+@parametrize_with_cases(argnames="case", cases=THIS_MODULE)
+def test_number_of_parameters(case):
+    assert case["n"] == case["func"].n, "Func gets unexpected number of parameters"
+    if case["n"] > 1:
+        assert_raises_unfit_parameters(case, case["n"] - 1)
+    assert_raises_unfit_parameters(case, case["n"] + 1)
 
 
-@cases_data(module=THIS_MODULE)
-def test_name(case_data):
-    case = case_data.get()
-    assert case.func_name == case.func.name, "Func name is different than expected"
-
-
-@cases_data(module=THIS_MODULE)
-def test_title_name(case_data):
-    case = case_data.get()
+@parametrize_with_cases(argnames="case", cases=THIS_MODULE)
+def test_name(case):
     assert (
-        case.title == case.func.title_name
+        case["func_name"] == case["func"].name
+    ), "Func name is different than expected"
+
+
+@parametrize_with_cases(argnames="case", cases=THIS_MODULE)
+def test_title_name(case):
+    assert (
+        case["title"] == case["func"].title_name
     ), "Func title name is different than expected"
 
 
-@cases_data(module=THIS_MODULE)
-def test_signature(case_data):
-    case = case_data.get()
+@parametrize_with_cases(argnames="case", cases=THIS_MODULE)
+def test_signature(case):
     assert (
-        case.func_name == case.func.signature
+        case["func_name"] == case["func"].signature
     ), "Func signature is different than expected"
 
 
-@cases_data(module=THIS_MODULE)
-def test_syntax(case_data):
-    case = case_data.get()
-    assert case.syntax == case.func.syntax, "Func syntax is different than expected"
+@parametrize_with_cases(argnames="case", cases=THIS_MODULE)
+def test_syntax(case):
+    assert (
+        case["syntax"] == case["func"].syntax
+    ), "Func syntax is different than expected"
 
 
-@cases_data(module=THIS_MODULE)
-def test_assign(case_data):
-    case = case_data.get()
-    assigned_func = case.func.assign(case.a)
-    for i, (x_val, y_val) in enumerate(zip(case.x, case.y), start=1):
-        assert y_val == pytest.approx(assigned_func(x_val), rel=case.eps), (
+@parametrize_with_cases(argnames="case", cases=THIS_MODULE)
+def test_assign(case):
+    assigned_func = case["func"].assign(case["a"])
+    for i, (x_val, y_val) in enumerate(zip(case["x"], case["y"]), start=1):
+        assert float(y_val) == pytest.approx(
+            assigned_func(float(x_val)), rel=case.get("eps", 1e-5)
+        ), (
             "Y value is different than expected in assigned function "
             f"for the {i} value"
         )
-    case.func.clear_fixed()
+    case["func"].clear_fixed()
 
 
-@cases_data(module=THIS_MODULE)
-def test_execute_on_single_value(case_data):
-    case = case_data.get()
-    for x_val, y_val in zip(case.x, case.y):
-        assert y_val == pytest.approx(
-            case.func(case.a, x_val), rel=case.eps
+@parametrize_with_cases(argnames="case", cases=THIS_MODULE)
+def test_execute_on_single_value(case):
+    for x_val, y_val in zip(case["x"], case["y"]):
+        assert float(y_val) == pytest.approx(
+            case["func"](case["a"], float(x_val)), rel=case.get("eps", 1e-5)
         ), "Y value is different than expected in called function"
 
 
-@cases_data(module=THIS_MODULE)
-def test_execute_on_array(case_data):  # pylint: disable=W0613
-    case = case_data.get()
-    y_array_calculation = case.func(case.a, case.x)
+@parametrize_with_cases(argnames="case", cases=THIS_MODULE)
+def test_execute_on_array(case):  # pylint: disable=W0613
+    y_array_calculation = case["func"](case["a"], case["x"])
     assert y_array_calculation == pytest.approx(
-        case.y, rel=case.eps
+        case["y"], rel=case.get("eps", 1e-5)
     ), "Y value is different than expected in array function"
 
 
-@cases_data(module=THIS_MODULE)
-def test_execute_x_derivative_on_single_value(case_data):
-    case = case_data.get()
-    for x_val, x_derivative in zip(case.x, case.x_derivatives):
-        assert x_derivative == pytest.approx(
-            case.func.x_derivative(case.a, x_val), rel=case.eps
-        ), f"X derivative of ({case.a}, {x_val}) is different than expected"
+@parametrize_with_cases(argnames="case", cases=THIS_MODULE)
+def test_execute_x_derivative_on_single_value(case):
+    for x_val, x_derivative in zip(case["x"], case["x_derivatives"]):
+        assert float(x_derivative) == pytest.approx(
+            case["func"].x_derivative(case["a"], float(x_val)),
+            rel=case.get("eps", 1e-5),
+        ), f"X derivative of ({case['a']}, {x_val}) is different than expected"
 
 
-@cases_data(module=THIS_MODULE)
-def test_execute_x_derivative_on_array(case_data):  # pylint: disable=W0613
-    case = case_data.get()
-    x_derivative_array_calculation = case.func.x_derivative(case.a, case.x)
-    assert x_derivative_array_calculation == pytest.approx(
-        case.x_derivatives, rel=case.eps
+@parametrize_with_cases(argnames="case", cases=THIS_MODULE)
+def test_execute_x_derivative_on_array(case):  # pylint: disable=W0613
+    x_derivative = case["func"].x_derivative(case["a"], case["x"])
+    assert x_derivative == pytest.approx(
+        case["x_derivatives"], rel=case.get("eps", 1e-5)
     ), "Array calculation of x derivative is different than expected"
 
 
-@cases_data(module=THIS_MODULE)
-def test_execute_a_derivative_on_single_value(case_data):  # pylint: disable=W0613
-    case = case_data.get()
-    for i, (x_val, a_derivative) in enumerate(zip(case.x, case.a_derivatives), start=1):
+@parametrize_with_cases(argnames="case", cases=THIS_MODULE)
+def test_execute_a_derivative_on_single_value(case):  # pylint: disable=W0613
+    for i, (x_val, a_derivative) in enumerate(
+        zip(case["x"], case["a_derivatives"]), start=1
+    ):
         assert a_derivative == pytest.approx(
-            case.func.a_derivative(case.a, x_val), rel=case.eps
+            case["func"].a_derivative(case["a"], float(x_val)),
+            rel=case.get("eps", 1e-5),
         ), f"A derivative is different than expected on value {i}"
 
 
-@cases_data(module=THIS_MODULE)
-def test_execute_a_derivative_on_array(case_data):  # pylint: disable=W0613
-    case = case_data.get()
-    a_derivative_array_calculation = case.func.a_derivative(case.a, case.x)
+@parametrize_with_cases(argnames="case", cases=THIS_MODULE)
+def test_execute_a_derivative_on_array(case):  # pylint: disable=W0613
+    a_derivative_array_calculation = case["func"].a_derivative(case["a"], case["x"])
     for i, (expected_a_derivative, actual_a_derivative) in enumerate(
-        zip(a_derivative_array_calculation.T, case.a_derivatives), start=1
+        zip(a_derivative_array_calculation.T, case["a_derivatives"]), start=1
     ):
         assert np.array(expected_a_derivative) == pytest.approx(
-            np.array(actual_a_derivative), rel=case.eps
+            np.array(actual_a_derivative), rel=case.get("eps", 1e-5)
         ), (
             "Array calculation of a derivative is different than expected "
             f"on value {i}"
         )
 
 
-def test_initialize_polynom_with_0_degree_raises_error():
+def test_initialize_polynomial_with_0_degree_raises_error():
     with pytest.raises(FitFunctionLoadError, match="^n must be positive, got 0$"):
         polynom(0)
 
 
-def test_initialize_polynom_with_negative_degree_raises_error():
+def test_initialize_polynomial_with_negative_degree_raises_error():
     with pytest.raises(FitFunctionLoadError, match="^n must be positive, got -1$"):
         polynom(-1)
