@@ -323,8 +323,8 @@ def test_syntax(case):
 def test_assign(case):
     assigned_func = case["func"].assign(case["a"])
     for i, (x_val, y_val) in enumerate(zip(case["x"], case["y"]), start=1):
-        assert y_val == pytest.approx(
-            assigned_func(x_val), rel=case.get("eps", 1e-5)
+        assert float(y_val) == pytest.approx(
+            assigned_func(float(x_val)), rel=case.get("eps", 1e-5)
         ), (
             "Y value is different than expected in assigned function "
             f"for the {i} value"
@@ -335,8 +335,8 @@ def test_assign(case):
 @parametrize_with_cases(argnames="case", cases=THIS_MODULE)
 def test_execute_on_single_value(case):
     for x_val, y_val in zip(case["x"], case["y"]):
-        assert y_val == pytest.approx(
-            case["func"](case["a"], x_val), rel=case.get("eps", 1e-5)
+        assert float(y_val) == pytest.approx(
+            case["func"](case["a"], float(x_val)), rel=case.get("eps", 1e-5)
         ), "Y value is different than expected in called function"
 
 
@@ -351,27 +351,28 @@ def test_execute_on_array(case):  # pylint: disable=W0613
 @parametrize_with_cases(argnames="case", cases=THIS_MODULE)
 def test_execute_x_derivative_on_single_value(case):
     for x_val, x_derivative in zip(case["x"], case["x_derivatives"]):
-        assert x_derivative == pytest.approx(
-            case["func"].x_derivative(case["a"], x_val), rel=case.get("eps", 1e-5)
+        assert float(x_derivative) == pytest.approx(
+            case["func"].x_derivative(case["a"], float(x_val)),
+            rel=case.get("eps", 1e-5),
         ), f"X derivative of ({case['a']}, {x_val}) is different than expected"
 
 
 @parametrize_with_cases(argnames="case", cases=THIS_MODULE)
 def test_execute_x_derivative_on_array(case):  # pylint: disable=W0613
-    x_derivative_array_calculation = case["func"].x_derivative(case["a"], case["x"])
-    assert x_derivative_array_calculation == pytest.approx(
+    x_derivative = case["func"].x_derivative(case["a"], case["x"])
+    assert x_derivative == pytest.approx(
         case["x_derivatives"], rel=case.get("eps", 1e-5)
     ), "Array calculation of x derivative is different than expected"
 
 
 @parametrize_with_cases(argnames="case", cases=THIS_MODULE)
 def test_execute_a_derivative_on_single_value(case):  # pylint: disable=W0613
-
     for i, (x_val, a_derivative) in enumerate(
         zip(case["x"], case["a_derivatives"]), start=1
     ):
         assert a_derivative == pytest.approx(
-            case["func"].a_derivative(case["a"], x_val), rel=case.get("eps", 1e-5)
+            case["func"].a_derivative(case["a"], float(x_val)),
+            rel=case.get("eps", 1e-5),
         ), f"A derivative is different than expected on value {i}"
 
 
