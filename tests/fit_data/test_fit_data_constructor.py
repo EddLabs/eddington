@@ -1,5 +1,5 @@
 import pytest
-from pytest_cases import cases_data, THIS_MODULE
+from pytest_cases import THIS_MODULE, parametrize_with_cases
 from copy import deepcopy
 
 from eddington import (
@@ -81,87 +81,76 @@ def case_jumbled_columns():
     return fit_data, expected_columns
 
 
-@cases_data(module=THIS_MODULE)
-def test_x_column(case_data):
-    fit_data, expected_columns = case_data.get()
+@parametrize_with_cases(argnames="fit_data, expected_columns", cases=THIS_MODULE)
+def test_x_column(fit_data, expected_columns):
     assert (
         expected_columns.x == fit_data.x_column
     ), "X column name is different than expected"
 
 
-@cases_data(module=THIS_MODULE)
-def test_x_data(case_data):
-    fit_data, expected_columns = case_data.get()
+@parametrize_with_cases(argnames="fit_data, expected_columns", cases=THIS_MODULE)
+def test_x_data(fit_data, expected_columns):
     assert COLUMNS[expected_columns.x] == pytest.approx(
         fit_data.x
     ), "X is different than expected"
 
 
-@cases_data(module=THIS_MODULE)
-def test_xerr_column(case_data):
-    fit_data, expected_columns = case_data.get()
+@parametrize_with_cases(argnames="fit_data, expected_columns", cases=THIS_MODULE)
+def test_xerr_column(fit_data, expected_columns):
     assert (
         expected_columns.xerr == fit_data.xerr_column
     ), "X error column name is different than expected"
 
 
-@cases_data(module=THIS_MODULE)
-def test_xerr_data(case_data):
-    fit_data, expected_columns = case_data.get()
+@parametrize_with_cases(argnames="fit_data, expected_columns", cases=THIS_MODULE)
+def test_xerr_data(fit_data, expected_columns):
     assert COLUMNS[expected_columns.xerr] == pytest.approx(
         fit_data.xerr
     ), "X error is different than expected"
 
 
-@cases_data(module=THIS_MODULE)
-def test_y_column(case_data):
-    fit_data, expected_columns = case_data.get()
+@parametrize_with_cases(argnames="fit_data, expected_columns", cases=THIS_MODULE)
+def test_y_column(fit_data, expected_columns):
     assert (
         expected_columns.y == fit_data.y_column
     ), "Y column name is different than expected"
 
 
-@cases_data(module=THIS_MODULE)
-def test_y_data(case_data):
-    fit_data, expected_columns = case_data.get()
+@parametrize_with_cases(argnames="fit_data, expected_columns", cases=THIS_MODULE)
+def test_y_data(fit_data, expected_columns):
     assert COLUMNS[expected_columns.y] == pytest.approx(
         fit_data.y
     ), "Y is different than expected"
 
 
-@cases_data(module=THIS_MODULE)
-def test_yerr_column(case_data):
-    fit_data, expected_columns = case_data.get()
+@parametrize_with_cases(argnames="fit_data, expected_columns", cases=THIS_MODULE)
+def test_yerr_column(fit_data, expected_columns):
     assert (
         expected_columns.yerr == fit_data.yerr_column
     ), "Y error column name is different than expected"
 
 
-@cases_data(module=THIS_MODULE)
-def test_yerr_data(case_data):
-    fit_data, expected_columns = case_data.get()
+@parametrize_with_cases(argnames="fit_data, expected_columns", cases=THIS_MODULE)
+def test_yerr_data(fit_data, expected_columns):
     assert COLUMNS[expected_columns.yerr] == pytest.approx(
         fit_data.yerr
     ), "Y error is different than expected"
 
 
-@cases_data(module=THIS_MODULE)
-def test_all_columns(case_data):
-    fit_data, _ = case_data.get()
+@parametrize_with_cases(argnames="fit_data, expected_columns", cases=THIS_MODULE)
+def test_all_columns(fit_data, expected_columns):
     assert COLUMNS_NAMES == fit_data.all_columns, "Columns are different than expected"
 
 
-@cases_data(module=THIS_MODULE)
-def test_used_columns(case_data):
-    fit_data, expected_columns = case_data.get()
+@parametrize_with_cases(argnames="fit_data, expected_columns", cases=THIS_MODULE)
+def test_used_columns(fit_data, expected_columns):
     assert (
         fit_data.used_columns == expected_columns
     ), "Used columns are different than expected"
 
 
-@cases_data(module=THIS_MODULE)
-def test_data(case_data):
-    fit_data, _ = case_data.get()
+@parametrize_with_cases(argnames="fit_data, expected_columns", cases=THIS_MODULE)
+def test_data(fit_data, expected_columns):
     assert COLUMNS_NAMES == list(
         fit_data.data.keys()
     ), "Data keys are different than expected"

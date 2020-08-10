@@ -1,5 +1,5 @@
 import pytest
-from pytest_cases import cases_data, THIS_MODULE
+from pytest_cases import THIS_MODULE, parametrize_with_cases
 
 import numpy as np
 from eddington import FitData
@@ -92,9 +92,8 @@ def case_set_selected_records():
     return fit_data, [2, 5]
 
 
-@cases_data(module=THIS_MODULE)
-def test_x(case_data):
-    fit_data, selected_indices = case_data.get()
+@parametrize_with_cases(argnames="fit_data, selected_indices", cases=THIS_MODULE)
+def test_x(fit_data, selected_indices):
     expected_x = extract_values(VALUES[0], selected_indices)
     assert fit_data.x.shape == np.shape(
         selected_indices
@@ -102,33 +101,29 @@ def test_x(case_data):
     assert fit_data.x == pytest.approx(expected_x), "X is different than expected"
 
 
-@cases_data(module=THIS_MODULE)
-def test_xerr(case_data):
-    fit_data, selected_indices = case_data.get()
+@parametrize_with_cases(argnames="fit_data, selected_indices", cases=THIS_MODULE)
+def test_xerr(fit_data, selected_indices):
     assert fit_data.xerr == pytest.approx(
         extract_values(VALUES[1], selected_indices)
     ), "X error is different than expected"
 
 
-@cases_data(module=THIS_MODULE)
-def test_y(case_data):
-    fit_data, selected_indices = case_data.get()
+@parametrize_with_cases(argnames="fit_data, selected_indices", cases=THIS_MODULE)
+def test_y(fit_data, selected_indices):
     assert fit_data.y == pytest.approx(
         extract_values(VALUES[2], selected_indices)
     ), "Y is different than expected"
 
 
-@cases_data(module=THIS_MODULE)
-def test_yerr(case_data):
-    fit_data, selected_indices = case_data.get()
+@parametrize_with_cases(argnames="fit_data, selected_indices", cases=THIS_MODULE)
+def test_yerr(fit_data, selected_indices):
     assert fit_data.yerr == pytest.approx(
         extract_values(VALUES[3], selected_indices)
     ), "Y error is different than expected"
 
 
-@cases_data(module=THIS_MODULE)
-def test_is_selected(case_data):
-    fit_data, selected_indices = case_data.get()
+@parametrize_with_cases(argnames="fit_data, selected_indices", cases=THIS_MODULE)
+def test_is_selected(fit_data, selected_indices):
     for i in range(1, fit_data.length + 1):
         if i in selected_indices:
             assert fit_data.is_selected(i), f"Record {i} was not selected"
