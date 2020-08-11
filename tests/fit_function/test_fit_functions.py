@@ -8,7 +8,7 @@ from eddington import (
     hyperbolic,
     linear,
     parabolic,
-    polynom,
+    polynomial,
     cos,
     sin,
     straight_power,
@@ -50,9 +50,9 @@ def case_linear():
     )
 
 
-def case_polynom_1():
+def case_polynomial_1():
     return dict(
-        func=polynom(1),
+        func=polynomial(1),
         func_name="linear",
         title="Linear",
         n=2,
@@ -164,11 +164,11 @@ def case_sin():
     )
 
 
-def case_polynom_3():
+def case_polynomial_3():
     return dict(
-        func=polynom(3),
-        func_name="polynom_3",
-        title="Polynom 3",
+        func=polynomial(3),
+        func_name="polynomial_3",
+        title="Polynomial 3",
         syntax="a[0] + a[1] * x + a[2] * x ^ 2 + a[3] * x ^ 3",
         n=4,
         a=np.array([3, 4, -2, 1]),
@@ -436,9 +436,9 @@ def test_execute_a_derivative_on_array(case):  # pylint: disable=W0613
 
 def test_initialize_polynomial_with_0_degree_raises_error():
     with pytest.raises(FitFunctionLoadError, match="^n must be positive, got 0$"):
-        polynom(0)
+        polynomial(0)
 
 
 def test_initialize_polynomial_with_negative_degree_raises_error():
     with pytest.raises(FitFunctionLoadError, match="^n must be positive, got -1$"):
-        polynom(-1)
+        polynomial(-1)
