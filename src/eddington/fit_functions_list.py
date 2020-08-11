@@ -262,9 +262,9 @@ def normal(a, x):
         [
             (a[1] ** x) * np.exp(-a[1]) / scipy.special.gamma(x + 1),
             a[0]
-            * np.exp(-a[1])
-            / scipy.special.gamma(x + 1)
-            * (x * a[1] ** (x - 1) - a[1] ** x),
+            * np.exp(-a[1])  # noqa: W503
+            / scipy.special.gamma(x + 1)  # noqa: W503
+            * (x * a[1] ** (x - 1) - a[1] ** x),  # noqa: W503
             np.ones(shape=np.shape(x)),
         ]
     ),
