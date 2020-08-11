@@ -65,4 +65,4 @@ def __get_a0(n, a0=None):  # pylint: disable=invalid-name
     """
     if a0 is not None:
         return a0
-    return np.full(shape=n, fill_value=1)
+    return np.full(shape=n, fill_value=1.0)

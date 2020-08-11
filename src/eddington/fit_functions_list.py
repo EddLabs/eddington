@@ -255,16 +255,14 @@ def normal(a, x):
     n=3,
     syntax="a[0] * (a[1] ^ x) * exp(-a[1]) / gamma(x+1) + a[2]",
     x_derivative=lambda a, x: (
-        a[0] * (a[1] ** x) * np.exp(-a[1]) / scipy.special.gamma(x + 1)
+        a[0] * np.power(a[1], x) * np.exp(-a[1]) / scipy.special.gamma(x + 1)
     )  # noqa: W503
     * (np.log(a[1]) - scipy.special.digamma(x + 1)),  # noqa: W503
     a_derivative=lambda a, x: np.stack(
         [
-            (a[1] ** x) * np.exp(-a[1]) / scipy.special.gamma(x + 1),
-            a[0]
-            * np.exp(-a[1])  # noqa: W503
-            / scipy.special.gamma(x + 1)  # noqa: W503
-            * (x * a[1] ** (x - 1) - a[1] ** x),  # noqa: W503
+            np.power(a[1], x) * np.exp(-a[1]) / scipy.special.gamma(x + 1),
+            (a[0] * np.exp(-a[1]) / scipy.special.gamma(x + 1))
+            * (x * np.power(a[1], x - 1) - np.power(a[1], x)),  # noqa: W503
             np.ones(shape=np.shape(x)),
         ]
     ),
@@ -277,4 +275,4 @@ def poisson(a, x):
     :param x: free parameter
     :return: float
     """
-    return a[0] * (a[1] ** x) * np.exp(-a[1]) / scipy.special.gamma(x + 1) + a[2]
+    return a[0] * np.power(a[1], x) * np.exp(-a[1]) / scipy.special.gamma(x + 1) + a[2]
