@@ -253,7 +253,7 @@ def normal(a, x):
 
 @fit_function(
     n=3,
-    syntax="a[0] * (a[1] ** x) * exp(-a[1]) / gamma(x+1) + a[2]",
+    syntax="a[0] * (a[1] ^ x) * exp(-a[1]) / gamma(x+1) + a[2]",
     x_derivative=lambda a, x: (
         a[0] * (a[1] ** x) * np.exp(-a[1]) / scipy.special.gamma(x + 1)
     )  # noqa: W503
