@@ -105,7 +105,7 @@ def inverse_power(a, x):  # pylint: disable=C0103
     return a[0] / (x + a[1]) ** a[2] + a[3]
 
 
-def polynom(n):  # pylint: disable=C0103
+def polynomial(n):  # pylint: disable=C0103
     """
     Creates a polynomial fit function with parameters as coefficients.
 
@@ -127,9 +127,9 @@ def polynom(n):  # pylint: disable=C0103
 
     @fit_function(
         n=n + 1,
-        name=f"polynom_{n}",
+        name=f"polynomial_{n}",
         syntax=syntax,
-        x_derivative=lambda a, x: polynom(n - 1)(arange * a[1:], x),
+        x_derivative=lambda a, x: polynomial(n - 1)(arange * a[1:], x),
         a_derivative=lambda a, x: np.stack([x ** i for i in range(n + 1)]),
         save=False,
     )  # pylint: disable=C0103
