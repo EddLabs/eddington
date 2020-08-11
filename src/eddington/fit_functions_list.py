@@ -254,15 +254,18 @@ def normal(a, x):
 @fit_function(
     n=3,
     syntax="a[0] * (a[1] ** x) * exp(-a[1]) / gamma(x+1) + a[2]",
-    x_derivative=lambda a, x: (a[0] * (a[1] ** x) * np.exp(-a[1]) / scipy.special.gamma(x+1))*(np.log(a[1])-scipy.special.digamma(x+1)),
+    x_derivative=lambda a, x: (a[0] * (a[1] ** x) * np.exp(-a[1]) \
+                               / scipy.special.gamma(x + 1)) \
+                              * (np.log(a[1]) - scipy.special.digamma(x + 1)),
     a_derivative=lambda a, x: np.stack(
         [
-            (a[1] ** x) * np.exp(-a[1]) / scipy.special.gamma(x+1),
-            a[0] * np.exp(-a[1]) / scipy.special.gamma(x+1) * (x * a[1] ** (x-1) - a[1] ** x),
+            (a[1] ** x) * np.exp(-a[1]) / scipy.special.gamma(x + 1),
+            a[0] * np.exp(-a[1]) / scipy.special.gamma(x + 1) * \
+            (x * a[1] ** (x - 1) - a[1] ** x),
             np.ones(shape=np.shape(x)),
         ]
     ),
-) # pylint: disable=C0103
+)  # pylint: disable=C0103
 def poisson(a, x):
     """
     Poisson fit function.
