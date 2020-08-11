@@ -35,7 +35,7 @@ def case_fitting(case_path):
         )
     )
     a0 = json_obj.get("a0", None)
-    result = fit_to_data(data=data, func=func)
+    result = fit_to_data(data=data, func=func, a0=a0)
     decimal = json_obj.get("decimal", 2)
     inp = dict(actual_result=result, a0=a0, func=func, delta=np.power(10.0, -decimal))
     expected_result = json_obj["result"]
