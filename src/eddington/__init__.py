@@ -46,6 +46,7 @@ __all__ = [
     "straight_power",
     "inverse_power",
     "normal",
+    "poisson",
     # Fitting algorithm
     "fit_to_data",
     # Exceptions
