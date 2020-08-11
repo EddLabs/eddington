@@ -26,6 +26,7 @@ from eddington.fit_functions_list import (
     straight_power,
     inverse_power,
     normal,
+    poisson,
 )
 from eddington.fitting import fit_to_data
 
