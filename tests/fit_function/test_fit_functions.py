@@ -280,7 +280,7 @@ def case_poisson():
         func=poisson,
         func_name="poisson",
         title="Poisson",
-        syntax="a[0] * (a[1] ** x) * exp(-a[1]) / gamma(x+1) + a[2]",
+        syntax="a[0] * (a[1] ^ x) * exp(-a[1]) / gamma(x+1) + a[2]",
         n=3,
         a=np.array([1, 4, 0]),
         x=np.arange(1, 10),
