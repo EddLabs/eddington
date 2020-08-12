@@ -2,7 +2,7 @@ import json
 
 import numpy as np
 import pytest
-from pytest_cases import cases_generator, cases_data, THIS_MODULE
+from pytest_cases import parametrize, parametrize_with_cases, THIS_MODULE
 from collections import OrderedDict
 from pathlib import Path
 
@@ -13,7 +13,7 @@ def cases_paths():
     return (Path(__file__).parent / "cases").glob("**/*.json")
 
 
-@cases_generator("case {case_path.stem}", case_path=cases_paths())
+@parametrize(idgen="case {case_path.stem}", case_path=cases_paths())
 def case_fitting(case_path):
     with open(str(case_path), mode="r") as json_file:
         json_obj = json.load(json_file)
@@ -42,33 +42,29 @@ def case_fitting(case_path):
     return inp, expected_result
 
 
-@cases_data(module=THIS_MODULE)
-def test_a(case_data, clear_fix):  # pylint: disable=W0613
-    inp, expected_result = case_data.get()
+@parametrize_with_cases(argnames="inp, expected_result", cases=THIS_MODULE)
+def test_a(inp, expected_result, clear_fix):  # pylint: disable=W0613
     assert inp["actual_result"].a == pytest.approx(
         expected_result["a"], rel=inp["delta"]
     ), "A error is different than expected"
 
 
-@cases_data(module=THIS_MODULE)
-def test_aerr(case_data, clear_fix):  # pylint: disable=W0613
-    inp, expected_result = case_data.get()
+@parametrize_with_cases(argnames="inp, expected_result", cases=THIS_MODULE)
+def test_aerr(inp, expected_result, clear_fix):  # pylint: disable=W0613
     assert inp["actual_result"].aerr == pytest.approx(
         expected_result["aerr"], rel=inp["delta"]
     ), "A error is different than expected"
 
 
-@cases_data(module=THIS_MODULE)
-def test_arerr(case_data, clear_fix):  # pylint: disable=W0613
-    inp, expected_result = case_data.get()
+@parametrize_with_cases(argnames="inp, expected_result", cases=THIS_MODULE)
+def test_arerr(inp, expected_result, clear_fix):  # pylint: disable=W0613
     assert inp["actual_result"].arerr == pytest.approx(
         expected_result["arerr"], rel=inp["delta"]
     ), "A relative error is different than expected"
 
 
-@cases_data(module=THIS_MODULE)
-def test_acov(case_data, clear_fix):  # pylint: disable=W0613
-    inp, expected_result = case_data.get()
+@parametrize_with_cases(argnames="inp, expected_result", cases=THIS_MODULE)
+def test_acov(inp, expected_result, clear_fix):  # pylint: disable=W0613
     actual_acov = inp["actual_result"].acov
     expected_acov = np.array(expected_result["acov"])
     assert (
@@ -80,33 +76,29 @@ def test_acov(case_data, clear_fix):  # pylint: disable=W0613
         ), f"Covariance is different than expected in line {i}"
 
 
-@cases_data(module=THIS_MODULE)
-def test_chi2(case_data, clear_fix):  # pylint: disable=W0613
-    inp, expected_result = case_data.get()
+@parametrize_with_cases(argnames="inp, expected_result", cases=THIS_MODULE)
+def test_chi2(inp, expected_result, clear_fix):  # pylint: disable=W0613
     assert inp["actual_result"].chi2 == pytest.approx(
         expected_result["chi2"], rel=inp["delta"]
     ), "A relative error is different than expected"
 
 
-@cases_data(module=THIS_MODULE)
-def test_degrees_of_freedom(case_data, clear_fix):  # pylint: disable=W0613
-    inp, expected_result = case_data.get()
+@parametrize_with_cases(argnames="inp, expected_result", cases=THIS_MODULE)
+def test_degrees_of_freedom(inp, expected_result, clear_fix):  # pylint: disable=W0613
     assert inp["actual_result"].degrees_of_freedom == pytest.approx(
         expected_result["degrees_of_freedom"], rel=inp["delta"]
     ), "A relative error is different than expected"
 
 
-@cases_data(module=THIS_MODULE)
-def test_chi2_reduced(case_data, clear_fix):  # pylint: disable=W0613
-    inp, expected_result = case_data.get()
+@parametrize_with_cases(argnames="inp, expected_result", cases=THIS_MODULE)
+def test_chi2_reduced(inp, expected_result, clear_fix):  # pylint: disable=W0613
     assert inp["actual_result"].chi2_reduced == pytest.approx(
         expected_result["chi2_reduced"], rel=inp["delta"]
     ), "A relative error is different than expected"
 
 
-@cases_data(module=THIS_MODULE)
-def test_p_probability(case_data, clear_fix):  # pylint: disable=W0613
-    inp, expected_result = case_data.get()
+@parametrize_with_cases(argnames="inp, expected_result", cases=THIS_MODULE)
+def test_p_probability(inp, expected_result, clear_fix):  # pylint: disable=W0613
     assert inp["actual_result"].p_probability == pytest.approx(
         expected_result["p_probability"], rel=inp["delta"]
     ), "A relative error is different than expected"
