@@ -1,0 +1,7 @@
+[src]
+
+[tests]
+contexts = ["test"]
+
+[fitting_tests]
+contexts = ["test"]
