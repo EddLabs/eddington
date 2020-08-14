@@ -378,7 +378,7 @@ class FitData:  # pylint: disable=too-many-instance-attributes,too-many-public-m
         if (0 != row):
             # if this is not a header row
             if (False == self.__is_number(value)):
-                raise FitDataError
+                raise FitDataInvalidSyntax(col, row, value)
             else:
                 self._data[col][row - 1] = value
         else:
