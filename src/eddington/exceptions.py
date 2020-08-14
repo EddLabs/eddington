@@ -69,4 +69,3 @@ class FitDataInvalidSyntax(FitDataError):  # noqa: D101
     def __init__(self, col, row, value):  # noqa: D107
         msg = f'the cell at column:"{col}", row:"{row}" has invalid syntax{value}.'
         super(FitDataInvalidSyntax, self).__init__(msg)
-        
