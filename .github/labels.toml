@@ -3,6 +3,11 @@ color = "d73a4a"
 name = "bug"
 description = "Something isn't working"
 
+[design]
+color = "8acc3b"
+name = "design"
+description = "Issues involving redesigning of the code or a design questions."
+
 [documentation]
 color = "0075ca"
 name = "documentation"
