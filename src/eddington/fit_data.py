@@ -371,6 +371,8 @@ class FitData:  # pylint: disable=too-many-instance-attributes,too-many-public-m
 
     def set_cell(self, row, col, value):
         """
+        Allowes to set value to a cell.
+
         :param row: The row number, where 0 represents the header row
         :param col: The columns name (original, so that it can be changed here)
         :param value: The new value to set for the cell
