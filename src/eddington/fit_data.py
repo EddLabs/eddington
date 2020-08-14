@@ -20,7 +20,7 @@ from eddington.exceptions import (
     FitDataColumnsLengthError,
     FitDataColumnsSelectionError,
     FitDataInvalidFileSyntax,
-    FitDataError,
+    FitDataInvalidSyntax,
 )
 from eddington.random_util import random_array, random_error, random_sigma
 
