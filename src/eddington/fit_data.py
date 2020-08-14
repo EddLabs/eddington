@@ -20,6 +20,7 @@ from eddington.exceptions import (
     FitDataColumnsLengthError,
     FitDataColumnsSelectionError,
     FitDataInvalidFileSyntax,
+    FitDataError,
 )
 from eddington.random_util import random_array, random_error, random_sigma
 
@@ -367,3 +368,18 @@ class FitData:  # pylint: disable=too-many-instance-attributes,too-many-public-m
             return True
         except ValueError:
             return False
+
+    def set_cell(self, row, col, value):
+        """
+        :param row: The row number, where 0 represents the header row
+        :param col: The columns name (original, so that it can be changed here)
+        :param value: The new value to set for the cell
+        """
+        if (0 != row):
+            # if this is not a header row
+            if (False == self.__is_number(value)):
+                raise FitDataError
+            else:
+                self._data[col][row - 1] = value
+        else:
+            self._data = OrderedDict([(value, v) if k == col else (k, v) for k, v in self._data.items()])
