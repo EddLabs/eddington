@@ -375,11 +375,12 @@ class FitData:  # pylint: disable=too-many-instance-attributes,too-many-public-m
         :param col: The columns name (original, so that it can be changed here)
         :param value: The new value to set for the cell
         """
-        if (0 != row):
+        if row != 0:
             # if this is not a header row
-            if (False == self.__is_number(value)):
+            if not self.__is_number(value):
                 raise FitDataInvalidSyntax(col, row, value)
             else:
                 self._data[col][row - 1] = value
         else:
-            self._data = OrderedDict([(value, v) if k == col else (k, v) for k, v in self._data.items()])
+            self._data = OrderedDict([(value, v) if k == col else (k, v) 
+                                    for k, v in self._data.items()])
