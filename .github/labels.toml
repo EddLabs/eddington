@@ -41,7 +41,7 @@ description = "This doesn't seem right"
 [quality]
 color = "f98943"
 name = "quality"
-description = "issues regarding code quality (unit tests, system tests, code analysis, etc.)"
+description = "Issues regarding code quality (unit tests, system tests, code analysis, etc.)"
 
 [question]
 color = "d876e3"
