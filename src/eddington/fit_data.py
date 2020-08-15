@@ -376,8 +376,12 @@ class FitData:  # pylint: disable=too-many-instance-attributes,too-many-public-m
         :param old: The old columns name
         :param new: The new value to set for the header
         """
-        self._data = OrderedDict([
-                (new, v) if k == old else (k, v) for k, v in self._data.items()])
+        if new != old:
+            if new not in self.all_columns:
+                self._data = OrderedDict([
+                    (new, v) if k == old else (k, v) for k, v in self._data.items()])
+            else:
+                raise FitDataColumnAlreadyExists(new)
   
     def set_cell(self, row, col, value):
         """
