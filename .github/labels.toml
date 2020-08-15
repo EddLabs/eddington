@@ -6,7 +6,7 @@ description = "Something isn't working"
 [design]
 color = "8acc3b"
 name = "design"
-description = "Issues involving redesigning of the code or a design questions."
+description = "This involvs redesigning of the code or design questions."
 
 [documentation]
 color = "0075ca"
@@ -38,10 +38,15 @@ color = "e4e669"
 name = "invalid"
 description = "This doesn't seem right"
 
+[testing]
+color = "fbca04"
+name = "testing"
+description = "Testing related (unit tests, system tests, integration tests, etc.)"
+
 [quality]
 color = "f98943"
 name = "quality"
-description = "Issues regarding code quality (unit tests, system tests, code analysis, etc.)"
+description = "Code quality related (static code analysis, code coverage, etc.)"
 
 [question]
 color = "d876e3"
