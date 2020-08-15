@@ -69,3 +69,9 @@ class FitDataInvalidSyntax(FitDataError):  # noqa: D101
     def __init__(self, col, row, value):  # noqa: D107
         msg = f'the cell at row:"{row}", column:"{col}" has invalid syntax{value}.'
         super(FitDataInvalidSyntax, self).__init__(msg)
+
+
+class FitDataColumnAlreadyExists(FitDataError):  # noqa: D101
+    def __init__(self, col):  # noqa: D107
+        msg = f'the column name:"{col}" is already used.'
+        super(FitDataColumnAlreadyExists, self).__init__(msg)
