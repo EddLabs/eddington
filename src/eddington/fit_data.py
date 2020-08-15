@@ -369,19 +369,25 @@ class FitData:  # pylint: disable=too-many-instance-attributes,too-many-public-m
         except ValueError:
             return False
 
+    def set_header(self, old, new):
+        """
+        Allowes to set new value to a header.
+
+        :param old: The old columns name
+        :param new: The new value to set for the header
+        """
+        self._data = OrderedDict([
+                (new, v) if k == old else (k, v) for k, v in self._data.items()])
+  
     def set_cell(self, row, col, value):
         """
-        Allowes to set value to a cell.
+        Allowes to set new value to a cell.
 
-        :param row: The row number, where 0 represents the header row
-        :param col: The columns name (original, so that it can be changed here)
+        :param row: The row number
+        :param col: The columns name
         :param value: The new value to set for the cell
         """
-        if row != 0:
-            # if this is not a header row
-            if not self.__is_number(value):
-                raise FitDataInvalidSyntax(col, row, value)
-            self._data[col][row - 1] = value
-        else:
-            self._data = OrderedDict([
-                (value, v) if k == col else (k, v) for k, v in self._data.items()])
+
+        if not self.__is_number(value):
+            raise FitDataInvalidSyntax(col, row, value)
+        self._data[col][row - 1] = value
