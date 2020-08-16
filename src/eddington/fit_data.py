@@ -21,6 +21,7 @@ from eddington.exceptions import (
     FitDataColumnsSelectionError,
     FitDataInvalidFileSyntax,
     FitDataInvalidSyntax,
+    FitDataColumnAlreadyExists,
 )
 from eddington.random_util import random_array, random_error, random_sigma
 
@@ -376,12 +377,13 @@ class FitData:  # pylint: disable=too-many-instance-attributes,too-many-public-m
         :param old: The old columns name
         :param new: The new value to set for the header
         """
-        if new != old:
-            if new not in self.all_columns:
-                self._data = OrderedDict([
-                    (new, v) if k == old else (k, v) for k, v in self._data.items()])
-            else:
+        if new != old and new != "":
+            if new in self.all_columns:
                 raise FitDataColumnAlreadyExists(new)
+            else:
+                self._data[new] = self._data.pop(old)
+                self._all_columns = list(self.data.keys())
+
   
     def set_cell(self, row, col, value):
         """
