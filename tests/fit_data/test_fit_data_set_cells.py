@@ -6,11 +6,12 @@ from eddington.exceptions import FitDataInvalidSyntax, FitDataColumnAlreadyExist
 from tests.fit_data import COLUMNS, NUMBER_OF_RECORDS
 
 import numpy as np
+import random
 import string
 
 
 def random_name(n):
-    return "".join(np.random.choice(string.ascii_letters) for i in range(n))
+    return "".join(random.choice(string.ascii_letters) for i in range(n))
 
 
 def test_set_cell_allowed():
@@ -20,7 +21,7 @@ def test_set_cell_allowed():
 
     for i in range(4):
         for j in range(7):
-            fit_data.set_cell(rows[i][j], COLUMNS.keys()[i], values[i][j])
+            fit_data.set_cell(rows[i][j], list(COLUMNS.keys())[i], values[i][j])
 
     assert (
         fit_data.x[rows] == values[0]
@@ -42,7 +43,7 @@ def test_set_cell_not_allowed():
     values = [
         [
             random_name(3),
-            "".join(np.random.choice(string.punctuation) for i in range(3)),
+            "".join(random.choice(string.punctuation) for i in range(3)),
         ]
         for i in range(4)
     ]
@@ -50,7 +51,7 @@ def test_set_cell_not_allowed():
     for i in range(4):
         for j in range(2):
             with pytest.raises(FitDataInvalidSyntax):
-                fit_data.set_cell(rows[i][j], COLUMNS.keys()[i], values[i][j])
+                fit_data.set_cell(rows[i][j], list(COLUMNS.keys())[i], values[i][j])
 
 
 def test_set_header_allowed():
@@ -94,7 +95,7 @@ def test_set_header_not_allowed():
 def test_set_header_bad_after_good():
     fit_data = FitData(COLUMNS)
     old_x = fit_data.x_column
-    new_x = "".join(np.random.choice(string.ascii_letters) for i in range(3))
+    new_x = random_name(3)
 
     with pytest.raises(FitDataColumnAlreadyExists):
         fit_data.set_header(fit_data.x_column, fit_data.y_column)
