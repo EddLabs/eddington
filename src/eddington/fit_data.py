@@ -384,7 +384,6 @@ class FitData:  # pylint: disable=too-many-instance-attributes,too-many-public-m
                 self._data[new] = self._data.pop(old)
                 self._all_columns = list(self.data.keys())
 
-  
     def set_cell(self, row, col, value):
         """
         Allowes to set new value to a cell.
