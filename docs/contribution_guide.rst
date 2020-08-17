@@ -17,7 +17,7 @@ your code in it.
 
 When writing code, please pay attention that you:
 
-1. Write your code clearly, with self-explainable functions and classes.
+1. Write your code clearly, with self-explainable variables, functions and classes.
 2. Reuse existing code when possible.
 3. Document new functions, classes, and modules (especially if they’re public).
 
@@ -30,7 +30,7 @@ Step 2 – Test Your Code
 In the Eddington platform, we believe in 100% test coverage, and we enforce it
 throughout our repositories! If you add new functionalities or change existing
 functionality, you must test the new ability with a unit test
-(or better yet – **tests**).
+(or better yet – **unit tests**).
 
 We use pytest_ as our testing platform. Some of our tests use the `pytest-case`_
 and `pytest-mock`_ libraries. Feel free to use those libraries as well as other testing
@@ -49,8 +49,8 @@ Step 3 – Clean Your Code
 
 Writing a working code can sometimes be really hard, but writing **clean** code is always
 harder. Here in the Eddington platform, we believe that code should be clean, but we
-want to make sure that you write clean code as easy as possible, using automatic tools
-that help you achieve that along the way.
+want to make sure that you write clean code as easily as possible, using automatic
+tools that help you achieve that along the way.
 
 We use state-of-the-art static code analysis tools such as black, flake8, pylint, mypy,
 pydostyle, etc. Orchestrating all these tools is statue_, which runs each of those
@@ -64,8 +64,8 @@ In order to use *Statue*, follow the next steps:
 4. Save all changes in a commit or append them to an existing commit.
 
 You may find some of the errors presented by those tools tedious or irrelevant,
-but rest assured that we take those seriously. If you think that in a specific line
-an error should be ignored (using :code:`# noqa` or :code:`# pylint: disable` for
+but rest assured that we take those errors seriously. If you think that in a specific
+line an error should be ignored (using :code:`# noqa` or :code:`# pylint: disable` for
 example), make sure that this skip is justified before using it.
 
 Step 4 – Re-run everything
