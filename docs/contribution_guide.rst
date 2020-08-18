@@ -17,9 +17,10 @@ your code in it.
 
 When writing code, please pay attention that you:
 
-1. Write your code clearly, with self-explainable variables, functions and classes.
-2. Reuse existing code when possible.
-3. Document new functions, classes, and modules (especially if they’re public).
+1. Make sure your *master* branch is `up-to-date`_ with the latest changed in the Eddington platform, and make you feature branch based upon it. This will help you avoid merge conflicts.
+2. Write your code clearly, with self-explainable variables, functions and classes.
+3. Reuse existing code when possible.
+4. Document new functions, classes, and modules (especially if they’re public).
 
 Code reviews you’ll be receiving often would address the following guidelines, as well
 as design issues if there are any.
@@ -53,15 +54,16 @@ want to make sure that you write clean code as easily as possible, using automat
 tools that help you achieve that along the way.
 
 We use state-of-the-art static code analysis tools such as black, flake8, pylint, mypy,
-pydostyle, etc. Orchestrating all these tools is statue_, which runs each of those
+pydocstyle, etc. Orchestrating all these tools is statue_, which runs each of those
 tools on all of our code-base.
 
 In order to use *Statue*, follow the next steps:
 
 1. Run :code:`pip install statue`
-2. Go to the main repository directory and run :code:`statue --context format`. This will change your code to fit styling guidelines. Save the changes in a commit or append them to an existing commit.
-3. Run :code:`statue` again (now without any arguments) and it will check if there are any issues that it wasn't able to solve on its own. If there are any errors, fix them.
-4. Save all changes in a commit or append them to an existing commit.
+2. Run :code:`statue install`. This will install missing packages if needed.
+3. Go to the main repository directory and run :code:`statue --context format`. This will change your code to fit styling guidelines. Save the changes in a commit or append them to an existing commit.
+4. Run :code:`statue` again (now without any arguments) and it will check if there are any issues that it wasn't able to solve on its own. If there are any errors, fix them.
+5. Save all changes in a commit or append them to an existing commit.
 
 You may find some of the errors presented by those tools tedious or irrelevant,
 but rest assured that we take those errors seriously. If you think that in a specific
@@ -93,6 +95,7 @@ code or commenting back. Once all the issues are resolved, your PR will be merge
 master!
 
 .. _pull-request: https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/about-pull-requests
+.. _up-to-date: https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/syncing-a-fork
 .. _pytest: https://docs.pytest.org/en/stable/
 .. _pytest-case: https://smarie.github.io/python-pytest-cases/
 .. _pytest-mock: https://github.com/pytest-dev/pytest-mock/
