@@ -51,7 +51,7 @@ Step 3 – Cleaning Your Code
 Writing a working code can sometimes be really hard, but writing a **clean** code is always
 harder.
 
-Here on the eddington platform we believe that code should be clean, and we want to
+Here on the Eddington platform we believe that code should be clean, and we want to
 make sure that writing clean code is as easy as possible. We do that by using automatic
 tools that would help you achieve that along the way.
 
