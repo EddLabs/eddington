@@ -41,7 +41,7 @@ In order to run the unit tests and see the code coverage, you should use tox_:
 
 1. Install *tox* with :code:`pip install tox`
 2. Go to the main repository directory and run :code:`tox -e py`
-3. This will run the unit tests and show the coverage report. Make sure the code to passes and all lines are covered
+3. This will run the unit tests and show the coverage report. Make sure the code passes and all lines are covered
 
 We will never compromise on code coverage and/or extensive unit testing.
 
