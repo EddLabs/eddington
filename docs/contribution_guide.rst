@@ -39,7 +39,7 @@ libraries whenever needed.
 
 In order to run the unit tests and see the code coverage, you should use tox_:
 
-1. Install tox with :code:`pip install tox`
+1. Install *tox* with :code:`pip install tox`
 2. Go to the main repository directory and run :code:`tox -e py`
 3. This will run the unit tests and show the coverage report. Make sure the code to passes and all lines are covered
 
@@ -55,9 +55,9 @@ Here on the eddington platform we believe that code should be clean, and we want
 make sure that writing clean code is as easy as possible. We do that by using automatic
 tools that would help you achieve that along the way.
 
-We use state-of-the-art static code analysis tools such as black, flake8, pylint, mypy,
-pydocstyle, etc. Statue_ is orchestrating all these tools by running each of them on
-all of our code-base.
+We use state-of-the-art static code analysis tools such as *black*, *flake8*, *pylint*,
+*mypy*, *pydocstyle*, etc. Statue_ is orchestrating all these tools by running each of
+them on all of our code-base.
 
 In order to use *Statue*, follow the next steps:
 
