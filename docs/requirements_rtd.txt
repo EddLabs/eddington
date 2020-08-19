@@ -1,1 +1,4 @@
 -r docs_requirements.txt
+numpy
+scipy
+xlrd
