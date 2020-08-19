@@ -8,3 +8,4 @@ API
    :glob:
 
    Fit Data <fit_data>
+   Fit Function <fit_function>
