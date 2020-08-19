@@ -3,12 +3,16 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
+.. figure:: images/eddington.png
+    :width: 500
+
+=========
 Eddington
 =========
 
 *Eddington* is a user-friendly data fitting platform for common uses, based on
 open-source libraries such as *numpy*, *scipy*, and *matplotlib*.
-*Eddington* can be integrated with python code as a library, can be used as CLI and
+*Eddington* can be integrated with python code as a library, can be used as a CLI and
 has an easy to use GUI.
 
 .. toctree::
