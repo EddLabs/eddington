@@ -14,22 +14,32 @@ class FitFunction:  # pylint: disable=invalid-name,too-many-instance-attributes
     """
     Fitting function class.
 
-    :param fit_func: Callable. The actual fitting function.
-     The function gets 2 parameters:
-     a - an array with the parameters of the function.
-     x - the sample data to be fit.
-    :param n: Number of parameters. the length of "a" in fit_func.
+    This class wraps up a callable which gets 2 parameters:
+
+    * ``a`` - An array with the parameters of the function.
+    * ``x`` - The sample data to be fit.
+
+    Our main goal is to find the best suitable ``a`` that match given ``x`` values to
+    given ``y`` values.
+
+    :param fit_func: The actual fitting function.
+    :type fit_func: callable
+    :param n: Number of parameters. the length of "a" in :paramref:`fit_func`.
+    :type n: int
     :param name: The name of the function.
+    :type name: str
     :param syntax: The syntax of the fitting function
+    :type syntax: str
     :param a_derivative: a function representing the derivative of fit_func according
      to the "a" array
+    :type a_derivative: callable
     :param x_derivative: a function representing the derivative of fit_func according
      to x
-    :param title_name: same as "name" but in title case
-    :param costumed: Is this fit functioned made from a string.
-     This will be deprecated soon.
-    :param save: Boolean. Should this function be saved in the
-     :class:`FitFunctionsRegistry`
+    :type a_derivative: callable
+    :param title_name: same as :paramref:`name` but in title case
+    :type title_name: str
+    :param save: Should this function be saved in the :class:`FitFunctionsRegistry`
+    :type save: bool
     """
 
     fit_func: Callable = field(repr=False)
@@ -80,8 +90,10 @@ class FitFunction:  # pylint: disable=invalid-name,too-many-instance-attributes
         Fix parameter with predefined value.
 
         :param index: The index of the parameter to fix. Starting from 0
+        :type index: int
         :param value: The value to fix
-        :return: self
+        :type value: float
+        :return: self :class:`FitFunction`
         """
         if index < 0 or index >= self.n:
             raise FitFunctionRuntimeError(
@@ -96,7 +108,8 @@ class FitFunction:  # pylint: disable=invalid-name,too-many-instance-attributes
         Unfix a fixed parameter.
 
         :param index: The index of the parameter to unfix
-        :return: self
+        :type index: int
+        :return: self :class:`FitFunction`
         """
         del self.fixed[index]
         return self
@@ -105,7 +118,7 @@ class FitFunction:  # pylint: disable=invalid-name,too-many-instance-attributes
         """
         Clear all fixed parameters.
 
-        :return: self
+        :return: self :class:`FitFunction`
         """
         self.fixed.clear()
 
@@ -171,20 +184,38 @@ def fit_function(  # pylint: disable=invalid-name,too-many-arguments
     """
     Wrapper making a simple callable into a :class:`FitFunction`.
 
-    :param n: Number of parameters. the length of "a" in fit_func.
+    :param n: Number of parameters. The length of parameter ``a`` of the fitting
+     function.
+    :type n: int
     :param name: The name of the function.
-    :param syntax: The syntax of the fitting function
-    :param a_derivative: a function representing the derivative of fit_func according
-     to the "a" array
-    :param x_derivative: a function representing the derivative of fit_func according
-     to x
-    :param save: Boolean. Should this function be saved in the
+    :type name: str
+    :param syntax: The syntax of the fitting function.
+    :type syntax: str
+    :param a_derivative: a function representing the derivative of the fit function
+     according to the "a" parameter array
+    :type a_derivative: callable
+    :param x_derivative: a function representing the derivative of the fit function
+     according to x
+    :param save: Should this function be saved in the
      :class:`FitFunctionsRegistry`
+    :type save: bool
     :return: :class:`FitFunction` instance.
     """
 
     def wrapper(func):
         func_name = func.__name__ if name is None else name
+        if func.__doc__ is None:
+            func.__doc__ = ""
+        func.__doc__ += f"""
+
+Syntax: :code:`y = {syntax}`
+
+:param a: Coefficients array of length {n}
+:type a: ``numpy.ndarray``
+:param x: Free parameter
+:type x: ``numpy.ndarray`` or ``float``
+:returns: ``numpy.ndarray`` or ``float``
+    """
         return functools.wraps(func)(
             FitFunction(
                 fit_func=func,
