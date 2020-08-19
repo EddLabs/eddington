@@ -34,7 +34,7 @@ Eddington
 
 *Eddington* is a user-friendly data fitting platform for common uses, based on
 open-source libraries such as *numpy*, *scipy*, and *matplotlib*.
-*Eddington* can be integrated with python code as a library, can be used as CLI and
+*Eddington* can be integrated with python code as a library, can be used as a CLI and
 has an easy to use GUI.
 
 Documentation
