@@ -28,7 +28,7 @@ def check_data_by_indexes(actual_fit_data):
     for key in actual_fit_data.data.keys():
         np.testing.assert_equal(
             actual_fit_data.data[key],
-            VALUES[key],
+            VALUES[int(key)],
             err_msg="Data is different than expected",
         )
 
