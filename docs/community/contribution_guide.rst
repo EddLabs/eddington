@@ -1,3 +1,5 @@
+.. contribution_guide:
+
 Contribution Guide
 ==================
 
