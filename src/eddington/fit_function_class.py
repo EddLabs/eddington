@@ -209,7 +209,7 @@ def fit_function(  # pylint: disable=invalid-name,too-many-arguments
         func.__doc__ += f"""
 
 Syntax: :code:`y = {syntax}`
-    
+
 :param a: Coefficients array of length {n}
 :type a: ``numpy.ndarray``
 :param x: Free parameter

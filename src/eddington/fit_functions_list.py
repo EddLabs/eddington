@@ -35,9 +35,7 @@ def constant(a, x):
     a_derivative=lambda a, x: np.stack([np.ones(shape=np.shape(x)), x, x ** 2]),
 )  # pylint: disable=C0103
 def parabolic(a, x):
-    """
-    Parabolic fit function.
-    """
+    """Parabolic fit function."""
     return a[0] + a[1] * x + a[2] * x ** 2
 
 
@@ -55,9 +53,7 @@ def parabolic(a, x):
     ),
 )  # pylint: disable=C0103
 def straight_power(a, x):  # pylint: disable=C0103
-    """
-    Represent fitting of y ~ x^n.
-    """
+    """Represent fitting of y ~ x^n."""
     return a[0] * (x + a[1]) ** a[2] + a[3]
 
 
@@ -75,9 +71,7 @@ def straight_power(a, x):  # pylint: disable=C0103
     ),
 )  # pylint: disable=C0103
 def inverse_power(a, x):  # pylint: disable=C0103
-    """
-    Represent fitting of y ~ x^(-n).
-    """
+    """Represent fitting of y ~ x^(-n)."""
     return a[0] / (x + a[1]) ** a[2] + a[3]
 
 
