@@ -24,7 +24,7 @@ class FitFunction:  # pylint: disable=invalid-name,too-many-instance-attributes
 
     :param fit_func: The actual fitting function.
     :type fit_func: callable
-    :param n: Number of parameters. the length of "a" in :paramref:`fit_func`.
+    :param n: Number of parameters. the length of "a" in `fit_func`.
     :type n: int
     :param name: The name of the function.
     :type name: str
@@ -36,7 +36,7 @@ class FitFunction:  # pylint: disable=invalid-name,too-many-instance-attributes
     :param x_derivative: a function representing the derivative of fit_func according
      to x
     :type a_derivative: callable
-    :param title_name: same as :paramref:`name` but in title case
+    :param title_name: same as `name` but in title case
     :type title_name: str
     :param save: Should this function be saved in the :class:`FitFunctionsRegistry`
     :type save: bool
