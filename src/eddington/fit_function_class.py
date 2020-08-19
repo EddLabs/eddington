@@ -204,6 +204,18 @@ def fit_function(  # pylint: disable=invalid-name,too-many-arguments
 
     def wrapper(func):
         func_name = func.__name__ if name is None else name
+        if func.__doc__ is None:
+            func.__doc__ = ""
+        func.__doc__ += f"""
+
+Syntax: :code:`y = {syntax}`
+    
+:param a: Coefficients array of length {n}
+:type a: ``numpy.ndarray``
+:param x: Free parameter
+:type x: ``numpy.ndarray`` or ``float``
+:returns: ``numpy.ndarray`` or ``float``
+    """
         return functools.wraps(func)(
             FitFunction(
                 fit_func=func,
