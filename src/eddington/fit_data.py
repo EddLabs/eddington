@@ -264,9 +264,9 @@ class FitData:  # pylint: disable=too-many-instance-attributes,too-many-public-m
         :type xmin: float
         :param xmax: Maximum value for x.
         :type xmax: float
-        :param min_coeff: Minimum value for :paramref:`a` coefficient.
+        :param min_coeff: Minimum value for `a` coefficient.
         :type min_coeff: float
-        :param max_coeff: Maximum value for :paramref:`a` coefficient.
+        :param max_coeff: Maximum value for `a` coefficient.
         :type max_coeff: float
         :param xsigma: Standard deviation for x.
         :type xsigma: int
