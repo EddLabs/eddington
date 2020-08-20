@@ -1,5 +1,13 @@
 #!/usr/bin/env python
+import os
+
 from setuptools import setup
 
+READTHEDOCS = "READTHEDOCS"
+
 version = "0.0.12"
-setup(version=version)
+on_rtd = os.environ.get(READTHEDOCS) == "True"
+install_requires = []
+if not on_rtd:
+    install_requires = ["scipy >= 1.5.2", "numpy >= 1.19.1", "xlrd >= 1.2.0"]
+setup(version=version, install_requires=install_requires)
