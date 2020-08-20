@@ -281,3 +281,7 @@ spelling_lang = "en_US"
 spelling_word_list_filename = "spelling_wordlist"
 
 spelling_ignore_pypi_package_names = True
+
+# -- Options for autodoc -------------------------------------------
+
+autodoc_mock_imports = ["numpy", "scipy", "xlrd"]
