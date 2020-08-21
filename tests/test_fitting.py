@@ -1,7 +1,7 @@
-import pytest
 from argparse import Namespace
 
 import numpy as np
+import pytest
 
 from eddington import FitData, fit_function, fit_to_data
 

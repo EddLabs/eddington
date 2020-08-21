@@ -12,22 +12,22 @@ from eddington.exceptions import (
 )
 from eddington.fit_data import FitData
 from eddington.fit_function_class import FitFunction, fit_function
-from eddington.fit_functions_registry import FitFunctionsRegistry
-from eddington.fit_result import FitResult
 from eddington.fit_functions_list import (
     constant,
+    cos,
     exponential,
     hyperbolic,
+    inverse_power,
     linear,
+    normal,
     parabolic,
+    poisson,
     polynomial,
-    cos,
     sin,
     straight_power,
-    inverse_power,
-    normal,
-    poisson,
 )
+from eddington.fit_functions_registry import FitFunctionsRegistry
+from eddington.fit_result import FitResult
 from eddington.fitting import fit_to_data
 
 __all__ = [

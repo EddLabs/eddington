@@ -3,20 +3,20 @@ import pytest
 from pytest_cases import THIS_MODULE, parametrize_with_cases
 
 from eddington import (
+    FitFunctionLoadError,
+    FitFunctionRuntimeError,
     constant,
+    cos,
     exponential,
     hyperbolic,
+    inverse_power,
     linear,
+    normal,
     parabolic,
+    poisson,
     polynomial,
-    cos,
     sin,
     straight_power,
-    inverse_power,
-    FitFunctionRuntimeError,
-    FitFunctionLoadError,
-    normal,
-    poisson,
 )
 
 

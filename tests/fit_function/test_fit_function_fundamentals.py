@@ -1,8 +1,7 @@
+import numpy as np
 import pytest
 
-import numpy as np
 from eddington import FitFunctionRuntimeError
-
 from tests.fit_function.dummy_functions import dummy_func1, dummy_func2
 
 delta = 10e-5

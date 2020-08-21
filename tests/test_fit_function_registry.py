@@ -1,10 +1,6 @@
 import pytest
 
-from eddington import (
-    FitFunctionLoadError,
-    FitFunctionsRegistry,
-    fit_function,
-)
+from eddington import FitFunctionLoadError, FitFunctionsRegistry, fit_function
 from eddington.exceptions import FitFunctionSaveError
 
 

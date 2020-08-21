@@ -1,7 +1,7 @@
 """Fitting function to evaluate with the fitting algorithm."""
 import functools
 from dataclasses import InitVar, dataclass, field
-from typing import Callable, Optional, Dict
+from typing import Callable, Dict, Optional
 
 import numpy as np
 

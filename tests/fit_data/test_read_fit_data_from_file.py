@@ -1,11 +1,11 @@
 from collections import namedtuple
 from copy import deepcopy
 from pathlib import Path
+
 import numpy as np
 import pytest
-from mock import PropertyMock, mock_open, patch, Mock
-from pytest_cases import parametrize_plus, fixture_ref
-
+from mock import Mock, PropertyMock, mock_open, patch
+from pytest_cases import fixture_ref, parametrize_plus
 
 from eddington import FitData, FitDataInvalidFileSyntax
 from tests.fit_data import COLUMNS, CONTENT, ROWS, VALUES
