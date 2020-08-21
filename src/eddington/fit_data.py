@@ -319,9 +319,8 @@ class FitData:  # pylint: disable=too-many-instance-attributes,too-many-public-m
         if isinstance(filepath, str):
             filepath = Path(filepath)
 
-        wb = openpyxl.load_workbook(filepath, data_only=True)
-        ws = wb[sheet]
-        rows = [list(row) for row in ws.values]
+        workbook = openpyxl.load_workbook(filepath, data_only=True)
+        rows = [list(row) for row in workbook[sheet].values]
 
         return cls.__extract_data_from_rows(
             rows=rows,
