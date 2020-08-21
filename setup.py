@@ -9,5 +9,5 @@ version = "0.0.12"
 on_rtd = os.environ.get(READTHEDOCS) == "True"
 install_requires = []
 if not on_rtd:
-    install_requires = ["scipy >= 1.5.2", "numpy >= 1.19.1", "xlrd >= 1.2.0"]
+    install_requires = ["scipy >= 1.5.2", "numpy >= 1.19.1", "openpyxl >= 3.0.4"]
 setup(version=version, install_requires=install_requires)
