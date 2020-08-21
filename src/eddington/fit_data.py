@@ -3,7 +3,7 @@ import csv
 from collections import OrderedDict, namedtuple
 from pathlib import Path
 from typing import Dict, Union, Optional, List
-from openpyxl import load_workbook
+import openpyxl
 
 
 import numpy as np
@@ -319,7 +319,7 @@ class FitData:  # pylint: disable=too-many-instance-attributes,too-many-public-m
         if isinstance(filepath, str):
             filepath = Path(filepath)
 
-        wb = load_workbook(filepath, data_only=True)
+        wb = openpyxl.load_workbook(filepath, data_only=True)
         ws = wb[sheet]
         rows = [list(row) for row in ws.values]
 

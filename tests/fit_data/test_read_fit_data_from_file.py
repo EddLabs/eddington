@@ -3,7 +3,7 @@ from copy import deepcopy
 from pathlib import Path
 import numpy as np
 import pytest
-from mock import PropertyMock, mock_open, patch
+from mock import PropertyMock, mock_open, patch, Mock
 from pytest_cases import parametrize_plus, fixture_ref
 
 
@@ -73,20 +73,9 @@ def read_csv(mocker):
 
 
 def set_excel_rows(reader, rows):
-    def nrows():
-        return len(rows)
-
-    def get_row(i):
-        return [DummyCell(value=element) for element in rows[i]]
-
-    def row_iterator():
-        return iter([get_row(i) for i in range(nrows())])
-
-    sheet = reader.return_value.get_sheet_by_name.return_value
-    print(sheet)
-    type(sheet).max_row = PropertyMock(side_effect=nrows)
-    sheet.iter_rows.side_effect=row_iterator
-
+    sheet = Mock()
+    reader.return_value = {SHEET_NAME: sheet}
+    type(sheet).values = PropertyMock(return_value=rows)
 
 
 @pytest.fixture
@@ -95,12 +84,10 @@ def mock_load_workbook(mocker):
     return load_workbook
 
 
-
 @pytest.fixture
 def read_excel(mock_load_workbook):
-    def actual_read(file_path,**kwargs):
+    def actual_read(file_path, **kwargs):
         return FitData.read_from_excel(file_path, SHEET_NAME, **kwargs)
-
 
     return actual_read, dict(reader=mock_load_workbook, row_setter=set_excel_rows)
 
@@ -108,7 +95,6 @@ def read_excel(mock_load_workbook):
 @parametrize_plus("read, mocks", [fixture_ref(read_csv), fixture_ref(read_excel)])
 def test_read_with_headers_successful(read, mocks):
     mocks["row_setter"](mocks["reader"], ROWS)
-
 
     actual_fit_data = read(FILE_PATH)
 
