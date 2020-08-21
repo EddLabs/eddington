@@ -2,12 +2,10 @@
 import csv
 from collections import OrderedDict, namedtuple
 from pathlib import Path
-from typing import Dict, Union, Optional, List
-import openpyxl
-
+from typing import Dict, List, Optional, Union
 
 import numpy as np
-
+import openpyxl
 
 from eddington.consts import (
     DEFAULT_MAX_COEFF,
@@ -26,7 +24,6 @@ from eddington.exceptions import (
     FitDataInvalidFileSyntax,
 )
 from eddington.random_util import random_array, random_error, random_sigma
-
 
 Columns = namedtuple("ColumnsResult", ["x", "y", "xerr", "yerr"])
 

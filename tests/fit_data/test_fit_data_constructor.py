@@ -1,6 +1,7 @@
+from copy import deepcopy
+
 import pytest
 from pytest_cases import THIS_MODULE, parametrize_with_cases
-from copy import deepcopy
 
 from eddington import (
     FitData,
@@ -9,7 +10,6 @@ from eddington import (
     FitDataColumnsLengthError,
 )
 from eddington.fit_data import Columns
-
 from tests.fit_data import COLUMNS, COLUMNS_NAMES
 
 COLUMNS_OPTIONS = ["x_column", "xerr_column", "y_column", "yerr_column"]

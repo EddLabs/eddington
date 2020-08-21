@@ -1,10 +1,10 @@
 import json
+from collections import OrderedDict
+from pathlib import Path
 
 import numpy as np
 import pytest
-from pytest_cases import parametrize, parametrize_with_cases, THIS_MODULE
-from collections import OrderedDict
-from pathlib import Path
+from pytest_cases import THIS_MODULE, parametrize, parametrize_with_cases
 
 from eddington import FitData, FitFunctionsRegistry, fit_to_data
 

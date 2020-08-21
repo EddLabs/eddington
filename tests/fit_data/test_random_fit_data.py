@@ -1,6 +1,6 @@
+import numpy as np
 import pytest
 from mock import call
-import numpy as np
 
 from eddington import FitData
 from eddington.consts import (
@@ -12,7 +12,6 @@ from eddington.consts import (
     DEFAULT_XSIGMA,
     DEFAULT_YSIGMA,
 )
-
 from tests.fit_function.dummy_functions import dummy_func1
 
 a = [2, 1]
