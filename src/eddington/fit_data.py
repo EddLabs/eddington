@@ -3,9 +3,11 @@ import csv
 from collections import OrderedDict, namedtuple
 from pathlib import Path
 from typing import Dict, Union, Optional, List
+from openpyxl import load_workbook
+
 
 import numpy as np
-import xlrd
+
 
 from eddington.consts import (
     DEFAULT_MAX_COEFF,
@@ -316,10 +318,11 @@ class FitData:  # pylint: disable=too-many-instance-attributes,too-many-public-m
         """
         if isinstance(filepath, str):
             filepath = Path(filepath)
-        excel_obj = xlrd.open_workbook(filepath)
-        sheet_obj = excel_obj.sheet_by_name(sheet)
-        rows = [sheet_obj.row(i) for i in range(sheet_obj.nrows)]
-        rows = [list(map(lambda element: element.value, row)) for row in rows]
+
+        wb = load_workbook(filepath, data_only=True)
+        ws = wb[sheet]
+        rows = [list(row) for row in ws.values]
+
         return cls.__extract_data_from_rows(
             rows=rows,
             file_name=filepath.name,

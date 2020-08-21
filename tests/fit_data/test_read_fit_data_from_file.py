@@ -6,6 +6,7 @@ import pytest
 from mock import PropertyMock, mock_open, patch
 from pytest_cases import parametrize_plus, fixture_ref
 
+
 from eddington import FitData, FitDataInvalidFileSyntax
 from tests.fit_data import COLUMNS, CONTENT, ROWS, VALUES
 
@@ -78,29 +79,36 @@ def set_excel_rows(reader, rows):
     def get_row(i):
         return [DummyCell(value=element) for element in rows[i]]
 
-    sheet = reader.return_value.sheet_by_name.return_value
+    def row_iterator():
+        return iter([get_row(i) for i in range(nrows())])
 
-    type(sheet).nrows = PropertyMock(side_effect=nrows)
-    sheet.row.side_effect = get_row
+    sheet = reader.return_value.get_sheet_by_name.return_value
+    print(sheet)
+    type(sheet).max_row = PropertyMock(side_effect=nrows)
+    sheet.iter_rows.side_effect=row_iterator
 
-
-@pytest.fixture
-def mock_open_workbook(mocker):
-    open_workbook = mocker.patch("xlrd.open_workbook")
-    return open_workbook
 
 
 @pytest.fixture
-def read_excel(mock_open_workbook):
-    def actual_read(file_path, **kwargs):
+def mock_load_workbook(mocker):
+    load_workbook = mocker.patch("openpyxl.load_workbook")
+    return load_workbook
+
+
+
+@pytest.fixture
+def read_excel(mock_load_workbook):
+    def actual_read(file_path,**kwargs):
         return FitData.read_from_excel(file_path, SHEET_NAME, **kwargs)
 
-    return actual_read, dict(reader=mock_open_workbook, row_setter=set_excel_rows)
+
+    return actual_read, dict(reader=mock_load_workbook, row_setter=set_excel_rows)
 
 
 @parametrize_plus("read, mocks", [fixture_ref(read_csv), fixture_ref(read_excel)])
 def test_read_with_headers_successful(read, mocks):
     mocks["row_setter"](mocks["reader"], ROWS)
+
 
     actual_fit_data = read(FILE_PATH)
 
@@ -111,9 +119,7 @@ def test_read_with_headers_successful(read, mocks):
 @parametrize_plus("read, mocks", [fixture_ref(read_csv), fixture_ref(read_excel)])
 def test_read_without_headers_successful(read, mocks):
     mocks["row_setter"](mocks["reader"], CONTENT)
-
     actual_fit_data = read(FILE_PATH)
-
     check_data_by_indexes(actual_fit_data)
     check_columns(actual_fit_data)
 
