@@ -404,8 +404,8 @@ class FitData:  # pylint: disable=too-many-instance-attributes,too-many-public-m
             content = rows
         try:
             content = [list(map(float, row)) for row in content]
-        except ValueError:
-            raise FitDataInvalidFileSyntax(file_name, sheet=sheet)
+        except ValueError as error:
+            raise FitDataInvalidFileSyntax(file_name, sheet=sheet) from error
         columns = [np.array(column) for column in zip(*content)]
         return FitData(
             OrderedDict(zip(headers, columns)),
