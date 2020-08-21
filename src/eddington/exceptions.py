@@ -36,19 +36,19 @@ class FitDataInvalidFileSyntax(FitDataInvalidFile):  # noqa: D101
     def __init__(self, file_name, sheet=None):  # noqa: D107
         sheet_msg = "" if sheet is None else f' in sheet "{sheet}"'
         msg = f'"{file_name}" has invalid syntax{sheet_msg}.'
-        super(FitDataInvalidFileSyntax, self).__init__(msg)
+        super().__init__(msg)
 
 
 class FitDataColumnsLengthError(FitDataInvalidFile):  # noqa: D101
     msg = "All columns in FitData should have the same length"
 
     def __init__(self):  # noqa: D107
-        super(FitDataColumnsLengthError, self).__init__(self.msg)
+        super().__init__(self.msg)
 
 
 class FitDataColumnIndexError(FitDataError):  # noqa: D101
     def __init__(self, index, max_index):  # noqa: D107
-        super(FitDataColumnIndexError, self).__init__(
+        super().__init__(
             f"No column number {index} in data. "
             f"index should be between 1 and {max_index}"
         )
@@ -56,9 +56,7 @@ class FitDataColumnIndexError(FitDataError):  # noqa: D101
 
 class FitDataColumnExistenceError(FitDataError):  # noqa: D101
     def __init__(self, column):  # noqa: D107
-        super(FitDataColumnExistenceError, self).__init__(
-            f'Could not find column "{column}" in data'
-        )
+        super().__init__(f'Could not find column "{column}" in data')
 
 
 class FitDataColumnsSelectionError(FitDataError):  # noqa: D101
