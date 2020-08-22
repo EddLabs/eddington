@@ -22,6 +22,7 @@
 *.inc             text
 *.ini             text
 *.js              text
+*.csv             text
 *.json            text
 *.jsx             text
 *.less            text
@@ -194,3 +195,7 @@ Procfile          text
 
 # Ignore files (like .npmignore or .gitignore)
 *.*ignore         text
+
+# Data
+*.xls             binary
+*.xlsx            binary
