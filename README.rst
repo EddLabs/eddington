@@ -54,7 +54,6 @@ If you experience problems with Eddington, `log them on GitHub`_.
 
 If you want to contribute code, please `fork the code`_ and `submit a pull request`_.
 
-.. _BeeWare suite: http://EddLabs.org
 .. _Read The Docs: https://eddington.readthedocs.io
 .. _EddLabs/developers: https://gitter.im/EddLabs/developers
 .. _log them on Github: https://github.com/EddLabs/eddington/issues
