@@ -10,7 +10,7 @@ from eddington import FitData, FitFunctionsRegistry, fit_to_data
 
 
 def cases_paths():
-    return (Path(__file__).parent / "cases").glob("**/*.json")
+    return (Path(__file__).parent.parent / "resources" / "cases").glob("**/*.json")
 
 
 @parametrize(idgen="case {case_path.stem}", case_path=cases_paths())
