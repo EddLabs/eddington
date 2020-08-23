@@ -53,7 +53,7 @@ jobs:
         pip install tox
     - name: Install Latex
       run: sudo apt-get install texlive-full
-      if: matrix.task == "docs"
+      if: matrix.task == 'docs'
     - name: Run Post-Test check
       run: |
         tox -e ${{ matrix.task }}
