@@ -242,6 +242,7 @@ class FitData:  # pylint: disable=too-many-instance-attributes,too-many-public-m
     def random(  # pylint: disable=invalid-name,too-many-arguments
         cls,
         fit_func,  # type: ignore
+        x: Optional[np.ndarray] = None,
         a: Optional[np.ndarray] = None,
         xmin: float = DEFAULT_XMIN,
         xmax: float = DEFAULT_XMAX,
@@ -256,6 +257,9 @@ class FitData:  # pylint: disable=too-many-instance-attributes,too-many-public-m
 
         :param fit_func: :class:`FitFunction` to evaluate with the fit data
         :type fit_func: ``FitFunction``
+        :param x: Optional. The input for the fitting algorithm.
+         If not given, generated randomly.
+        :type x: ``numpy.ndarray``
         :param a: Optional. the actual parameters that should be returned by the
          fitting algorithm. If not given, generated randomly.
         :type a: ``numpy.ndarray``
@@ -277,7 +281,8 @@ class FitData:  # pylint: disable=too-many-instance-attributes,too-many-public-m
         """
         if a is None:
             a = random_array(min_val=min_coeff, max_val=max_coeff, size=fit_func.n)
-        x = random_array(min_val=xmin, max_val=xmax, size=measurements)
+        if x is None:
+            x = random_array(min_val=xmin, max_val=xmax, size=measurements)
         xerr = random_sigma(average_sigma=xsigma, size=measurements)
         yerr = random_sigma(average_sigma=ysigma, size=measurements)
         y = fit_func(a, x + random_error(scales=xerr)) + random_error(scales=yerr)
