@@ -3,5 +3,5 @@
 [sources.tests]
 contexts = ["test"]
 
-[sources.fitting_tests]
+[sources.integration_tests]
 contexts = ["test"]
