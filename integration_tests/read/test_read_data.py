@@ -3,31 +3,53 @@ from pathlib import Path
 import pytest
 from pytest_cases import THIS_MODULE, parametrize_with_cases
 
-from eddington import FitData
+from eddington import FitData, FitDataInvalidFileSyntax
 
 SOURCES_DIRECTORY = Path(__file__).parent.parent / "resources"
 
 EXCEL_FILE = SOURCES_DIRECTORY / "data.xlsx"
-SHEET_NAME = "data1"
+VALID_SHEET_NAME = "data1"
+INVALID_SHEET_NAME = "invalid_data1"
 
-CSV_FILE = SOURCES_DIRECTORY / "data.csv"
+VALID_CSV_FILE = SOURCES_DIRECTORY / "valid_data.csv"
+INVALID_CSV_FILE = SOURCES_DIRECTORY / "invalid_data.csv"
 
 
-def case_read_excel():
+def read_excel_method(sheet_name):
     def read_method(**kwargs):
-        return FitData.read_from_excel(EXCEL_FILE, SHEET_NAME, **kwargs)
+        return FitData.read_from_excel(EXCEL_FILE, sheet_name, **kwargs)
 
     return read_method
 
 
-def case_read_csv():
+def case_read_valid_excel():
+    return read_excel_method(VALID_SHEET_NAME)
+
+
+def case_read_invalid_excel():
+    return read_excel_method(INVALID_SHEET_NAME)
+
+
+def read_csv_method(file_path):
     def read_method(**kwargs):
-        return FitData.read_from_csv(CSV_FILE, **kwargs)
+        return FitData.read_from_csv(file_path, **kwargs)
 
     return read_method
 
 
-@parametrize_with_cases(argnames="read_method", cases=THIS_MODULE)
+def case_read_valid_csv():
+    return read_csv_method(VALID_CSV_FILE)
+
+
+def case_read_invalid_csv():
+    return read_csv_method(INVALID_CSV_FILE)
+
+
+VALID_CASES = [case_read_valid_excel, case_read_valid_csv]
+INVALID_CASES = [case_read_invalid_excel, case_read_invalid_csv]
+
+
+@parametrize_with_cases(argnames="read_method", cases=VALID_CASES)
 def test_simple_read(read_method):
     fit_data: FitData = read_method()
     assert fit_data.x == pytest.approx(
@@ -44,7 +66,7 @@ def test_simple_read(read_method):
     ), "y error is different than expected"
 
 
-@parametrize_with_cases(argnames="read_method", cases=THIS_MODULE)
+@parametrize_with_cases(argnames="read_method", cases=VALID_CASES)
 def test_read_with_y_column(read_method):
     fit_data: FitData = read_method(y_column=5)
     assert fit_data.x == pytest.approx(
@@ -59,3 +81,9 @@ def test_read_with_y_column(read_method):
     assert fit_data.yerr == pytest.approx(
         [14.0, 10.0, 11.0, 8.0, 10.0, 5.0, 16.0]
     ), "y error is different than expected"
+
+
+@parametrize_with_cases(argnames="read_method", cases=INVALID_CASES)
+def test_read_invalid_data_file(read_method):
+    with pytest.raises(FitDataInvalidFileSyntax):
+        read_method()
