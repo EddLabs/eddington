@@ -1,6 +1,7 @@
-from pytest_cases import parametrize_with_cases, THIS_MODULE
 from pathlib import Path
+
 import pytest
+from pytest_cases import THIS_MODULE, parametrize_with_cases
 
 from eddington import FitData
 
