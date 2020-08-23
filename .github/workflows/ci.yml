@@ -52,7 +52,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install tox
     - name: Install Latex
-      run: sudo apt-get install texlive-full
+      run: sudo apt-get install texlive-base
       if: matrix.task == 'docs'
     - name: Run Post-Test check
       run: |
