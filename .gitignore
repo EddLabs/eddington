@@ -129,5 +129,8 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+# Excel temp file
+~$*.xlsx
+
 # IDE
 .idea/
