@@ -111,9 +111,39 @@ def test_read_without_headers_successful(read, mocks):
 
 
 @parametrize_plus("read, mocks", [fixture_ref(read_csv), fixture_ref(read_excel)])
-def test_read_without_headers_unsuccessful(read, mocks):
+def test_read_with_invalid_string_in_row(read, mocks):
     rows = deepcopy(CONTENT)
     rows[1][0] = "f"
+    mocks["row_setter"](mocks["reader"], rows)
+
+    with pytest.raises(FitDataInvalidFileSyntax):
+        read(FILE_PATH)
+
+
+@parametrize_plus("read, mocks", [fixture_ref(read_csv), fixture_ref(read_excel)])
+def test_read_with_none_in_row(read, mocks):
+    rows = deepcopy(CONTENT)
+    rows[1][0] = None
+    mocks["row_setter"](mocks["reader"], rows)
+
+    with pytest.raises(FitDataInvalidFileSyntax):
+        read(FILE_PATH)
+
+
+@parametrize_plus("read, mocks", [fixture_ref(read_csv), fixture_ref(read_excel)])
+def test_read_with_empty_header(read, mocks):
+    rows = deepcopy(ROWS)
+    rows[0][0] = ""
+    mocks["row_setter"](mocks["reader"], rows)
+
+    with pytest.raises(FitDataInvalidFileSyntax):
+        read(FILE_PATH)
+
+
+@parametrize_plus("read, mocks", [fixture_ref(read_csv), fixture_ref(read_excel)])
+def test_read_with_float_header(read, mocks):
+    rows = deepcopy(ROWS)
+    rows[0][0] = "1.25"
     mocks["row_setter"](mocks["reader"], rows)
 
     with pytest.raises(FitDataInvalidFileSyntax):

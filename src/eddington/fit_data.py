@@ -406,7 +406,7 @@ class FitData:  # pylint: disable=too-many-instance-attributes,too-many-public-m
             content = rows
         try:
             content = [list(map(float, row)) for row in content]
-        except ValueError as error:
+        except (ValueError, TypeError) as error:
             raise FitDataInvalidFileSyntax(file_name, sheet=sheet) from error
         columns = [np.array(column) for column in zip(*content)]
         return FitData(
@@ -419,7 +419,15 @@ class FitData:  # pylint: disable=too-many-instance-attributes,too-many-public-m
 
     @classmethod
     def __is_headers(cls, headers):
-        return all([header != "" and not cls.__is_number(header) for header in headers])
+        return all([cls.__is_header(header) for header in headers])
+
+    @classmethod
+    def __is_header(cls, string):
+        if not isinstance(string, str):
+            return False
+        if string == "":
+            return False
+        return not cls.__is_number(string)
 
     @classmethod
     def __is_number(cls, string):
