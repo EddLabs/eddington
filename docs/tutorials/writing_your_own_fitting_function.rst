@@ -36,7 +36,7 @@ A somewhat easier approach would be to use the following fitting function:
 
     y=\frac{a_0x}{x-a_0}+a_1
 
-Now, after you fit the data, you get :math:`f` directly (which is equal to :math:`a_0`)
+Now, after you fit the data, you get :math:`f` directly (which equals to :math:`a_0`)
 
 Since this fitting function is not implemented out-of-the-box, you'd have to implement
 it yourself.
@@ -65,9 +65,8 @@ encapsulate the systematic errors in our :math:`v` samples.
 
     The inputs of the fitting function are :python:`a` which is the parameters vector
     and :python:`x` which is the free variable. while :python:`a` can be from any
-    array-like type (such as :python:`list`, :python:`tuple` and
-    :python:`numpy.ndarray`), :python:`x` can be both an :python:`numpy.ndarray` and
-    :python:`float`.
+    array-like type such as :python:`list`, :python:`tuple`, :python:`numpy.ndarray`,
+    etc. :python:`x` can be both an :python:`numpy.ndarray` and :python:`float`.
 
 Now, we can use the fitting function we've created in order to fit the data:
 
@@ -132,8 +131,68 @@ decorator. In our example:
 .. note::
 
     When implementing the derivatives pay attention that you take :python:`a` as the
-    first parameter and :python:`x` as the second. Moreover, you should pay attention
-    to the *dimension* of the output: :python:`x_derivative` returns a
-    :python:`numpy.ndarray` with dimension similar to :python:`x`, while
-    :python:`a_derivative` returns a :python:`numpy.ndarray` with dimension equal to
-    :python:`x` dimension times :python:`a` dimension.
+    first parameter and :python:`x` as the second. Moreover, make sure that the
+    *dimension* of the output: :python:`x_derivative` returns a :python:`numpy.ndarray`
+    with dimension similar to :python:`x`, while :python:`a_derivative` returns a
+    :python:`numpy.ndarray` with dimension equal to :python:`x` dimension times
+    :python:`a` dimension.
+
+
+The Fit Functions Registry
+--------------------------
+
+By default, creating a new fit function adds it automatically to the
+`FitFunctionsRegistry`, a singleton containing all fitting functions.
+Once the fitting function you've created is imported (for example, in the *__init__.py*
+file) it can be loaded from the registry in the following way:
+
+.. code:: python
+
+    from eddington import FitFunctionsRegistry
+
+    fit_func = FitFunctionsRegistry.load("lens")
+
+If you wish to specify a different name to the fitting function by which it can be
+loaded from the registry, use the `name` parameter in the `fit_function` decorator
+in the following way:
+
+.. code:: python
+
+    from eddington import fit_function, FitFunctionsRegistry
+
+    @fit_function(n=2, name="my_amazing_func")
+    def lens(a, x):
+        return (a[0] * x) / (x - a[0]) + a[1]
+
+    fit_func = FitFunctionsRegistry.load("my_amazing_func")  # Returns the "lens" function
+
+If you expect others to use your new fitting function, consider adding a `syntax` string
+indicating how the fitting functions fit the data. This can be printed out when needed.
+For example:
+
+.. code:: python
+
+    from eddington import fit_function, FitFunctionsRegistry
+
+    @fit_function(n=2, syntax="(a[0] * x) / (x - a[0]) + a[1]")
+    def lens(a, x):
+        return (a[0] * x) / (x - a[0]) + a[1]
+
+    ...
+
+    fit_func = FitFunctionsRegistry.load("lens")
+    print(f"Syntax is: {fit_func.syntax}")  # Prints out the defined syntax
+
+Lastly, if you wish the fit function to do not be saved into the registry, specify
+:python:`save=False` in the `fit_function` decorator. For example:
+
+
+.. code:: python
+
+    from eddington import fit_function
+
+    @fit_function(n=2, save=False)
+    def lens(a, x):
+        return (a[0] * x) / (x - a[0]) + a[1]
+
+As mentioned earlier, by default `save` is set to :python:`True`.
