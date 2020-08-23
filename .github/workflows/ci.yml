@@ -52,7 +52,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install tox
     - name: Install Latex
-      run: sudo apt-get install texlive-latex-extra
+      run: sudo apt-get install texlive-latex-extra texlive-pictures
       if: matrix.task == 'docs'
     - name: Run Post-Test check
       run: |
