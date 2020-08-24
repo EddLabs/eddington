@@ -457,11 +457,13 @@ class FitData:  # pylint: disable=too-many-instance-attributes,too-many-public-m
     def save_excel(self, output_directory, name=None, sheet=None):
         """
         Save :class:`FitData` to xlsx file.
-        :param output_directory: str or Path. Path to the directory for the new excel file to be saved.
+
+        :param output_directory: str or Path.
+         Path to the directory for the new excel file to be saved.
         :param name: Optional. The name of the file, without the .xlsx suffix
         :param sheet: Optional. Name of the sheet that the data will be saved to.
         """
-        workbook, worksheet = self.__make_sheet(sheet)
+        workbook = self.__make_sheet(sheet)[0]
 
         if name:
             path = Path(output_directory / f"{name}.xlsx")
@@ -473,10 +475,12 @@ class FitData:  # pylint: disable=too-many-instance-attributes,too-many-public-m
     def save_csv(self, output_directory, name=None):
         """
         Save :class:`FitData` to csv file.
-        :param output_directory: str or Path. Path to the directory for the new excel file to be saved.
+
+        :param output_directory: str or Path.
+         Path to the directory for the new excel file to be saved.
         :param name: Optional. The name of the file, without the .csv suffix
         """
-        workbook, worksheet = self.__make_sheet()
+        worksheet = self.__make_sheet()[1]
         data = worksheet.rows
 
         if name:
@@ -484,15 +488,15 @@ class FitData:  # pylint: disable=too-many-instance-attributes,too-many-public-m
         else:
             path = Path(output_directory / "FitData.csv")
 
-        csv = open(path, "w+")
+        csv_file = open(path, "w+")
 
         for row in data:
-            l = list(row)
-            for i in range(len(l)):
-                if i == len(l) - 1:
-                    csv.write(str(l[i].value))
+            lst = list(row)
+            for i, item in enumerate(lst):
+                if i == len(lst) - 1:
+                    csv_file.write(str(item.value))
                 else:
-                    csv.write(str(l[i].value) + ",")
-            csv.write("\n")
+                    csv_file.write(str(item.value) + ",")
+            csv_file.write("\n")
 
-        csv.close()
+        csv_file.close()
