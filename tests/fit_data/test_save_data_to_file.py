@@ -2,7 +2,6 @@ from pathlib import Path
 
 import numpy as np
 
-
 from eddington import FitData
 from tests.fit_data import COLUMNS
 
