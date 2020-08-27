@@ -437,7 +437,16 @@ class FitData:  # pylint: disable=too-many-instance-attributes,too-many-public-m
         except ValueError:
             return False
 
-    def __make_sheet(self, sheet=None):
+    def save_excel(self, output_directory, name="fit_data", sheet=None):
+        """
+        Save :class:`FitData` to xlsx file.
+
+        :param output_directory: str or Path.
+         Path to the directory for the new excel file to be saved.
+        :param name: Optional. The name of the file, without the .xlsx suffix.
+         "fit_data" by default
+        :param sheet: Optional. Name of the sheet that the data will be saved to.
+        """
         workbook = openpyxl.Workbook()
         worksheet = workbook.active
 
@@ -452,51 +461,28 @@ class FitData:  # pylint: disable=too-many-instance-attributes,too-many-public-m
         for row in zip(*columns):
             worksheet.append(row)
 
-        return workbook, worksheet
-
-    def save_excel(self, output_directory, name=None, sheet=None):
-        """
-        Save :class:`FitData` to xlsx file.
-
-        :param output_directory: str or Path.
-         Path to the directory for the new excel file to be saved.
-        :param name: Optional. The name of the file, without the .xlsx suffix
-        :param sheet: Optional. Name of the sheet that the data will be saved to.
-        """
-        workbook = self.__make_sheet(sheet)[0]
-
-        if name:
-            path = Path(output_directory / f"{name}.xlsx")
-        else:
-            path = Path(output_directory / "FitData.xlsx")
+        path = Path(output_directory / f"{name}.xlsx")
 
         workbook.save(path)
 
-    def save_csv(self, output_directory, name=None):
+    def save_csv(self, output_directory, name="fit_data"):
         """
         Save :class:`FitData` to csv file.
 
         :param output_directory: str or Path.
          Path to the directory for the new excel file to be saved.
-        :param name: Optional. The name of the file, without the .csv suffix
+        :param name: Optional. The name of the file, without the .csv suffix.
+         "fit_data" by default
         """
-        worksheet = self.__make_sheet()[1]
-        data = worksheet.rows
+        headers = list(self.data.keys())
+        columns = list(self.data.values())
 
-        if name:
-            path = Path(output_directory / f"{name}.csv")
-        else:
-            path = Path(output_directory / "FitData.csv")
+        path = Path(output_directory / f"{name}.csv")
 
-        csv_file = open(path, "w+")
+        csv_file = open(path, "w+", newline="")
 
-        for row in data:
-            lst = list(row)
-            for i, item in enumerate(lst):
-                if i == len(lst) - 1:
-                    csv_file.write(str(item.value))
-                else:
-                    csv_file.write(str(item.value) + ",")
-            csv_file.write("\n")
+        writer = csv.writer(csv_file)
+        writer.writerow(headers)
+        writer.writerows(zip(*columns))
 
         csv_file.close()
