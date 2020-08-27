@@ -22,3 +22,4 @@ has an easy to use GUI.
 
    community/index
    api/index
+   tutorials/index
