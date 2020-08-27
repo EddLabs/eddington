@@ -437,7 +437,12 @@ class FitData:  # pylint: disable=too-many-instance-attributes,too-many-public-m
         except ValueError:
             return False
 
-    def save_excel(self, output_directory, name="fit_data", sheet=None):
+    def save_excel(
+        self,
+        output_directory: Union[str, Path],
+        name: Optional[str] = "fit_data",
+        sheet: Optional[str] = None,
+    ):
         """
         Save :class:`FitData` to xlsx file.
 
@@ -461,11 +466,13 @@ class FitData:  # pylint: disable=too-many-instance-attributes,too-many-public-m
         for row in zip(*columns):
             worksheet.append(row)
 
-        path = Path(output_directory / f"{name}.xlsx")
+        path = Path(output_directory / Path(f"{name}.xlsx"))
 
         workbook.save(path)
 
-    def save_csv(self, output_directory, name="fit_data"):
+    def save_csv(
+        self, output_directory: Union[str, Path], name: Optional[str] = "fit_data"
+    ):
         """
         Save :class:`FitData` to csv file.
 
@@ -477,7 +484,7 @@ class FitData:  # pylint: disable=too-many-instance-attributes,too-many-public-m
         headers = list(self.data.keys())
         columns = list(self.data.values())
 
-        path = Path(output_directory / f"{name}.csv")
+        path = Path(output_directory / Path(f"{name}.csv"))
 
         csv_file = open(path, "w+", newline="")
 
