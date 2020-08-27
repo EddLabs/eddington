@@ -23,13 +23,13 @@ def case_default():
 
 def case_int_x_column():
     fit_data = FitData(COLUMNS, x_column=3)
-    expected_columns = Columns(x="c", xerr="d", y="e", yerr="f",)
+    expected_columns = Columns(x="c", xerr="d", y="e", yerr="f")
     return fit_data, expected_columns
 
 
 def case_string_x_column():
     fit_data = FitData(COLUMNS, x_column="c")
-    expected_columns = Columns(x="c", xerr="d", y="e", yerr="f",)
+    expected_columns = Columns(x="c", xerr="d", y="e", yerr="f")
     return fit_data, expected_columns
 
 
@@ -47,13 +47,13 @@ def case_string_y_column():
 
 def case_int_xerr_column():
     fit_data = FitData(COLUMNS, xerr_column=4)
-    expected_columns = Columns(x="a", xerr="d", y="e", yerr="f",)
+    expected_columns = Columns(x="a", xerr="d", y="e", yerr="f")
     return fit_data, expected_columns
 
 
 def case_string_xerr_column():
     fit_data = FitData(COLUMNS, xerr_column="d")
-    expected_columns = Columns(x="a", xerr="d", y="e", yerr="f",)
+    expected_columns = Columns(x="a", xerr="d", y="e", yerr="f")
     return fit_data, expected_columns
 
 
