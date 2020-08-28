@@ -384,12 +384,13 @@ class FitData:  # pylint: disable=too-many-instance-attributes,too-many-public-m
 
         :param output_directory: Path to the directory for the new excel file to be
          saved.
-        :type output_directory:``Path`` or ``str
+        :type output_directory: ``Path`` or ``str``
         :param name: Optional. The name of the file, without the .xlsx suffix.
          "fit_data" by default.
         :type name: str
         :param sheet: Optional. Name of the sheet that the data will be saved to.
         :type sheet: str
+        :returns: :class:`FitData` read from the excel file.
         """
         workbook = openpyxl.Workbook()
         worksheet = workbook.active
