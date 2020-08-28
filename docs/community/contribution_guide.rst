@@ -65,8 +65,8 @@ In order to use *Statue*, follow the next steps:
 
 1. Run :code:`pip install statue`.
 2. Run :code:`statue install`. If needed, this command will install missing packages.
-3. Go to the main repository directory and run :code:`statue --context format`. This will change your code to fit styling guidelines. Save the changes in a commit or append them to an existing commit.
-4. Run :code:`statue` again (now without any arguments) and it will check if there are any issues that it wasn't able to solve on its own. If there are any errors, fix them.
+3. Go to the main repository directory and run :code:`statue run --context format`. This will change your code to fit styling guidelines. Save the changes in a commit or append them to an existing commit.
+4. Run :code:`statue run` again (now without any arguments) and it will check if there are any issues that it wasn't able to solve on its own. If there are any errors, fix them.
 5. Save all changes in a commit or append them to an existing commit.
 
 You may find some of the errors presented by those tools tedious or irrelevant,

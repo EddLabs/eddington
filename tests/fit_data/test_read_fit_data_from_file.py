@@ -38,7 +38,9 @@ def check_columns(
     actual_fit_data, x_column=0, xerr_column=1, y_column=2, yerr_column=3
 ):
     np.testing.assert_equal(
-        actual_fit_data.x, VALUES[x_column], err_msg="X is different than expected",
+        actual_fit_data.x,
+        VALUES[x_column],
+        err_msg="X is different than expected",
     )
     np.testing.assert_equal(
         actual_fit_data.xerr,
@@ -46,7 +48,9 @@ def check_columns(
         err_msg="X Error is different than expected",
     )
     np.testing.assert_equal(
-        actual_fit_data.y, VALUES[y_column], err_msg="Y is different than expected",
+        actual_fit_data.y,
+        VALUES[y_column],
+        err_msg="Y is different than expected",
     )
     np.testing.assert_equal(
         actual_fit_data.yerr,

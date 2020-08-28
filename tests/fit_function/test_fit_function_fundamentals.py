@@ -157,9 +157,7 @@ def test_fix_failure_when_trying_to_fix_negative_index(dummy_func1_fixture):
         FitFunctionRuntimeError,
         match="^Cannot fix index -1. Indices should be between 0 and 1$",
     ):
-        dummy_func1_fixture.fix(
-            -1, 10,
-        )
+        dummy_func1_fixture.fix(-1, 10)
 
 
 def test_fix_failure_when_trying_to_fix_too_big_index(dummy_func1_fixture):
