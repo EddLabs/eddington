@@ -373,6 +373,66 @@ class FitData:  # pylint: disable=too-many-instance-attributes,too-many-public-m
             yerr_column=yerr_column,
         )
 
+    def save_excel(
+        self,
+        output_directory: Union[str, Path],
+        name: Optional[str] = "fit_data",
+        sheet: Optional[str] = None,
+    ):
+        """
+        Save :class:`FitData` to xlsx file.
+
+        :param output_directory: Path to the directory for the new excel file to be
+         saved.
+        :type output_directory: ``Path`` or ``str``
+        :param name: Optional. The name of the file, without the .xlsx suffix.
+         "fit_data" by default.
+        :type name: str
+        :param sheet: Optional. Name of the sheet that the data will be saved to.
+        :type sheet: str
+        :returns: :class:`FitData` read from the excel file.
+        """
+        workbook = openpyxl.Workbook()
+        worksheet = workbook.active
+
+        if sheet:
+            worksheet.title = sheet
+
+        headers = list(self.data.keys())
+        columns = list(self.data.values())
+
+        worksheet.append(headers)
+
+        for row in zip(*columns):
+            worksheet.append(row)
+
+        path = Path(output_directory / Path(f"{name}.xlsx"))
+
+        workbook.save(path)
+
+    def save_csv(
+        self, output_directory: Union[str, Path], name: Optional[str] = "fit_data"
+    ):
+        """
+        Save :class:`FitData` to csv file.
+
+        :param output_directory:
+         Path to the directory for the new excel file to be saved.
+        :type output_directory: ``Path`` or ``str``
+        :param name: Optional. The name of the file, without the .csv suffix.
+         "fit_data" by default.
+        :type name: str
+        """
+        headers = list(self.data.keys())
+        columns = list(self.data.values())
+
+        path = Path(output_directory / Path(f"{name}.csv"))
+
+        with open(path, mode="w+", newline="") as csv_file:
+            writer = csv.writer(csv_file)
+            writer.writerow(headers)
+            writer.writerows(zip(*columns))
+
     @classmethod
     def __covert_to_index(cls, column):
         try:
