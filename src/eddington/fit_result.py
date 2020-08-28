@@ -9,7 +9,7 @@ from eddington.print_util import to_precise_string
 
 
 @dataclass(repr=False)  # pylint: disable=too-many-instance-attributes
-class FitResult:  
+class FitResult:
     """
     Dataclass that contains the relevant parameters returned by a fitting algorithm.
 
