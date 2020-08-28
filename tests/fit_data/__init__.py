@@ -13,3 +13,5 @@ COLUMNS = OrderedDict(
 CONTENT = np.stack(COLUMNS.values(), axis=1).tolist()
 ROWS = [list(COLUMNS.keys()), *CONTENT]
 VALUES = list(COLUMNS.values())
+
+DEFAULT_SHEET = "default_sheet"

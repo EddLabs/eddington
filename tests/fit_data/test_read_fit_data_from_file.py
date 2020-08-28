@@ -83,12 +83,6 @@ def set_excel_rows(reader, rows):
 
 
 @pytest.fixture
-def mock_load_workbook(mocker):
-    load_workbook = mocker.patch("openpyxl.load_workbook")
-    return load_workbook
-
-
-@pytest.fixture
 def read_excel(mock_load_workbook):
     def actual_read(file_path, **kwargs):
         return FitData.read_from_excel(file_path, SHEET_NAME, **kwargs)
