@@ -383,6 +383,24 @@ class FitData:  # pylint: disable=too-many-instance-attributes,too-many-public-m
         y_column: Optional[Union[str, int]] = None,
         yerr_column: Optional[Union[str, int]] = None,
     ):
+        """
+        Read :class:`FitData` from json file.
+
+        :param filepath: str or Path. Path to location of csv file
+        :param x_column: Indicates which column should be used as the x parameter
+        :type x_column: ``str`` or ``numpy.ndarray``
+        :param xerr_column: Indicates which column should be used as the x error
+         parameter
+        :type xerr_column: ``str`` or ``numpy.ndarray``
+        :param y_column: Indicates which column should be used as the x parameter
+        :type y_column: ``str`` or ``numpy.ndarray``
+        :param yerr_column: Indicates which column should be used as the y error
+         parameter
+        :type xerr_column: ``str`` or ``numpy.ndarray``
+        :returns: :class:`FitData` read from the json file.
+        """
+        if isinstance(filepath, str):
+            filepath = Path(filepath)
         with open(filepath, mode="r") as file:
             data = json.load(file, object_pairs_hook=OrderedDict)
         try:
@@ -396,7 +414,7 @@ class FitData:  # pylint: disable=too-many-instance-attributes,too-many-public-m
                 yerr_column=yerr_column,
             )
         except (ValueError, TypeError) as error:
-            raise FitDataInvalidFileSyntax(filepath.name) from error
+            raise FitDataInvalidFileSyntax(filepath) from error
 
     def save_excel(
         self,
