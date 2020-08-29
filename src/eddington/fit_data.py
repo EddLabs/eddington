@@ -1,5 +1,6 @@
 """Fitting data class insert the fitting algorithm."""
 import csv
+import json
 from collections import OrderedDict, namedtuple
 from pathlib import Path
 from typing import Dict, List, Optional, Union
@@ -372,6 +373,30 @@ class FitData:  # pylint: disable=too-many-instance-attributes,too-many-public-m
             y_column=y_column,
             yerr_column=yerr_column,
         )
+
+    @classmethod
+    def read_from_json(  # pylint: disable=too-many-arguments
+        cls,
+        filepath: Union[str, Path],
+        x_column: Optional[Union[str, int]] = None,
+        xerr_column: Optional[Union[str, int]] = None,
+        y_column: Optional[Union[str, int]] = None,
+        yerr_column: Optional[Union[str, int]] = None,
+    ):
+        with open(filepath, mode="r") as file:
+            data = json.load(file, object_pairs_hook=OrderedDict)
+        try:
+            return FitData(
+                OrderedDict(
+                    [(key, list(map(float, row))) for key, row in data.items()]
+                ),
+                x_column=x_column,
+                xerr_column=xerr_column,
+                y_column=y_column,
+                yerr_column=yerr_column,
+            )
+        except (ValueError, TypeError) as error:
+            raise FitDataInvalidFileSyntax(filepath.name) from error
 
     def save_excel(
         self,
