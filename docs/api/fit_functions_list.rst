@@ -1,4 +1,4 @@
-.. fit_functions_list:
+.. _fit_functions_list:
 
 Out-of-the-Box Fit Functions
 ============================

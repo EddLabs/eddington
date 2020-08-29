@@ -3,7 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-.. figure:: images/eddington.png
+.. figure:: _static/eddington_logo.png
     :width: 500
 
 =========
@@ -20,6 +20,7 @@ has an easy to use GUI.
    :hidden:
    :titlesonly:
 
+   about_us/index
    community/index
    api/index
    tutorials/index
