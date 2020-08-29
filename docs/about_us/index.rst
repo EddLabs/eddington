@@ -9,3 +9,4 @@ About Us
 
    What's Eddington? <what_is_eddington>
    Who's Eddington? <who_is_eddington>
+   Why Eddington? <why_eddington>
