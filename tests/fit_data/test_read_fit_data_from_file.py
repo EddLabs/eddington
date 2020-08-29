@@ -1,11 +1,11 @@
-from collections import namedtuple
+from collections import OrderedDict, namedtuple
 from copy import deepcopy
 from pathlib import Path
 
 import numpy as np
 import pytest
 from mock import Mock, PropertyMock, mock_open, patch
-from pytest_cases import fixture_ref, parametrize_plus
+from pytest_cases import fixture_ref, parametrize
 
 from eddington import FitData, FitDataInvalidFileSyntax
 from tests.fit_data import COLUMNS, CONTENT, ROWS, VALUES
@@ -90,7 +90,25 @@ def read_excel(mock_load_workbook):
     return actual_read, dict(reader=mock_load_workbook, row_setter=set_excel_rows)
 
 
-@parametrize_plus("read, mocks", [fixture_ref(read_csv), fixture_ref(read_excel)])
+def set_json_rows(reader, rows):
+    reader.return_value = OrderedDict(zip(rows[0], zip(*rows[1:])))
+
+
+@pytest.fixture
+def read_json(mock_load_json):
+    m_open = mock_open()
+
+    def actual_read(file_path, **kwargs):
+        with patch("eddington.fit_data.open", m_open):
+            return FitData.read_from_json(file_path, **kwargs)
+
+    return actual_read, dict(reader=mock_load_json, row_setter=set_json_rows)
+
+
+@parametrize(
+    "read, mocks",
+    [fixture_ref(read_csv), fixture_ref(read_excel), fixture_ref(read_json)],
+)
 def test_read_with_headers_successful(read, mocks):
     mocks["row_setter"](mocks["reader"], ROWS)
 
@@ -100,7 +118,7 @@ def test_read_with_headers_successful(read, mocks):
     check_columns(actual_fit_data)
 
 
-@parametrize_plus("read, mocks", [fixture_ref(read_csv), fixture_ref(read_excel)])
+@parametrize("read, mocks", [fixture_ref(read_csv), fixture_ref(read_excel)])
 def test_read_without_headers_successful(read, mocks):
     mocks["row_setter"](mocks["reader"], CONTENT)
     actual_fit_data = read(FILE_PATH)
@@ -108,9 +126,12 @@ def test_read_without_headers_successful(read, mocks):
     check_columns(actual_fit_data)
 
 
-@parametrize_plus("read, mocks", [fixture_ref(read_csv), fixture_ref(read_excel)])
+@parametrize(
+    "read, mocks",
+    [fixture_ref(read_csv), fixture_ref(read_excel), fixture_ref(read_json)],
+)
 def test_read_with_invalid_string_in_row(read, mocks):
-    rows = deepcopy(CONTENT)
+    rows = deepcopy(ROWS)
     rows[1][0] = "f"
     mocks["row_setter"](mocks["reader"], rows)
 
@@ -118,9 +139,12 @@ def test_read_with_invalid_string_in_row(read, mocks):
         read(FILE_PATH)
 
 
-@parametrize_plus("read, mocks", [fixture_ref(read_csv), fixture_ref(read_excel)])
+@parametrize(
+    "read, mocks",
+    [fixture_ref(read_csv), fixture_ref(read_excel), fixture_ref(read_json)],
+)
 def test_read_with_none_in_row(read, mocks):
-    rows = deepcopy(CONTENT)
+    rows = deepcopy(ROWS)
     rows[1][0] = None
     mocks["row_setter"](mocks["reader"], rows)
 
@@ -128,7 +152,7 @@ def test_read_with_none_in_row(read, mocks):
         read(FILE_PATH)
 
 
-@parametrize_plus("read, mocks", [fixture_ref(read_csv), fixture_ref(read_excel)])
+@parametrize("read, mocks", [fixture_ref(read_csv), fixture_ref(read_excel)])
 def test_read_with_empty_header(read, mocks):
     rows = deepcopy(ROWS)
     rows[0][0] = ""
@@ -138,7 +162,7 @@ def test_read_with_empty_header(read, mocks):
         read(FILE_PATH)
 
 
-@parametrize_plus("read, mocks", [fixture_ref(read_csv), fixture_ref(read_excel)])
+@parametrize("read, mocks", [fixture_ref(read_csv), fixture_ref(read_excel)])
 def test_read_with_float_header(read, mocks):
     rows = deepcopy(ROWS)
     rows[0][0] = "1.25"
@@ -148,7 +172,10 @@ def test_read_with_float_header(read, mocks):
         read(FILE_PATH)
 
 
-@parametrize_plus("read, mocks", [fixture_ref(read_csv), fixture_ref(read_excel)])
+@parametrize(
+    "read, mocks",
+    [fixture_ref(read_csv), fixture_ref(read_excel), fixture_ref(read_json)],
+)
 def test_read_with_x_column(read, mocks):
     mocks["row_setter"](mocks["reader"], ROWS)
 
@@ -157,7 +184,10 @@ def test_read_with_x_column(read, mocks):
     check_columns(actual_fit_data, x_column=2, xerr_column=3, y_column=4, yerr_column=5)
 
 
-@parametrize_plus("read, mocks", [fixture_ref(read_csv), fixture_ref(read_excel)])
+@parametrize(
+    "read, mocks",
+    [fixture_ref(read_csv), fixture_ref(read_excel), fixture_ref(read_json)],
+)
 def test_read_with_xerr_column(read, mocks):
     mocks["row_setter"](mocks["reader"], ROWS)
 
@@ -166,7 +196,10 @@ def test_read_with_xerr_column(read, mocks):
     check_columns(actual_fit_data, x_column=0, xerr_column=2, y_column=3, yerr_column=4)
 
 
-@parametrize_plus("read, mocks", [fixture_ref(read_csv), fixture_ref(read_excel)])
+@parametrize(
+    "read, mocks",
+    [fixture_ref(read_csv), fixture_ref(read_excel), fixture_ref(read_json)],
+)
 def test_read_with_y_column(read, mocks):
     mocks["row_setter"](mocks["reader"], ROWS)
 
@@ -175,7 +208,10 @@ def test_read_with_y_column(read, mocks):
     check_columns(actual_fit_data, x_column=0, xerr_column=1, y_column=4, yerr_column=5)
 
 
-@parametrize_plus("read, mocks", [fixture_ref(read_csv), fixture_ref(read_excel)])
+@parametrize(
+    "read, mocks",
+    [fixture_ref(read_csv), fixture_ref(read_excel), fixture_ref(read_json)],
+)
 def test_read_with_yerr_column(read, mocks):
     mocks["row_setter"](mocks["reader"], ROWS)
 
@@ -184,7 +220,10 @@ def test_read_with_yerr_column(read, mocks):
     check_columns(actual_fit_data, x_column=0, xerr_column=1, y_column=2, yerr_column=4)
 
 
-@parametrize_plus("read, mocks", [fixture_ref(read_csv), fixture_ref(read_excel)])
+@parametrize(
+    "read, mocks",
+    [fixture_ref(read_csv), fixture_ref(read_excel), fixture_ref(read_json)],
+)
 def test_read_string_path_successful(read, mocks):
     mocks["row_setter"](mocks["reader"], ROWS)
 

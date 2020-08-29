@@ -9,6 +9,11 @@ def mock_load_workbook(mocker):
 
 
 @pytest.fixture
+def mock_load_json(mocker):
+    return mocker.patch("json.load")
+
+
+@pytest.fixture
 def mock_create_workbook(mocker):
     create_workbook = mocker.patch("openpyxl.Workbook")
     create_workbook.return_value.active.title = DEFAULT_SHEET

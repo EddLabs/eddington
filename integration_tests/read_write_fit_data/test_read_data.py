@@ -14,6 +14,9 @@ INVALID_SHEET_NAME = "invalid_data1"
 VALID_CSV_FILE = SOURCES_DIRECTORY / "valid_data.csv"
 INVALID_CSV_FILE = SOURCES_DIRECTORY / "invalid_data.csv"
 
+VALID_JSON_FILE = SOURCES_DIRECTORY / "valid_data.json"
+INVALID_JSON_FILE = SOURCES_DIRECTORY / "invalid_data.json"
+
 
 def read_excel_method(sheet_name):
     def read_method(**kwargs):
@@ -45,8 +48,23 @@ def case_read_invalid_csv():
     return read_csv_method(INVALID_CSV_FILE)
 
 
-VALID_CASES = [case_read_valid_excel, case_read_valid_csv]
-INVALID_CASES = [case_read_invalid_excel, case_read_invalid_csv]
+def read_json_method(file_path):
+    def read_method(**kwargs):
+        return FitData.read_from_json(file_path, **kwargs)
+
+    return read_method
+
+
+def case_read_valid_json():
+    return read_json_method(VALID_JSON_FILE)
+
+
+def case_read_invalid_json():
+    return read_json_method(INVALID_JSON_FILE)
+
+
+VALID_CASES = [case_read_valid_excel, case_read_valid_csv, case_read_valid_json]
+INVALID_CASES = [case_read_invalid_excel, case_read_invalid_csv, case_read_invalid_json]
 
 
 @parametrize_with_cases(argnames="read_method", cases=VALID_CASES)
