@@ -29,8 +29,14 @@ is questionable, it was ground breaking in the sense that an English physicist a
 to even consider a theory by a German physicist, during World War I, a theory so
 radical, which contradicts another great English physicist, Sir Isaac Newton.
 
+It was Eddington's dedication to the real, free scientific mind, one which isn't bound
+by geographical or political borders, that helped Einstein's theory make its first
+steps toward global consensus. Today, Einstein's theory of general relativity has been
+proven hundreds of times, based on thousands of observations, all which started by
+Eddington's first attempt.
+
 Eddington died from cancer at the age of 61. He had no wife and no children.
 
-For his dedication to the scientific method, one which exceeds any
-political believes, we decided to honour his name by naming our data fitting platform
+For his dedication to the scientific method, and his dedicated quest towards the world's
+hidden truths, we decided to honour his name by naming our data fitting platform
 after him.
