@@ -23,8 +23,7 @@ from eddington.exceptions import (
     FitDataColumnsLengthError,
     FitDataColumnsSelectionError,
     FitDataInvalidFileSyntax,
-    FitDataInvalidSyntax,
-    FitDataColumnAlreadyExists,
+    FitDataSetError,
 )
 from eddington.random_util import random_array, random_error, random_sigma
 
@@ -478,6 +477,46 @@ class FitData:  # pylint: disable=too-many-instance-attributes,too-many-public-m
             writer.writerow(headers)
             writer.writerows(zip(*columns))
 
+    def set_header(self, old, new):
+        """
+        Allowes to set new value to a header.
+
+        :param old: The old columns name
+        :param new: The new value to set for the header
+        """
+        if new == old:
+            return
+        if new == "":
+            raise FitDataSetError("Cannot set new header to be empty")
+        if new in self.all_columns:
+            raise FitDataSetError(f'The column name:"{new}" is already used.')
+        self._data[new] = self._data.pop(old)
+        self._all_columns = list(self.data.keys())
+
+    def set_cell(self, record_number, column_name, value):
+        """
+        Allowes to set new value to a cell.
+
+        :param record_number: The number of the record to set, starting from 1
+        :param column_name: The column name
+        :param value: The new value to set for the cell
+        """
+        if not self.__is_number(value):
+            raise FitDataSetError(
+                f'The cell at record number:"{record_number}", '
+                f'column:"{column_name}" has invalid syntax: {value}.'
+            )
+        try:
+            self._data[column_name][record_number - 1] = value
+        except KeyError as error:
+            raise FitDataSetError(
+                f'Column name "{column_name}" does not exists'
+            ) from error
+        except IndexError as error:
+            raise FitDataSetError(
+                f"Record number {record_number} does not exists"
+            ) from error
+
     @classmethod
     def __covert_to_index(cls, column):
         try:
@@ -541,30 +580,3 @@ class FitData:  # pylint: disable=too-many-instance-attributes,too-many-public-m
             return True
         except ValueError:
             return False
-
-    def set_header(self, old, new):
-        """
-        Allowes to set new value to a header.
-
-        :param old: The old columns name
-        :param new: The new value to set for the header
-        """
-        if new != old and new != "":
-            if new in self.all_columns:
-                raise FitDataColumnAlreadyExists(new)
-            else:
-                self._data[new] = self._data.pop(old)
-                self._all_columns = list(self.data.keys())
-
-    def set_cell(self, row, col, value):
-        """
-        Allowes to set new value to a cell.
-
-        :param row: The row number
-        :param col: The columns name
-        :param value: The new value to set for the cell
-        """
-
-        if not self.__is_number(value):
-            raise FitDataInvalidSyntax(col, row, value)
-        self._data[col][row - 1] = value
