@@ -34,5 +34,28 @@ Eddington
 
 *Eddington* is a user-friendly data fitting platform for common uses, based on
 open-source libraries such as *numpy*, *scipy*, and *matplotlib*.
-*Eddington* can be integrated with python code as a library, can be used as CLI and
+*Eddington* can be integrated with python code as a library, can be used as a CLI and
 has an easy to use GUI.
+
+Documentation
+-------------
+
+Documentation for Eddington can be found on `Read The Docs`_.
+
+Community
+---------
+
+You can talk to the community through the `EddLabs/developers`_ channel on Gitter.
+
+Contributing
+------------
+
+If you experience problems with Eddington, `log them on GitHub`_.
+
+If you want to contribute code, please `fork the code`_ and `submit a pull request`_.
+
+.. _Read The Docs: https://eddington.readthedocs.io
+.. _EddLabs/developers: https://gitter.im/EddLabs/developers
+.. _log them on Github: https://github.com/EddLabs/eddington/issues
+.. _fork the code: https://github.com/EddLabs/eddington
+.. _submit a pull request: https://github.com/EddLabs/eddington/pulls

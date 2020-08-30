@@ -1,6 +1,7 @@
+import numpy as np
 import pytest
 from mock import call
-import numpy as np
+from pytest_cases import fixture, parametrize
 
 from eddington import FitData
 from eddington.consts import (
@@ -12,7 +13,6 @@ from eddington.consts import (
     DEFAULT_XSIGMA,
     DEFAULT_YSIGMA,
 )
-
 from tests.fit_function.dummy_functions import dummy_func1
 
 a = [2, 1]
@@ -24,22 +24,25 @@ real_yerr = np.random.normal(size=DEFAULT_MEASUREMENTS)
 delta = 10e-5
 
 
-@pytest.fixture
+@fixture
 def random_sigma_mock(mocker):
     random_sigma = mocker.patch("eddington.fit_data.random_sigma")
     random_sigma.side_effect = [xerr, yerr]
     return random_sigma
 
 
-@pytest.fixture
+@fixture
 def random_error_mock(mocker):
     random_error = mocker.patch("eddington.fit_data.random_error")
     random_error.side_effect = [real_xerr, real_yerr]
     return random_error
 
 
-@pytest.fixture(
-    params=[
+@fixture
+@parametrize(
+    idgen="args={args}",
+    argnames="args",
+    argvalues=[
         dict(),
         dict(measurements=50),
         dict(min_coeff=9),
@@ -49,19 +52,26 @@ def random_error_mock(mocker):
         dict(xsigma=2.1),
         dict(ysigma=3.9),
         dict(a=[5, 3]),
-    ]
+        dict(x=x),
+    ],
 )
-def random_fit_data(request, mocker, random_sigma_mock, random_error_mock):
-    params = request.param
+def fit_arguments(args):
+    return args
+
+
+@fixture
+def random_fit_data(mocker, fit_arguments, random_sigma_mock, random_error_mock):
     random_array_mock = mocker.patch("eddington.fit_data.random_array")
-    if "a" in params:
-        random_array_mock.side_effect = [x]
-    else:
-        random_array_mock.side_effect = [a, x]
+    random_array_side_effect = []
+    if "a" not in fit_arguments:
+        random_array_side_effect.append(a)
+    if "x" not in fit_arguments:
+        random_array_side_effect.append(x)
+    random_array_mock.side_effect = random_array_side_effect
     return (
-        FitData.random(dummy_func1, **params),
+        FitData.random(dummy_func1, **fit_arguments),
         dict(
-            params=params,
+            params=fit_arguments,
             random_array=random_array_mock,
             random_sigma=random_sigma_mock,
             random_error=random_error_mock,
@@ -110,19 +120,18 @@ def test_random_array_calls(random_fit_data):
     xmax = params.get("xmax", DEFAULT_XMAX)
     measurements = params.get("measurements", DEFAULT_MEASUREMENTS)
 
-    if "a" in params:
-        assert random_array.call_count == 1
-        assert random_array.call_args_list[0] == call(
-            min_val=xmin, max_val=xmax, size=measurements
-        )
-    else:
-        assert random_array.call_count == 2
-        assert random_array.call_args_list[0] == call(
+    call_count = 0
+    if "a" not in params:
+        assert random_array.call_args_list[call_count] == call(
             min_val=amin, max_val=amax, size=dummy_func1.n
         )
-        assert random_array.call_args_list[1] == call(
+        call_count += 1
+    if "x" not in params:
+        assert random_array.call_args_list[call_count] == call(
             min_val=xmin, max_val=xmax, size=measurements
         )
+        call_count += 1
+    assert random_array.call_count == call_count
 
 
 def test_random_sigma_calls(random_fit_data):

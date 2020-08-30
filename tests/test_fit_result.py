@@ -1,7 +1,7 @@
 import mock
+import numpy as np
 import pytest
 from pytest_cases import THIS_MODULE, parametrize_with_cases
-import numpy as np
 
 from eddington import FitResult
 

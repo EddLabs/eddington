@@ -1,9 +1,12 @@
 """Fitting data class insert the fitting algorithm."""
 import csv
+import json
 from collections import OrderedDict, namedtuple
+from pathlib import Path
+from typing import Dict, List, Optional, Union
 
 import numpy as np
-import xlrd
+import openpyxl
 
 from eddington.consts import (
     DEFAULT_MAX_COEFF,
@@ -25,7 +28,6 @@ from eddington.exceptions import (
 )
 from eddington.random_util import random_array, random_error, random_sigma
 
-
 Columns = namedtuple("ColumnsResult", ["x", "y", "xerr", "yerr"])
 
 
@@ -33,20 +35,28 @@ class FitData:  # pylint: disable=too-many-instance-attributes,too-many-public-m
     """Fitting data class."""
 
     def __init__(  # pylint: disable=too-many-arguments
-        self, data, x_column=None, xerr_column=None, y_column=None, yerr_column=None,
+        self,
+        data: Union[OrderedDict, Dict[str, np.ndarray]],
+        x_column: Optional[Union[str, int]] = None,
+        xerr_column: Optional[Union[str, int]] = None,
+        y_column: Optional[Union[str, int]] = None,
+        yerr_column: Optional[Union[str, int]] = None,
     ):
         """
         Constructor.
 
-        :param data: Numpy array which its rows are the available data records.
-        :param x_column: int or string. Indicates the which column should be used as the
-         x parameter
-        :param xerr_column: int or string. Indicates the which column should be used as
-         the x error parameter
-        :param y_column: int or string. Indicates the which column should be used as the
-         x parameter
-        :param yerr_column: int or string. Indicates the which column should be used as
-         the x error parameter
+        :param data: Dictionary from a column name to its values
+        :type data: ``dict`` or ``OrderedDict`` from ``str`` to ``numpy.ndarray``
+        :param x_column: Indicates which column should be used as the x parameter
+        :type x_column: ``str`` or ``numpy.ndarray``
+        :param xerr_column: Indicates which column should be used as the x error
+         parameter
+        :type xerr_column: ``str`` or ``numpy.ndarray``
+        :param y_column: Indicates which column should be used as the y parameter
+        :type y_column: ``str`` or ``numpy.ndarray``
+        :param yerr_column: Indicates which column should be used as the y error
+         parameter
+        :type yerr_column: ``str`` or ``numpy.ndarray``
         """
         self._data = OrderedDict(
             [(key, np.array(value)) for key, value in data.items()]
@@ -111,25 +121,41 @@ class FitData:  # pylint: disable=too-many-instance-attributes,too-many-public-m
 
     # Records indices methods
 
-    def select_record(self, record_index):
-        """Select a record to be used in fitting."""
-        self.records_indices[record_index - 1] = True
+    def select_record(self, index: int):
+        """
+        Select a record to be used in fitting.
 
-    def unselect_record(self, record_index):
-        """Unselect a record to be used in fitting."""
-        self.records_indices[record_index - 1] = False
+        :param index: index of the desired record **starting from 1**.
+        :type index: int
+        """
+        self.records_indices[index - 1] = True
+
+    def unselect_record(self, index: int):
+        """
+        Unselect a record to be used in fitting.
+
+        :param index: index of the desired record **starting from 1**.
+        :type index: int
+        """
+        self.records_indices[index - 1] = False
 
     def select_all_records(self):
         """Select all records to be used in fitting."""
         self.records_indices = [True] * self.length
 
     def unselect_all_records(self):
-        """Unselect all recrods from being used in fitting."""
+        """Unselect all records from being used in fitting."""
         self.records_indices = [False] * self.length
 
-    def is_selected(self, records_index):
-        """Checks if a record is selected or not."""
-        return self.records_indices[records_index - 1]
+    def is_selected(self, index):
+        """
+        Checks if a record is selected or not.
+
+        :param index: index of the desired record **starting from 1**.
+        :type index: int
+        :returns: ``bool``
+        """
+        return self.records_indices[index - 1]
 
     @property
     def records_indices(self):
@@ -218,34 +244,48 @@ class FitData:  # pylint: disable=too-many-instance-attributes,too-many-public-m
     @classmethod
     def random(  # pylint: disable=invalid-name,too-many-arguments
         cls,
-        fit_func,
-        a=None,
-        xmin=DEFAULT_XMIN,
-        xmax=DEFAULT_XMAX,
-        min_coeff=DEFAULT_MIN_COEFF,
-        max_coeff=DEFAULT_MAX_COEFF,
-        xsigma=DEFAULT_XSIGMA,
-        ysigma=DEFAULT_YSIGMA,
-        measurements=DEFAULT_MEASUREMENTS,
+        fit_func,  # type: ignore
+        x: Optional[np.ndarray] = None,
+        a: Optional[np.ndarray] = None,
+        xmin: float = DEFAULT_XMIN,
+        xmax: float = DEFAULT_XMAX,
+        min_coeff: float = DEFAULT_MIN_COEFF,
+        max_coeff: float = DEFAULT_MAX_COEFF,
+        xsigma: float = DEFAULT_XSIGMA,
+        ysigma: float = DEFAULT_YSIGMA,
+        measurements: int = DEFAULT_MEASUREMENTS,
     ):
         """
         Generate a random fit data.
 
-        :param fit_func: Fit function to evaluate with the fit data
-        :param a: Optional. the actual parameters that should be returned by the fitting
-         algorithm. If not given, generated randomly.
+        :param fit_func: :class:`FitFunction` to evaluate with the fit data
+        :type fit_func: ``FitFunction``
+        :param x: Optional. The input for the fitting algorithm.
+         If not given, generated randomly.
+        :type x: ``numpy.ndarray``
+        :param a: Optional. the actual parameters that should be returned by the
+         fitting algorithm. If not given, generated randomly.
+        :type a: ``numpy.ndarray``
         :param xmin: Minimum value for x.
+        :type xmin: float
         :param xmax: Maximum value for x.
-        :param min_coeff: Minimum value for :ref:`a` coefficient.
-        :param max_coeff: Maximum value for :ref:`a` coefficient.
+        :type xmax: float
+        :param min_coeff: Minimum value for `a` coefficient.
+        :type min_coeff: float
+        :param max_coeff: Maximum value for `a` coefficient.
+        :type max_coeff: float
         :param xsigma: Standard deviation for x.
+        :type xsigma: int
         :param ysigma: Standard deviation for y.
+        :type ysigma: int
         :param measurements: Number of measurements
-        :return: random :class:`FitData` object
+        :type measurements: int
+        :returns: random :class:`FitData`
         """
         if a is None:
             a = random_array(min_val=min_coeff, max_val=max_coeff, size=fit_func.n)
-        x = random_array(min_val=xmin, max_val=xmax, size=measurements)
+        if x is None:
+            x = random_array(min_val=xmin, max_val=xmax, size=measurements)
         xerr = random_sigma(average_sigma=xsigma, size=measurements)
         yerr = random_sigma(average_sigma=ysigma, size=measurements)
         y = fit_func(a, x + random_error(scales=xerr)) + random_error(scales=yerr)
@@ -256,28 +296,37 @@ class FitData:  # pylint: disable=too-many-instance-attributes,too-many-public-m
     @classmethod
     def read_from_excel(  # pylint: disable=too-many-arguments
         cls,
-        filepath,
-        sheet,
-        x_column=None,
-        xerr_column=None,
-        y_column=None,
-        yerr_column=None,
+        filepath: Union[str, Path],
+        sheet: str,
+        x_column: Optional[Union[str, int]] = None,
+        xerr_column: Optional[Union[str, int]] = None,
+        y_column: Optional[Union[str, int]] = None,
+        yerr_column: Optional[Union[str, int]] = None,
     ):
         """
         Read :class:`FitData` from excel file.
 
         :param filepath: str or Path. Path to location of excel file
-        :param sheet: str. The name of the seet to exctract the data from.
-        :param x_column: int or str. Column for the x values.
-        :param xerr_column: int or str. Column for the x error values.
-        :param y_column: int or str. Column for the y values.
-        :param yerr_column: int or str. Column for the y error values.
-        :return: :class:`FitData` read from the excel file.
+        :param sheet: str. The name of the sheet to extract the data from.
+        :param x_column: Indicates which column should be used as the
+         x parameter
+        :type x_column: ``str`` or ``numpy.ndarray``
+        :param xerr_column: Indicates which column should be used as the x error
+         parameter
+        :type xerr_column: ``str`` or ``numpy.ndarray``
+        :param y_column: Indicates which column should be used as the x parameter
+        :type y_column: ``str`` or ``numpy.ndarray``
+        :param yerr_column: Indicates which column should be used as the y error
+         parameter
+        :type xerr_column: ``str`` or ``numpy.ndarray``
+        :returns: :class:`FitData` read from the excel file.
         """
-        excel_obj = xlrd.open_workbook(filepath)
-        sheet_obj = excel_obj.sheet_by_name(sheet)
-        rows = [sheet_obj.row(i) for i in range(sheet_obj.nrows)]
-        rows = [list(map(lambda element: element.value, row)) for row in rows]
+        if isinstance(filepath, str):
+            filepath = Path(filepath)
+
+        workbook = openpyxl.load_workbook(filepath, data_only=True)
+        rows = [list(row) for row in workbook[sheet].values]
+
         return cls.__extract_data_from_rows(
             rows=rows,
             file_name=filepath.name,
@@ -290,18 +339,31 @@ class FitData:  # pylint: disable=too-many-instance-attributes,too-many-public-m
 
     @classmethod
     def read_from_csv(  # pylint: disable=too-many-arguments
-        cls, filepath, x_column=None, xerr_column=None, y_column=None, yerr_column=None,
+        cls,
+        filepath: Union[str, Path],
+        x_column: Optional[Union[str, int]] = None,
+        xerr_column: Optional[Union[str, int]] = None,
+        y_column: Optional[Union[str, int]] = None,
+        yerr_column: Optional[Union[str, int]] = None,
     ):
         """
         Read :class:`FitData` from csv file.
 
         :param filepath: str or Path. Path to location of csv file
-        :param x_column: int or str. Column for the x values.
-        :param xerr_column: int or str. Column for the x error values.
-        :param y_column: int or str. Column for the y values.
-        :param yerr_column: int or str. Column for the y error values.
-        :return: :class:`FitData` read from the csv file.
+        :param x_column: Indicates which column should be used as the x parameter
+        :type x_column: ``str`` or ``numpy.ndarray``
+        :param xerr_column: Indicates which column should be used as the x error
+         parameter
+        :type xerr_column: ``str`` or ``numpy.ndarray``
+        :param y_column: Indicates which column should be used as the x parameter
+        :type y_column: ``str`` or ``numpy.ndarray``
+        :param yerr_column: Indicates which column should be used as the y error
+         parameter
+        :type xerr_column: ``str`` or ``numpy.ndarray``
+        :returns: :class:`FitData` read from the csv file.
         """
+        if isinstance(filepath, str):
+            filepath = Path(filepath)
         with open(filepath, mode="r") as csv_file:
             csv_obj = csv.reader(csv_file)
             rows = list(csv_obj)
@@ -313,6 +375,108 @@ class FitData:  # pylint: disable=too-many-instance-attributes,too-many-public-m
             y_column=y_column,
             yerr_column=yerr_column,
         )
+
+    @classmethod
+    def read_from_json(  # pylint: disable=too-many-arguments
+        cls,
+        filepath: Union[str, Path],
+        x_column: Optional[Union[str, int]] = None,
+        xerr_column: Optional[Union[str, int]] = None,
+        y_column: Optional[Union[str, int]] = None,
+        yerr_column: Optional[Union[str, int]] = None,
+    ):
+        """
+        Read :class:`FitData` from json file.
+
+        :param filepath: str or Path. Path to location of csv file
+        :param x_column: Indicates which column should be used as the x parameter
+        :type x_column: ``str`` or ``numpy.ndarray``
+        :param xerr_column: Indicates which column should be used as the x error
+         parameter
+        :type xerr_column: ``str`` or ``numpy.ndarray``
+        :param y_column: Indicates which column should be used as the x parameter
+        :type y_column: ``str`` or ``numpy.ndarray``
+        :param yerr_column: Indicates which column should be used as the y error
+         parameter
+        :type xerr_column: ``str`` or ``numpy.ndarray``
+        :returns: :class:`FitData` read from the json file.
+        """
+        if isinstance(filepath, str):
+            filepath = Path(filepath)
+        with open(filepath, mode="r") as file:
+            data = json.load(file, object_pairs_hook=OrderedDict)
+        try:
+            return FitData(
+                OrderedDict(
+                    [(key, list(map(float, row))) for key, row in data.items()]
+                ),
+                x_column=x_column,
+                xerr_column=xerr_column,
+                y_column=y_column,
+                yerr_column=yerr_column,
+            )
+        except (ValueError, TypeError) as error:
+            raise FitDataInvalidFileSyntax(filepath) from error
+
+    def save_excel(
+        self,
+        output_directory: Union[str, Path],
+        name: Optional[str] = "fit_data",
+        sheet: Optional[str] = None,
+    ):
+        """
+        Save :class:`FitData` to xlsx file.
+
+        :param output_directory: Path to the directory for the new excel file to be
+         saved.
+        :type output_directory: ``Path`` or ``str``
+        :param name: Optional. The name of the file, without the .xlsx suffix.
+         "fit_data" by default.
+        :type name: str
+        :param sheet: Optional. Name of the sheet that the data will be saved to.
+        :type sheet: str
+        :returns: :class:`FitData` read from the excel file.
+        """
+        workbook = openpyxl.Workbook()
+        worksheet = workbook.active
+
+        if sheet:
+            worksheet.title = sheet
+
+        headers = list(self.data.keys())
+        columns = list(self.data.values())
+
+        worksheet.append(headers)
+
+        for row in zip(*columns):
+            worksheet.append(row)
+
+        path = Path(output_directory / Path(f"{name}.xlsx"))
+
+        workbook.save(path)
+
+    def save_csv(
+        self, output_directory: Union[str, Path], name: Optional[str] = "fit_data"
+    ):
+        """
+        Save :class:`FitData` to csv file.
+
+        :param output_directory:
+         Path to the directory for the new excel file to be saved.
+        :type output_directory: ``Path`` or ``str``
+        :param name: Optional. The name of the file, without the .csv suffix.
+         "fit_data" by default.
+        :type name: str
+        """
+        headers = list(self.data.keys())
+        columns = list(self.data.values())
+
+        path = Path(output_directory / Path(f"{name}.csv"))
+
+        with open(path, mode="w+", newline="") as csv_file:
+            writer = csv.writer(csv_file)
+            writer.writerow(headers)
+            writer.writerows(zip(*columns))
 
     @classmethod
     def __covert_to_index(cls, column):
@@ -339,17 +503,17 @@ class FitData:  # pylint: disable=too-many-instance-attributes,too-many-public-m
         y_column=None,
         yerr_column=None,
     ):
-        headers = rows[0]
+        headers: List[str] = rows[0]
         if cls.__is_headers(headers):
             content = rows[1:]
         else:
-            headers = range(len(headers))
+            headers = [str(i) for i in range(len(headers))]
             content = rows
         try:
             content = [list(map(float, row)) for row in content]
-        except ValueError:
-            raise FitDataInvalidFileSyntax(file_name, sheet=sheet)
-        columns = zip(*content)
+        except (ValueError, TypeError) as error:
+            raise FitDataInvalidFileSyntax(file_name, sheet=sheet) from error
+        columns = [np.array(column) for column in zip(*content)]
         return FitData(
             OrderedDict(zip(headers, columns)),
             x_column=x_column,
@@ -360,7 +524,15 @@ class FitData:  # pylint: disable=too-many-instance-attributes,too-many-public-m
 
     @classmethod
     def __is_headers(cls, headers):
-        return all([header != "" and not cls.__is_number(header) for header in headers])
+        return all([cls.__is_header(header) for header in headers])
+
+    @classmethod
+    def __is_header(cls, string):
+        if not isinstance(string, str):
+            return False
+        if string == "":
+            return False
+        return not cls.__is_number(string)
 
     @classmethod
     def __is_number(cls, string):

@@ -1,6 +1,7 @@
+from copy import deepcopy
+
 import pytest
 from pytest_cases import THIS_MODULE, parametrize_with_cases
-from copy import deepcopy
 
 from eddington import (
     FitData,
@@ -9,7 +10,6 @@ from eddington import (
     FitDataColumnsLengthError,
 )
 from eddington.fit_data import Columns
-
 from tests.fit_data import COLUMNS, COLUMNS_NAMES
 
 COLUMNS_OPTIONS = ["x_column", "xerr_column", "y_column", "yerr_column"]
@@ -23,13 +23,13 @@ def case_default():
 
 def case_int_x_column():
     fit_data = FitData(COLUMNS, x_column=3)
-    expected_columns = Columns(x="c", xerr="d", y="e", yerr="f",)
+    expected_columns = Columns(x="c", xerr="d", y="e", yerr="f")
     return fit_data, expected_columns
 
 
 def case_string_x_column():
     fit_data = FitData(COLUMNS, x_column="c")
-    expected_columns = Columns(x="c", xerr="d", y="e", yerr="f",)
+    expected_columns = Columns(x="c", xerr="d", y="e", yerr="f")
     return fit_data, expected_columns
 
 
@@ -47,13 +47,13 @@ def case_string_y_column():
 
 def case_int_xerr_column():
     fit_data = FitData(COLUMNS, xerr_column=4)
-    expected_columns = Columns(x="a", xerr="d", y="e", yerr="f",)
+    expected_columns = Columns(x="a", xerr="d", y="e", yerr="f")
     return fit_data, expected_columns
 
 
 def case_string_xerr_column():
     fit_data = FitData(COLUMNS, xerr_column="d")
-    expected_columns = Columns(x="a", xerr="d", y="e", yerr="f",)
+    expected_columns = Columns(x="a", xerr="d", y="e", yerr="f")
     return fit_data, expected_columns
 
 

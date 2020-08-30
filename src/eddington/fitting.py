@@ -24,7 +24,9 @@ def fit_to_data(
     """
     model = Model(
         **__get_odr_model_kwargs(
-            func, use_x_derivative=use_x_derivative, use_a_derivative=use_a_derivative,
+            func,
+            use_x_derivative=use_x_derivative,
+            use_a_derivative=use_a_derivative,
         )
     )
     a0 = __get_a0(n=func.active_parameters, a0=a0)
@@ -45,7 +47,9 @@ def fit_to_data(
 
 
 def __get_odr_model_kwargs(
-    func, use_x_derivative=True, use_a_derivative=True,
+    func,
+    use_x_derivative=True,
+    use_a_derivative=True,
 ):
     kwargs = dict(fcn=func)
     if use_a_derivative and func.a_derivative is not None:

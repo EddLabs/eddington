@@ -1,8 +1,7 @@
-import pytest
 import numpy as np
+import pytest
 
 from eddington.random_util import random_array, random_error, random_sigma
-
 
 n = 35
 returned = np.random.uniform(size=n)

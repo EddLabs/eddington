@@ -1,16 +1,16 @@
 import json
+from collections import OrderedDict
+from pathlib import Path
 
 import numpy as np
 import pytest
-from pytest_cases import parametrize, parametrize_with_cases, THIS_MODULE
-from collections import OrderedDict
-from pathlib import Path
+from pytest_cases import THIS_MODULE, parametrize, parametrize_with_cases
 
 from eddington import FitData, FitFunctionsRegistry, fit_to_data
 
 
 def cases_paths():
-    return (Path(__file__).parent / "cases").glob("**/*.json")
+    return (Path(__file__).parent.parent / "resources" / "cases").glob("**/*.json")
 
 
 @parametrize(idgen="case {case_path.stem}", case_path=cases_paths())

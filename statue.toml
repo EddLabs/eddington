@@ -1,7 +1,7 @@
-[src]
+[sources.src]
 
-[tests]
+[sources.tests]
 contexts = ["test"]
 
-[fitting_tests]
+[sources.integration_tests]
 contexts = ["test"]

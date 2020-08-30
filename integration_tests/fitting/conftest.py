@@ -1,4 +1,5 @@
 import pytest
+
 from eddington import FitFunctionsRegistry
 
 
