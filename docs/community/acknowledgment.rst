@@ -23,6 +23,7 @@ Contributors
 ------------
 * Assaf Zohar
 * Ohad Nir
+* Yuval Bardugo
 
 Special Thanks
 --------------
