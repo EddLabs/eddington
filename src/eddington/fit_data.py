@@ -479,10 +479,12 @@ class FitData:  # pylint: disable=too-many-instance-attributes,too-many-public-m
 
     def set_header(self, old, new):
         """
-        Allowes to set new value to a header.
+        Rename header.
 
         :param old: The old columns name
+        :type old: str
         :param new: The new value to set for the header
+        :type new: str
         """
         if new == old:
             return
@@ -495,11 +497,14 @@ class FitData:  # pylint: disable=too-many-instance-attributes,too-many-public-m
 
     def set_cell(self, record_number, column_name, value):
         """
-        Allowes to set new value to a cell.
+        Set new value to a cell.
 
         :param record_number: The number of the record to set, starting from 1
+        :type record_number: int
         :param column_name: The column name
+        :type column_name: str
         :param value: The new value to set for the cell
+        :type value: float
         """
         if not self.__is_number(value):
             raise FitDataSetError(
