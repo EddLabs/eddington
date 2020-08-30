@@ -61,3 +61,7 @@ class FitDataColumnExistenceError(FitDataError):  # noqa: D101
 
 class FitDataColumnsSelectionError(FitDataError):  # noqa: D101
     pass
+
+
+class FitDataSetError(FitDataError):  # noqa: D101
+    pass

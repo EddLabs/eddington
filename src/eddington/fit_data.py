@@ -23,6 +23,7 @@ from eddington.exceptions import (
     FitDataColumnsLengthError,
     FitDataColumnsSelectionError,
     FitDataInvalidFileSyntax,
+    FitDataSetError,
 )
 from eddington.random_util import random_array, random_error, random_sigma
 
@@ -475,6 +476,51 @@ class FitData:  # pylint: disable=too-many-instance-attributes,too-many-public-m
             writer = csv.writer(csv_file)
             writer.writerow(headers)
             writer.writerows(zip(*columns))
+
+    def set_header(self, old, new):
+        """
+        Rename header.
+
+        :param old: The old columns name
+        :type old: str
+        :param new: The new value to set for the header
+        :type new: str
+        """
+        if new == old:
+            return
+        if new == "":
+            raise FitDataSetError("Cannot set new header to be empty")
+        if new in self.all_columns:
+            raise FitDataSetError(f'The column name:"{new}" is already used.')
+        self._data[new] = self._data.pop(old)
+        self._all_columns = list(self.data.keys())
+
+    def set_cell(self, record_number, column_name, value):
+        """
+        Set new value to a cell.
+
+        :param record_number: The number of the record to set, starting from 1
+        :type record_number: int
+        :param column_name: The column name
+        :type column_name: str
+        :param value: The new value to set for the cell
+        :type value: float
+        """
+        if not self.__is_number(value):
+            raise FitDataSetError(
+                f'The cell at record number:"{record_number}", '
+                f'column:"{column_name}" has invalid syntax: {value}.'
+            )
+        try:
+            self._data[column_name][record_number - 1] = value
+        except KeyError as error:
+            raise FitDataSetError(
+                f'Column name "{column_name}" does not exists'
+            ) from error
+        except IndexError as error:
+            raise FitDataSetError(
+                f"Record number {record_number} does not exists"
+            ) from error
 
     @classmethod
     def __covert_to_index(cls, column):
