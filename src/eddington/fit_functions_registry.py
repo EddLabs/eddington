@@ -1,4 +1,6 @@
 """Registry containing predefined fit functions and fit functions generators."""
+from typing import List
+
 from eddington.exceptions import FitFunctionLoadError, FitFunctionSaveError
 
 
@@ -8,8 +10,13 @@ class FitFunctionsRegistry:  # noqa: D415,D213,D205
     __name_to_func_dict = dict()  # type: ignore
 
     @classmethod
-    def add(cls, func):
-        """Add a fit function."""
+    def add(cls, func):  # type: ignore
+        """
+        Add a fit function.
+
+        :param func: fit function to add to registry
+        :type func: :class:`FitFunction`
+        """
         if func.name in cls.__name_to_func_dict:
             raise FitFunctionSaveError(
                 f'Cannot save "{func.name}" to registry'
@@ -18,33 +25,54 @@ class FitFunctionsRegistry:  # noqa: D415,D213,D205
         cls.__name_to_func_dict[func.name] = func
 
     @classmethod
-    def remove(cls, func_name):
-        """Remove a fit function."""
+    def remove(cls, func_name: str) -> None:
+        """
+        Remove a fit function.
+
+        :param func_name: Name of the function to remove.
+        :type func_name: str
+        """
         del cls.__name_to_func_dict[func_name]
 
     @classmethod
-    def clear(cls):
+    def clear(cls) -> None:
         """Clear all fit functions and generators."""
         cls.__name_to_func_dict.clear()
 
     @classmethod
-    def all(cls):
-        """Get all fit functions and generators."""
-        return cls.__name_to_func_dict.values()
+    def all(cls):  # type: ignore
+        """
+        Get all fit functions and generators.
+
+        :returns: list of :class:`FitFunction`
+        """
+        return list(cls.__name_to_func_dict.values())
 
     @classmethod
-    def names(cls):
+    def names(cls) -> List[str]:
         """Names of all fit functions and generators."""
-        return cls.__name_to_func_dict.keys()
+        return list(cls.__name_to_func_dict.keys())
 
     @classmethod
-    def load(cls, name):
-        """Get a fit function and generators by name."""
-        if not cls.exists(name):
-            raise FitFunctionLoadError(f"No fit function named {name}")
-        return cls.__name_to_func_dict[name]
+    def load(cls, func_name):  # type: ignore
+        """
+        Get a fit function and generators by name.
+
+        :param func_name: Name of the function to load.
+        :type func_name: str
+        :returns: :class:`FitFunction`
+        """
+        if not cls.exists(func_name):
+            raise FitFunctionLoadError(f"No fit function named {func_name}")
+        return cls.__name_to_func_dict[func_name]
 
     @classmethod
-    def exists(cls, func_name):
-        """Checks whether a fit function exist."""
+    def exists(cls, func_name: str):
+        """
+        Checks whether a fit function exist.
+
+        :param func_name: Name of the function to load.
+        :type func_name: str
+        :returns: bool
+        """
         return func_name in cls.__name_to_func_dict
