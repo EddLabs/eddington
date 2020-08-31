@@ -1,9 +1,11 @@
 """List of common fit functions."""
+from typing import Union
+
 import numpy as np
 import scipy.special
 
 from eddington.exceptions import FitFunctionLoadError
-from eddington.fit_function_class import fit_function
+from eddington.fit_function_class import FitFunction, fit_function
 
 
 @fit_function(
@@ -12,7 +14,7 @@ from eddington.fit_function_class import fit_function
     x_derivative=lambda a, x: np.full(shape=np.shape(x), fill_value=a[1]),
     a_derivative=lambda a, x: np.stack([np.ones(shape=np.shape(x)), x]),
 )  # pylint: disable=C0103
-def linear(a, x):
+def linear(a: np.ndarray, x: Union[np.ndarray, float]) -> Union[np.ndarray, float]:
     """Simple linear fit function."""
     return a[0] + a[1] * x
 
@@ -23,7 +25,7 @@ def linear(a, x):
     x_derivative=lambda a, x: np.zeros(shape=np.shape(x)),
     a_derivative=lambda a, x: np.stack([np.ones(shape=np.shape(x))]),
 )  # pylint: disable=C0103
-def constant(a, x):
+def constant(a: np.ndarray, x: Union[np.ndarray, float]) -> Union[np.ndarray, float]:
     """Constant fit function."""
     return np.full(fill_value=a[0], shape=np.shape(x))
 
@@ -34,7 +36,7 @@ def constant(a, x):
     x_derivative=lambda a, x: a[1] + 2 * a[2] * x,
     a_derivative=lambda a, x: np.stack([np.ones(shape=np.shape(x)), x, x ** 2]),
 )  # pylint: disable=C0103
-def parabolic(a, x):
+def parabolic(a: np.ndarray, x: Union[np.ndarray, float]) -> Union[np.ndarray, float]:
     """Parabolic fit function."""
     return a[0] + a[1] * x + a[2] * x ** 2
 
@@ -52,7 +54,9 @@ def parabolic(a, x):
         ]
     ),
 )  # pylint: disable=C0103
-def straight_power(a, x):  # pylint: disable=C0103
+def straight_power(
+    a: np.ndarray, x: Union[np.ndarray, float]
+) -> Union[np.ndarray, float]:  # pylint: disable=C0103
     """Represent fitting of y ~ x^n."""
     return a[0] * (x + a[1]) ** a[2] + a[3]
 
@@ -70,7 +74,9 @@ def straight_power(a, x):  # pylint: disable=C0103
         ]
     ),
 )  # pylint: disable=C0103
-def inverse_power(a, x):  # pylint: disable=C0103
+def inverse_power(
+    a: np.ndarray, x: Union[np.ndarray, float]
+) -> Union[np.ndarray, float]:  # pylint: disable=C0103
     """Represent fitting of y ~ x^(-n)."""
     return a[0] / (x + a[1]) ** a[2] + a[3]
 
@@ -83,7 +89,7 @@ def inverse_power(a, x):  # pylint: disable=C0103
         [1 / (x + a[1]), -a[0] / ((x + a[1]) ** 2), np.ones(shape=np.shape(x))]
     ),
 )  # pylint: disable=C0103
-def hyperbolic(a, x):
+def hyperbolic(a: np.ndarray, x: Union[np.ndarray, float]) -> Union[np.ndarray, float]:
     """Hyperbolic fit function."""
     return a[0] / (x + a[1]) + a[2]
 
@@ -96,7 +102,7 @@ def hyperbolic(a, x):
         [np.exp(a[1] * x), a[0] * x * np.exp(a[1] * x), np.ones(np.shape(x))]
     ),
 )  # pylint: disable=C0103
-def exponential(a, x):
+def exponential(a: np.ndarray, x: Union[np.ndarray, float]) -> Union[np.ndarray, float]:
     """Exponential fit function."""
     return a[0] * np.exp(a[1] * x) + a[2]
 
@@ -114,7 +120,7 @@ def exponential(a, x):
         ]
     ),
 )  # pylint: disable=C0103
-def cos(a, x):
+def cos(a: np.ndarray, x: Union[np.ndarray, float]) -> Union[np.ndarray, float]:
     """Cosines fit function."""
     return a[0] * np.cos(a[1] * x + a[2]) + a[3]
 
@@ -132,7 +138,7 @@ def cos(a, x):
         ]
     ),
 )  # pylint: disable=C0103
-def sin(a, x):
+def sin(a: np.ndarray, x: Union[np.ndarray, float]) -> Union[np.ndarray, float]:
     """Sine fit function."""
     return a[0] * np.sin(a[1] * x + a[2]) + a[3]
 
@@ -152,7 +158,7 @@ def sin(a, x):
         ]
     ),
 )  # pylint: disable=C0103
-def normal(a, x):
+def normal(a: np.ndarray, x: Union[np.ndarray, float]) -> Union[np.ndarray, float]:
     """Normal distribution fit function."""
     return a[0] * np.exp(-(((x - a[1]) / a[2]) ** 2)) + a[3]
 
@@ -173,12 +179,12 @@ def normal(a, x):
         ]
     ),
 )  # pylint: disable=C0103
-def poisson(a, x):
+def poisson(a: np.ndarray, x: Union[np.ndarray, float]) -> Union[np.ndarray, float]:
     """Poisson fit function."""
     return a[0] * np.power(a[1], x) * np.exp(-a[1]) / scipy.special.gamma(x + 1) + a[2]
 
 
-def polynomial(n):  # pylint: disable=C0103
+def polynomial(n: int) -> FitFunction:  # pylint: disable=C0103
     """
     Creates a polynomial fit function with parameters as coefficients.
 
@@ -206,7 +212,7 @@ def polynomial(n):  # pylint: disable=C0103
         a_derivative=lambda a, x: np.stack([x ** i for i in range(n + 1)]),
         save=False,
     )  # pylint: disable=C0103
-    def func(a, x):
+    def func(a: np.ndarray, x: Union[np.ndarray, float]) -> Union[np.ndarray, float]:
         return sum([a[i] * x ** i for i in range(n + 1)])
 
     return func

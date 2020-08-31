@@ -1,4 +1,6 @@
 """Implementation of the fitting algorithm."""
+from typing import Any, Dict, Optional
+
 import numpy as np
 from scipy.odr import ODR, Model, RealData
 
@@ -9,8 +11,8 @@ def fit_to_data(  # pylint: disable=invalid-name
     data: FitData,
     func: FitFunction,
     a0: np.ndarray = None,
-    use_x_derivative=True,
-    use_a_derivative=True,
+    use_x_derivative: bool = True,
+    use_a_derivative: bool = True,
 ) -> FitResult:
     """
     Implementation of the fitting algorithm.
@@ -55,11 +57,11 @@ def fit_to_data(  # pylint: disable=invalid-name
 
 
 def __get_odr_model_kwargs(
-    func,
-    use_x_derivative=True,
-    use_a_derivative=True,
-):
-    kwargs = dict(fcn=func)
+    func: FitFunction,
+    use_x_derivative: bool = True,
+    use_a_derivative: bool = True,
+) -> Dict[str, Any]:
+    kwargs: Dict[str, Any] = dict(fcn=func)
     if use_a_derivative and func.a_derivative is not None:
         kwargs["fjacb"] = func.a_derivative
     if use_x_derivative and func.x_derivative is not None:
@@ -67,7 +69,9 @@ def __get_odr_model_kwargs(
     return kwargs
 
 
-def __get_a0(n, a0=None):  # pylint: disable=invalid-name
+def __get_a0(  # pylint: disable=invalid-name
+    n: int, a0: Optional[np.ndarray] = None
+) -> np.ndarray:
     """
     Returns initial parameters for fitting algorithm.
 

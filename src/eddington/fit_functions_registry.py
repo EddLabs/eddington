@@ -67,7 +67,7 @@ class FitFunctionsRegistry:  # noqa: D415,D213,D205
         return cls.__name_to_func_dict[func_name]
 
     @classmethod
-    def exists(cls, func_name: str):
+    def exists(cls, func_name: str) -> bool:
         """
         Checks whether a fit function exist.
 

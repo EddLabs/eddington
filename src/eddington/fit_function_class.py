@@ -1,7 +1,7 @@
 """Fitting function to evaluate with the fitting algorithm."""
 import functools
 from dataclasses import InitVar, dataclass, field
-from typing import Callable, Dict, Optional
+from typing import Callable, Dict, Optional, Union
 
 import numpy as np
 
@@ -179,8 +179,20 @@ class FitFunction:  # pylint: disable=invalid-name,too-many-instance-attributes
 
 
 def fit_function(  # pylint: disable=invalid-name,too-many-arguments
-    n, name=None, syntax=None, a_derivative=None, x_derivative=None, save=True
-):
+    n: int,
+    name: Optional[str] = None,
+    syntax: Optional[str] = None,
+    a_derivative: Optional[
+        Callable[[np.ndarray, Union[np.ndarray, float]], np.ndarray]
+    ] = None,
+    x_derivative: Optional[
+        Callable[[np.ndarray, Union[np.ndarray, float]], Union[np.ndarray, float]]
+    ] = None,
+    save: bool = True,
+) -> Callable[
+    [Callable[[np.ndarray, Union[np.ndarray, float]], Union[np.ndarray, float]]],
+    FitFunction,
+]:
     """
     Wrapper making a simple callable into a :class:`FitFunction`.
 
