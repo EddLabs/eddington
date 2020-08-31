@@ -1,4 +1,4 @@
-.. fit_function:
+.. _fit_function:
 
 Fit Function
 =============
