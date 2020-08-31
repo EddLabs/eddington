@@ -1,8 +1,9 @@
 """Printing functions for displaying numbers with given precision."""
 import math
+from typing import Tuple
 
 
-def to_relevant_precision(decimal):
+def to_relevant_precision(decimal: float) -> Tuple[float, int]:
     """
     Get relevant precision of a decimal number.
 
@@ -21,7 +22,7 @@ def to_relevant_precision(decimal):
     return abs_a, precision
 
 
-def to_precise_string(decimal, precision):
+def to_precise_string(decimal: float, precision: int) -> str:
     """
     Returns a decimal as string with desired precision.
 
