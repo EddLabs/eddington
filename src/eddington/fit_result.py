@@ -100,9 +100,9 @@ P-probability: {to_precise_string(self.p_probability, self.precision)}
         np.set_printoptions(precision=old_precision)
         return repr_string
 
-    def __a_value_string(
-        self, i: int, a: np.ndarray, aerr: np.ndarray, arerr: np.ndarray
-    ) -> str:  # pylint: disable=invalid-name
+    def __a_value_string(  # pylint: disable=invalid-name
+        self, i: int, a: float, aerr: float, arerr: float
+    ) -> str:
         a_string = to_precise_string(a, self.precision)
         aerr_string = to_precise_string(aerr, self.precision)
         arerr_string = to_precise_string(arerr, self.precision)
