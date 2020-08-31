@@ -5,22 +5,30 @@ from scipy.odr import ODR, Model, RealData
 from eddington import FitData, FitFunction, FitResult
 
 
-def fit_to_data(
+def fit_to_data(  # pylint: disable=invalid-name
     data: FitData,
     func: FitFunction,
     a0: np.ndarray = None,
     use_x_derivative=True,
     use_a_derivative=True,
-):  # pylint: disable=C0103
+) -> FitResult:
     """
-    Implementation of the fitting algorithm using scipy ODR algorithm.
+    Implementation of the fitting algorithm.
 
-    :param data: :class:`FitData`. Fitting data to optimize
-    :param func: :class:`FitFunction`. a function to fit the data according to.
-    :param a0: nd.array. initail guess for the parameters
-    :param use_x_derivative: Boolean. indicates whether to use x derviative or not.
-    :param use_a_derivative: Boolean. indicates whether to use a derviative or not.
-    :return: :class:`FitResult`
+    This functions wraps *scipy*'s
+    `ODR <https://docs.scipy.org/doc/scipy/reference/odr.html>`_ algorithm.
+
+    :param data: Fitting data to optimize
+    :type data: :class:`FitData`
+    :param func: a function to fit the data according to.
+    :type func: :class:`FitFunction`
+    :param a0: initial guess for the parameters
+    :type a0: ``np.ndarray``
+    :param use_x_derivative: indicates whether to use x derivative or not.
+    :type use_x_derivative: ``bool``
+    :param use_a_derivative: indicates whether to use a derivative or not.
+    :type use_a_derivative: ``bool``
+    :returns: :class:`FitResult`
     """
     model = Model(
         **__get_odr_model_kwargs(
@@ -33,8 +41,8 @@ def fit_to_data(
     real_data = RealData(x=data.x, y=data.y, sx=data.xerr, sy=data.yerr)
     odr = ODR(data=real_data, model=model, beta0=a0)
     output = odr.run()
-    a = output.beta
-    chi2 = output.sum_square  # pylint: disable=E1101
+    a = output.beta  # pylint: disable=invalid-name
+    chi2 = output.sum_square  # pylint: disable=no-member
     degrees_of_freedom = len(data.x) - func.active_parameters
     return FitResult(
         a0=a0,

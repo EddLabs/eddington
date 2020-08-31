@@ -1,4 +1,4 @@
-.. fit_data:
+.. _fit_data:
 
 Fit Data
 ========

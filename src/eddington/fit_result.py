@@ -1,6 +1,7 @@
 """Fitting result class that will be returned by the fitting algorithm."""
 from dataclasses import dataclass, field
-from typing import Optional
+from pathlib import Path
+from typing import Optional, Union
 
 import numpy as np
 import scipy.stats as stats
@@ -16,8 +17,8 @@ class FitResult:
     :param a0: The initial guess for the fit function parameters.
     :param a: The result for the fitting parameters.
     :param aerr: Estimated errors of a.
-    :param arerr: Estimated relative errors of a (equivilant to aerr/a).
-    :param acov: Covarance matrix of a.
+    :param arerr: Estimated relative errors of a (equivalent to aerr/a).
+    :param acov: Covariance matrix of a.
     :param degrees_of_freedom: How many degrees of freedom of the fittings.
     :param chi2: Optimization evaluation for the fit.
     :param chi2_reduced: Reduced chi2.
@@ -48,12 +49,13 @@ class FitResult:
         self.chi2_reduced = self.chi2 / self.degrees_of_freedom
         self.p_probability = stats.chi2.sf(self.chi2, self.degrees_of_freedom)
 
-    def print_or_export(self, file_path=None):
+    def print_or_export(self, file_path: Optional[Union[str, Path]] = None) -> None:
         """
         Write the result to a file or print it to console.
 
-        :param file_path: str ot None. Path to write the result in. if None, prints
-         to console.
+        :param file_path: Optional. Path to write the result in. if None, prints to
+         console.
+        :type file_path: ``str`` or ``Path``
         """
         if file_path is None:
             print(self.pretty_string)
@@ -62,7 +64,7 @@ class FitResult:
             output_file.write(self.pretty_string)
 
     @property
-    def pretty_string(self):
+    def pretty_string(self) -> str:
         """Pretty representation string."""
         if self.__pretty_string is None:
             self.__pretty_string = self.__build_pretty_string()
