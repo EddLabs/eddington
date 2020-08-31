@@ -1,5 +1,6 @@
 # pylint: disable=missing-class-docstring
 """Exception classes for Eddington."""
+from typing import Optional
 
 
 class EddingtonException(Exception):  # noqa: D101
@@ -33,7 +34,9 @@ class FitDataInvalidFile(FitDataError):  # noqa: D101
 
 
 class FitDataInvalidFileSyntax(FitDataInvalidFile):  # noqa: D101
-    def __init__(self, file_name, sheet=None):  # noqa: D107
+    def __init__(
+        self, file_name: str, sheet: Optional[str] = None
+    ) -> None:  # noqa: D107
         sheet_msg = "" if sheet is None else f' in sheet "{sheet}"'
         msg = f'"{file_name}" has invalid syntax{sheet_msg}.'
         super().__init__(msg)
@@ -42,12 +45,12 @@ class FitDataInvalidFileSyntax(FitDataInvalidFile):  # noqa: D101
 class FitDataColumnsLengthError(FitDataInvalidFile):  # noqa: D101
     msg = "All columns in FitData should have the same length"
 
-    def __init__(self):  # noqa: D107
+    def __init__(self) -> None:  # noqa: D107
         super().__init__(self.msg)
 
 
 class FitDataColumnIndexError(FitDataError):  # noqa: D101
-    def __init__(self, index, max_index):  # noqa: D107
+    def __init__(self, index: int, max_index: int) -> None:  # noqa: D107
         super().__init__(
             f"No column number {index} in data. "
             f"index should be between 1 and {max_index}"
@@ -55,7 +58,7 @@ class FitDataColumnIndexError(FitDataError):  # noqa: D101
 
 
 class FitDataColumnExistenceError(FitDataError):  # noqa: D101
-    def __init__(self, column):  # noqa: D107
+    def __init__(self, column: str) -> None:  # noqa: D107
         super().__init__(f'Could not find column "{column}" in data')
 
 
