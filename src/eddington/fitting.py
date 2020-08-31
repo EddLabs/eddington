@@ -47,7 +47,6 @@ def fit_to_data(  # pylint: disable=invalid-name
     chi2 = output.sum_square  # pylint: disable=no-member
     degrees_of_freedom = len(data.x) - func.active_parameters
     return FitResult(
-        a0=a0,
         a=a,
         aerr=output.sd_beta,
         acov=output.cov_beta,

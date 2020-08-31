@@ -1,4 +1,3 @@
-import mock
 import numpy as np
 import pytest
 from pytest_cases import THIS_MODULE, parametrize_with_cases
@@ -9,7 +8,6 @@ from eddington import FitResult
 def case_standard():
 
     kwargs = dict(
-        a0=[1.0, 3.0],
         a=[1.1, 2.98],
         aerr=[0.1, 0.76],
         acov=[[0.01, 2.3], [2.3, 0.988]],
@@ -19,29 +17,38 @@ def case_standard():
     chi2_reduced = 1.6552
     p_probability = 0.14167
     arerr = [9.09091, 25.50336]
-    repr_string = """Results:
-========
 
-Initial parameters' values:
-\t1.0 3.0
-Fitted parameters' values:
-\ta[0] = 1.100 \u00B1 0.1000 (9.091% error)
-\ta[1] = 2.980 \u00B1 0.7600 (25.503% error)
-Fitted parameters covariance:
-[[0.01  2.3  ]
- [2.3   0.988]]
-Chi squared: 8.276
-Degrees of freedom: 5
-Chi squared reduced: 1.655
-P-probability: 0.1417
-"""
     fit_result = FitResult(**kwargs)
     return (
         dict(
             chi2_reduced=chi2_reduced,
             p_probability=p_probability,
             arerr=arerr,
-            repr_string=repr_string,
+            delta=10e-5,
+            **kwargs,
+        ),
+        fit_result,
+    )
+
+
+def case_negative_value():
+
+    kwargs = dict(
+        a=[1.1, -2.98],
+        aerr=[0.1, 0.76],
+        acov=[[0.01, 2.3], [2.3, 0.988]],
+        chi2=8.276,
+        degrees_of_freedom=5,
+    )
+    chi2_reduced = 1.6552
+    p_probability = 0.14167
+    arerr = [9.09091, 25.50336]
+    fit_result = FitResult(**kwargs)
+    return (
+        dict(
+            chi2_reduced=chi2_reduced,
+            p_probability=p_probability,
+            arerr=arerr,
             delta=10e-5,
             **kwargs,
         ),
@@ -51,7 +58,6 @@ P-probability: 0.1417
 
 def case_with_zero_error():
     kwargs = dict(
-        a0=[1.0, 3.0],
         a=[1.1, 2.98],
         aerr=[0.0, 0.0],
         acov=[[0.0, 0.0], [0.0, 0.0]],
@@ -61,29 +67,12 @@ def case_with_zero_error():
     chi2_reduced = 1.6552
     p_probability = 0.14167
     arerr = [0.0, 0.0]
-    repr_string = """Results:
-========
-
-Initial parameters' values:
-\t1.0 3.0
-Fitted parameters' values:
-\ta[0] = 1.100 ± 0.000 (0.000% error)
-\ta[1] = 2.980 ± 0.000 (0.000% error)
-Fitted parameters covariance:
-[[0. 0.]
- [0. 0.]]
-Chi squared: 8.276
-Degrees of freedom: 5
-Chi squared reduced: 1.655
-P-probability: 0.1417
-"""
     fit_result = FitResult(**kwargs)
     return (
         dict(
             chi2_reduced=chi2_reduced,
             p_probability=p_probability,
             arerr=arerr,
-            repr_string=repr_string,
             delta=10e-5,
             **kwargs,
         ),
@@ -94,7 +83,6 @@ P-probability: 0.1417
 def case_with_zero_value():
 
     kwargs = dict(
-        a0=[1.0, 3.0],
         a=[0.0, 0.0],
         aerr=[0.1, 0.76],
         acov=[[0.01, 2.3], [2.3, 0.988]],
@@ -104,29 +92,12 @@ def case_with_zero_value():
     chi2_reduced = 1.6552
     p_probability = 0.14167
     arerr = [np.inf, np.inf]
-    repr_string = """Results:
-========
-
-Initial parameters' values:
-\t1.0 3.0
-Fitted parameters' values:
-\ta[0] = 0.000 \u00B1 0.1000 (inf% error)
-\ta[1] = 0.000 \u00B1 0.7600 (inf% error)
-Fitted parameters covariance:
-[[0.01  2.3  ]
- [2.3   0.988]]
-Chi squared: 8.276
-Degrees of freedom: 5
-Chi squared reduced: 1.655
-P-probability: 0.1417
-"""
     fit_result = FitResult(**kwargs)
     return (
         dict(
             chi2_reduced=chi2_reduced,
             p_probability=p_probability,
             arerr=arerr,
-            repr_string=repr_string,
             delta=10e-5,
             **kwargs,
         ),
@@ -137,7 +108,6 @@ P-probability: 0.1417
 def case_with_small_p_probability():
 
     kwargs = dict(
-        a0=[1.0, 3.0],
         a=[1.1, 2.98],
         aerr=[0.1, 0.76],
         acov=[[0.01, 2.3], [2.3, 0.988]],
@@ -147,41 +117,17 @@ def case_with_small_p_probability():
     chi2_reduced = 8.7452
     p_probability = 2.63263e-8
     arerr = [9.09091, 25.50336]
-    repr_string = """Results:
-========
-
-Initial parameters' values:
-\t1.0 3.0
-Fitted parameters' values:
-\ta[0] = 1.100 \u00B1 0.1000 (9.091% error)
-\ta[1] = 2.980 \u00B1 0.7600 (25.503% error)
-Fitted parameters covariance:
-[[0.01  2.3  ]
- [2.3   0.988]]
-Chi squared: 43.726
-Degrees of freedom: 5
-Chi squared reduced: 8.745
-P-probability: 2.633e-08
-"""
     fit_result = FitResult(**kwargs)
     return (
         dict(
             chi2_reduced=chi2_reduced,
             p_probability=p_probability,
             arerr=arerr,
-            repr_string=repr_string,
             delta=10e-5,
             **kwargs,
         ),
         fit_result,
     )
-
-
-@parametrize_with_cases(argnames="expected, fit_result", cases=THIS_MODULE)
-def test_a0(expected, fit_result):
-    assert fit_result.a0 == pytest.approx(
-        expected["a0"], rel=expected["delta"]
-    ), "Initial Guess is different than expected"
 
 
 @parametrize_with_cases(argnames="expected, fit_result", cases=THIS_MODULE)
@@ -242,27 +188,3 @@ def test_p_probability(expected, fit_result):
     assert fit_result.p_probability == pytest.approx(
         expected["p_probability"], rel=expected["delta"]
     ), "Chi2 reduced is different than expected"
-
-
-@parametrize_with_cases(argnames="expected, fit_result", cases=THIS_MODULE)
-def test_representation(expected, fit_result):
-    assert expected["repr_string"] == str(
-        fit_result
-    ), "Representation is different than expected"
-
-
-@parametrize_with_cases(argnames="expected, fit_result", cases=THIS_MODULE)
-def test_export_to_file(expected, fit_result):
-    path = "/path/to/output"
-    mock_open_obj = mock.mock_open()
-    with mock.patch("eddington.fit_result.open", mock_open_obj):
-        fit_result.print_or_export(path)
-        mock_open_obj.assert_called_once_with(path, mode="w")
-        mock_open_obj.return_value.write.assert_called_with(expected["repr_string"])
-
-
-@parametrize_with_cases(argnames="expected, fit_result", cases=THIS_MODULE)
-def test_print(expected, fit_result):
-    with mock.patch("sys.stdout") as mock_print:
-        fit_result.print_or_export()
-        assert mock_print.write.call_args_list[0] == mock.call(expected["repr_string"])

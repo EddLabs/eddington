@@ -29,6 +29,7 @@ from eddington.fit_functions_list import (
 from eddington.fit_functions_registry import FitFunctionsRegistry
 from eddington.fit_result import FitResult
 from eddington.fitting import fit_to_data
+from eddington.print_util import fit_result_pretty_string
 
 __all__ = [
     # Fit functions infrastructure
@@ -63,4 +64,6 @@ __all__ = [
     # Data structures
     "FitData",
     "FitResult",
+    # Util
+    "fit_result_pretty_string",
 ]
