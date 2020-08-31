@@ -252,17 +252,10 @@ def test_representation(expected, fit_result):
 
 
 @parametrize_with_cases(argnames="expected, fit_result", cases=THIS_MODULE)
-def test_export_to_file(expected, fit_result):
-    path = "/path/to/output"
+def test_export_to_text_file(expected, fit_result):
+    path = "/path/to/output.txt"
     mock_open_obj = mock.mock_open()
     with mock.patch("eddington.fit_result.open", mock_open_obj):
-        fit_result.print_or_export(path)
+        fit_result.save_txt(path)
         mock_open_obj.assert_called_once_with(path, mode="w")
         mock_open_obj.return_value.write.assert_called_with(expected["repr_string"])
-
-
-@parametrize_with_cases(argnames="expected, fit_result", cases=THIS_MODULE)
-def test_print(expected, fit_result):
-    with mock.patch("sys.stdout") as mock_print:
-        fit_result.print_or_export()
-        assert mock_print.write.call_args_list[0] == mock.call(expected["repr_string"])
