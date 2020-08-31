@@ -2,7 +2,7 @@
 import numpy as np
 
 
-def random_array(min_val, max_val, size):
+def random_array(min_val: float, max_val: float, size: int) -> np.ndarray:
     """
     Creates a random array.
 
@@ -14,7 +14,7 @@ def random_array(min_val, max_val, size):
     return np.random.uniform(min_val, max_val, size=size)
 
 
-def random_sigma(average_sigma, size):
+def random_sigma(average_sigma: float, size: int) -> np.ndarray:
     """
     Creates random standard deviation (aka. sigma).
 
@@ -25,7 +25,7 @@ def random_sigma(average_sigma, size):
     return np.random.exponential(average_sigma, size=size)
 
 
-def random_error(scales):
+def random_error(scales: np.ndarray) -> np.ndarray:
     """
     Generates random errors based on an array of scales.
 
