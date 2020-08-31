@@ -1,5 +1,5 @@
 """Implementation of the fitting algorithm."""
-from typing import Optional, Dict, Any
+from typing import Any, Dict, Optional
 
 import numpy as np
 from scipy.odr import ODR, Model, RealData

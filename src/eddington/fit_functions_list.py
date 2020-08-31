@@ -5,7 +5,7 @@ import numpy as np
 import scipy.special
 
 from eddington.exceptions import FitFunctionLoadError
-from eddington.fit_function_class import fit_function, FitFunction
+from eddington.fit_function_class import FitFunction, fit_function
 
 
 @fit_function(
