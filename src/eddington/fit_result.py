@@ -38,7 +38,7 @@ class FitResult:
     precision: int = field(default=3)
     __pretty_string: Optional[str] = field(default=None, init=False)
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         """Post init methods."""
         self.aerr = np.array(self.aerr)
         self.acov = np.array(self.acov)
@@ -70,11 +70,11 @@ class FitResult:
             self.__pretty_string = self.__build_pretty_string()
         return self.__pretty_string
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Representation string."""
         return self.pretty_string
 
-    def __build_pretty_string(self):
+    def __build_pretty_string(self) -> str:
         old_precision = np.get_printoptions()["precision"]
         np.set_printoptions(precision=self.precision)
         a_value_string = "\n".join(
@@ -100,7 +100,9 @@ P-probability: {to_precise_string(self.p_probability, self.precision)}
         np.set_printoptions(precision=old_precision)
         return repr_string
 
-    def __a_value_string(self, i, a, aerr, arerr):  # pylint: disable=invalid-name
+    def __a_value_string(
+        self, i: int, a: np.ndarray, aerr: np.ndarray, arerr: np.ndarray
+    ) -> str:  # pylint: disable=invalid-name
         a_string = to_precise_string(a, self.precision)
         aerr_string = to_precise_string(aerr, self.precision)
         arerr_string = to_precise_string(arerr, self.precision)
