@@ -2,7 +2,7 @@
 import json
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Optional, Union
+from typing import List, Optional, Union
 
 import numpy as np
 import scipy.stats as stats
@@ -27,11 +27,13 @@ class FitResult:
      chi2_reduced.
     """
 
-    a0: np.ndarray  # pylint: disable=invalid-name
-    a: np.ndarray  # pylint: disable=invalid-name
-    aerr: np.ndarray
-    arerr: np.ndarray = field(init=False)
-    acov: np.ndarray
+    a0: Union[List[float], np.ndarray]  # pylint: disable=invalid-name
+    a: Union[List[float], np.ndarray]  # pylint: disable=invalid-name
+    aerr: Union[List[float], np.ndarray]
+    arerr: Union[List[float], np.ndarray] = field(
+        init=False,
+    )
+    acov: Union[List[List[float]], np.ndarray]
     degrees_of_freedom: int
     chi2: float
     chi2_reduced: float = field(init=False)
@@ -71,12 +73,19 @@ class FitResult:
         """
         with open(file_path, mode="w") as output_file:
             json.dump(
-                {
-                    key: value
-                    for (key, value) in vars(self).items()
-                    if key != "precision"
-                },
+                dict(
+                    a0=self.a0.tolist(),  # type: ignore
+                    a=self.a.tolist(),  # type: ignore
+                    aerr=self.aerr.tolist(),  # type: ignore
+                    arerr=self.arerr.tolist(),  # type: ignore
+                    acov=self.acov.tolist(),  # type: ignore
+                    degrees_of_freedom=self.degrees_of_freedom,
+                    chi2=self.chi2,
+                    chi2_reduced=self.chi2_reduced,
+                    p_probability=self.p_probability,
+                ),
                 output_file,
+                indent=1,
             )
 
     @property
