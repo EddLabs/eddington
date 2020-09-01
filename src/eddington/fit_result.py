@@ -2,7 +2,7 @@
 import json
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Optional, Union
+from typing import Optional, Union, List
 
 import numpy as np
 import scipy.stats as stats
@@ -27,11 +27,11 @@ class FitResult:
      chi2_reduced.
     """
 
-    a0: np.ndarray  # pylint: disable=invalid-name
-    a: np.ndarray  # pylint: disable=invalid-name
-    aerr: np.ndarray
-    arerr: np.ndarray = field(init=False)
-    acov: np.ndarray
+    a0: Union[List[float], np.ndarray]  # pylint: disable=invalid-name
+    a: Union[List[float], np.ndarray]  # pylint: disable=invalid-name
+    aerr: Union[List[float], np.ndarray]
+    arerr: Union[List[float], np.ndarray] = field(init=False)
+    acov: Union[List[List[float]], np.ndarray]
     degrees_of_freedom: int
     chi2: float
     chi2_reduced: float = field(init=False)
