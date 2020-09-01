@@ -71,12 +71,19 @@ class FitResult:
         """
         with open(file_path, mode="w") as output_file:
             json.dump(
-                {
-                    key: value
-                    for (key, value) in vars(self).items()
-                    if key != "precision"
-                },
+                dict(
+                    a0=self.a0.tolist(),
+                    a=self.a.tolist(),
+                    aerr=self.aerr.tolist(),
+                    arerr=self.arerr.tolist(),
+                    acov=self.acov.tolist(),
+                    degrees_of_freedom=self.degrees_of_freedom,
+                    chi2=self.chi2,
+                    chi2_reduced=self.chi2_reduced,
+                    p_probability=self.p_probability,
+                ),
                 output_file,
+                indent=1,
             )
 
     @property
