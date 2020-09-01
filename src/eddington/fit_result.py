@@ -1,4 +1,5 @@
 """Fitting result class that will be returned by the fitting algorithm."""
+import json
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Optional, Union
@@ -49,19 +50,34 @@ class FitResult:
         self.chi2_reduced = self.chi2 / self.degrees_of_freedom
         self.p_probability = stats.chi2.sf(self.chi2, self.degrees_of_freedom)
 
-    def print_or_export(self, file_path: Optional[Union[str, Path]] = None) -> None:
+    def save_txt(self, file_path: Union[str, Path]) -> None:
         """
-        Write the result to a file or print it to console.
+        Write the result to a text file.
 
-        :param file_path: Optional. Path to write the result in. if None, prints to
+        :param file_path: Path to write the result in. if None, prints to
          console.
         :type file_path: ``str`` or ``Path``
         """
-        if file_path is None:
-            print(self.pretty_string)
-            return
         with open(file_path, mode="w") as output_file:
             output_file.write(self.pretty_string)
+
+    def save_json(self, file_path: Union[str, Path]) -> None:
+        """
+        Write the result to a json file.
+
+        :param file_path: Path to write the result in. if None, prints to
+         console.
+        :type file_path: ``str`` or ``Path``
+        """
+        with open(file_path, mode="w") as output_file:
+            json.dump(
+                {
+                    key: value
+                    for (key, value) in vars(self).items()
+                    if key != "precision"
+                },
+                output_file,
+            )
 
     @property
     def pretty_string(self) -> str:
