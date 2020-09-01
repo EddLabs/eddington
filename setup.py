@@ -5,7 +5,7 @@ from setuptools import setup
 
 READTHEDOCS = "READTHEDOCS"
 
-version = "0.0.15.dev0"
+version = "0.0.15.dev1"
 on_rtd = os.environ.get(READTHEDOCS) == "True"
 install_requires = []
 if not on_rtd:
