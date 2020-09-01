@@ -4,6 +4,7 @@ import pytest
 from pytest_cases import THIS_MODULE, parametrize_with_cases
 
 from eddington import FitResult
+from tests.util import assert_dict_equal
 
 
 def case_standard():
@@ -259,3 +260,27 @@ def test_export_to_text_file(expected, fit_result):
         fit_result.save_txt(path)
         mock_open_obj.assert_called_once_with(path, mode="w")
         mock_open_obj.return_value.write.assert_called_with(expected["repr_string"])
+
+
+@parametrize_with_cases(argnames="expected, fit_result", cases=THIS_MODULE)
+def test_export_to_json_file(expected, fit_result, json_dump_mock):
+    path = "/path/to/output.json"
+    mock_open_obj = mock.mock_open()
+    with mock.patch("eddington.fit_result.open", mock_open_obj):
+        fit_result.save_json(path)
+        mock_open_obj.assert_called_once_with(path, mode="w")
+        assert_dict_equal(
+            json_dump_mock.call_args_list[0][0][0],
+            dict(
+                a=expected["a"],
+                a0=expected["a0"],
+                aerr=expected["aerr"],
+                arerr=expected["arerr"],
+                acov=expected["acov"],
+                chi2=expected["chi2"],
+                chi2_reduced=expected["chi2_reduced"],
+                degrees_of_freedom=expected["degrees_of_freedom"],
+                p_probability=expected["p_probability"],
+            ),
+            rel=expected["delta"],
+        )
