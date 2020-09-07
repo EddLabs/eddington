@@ -2,8 +2,47 @@
 from typing import Optional
 
 import matplotlib.pyplot as plt
+import numpy as np
 
 from eddington import FitData
+
+
+def plot_fitting(  # pylint: disable=C0103,R0913
+    func,
+    data: FitData,
+    a: np.ndarray,
+    title_name,
+    xlabel: Optional[str] = None,
+    ylabel: Optional[str] = None,
+    grid: bool = False,
+    step: Optional[float] = None,
+    xmin: Optional[float] = None,
+    xmax: Optional[float] = None,
+):
+    """
+    Plot fitting plot.
+
+    :param func: Fitting function.
+    :param data: Fitting data
+    :param a: The parameters result
+    :param title_name: str or None. Title for the figure.
+    :param xlabel: str or None. Label of the x axis
+    :param ylabel: str or None. Label of the x axis
+    :param grid: bool. Add grid lines or not
+    :param xmin: Optional. minimum value for x in plot
+    :param xmax: Optional. maximum value for x in plot
+    :param step: float or None. step between values of the continuous plot
+    """
+    fig = plot_data(
+        data=data, title_name=title_name, xlabel=xlabel, ylabel=ylabel, grid=grid
+    )
+    xmin, xmax = get_plot_borders(x=data.x, xmin=xmin, xmax=xmax)
+    if step is None:
+        step = (xmax - xmin) / 1000.0
+    x = np.arange(xmin, xmax, step=step)  # pylint: disable=invalid-name
+    y = func(a, x)  # pylint: disable=invalid-name
+    plot(fig=fig, x=x, y=y)
+    return fig
 
 
 def plot_data(
@@ -130,6 +169,25 @@ def errorbar(fig, x, y, xerr, yerr):  # pylint: disable=C0103
         linestyle="None",
         figure=fig,
     )
+
+
+def get_plot_borders(
+    x: np.ndarray, xmin: Optional[float] = None, xmax: Optional[float] = None
+):  # pylint: disable=C0103
+    """
+    Get borders for a plot based on its x values.
+
+    :param x: Array. x values of the fitting
+    :return: tuple. minimum and maximum values for the plot.
+    """
+    data_xmin = np.min(x)
+    data_xmax = np.max(x)
+    gap = (data_xmax - data_xmin) * 0.1
+    if xmin is None:
+        xmin = data_xmin - gap
+    if xmax is None:
+        xmax = data_xmax + gap
+    return xmin, xmax
 
 
 def show_or_export(fig: plt.Figure, output_path=None):

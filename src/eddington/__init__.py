@@ -29,7 +29,7 @@ from eddington.fit_functions_list import (
 from eddington.fit_functions_registry import FitFunctionsRegistry
 from eddington.fit_result import FitResult
 from eddington.fitting import fit_to_data
-from eddington.plot import plot_data, show_or_export
+from eddington.plot import plot_data, show_or_export, plot_fitting
 
 __all__ = [
     # Fit functions infrastructure
@@ -66,5 +66,6 @@ __all__ = [
     "FitResult",
     # Plot
     "plot_data",
+    "plot_fitting",
     "show_or_export",
 ]
