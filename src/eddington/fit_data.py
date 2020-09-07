@@ -240,6 +240,32 @@ class FitData:  # pylint: disable=too-many-instance-attributes,too-many-public-m
         self.__validate_index(self._yerr_column_index, yerr_column)
         self._yerr_column = self.all_columns[self._yerr_column_index]
 
+    # More functionalities
+
+    def residuals(self, fit_func, a: np.ndarray):  # pylint: disable=invalid-name
+        """
+        Creates residuals :class:`FitData` objects.
+
+        :param fit_func: :class:`FitFunction` to evaluate with the fit data
+        :type fit_func: ``FitFunction``
+        :param a: the parameters of the given fit function
+        :type a: ``numpy.ndarray``
+        :returns: residuals :class:`FitData`
+        """
+        y_residuals = self.y - fit_func(a, self.x)
+        return FitData(
+            data=OrderedDict(
+                [
+                    (self.x_column, self.x),
+                    (self.xerr_column, self.xerr),
+                    (self.y_column, y_residuals),
+                    (self.yerr_column, self.yerr),
+                ]
+            )
+        )
+
+    # Class methods
+
     @classmethod
     def random(  # pylint: disable=invalid-name,too-many-arguments
         cls,
