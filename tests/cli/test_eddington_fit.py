@@ -2,11 +2,21 @@ from pathlib import Path
 
 import numpy as np
 from click.testing import CliRunner
-from pytest_cases import THIS_MODULE, fixture, parametrize_with_cases
+from pytest_cases import (
+    THIS_MODULE,
+    fixture,
+    fixture_ref,
+    parametrize,
+    parametrize_with_cases,
+    case,
+)
 
 from eddington import FitData, FitResult, linear
 from eddington.cli import eddington_cli
-from tests.util import dummy_function
+from tests.conftest import mock_read_from_csv, mock_read_from_excel, mock_read_from_json
+from tests.util import assert_dict_equal, dummy_function
+
+COLUMNS_SET_TAG = "column_set"
 
 FIT_FUNC = dummy_function("dummy", "Dummy Syntax")
 A = np.array([1, 2])
@@ -35,185 +45,164 @@ def mock_fit_to_data(mocker):
     return fit_method
 
 
-def case_csv_data(mock_read_from_csv):
-    mock_read_from_csv.return_value = FIT_DATA
-    data_file_name = "data.csv"
-    return data_file_name, mock_read_from_csv, None
+@fixture
+def mock_plot_fitting(mocker):
+    return mocker.patch("eddington.cli.plot_fitting")
 
 
-def case_json_data(mock_read_from_json):
-    mock_read_from_json.return_value = FIT_DATA
-    data_file_name = "data.json"
-    return data_file_name, mock_read_from_json, None
+@fixture
+def mock_show_or_export(mocker):
+    return mocker.patch("eddington.cli.show_or_export")
 
 
-def case_excel_data(mock_read_from_excel):
-    mock_read_from_excel.return_value = FIT_DATA
-    data_file_name = "data.xlsx"
-    return data_file_name, mock_read_from_excel, SHEET
-
-
-@parametrize_with_cases(
-    argnames="data_file_name, read_method, sheet", cases=THIS_MODULE
-)
-def test_simple_fit(
-    data_file_name,
-    read_method,
-    sheet,
-    mock_fit_to_data,
-    mock_load_fit_func,
-    tmpdir,
-):
-    data_file = existing_data_file(data_file_name, tmpdir)
-    read_kwargs = dict(
-        filepath=data_file,
+@case(tags=[COLUMNS_SET_TAG])
+def case_no_args():
+    return [], dict(
         x_column=None,
         xerr_column=None,
         y_column=None,
         yerr_column=None,
     )
-    assert_successful_result(
-        cli_args=["fit", FIT_FUNC.name, "-d", str(data_file)],
-        base_read_kwargs=read_kwargs,
-        read_method=read_method,
-        mock_load_fit_func=mock_load_fit_func,
-        mock_fit_to_data=mock_fit_to_data,
-        sheet=sheet,
-    )
 
 
-@parametrize_with_cases(
-    argnames="data_file_name, read_method, sheet", cases=THIS_MODULE
-)
-def test_fit_with_specified_x_column(
-    data_file_name,
-    read_method,
-    sheet,
-    mock_fit_to_data,
-    mock_load_fit_func,
-    tmpdir,
-):
+@case(tags=[COLUMNS_SET_TAG])
+def case_x_column():
     x_column = "x_column"
-    data_file = existing_data_file(data_file_name, tmpdir)
-    read_kwargs = dict(
-        filepath=data_file,
+    return ["--x-column", x_column], dict(
         x_column=x_column,
         xerr_column=None,
         y_column=None,
         yerr_column=None,
     )
-    assert_successful_result(
-        cli_args=["fit", FIT_FUNC.name, "-d", str(data_file), "--x-column", x_column],
-        base_read_kwargs=read_kwargs,
-        read_method=read_method,
-        mock_load_fit_func=mock_load_fit_func,
-        mock_fit_to_data=mock_fit_to_data,
-        sheet=sheet,
-    )
 
 
-@parametrize_with_cases(
-    argnames="data_file_name, read_method, sheet", cases=THIS_MODULE
-)
-def test_fit_with_specified_xerr_column(
-    data_file_name,
-    read_method,
-    sheet,
-    mock_fit_to_data,
-    mock_load_fit_func,
-    tmpdir,
-):
+@case(tags=[COLUMNS_SET_TAG])
+def case_xerr_column():
     xerr_column = "xerr_column"
-    data_file = existing_data_file(data_file_name, tmpdir)
-    read_kwargs = dict(
-        filepath=data_file,
+    return ["--xerr-column", xerr_column], dict(
         x_column=None,
         xerr_column=xerr_column,
         y_column=None,
         yerr_column=None,
     )
-    assert_successful_result(
-        cli_args=[
-            "fit",
-            FIT_FUNC.name,
-            "-d",
-            str(data_file),
-            "--xerr-column",
-            xerr_column,
-        ],
-        base_read_kwargs=read_kwargs,
-        read_method=read_method,
-        mock_load_fit_func=mock_load_fit_func,
-        mock_fit_to_data=mock_fit_to_data,
-        sheet=sheet,
-    )
 
 
-@parametrize_with_cases(
-    argnames="data_file_name, read_method, sheet", cases=THIS_MODULE
-)
-def test_fit_with_specified_y_column(
-    data_file_name,
-    read_method,
-    sheet,
-    mock_fit_to_data,
-    mock_load_fit_func,
-    tmpdir,
-):
+@case(tags=[COLUMNS_SET_TAG])
+def case_y_column():
     y_column = "y_column"
-    data_file = existing_data_file(data_file_name, tmpdir)
-    read_kwargs = dict(
-        filepath=data_file,
+    return ["--y-column", y_column], dict(
         x_column=None,
         xerr_column=None,
         y_column=y_column,
         yerr_column=None,
     )
-    assert_successful_result(
-        cli_args=["fit", FIT_FUNC.name, "-d", str(data_file), "--y-column", y_column],
-        base_read_kwargs=read_kwargs,
-        read_method=read_method,
-        mock_load_fit_func=mock_load_fit_func,
-        mock_fit_to_data=mock_fit_to_data,
-        sheet=sheet,
-    )
 
 
-@parametrize_with_cases(
-    argnames="data_file_name, read_method, sheet", cases=THIS_MODULE
-)
-def test_fit_with_specified_yerr_column(
-    data_file_name,
-    read_method,
-    sheet,
-    mock_fit_to_data,
-    mock_load_fit_func,
-    tmpdir,
-):
+@case(tags=[COLUMNS_SET_TAG])
+def case_yerr_column():
     yerr_column = "yerr_column"
-    data_file = existing_data_file(data_file_name, tmpdir)
-    read_kwargs = dict(
-        filepath=data_file,
+    return ["--yerr-column", yerr_column], dict(
         x_column=None,
         xerr_column=None,
         y_column=None,
         yerr_column=yerr_column,
     )
-    assert_successful_result(
-        cli_args=[
+
+
+read_methods = parametrize(
+    argnames="read_method, sheet, data_file_name",
+    argvalues=[
+        (fixture_ref(mock_read_from_csv), None, "data.csv"),
+        (fixture_ref(mock_read_from_json), None, "data.json"),
+        (fixture_ref(mock_read_from_excel), SHEET, "data.xlsx"),
+    ],
+    idgen="{data_file_name}",
+)
+
+
+@read_methods
+@parametrize_with_cases(
+    argnames="cli_args, read_kwargs", cases=THIS_MODULE, has_tag=COLUMNS_SET_TAG
+)
+def test_fit_with_columns_set(
+    cli_args,
+    read_kwargs,
+    read_method,
+    sheet,
+    data_file_name,
+    cli_runner,
+    tmpdir,
+    mock_load_fit_func,
+    mock_fit_to_data,
+    mock_plot_fitting,
+    mock_show_or_export,
+):
+    read_method.return_value = FIT_DATA
+    data_file = make_existing(data_file_name, tmpdir)
+    extra_cli_args = ["--sheet", sheet] if sheet is not None else []
+    result = cli_runner.invoke(
+        eddington_cli,
+        ["fit", FIT_FUNC.name, "-d", str(data_file), *cli_args, *extra_cli_args],
+    )
+    assert_code_and_output(result)
+    extra_read_kwargs = dict(sheet=sheet) if sheet is not None else dict()
+    read_method.assert_called_once_with(
+        filepath=data_file, **read_kwargs, **extra_read_kwargs
+    )
+    mock_load_fit_func.assert_called_with(FIT_FUNC.name)
+    mock_fit_to_data.assert_called_with(FIT_DATA, FIT_FUNC)
+    assert mock_plot_fitting.call_count == 1
+    assert_dict_equal(
+        mock_plot_fitting.call_args_list[0][1],
+        dict(
+            a=FIT_RESULT.a, data=FIT_DATA, func=FIT_FUNC, title_name=FIT_FUNC.title_name
+        ),
+        rel=1e-5,
+    )
+    mock_show_or_export.assert_called_once_with(mock_plot_fitting.return_value)
+
+
+@read_methods
+def test_fit_without_plot_fitting(
+    read_method,
+    sheet,
+    data_file_name,
+    cli_runner,
+    tmpdir,
+    mock_read_from_csv,
+    mock_load_fit_func,
+    mock_fit_to_data,
+    mock_plot_fitting,
+    mock_show_or_export,
+):
+    read_method.return_value = FIT_DATA
+    data_file = make_existing(data_file_name, tmpdir)
+    extra_cli_args = ["--sheet", sheet] if sheet is not None else []
+    result = cli_runner.invoke(
+        eddington_cli,
+        [
             "fit",
             FIT_FUNC.name,
             "-d",
             str(data_file),
-            "--yerr-column",
-            yerr_column,
+            "--no-plot-fitting",
+            *extra_cli_args,
         ],
-        base_read_kwargs=read_kwargs,
-        read_method=read_method,
-        mock_load_fit_func=mock_load_fit_func,
-        mock_fit_to_data=mock_fit_to_data,
-        sheet=sheet,
     )
+    assert_code_and_output(result)
+    extra_read_kwargs = dict(sheet=sheet) if sheet is not None else dict()
+    read_method.assert_called_once_with(
+        filepath=data_file,
+        x_column=None,
+        xerr_column=None,
+        y_column=None,
+        yerr_column=None,
+        **extra_read_kwargs,
+    )
+    mock_load_fit_func.assert_called_with(FIT_FUNC.name)
+    mock_fit_to_data.assert_called_with(FIT_DATA, FIT_FUNC)
+    mock_plot_fitting.assert_not_called()
+    mock_show_or_export.assert_not_called()
 
 
 def test_read_data_from_excel_fails_for_no_sheet_name(tmpdir):
@@ -242,32 +231,17 @@ def test_read_data_from_unknown_type(tmpdir):
     ), "Output is different than expected"
 
 
-def existing_data_file(data_file_name, tmpdir):
+# Utility functions
+
+
+def make_existing(data_file_name, tmpdir):
     data_file = Path(tmpdir) / data_file_name
     data_file.touch()
     return data_file
 
 
-def build_cli_args(args, sheet):
-    cli_args = args
-    if sheet is not None:
-        cli_args.append(f"--sheet={sheet}")
-    return cli_args
-
-
-def assert_successful_result(
-    cli_args, base_read_kwargs, read_method, mock_load_fit_func, mock_fit_to_data, sheet
-):
-    cli_runner = CliRunner()
-    cli_args = build_cli_args(cli_args, sheet)
-    result = cli_runner.invoke(eddington_cli, cli_args)
+def assert_code_and_output(result):
     assert result.exit_code == 0, "Result code should be successful"
     assert (
         result.output == f"{FIT_RESULT.pretty_string}\n"
     ), "Output is different than expected"
-
-    if sheet is not None:
-        base_read_kwargs["sheet"] = sheet
-    read_method.assert_called_once_with(**base_read_kwargs)
-    mock_load_fit_func.assert_called_with(FIT_FUNC.name)
-    mock_fit_to_data.assert_called_with(FIT_DATA, FIT_FUNC)

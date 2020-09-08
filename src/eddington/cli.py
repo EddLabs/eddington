@@ -6,7 +6,14 @@ from typing import Optional
 import click
 from prettytable import PrettyTable
 
-from eddington import FitData, FitFunctionsRegistry, __version__, fit_to_data
+from eddington import (
+    FitData,
+    FitFunctionsRegistry,
+    __version__,
+    fit_to_data,
+    plot_fitting,
+    show_or_export,
+)
 
 # pylint: disable=too-many-arguments
 
@@ -49,6 +56,12 @@ def eddington_list(regex: Optional[str]):
 @click.option("--xerr-column", type=str, help="Column to read x error values from.")
 @click.option("--y-column", type=str, help="Column to read y values from.")
 @click.option("--yerr-column", type=str, help="Column to read y error values from.")
+@click.option(
+    "--plot-fitting/--no-plot-fitting",
+    "should_plot_fitting",
+    default=True,
+    help="Should plot fitting",
+)
 def eddington_fit(
     ctx: click.Context,
     fit_func: Optional[str],
@@ -58,6 +71,7 @@ def eddington_fit(
     xerr_column: Optional[str],
     y_column: Optional[str],
     yerr_column: Optional[str],
+    should_plot_fitting: bool,
 ):
     """Fit data file according to a fitting function."""
     # fmt: off
@@ -70,6 +84,11 @@ def eddington_fit(
     func = FitFunctionsRegistry.load(fit_func)
     result = fit_to_data(data, func)
     click.echo(result.pretty_string)
+    if should_plot_fitting:
+        fig = plot_fitting(
+            func=func, data=data, a=result.a, title_name=f"{func.title_name}"
+        )
+        show_or_export(fig)
 
 
 def __load_data_file(
