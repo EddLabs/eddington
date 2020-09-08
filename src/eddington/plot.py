@@ -22,14 +22,24 @@ def plot_residuals(
     Plot residuals plot.
 
     :param func: Fitting function.
+    :type func: :class:`FitFunction`
     :param data: Fitting data
+    :type data: :class:`FitData`
     :param a: The parameters result
-    :param title_name: str or None. Title for the figure.
-    :param xlabel: str or None. Label of the x axis
-    :param ylabel: str or None. Label of the x axis
-    :param grid: bool. Add grid lines or not
+    :type a: ``numpy.ndarray`` or ``list``
+    :param title_name: Optional. Title for the figure.
+    :type title_name: str
+    :param xlabel: Optional. Label of the x axis
+    :type xlabel: str
+    :param ylabel: Optional. Label of the x axis
+    :type ylabel: str
+    :param grid: Add grid lines or not
+    :type grid: bool
     :param xmin: Optional. minimum value for x in plot
+    :type xmin: float
     :param xmax: Optional. maximum value for x in plot
+    :type xmax: float
+    :returns: ``matplotlib.pyplot.Figure``
     """
     fig = plot_data(
         data=data.residuals(func, a),
@@ -59,15 +69,26 @@ def plot_fitting(  # pylint: disable=C0103,R0913
     Plot fitting plot.
 
     :param func: Fitting function.
+    :type func: :class:`FitFunction`
     :param data: Fitting data
+    :type data: :class:`FitData`
     :param a: The parameters result
-    :param title_name: str or None. Title for the figure.
-    :param xlabel: str or None. Label of the x axis
-    :param ylabel: str or None. Label of the x axis
-    :param grid: bool. Add grid lines or not
+    :type a: ``numpy.ndarray`` or ``list``
+    :param title_name: Optional. Title for the figure.
+    :type title_name: str
+    :param xlabel: Optional. Label of the x axis
+    :type xlabel: str
+    :param ylabel: Optional. Label of the x axis
+    :type ylabel: str
+    :param grid: Add grid lines or not
+    :type grid: bool
+    :param step: Optional. Steps between samples for the fitting graph
+    :type step: float
     :param xmin: Optional. minimum value for x in plot
+    :type xmin: float
     :param xmax: Optional. maximum value for x in plot
-    :param step: float or None. step between values of the continuous plot
+    :type xmax: float
+    :returns: ``matplotlib.pyplot.Figure``
     """
     fig = plot_data(
         data=data, title_name=title_name, xlabel=xlabel, ylabel=ylabel, grid=grid
@@ -92,11 +113,16 @@ def plot_data(
     Plot fitting data.
 
     :param data: Fitting data
-    :param title_name: str or None. Title for the figure.
-    :param xlabel: str or None. Label of the x axis
-    :param ylabel: str or None. Label of the x axis
-    :param grid: bool. Add grid lines or not
-    :returns: Data figure
+    :type data: :class:`FitData`
+    :param title_name: Optional. Title for the figure.
+    :type title_name: str
+    :param xlabel: Optional. Label of the x axis
+    :type xlabel: str
+    :param ylabel: Optional. Label of the x axis
+    :type ylabel: str
+    :param grid: Add grid lines or not
+    :type grid: bool
+    :returns: ``matplotlib.pyplot.Figure``
     """
     fig = get_figure(title_name=title_name, xlabel=xlabel, ylabel=ylabel, grid=grid)
     errorbar(fig=fig, x=data.x, y=data.y, xerr=data.xerr, yerr=data.yerr)
@@ -112,10 +138,10 @@ def get_figure(
     """
     Gets a figure from matplotlib.
 
-    :param title_name: str or None. Title for the figure.
-    :param xlabel: str or None. Label of the x axis
-    :param ylabel: str or None. Label of the x axis
-    :param grid: bool. Add grid lines or not
+    :param title_name: Optional. Title for the figure.
+    :param xlabel: Optional. Label of the x axis
+    :param ylabel: Optional. Label of the x axis
+    :param grid: Add grid lines or not
     :return: Figure instance
     """
     fig = plt.figure()
@@ -129,7 +155,7 @@ def title(fig, title_name):
     """
     Add/remove title to figure.
 
-    :param title_name: str or None. If None, don't add title. otherwise, add given title
+    :param title_name: Optional. If None, don't add title. otherwise, add given title
     :param fig: Plot figure.
     """
     if title_name is not None:
@@ -141,8 +167,8 @@ def label_axes(fig, xlabel, ylabel):
     Add/remove labels to figure.
 
     :param fig: Plot figure.
-    :param xlabel: str or None. If None, don't add label. otherwise, add given label
-    :param ylabel: str or None. If None, don't add label. otherwise, add given label
+    :param xlabel: Optional. If None, don't add label. otherwise, add given label
+    :param ylabel: Optional. If None, don't add label. otherwise, add given label
     """
     if xlabel is not None:
         plt.xlabel(xlabel, figure=fig)
