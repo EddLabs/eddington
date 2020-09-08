@@ -8,6 +8,8 @@ from prettytable import PrettyTable
 
 from eddington import FitData, FitFunctionsRegistry, __version__, fit_to_data
 
+# pylint: disable=too-many-arguments
+
 
 @click.group("eddington")
 @click.version_option(version=__version__)
@@ -43,26 +45,45 @@ def eddington_list(regex: Optional[str]):
     help="Data file to read from.",
 )
 @click.option("-s", "--sheet", type=str, help="Sheet name for excel files.")
+@click.option("--x-column", type=str, help="Column to read x values from.")
+@click.option("--xerr-column", type=str, help="Column to read x error values from.")
+@click.option("--y-column", type=str, help="Column to read y values from.")
+@click.option("--yerr-column", type=str, help="Column to read y error values from.")
 def eddington_fit(
-    ctx: click.Context, fit_func: Optional[str], data_file: str, sheet: Optional[str]
+    ctx: click.Context,
+    fit_func: Optional[str],
+    data_file: str,
+    sheet: Optional[str],
+    x_column: Optional[str],
+    xerr_column: Optional[str],
+    y_column: Optional[str],
+    yerr_column: Optional[str],
 ):
     """Fit data file according to a fitting function."""
-    data = __load_data_file(ctx, Path(data_file), sheet)
+    # fmt: off
+    data = __load_data_file(
+        ctx, Path(data_file), sheet,
+        x_column=x_column, xerr_column=xerr_column,
+        y_column=y_column, yerr_column=yerr_column,
+    )
+    # fmt: on
     func = FitFunctionsRegistry.load(fit_func)
     result = fit_to_data(data, func)
     click.echo(result.pretty_string)
 
 
-def __load_data_file(ctx: click.Context, data_file: Path, sheet: Optional[str]):
+def __load_data_file(
+    ctx: click.Context, data_file: Path, sheet: Optional[str], **kwargs
+):
     suffix = data_file.suffix
     if suffix == ".csv":
-        return FitData.read_from_csv(filepath=data_file)
+        return FitData.read_from_csv(filepath=data_file, **kwargs)
     if suffix == ".json":
-        return FitData.read_from_json(filepath=data_file)
+        return FitData.read_from_json(filepath=data_file, **kwargs)
     if suffix != ".xlsx":
         click.echo(f'Cannot read data with "{suffix}" suffix')
         ctx.exit(1)
     if sheet is None:
         click.echo("Sheet name has not been specified!")
         ctx.exit(1)
-    return FitData.read_from_excel(filepath=data_file, sheet=sheet)
+    return FitData.read_from_excel(filepath=data_file, sheet=sheet, **kwargs)

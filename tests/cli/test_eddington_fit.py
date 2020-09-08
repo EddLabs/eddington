@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import numpy as np
+from click.testing import CliRunner
 from pytest_cases import THIS_MODULE, fixture, parametrize_with_cases
 
 from eddington import FitData, FitResult, linear
@@ -19,6 +20,12 @@ FIT_RESULT = FitResult(
     chi2=0.345,
 )
 SHEET = "sheet"
+
+
+@fixture
+def mock_load_fit_func(mock_load_function):
+    mock_load_function.return_value = FIT_FUNC
+    return mock_load_function
 
 
 @fixture
@@ -49,35 +56,168 @@ def case_excel_data(mock_read_from_excel):
 @parametrize_with_cases(
     argnames="data_file_name, read_method, sheet", cases=THIS_MODULE
 )
-def test_read_data_from_file(
+def test_simple_fit(
     data_file_name,
     read_method,
     sheet,
-    cli_runner,
     mock_fit_to_data,
-    mock_load_function,
+    mock_load_fit_func,
     tmpdir,
 ):
-    mock_load_function.return_value = FIT_FUNC
-    data_file = Path(tmpdir) / data_file_name
-    data_file.touch()
-    cli_args = ["fit", FIT_FUNC.name, "-d", str(data_file)]
-    if sheet is not None:
-        cli_args.append(f"--sheet={sheet}")
-    result = cli_runner.invoke(eddington_cli, cli_args)
-    assert result.exit_code == 0, "Result code should be successful"
-    assert (
-        result.output == f"{FIT_RESULT.pretty_string}\n"
-    ), "Output is different than expected"
-    read_kwargs = dict(filepath=data_file)
-    if sheet is not None:
-        read_kwargs["sheet"] = sheet
-    read_method.assert_called_once_with(**read_kwargs)
-    mock_load_function.assert_called_with(FIT_FUNC.name)
-    mock_fit_to_data.assert_called_with(FIT_DATA, FIT_FUNC)
+    data_file = existing_data_file(data_file_name, tmpdir)
+    read_kwargs = dict(
+        filepath=data_file,
+        x_column=None,
+        xerr_column=None,
+        y_column=None,
+        yerr_column=None,
+    )
+    assert_successful_result(
+        cli_args=["fit", FIT_FUNC.name, "-d", str(data_file)],
+        base_read_kwargs=read_kwargs,
+        read_method=read_method,
+        mock_load_fit_func=mock_load_fit_func,
+        mock_fit_to_data=mock_fit_to_data,
+        sheet=sheet,
+    )
 
 
-def test_read_data_from_excel_fails_for_no_sheet_name(cli_runner, tmpdir):
+@parametrize_with_cases(
+    argnames="data_file_name, read_method, sheet", cases=THIS_MODULE
+)
+def test_fit_with_specified_x_column(
+    data_file_name,
+    read_method,
+    sheet,
+    mock_fit_to_data,
+    mock_load_fit_func,
+    tmpdir,
+):
+    x_column = "x_column"
+    data_file = existing_data_file(data_file_name, tmpdir)
+    read_kwargs = dict(
+        filepath=data_file,
+        x_column=x_column,
+        xerr_column=None,
+        y_column=None,
+        yerr_column=None,
+    )
+    assert_successful_result(
+        cli_args=["fit", FIT_FUNC.name, "-d", str(data_file), "--x-column", x_column],
+        base_read_kwargs=read_kwargs,
+        read_method=read_method,
+        mock_load_fit_func=mock_load_fit_func,
+        mock_fit_to_data=mock_fit_to_data,
+        sheet=sheet,
+    )
+
+
+@parametrize_with_cases(
+    argnames="data_file_name, read_method, sheet", cases=THIS_MODULE
+)
+def test_fit_with_specified_xerr_column(
+    data_file_name,
+    read_method,
+    sheet,
+    mock_fit_to_data,
+    mock_load_fit_func,
+    tmpdir,
+):
+    xerr_column = "xerr_column"
+    data_file = existing_data_file(data_file_name, tmpdir)
+    read_kwargs = dict(
+        filepath=data_file,
+        x_column=None,
+        xerr_column=xerr_column,
+        y_column=None,
+        yerr_column=None,
+    )
+    assert_successful_result(
+        cli_args=[
+            "fit",
+            FIT_FUNC.name,
+            "-d",
+            str(data_file),
+            "--xerr-column",
+            xerr_column,
+        ],
+        base_read_kwargs=read_kwargs,
+        read_method=read_method,
+        mock_load_fit_func=mock_load_fit_func,
+        mock_fit_to_data=mock_fit_to_data,
+        sheet=sheet,
+    )
+
+
+@parametrize_with_cases(
+    argnames="data_file_name, read_method, sheet", cases=THIS_MODULE
+)
+def test_fit_with_specified_y_column(
+    data_file_name,
+    read_method,
+    sheet,
+    mock_fit_to_data,
+    mock_load_fit_func,
+    tmpdir,
+):
+    y_column = "y_column"
+    data_file = existing_data_file(data_file_name, tmpdir)
+    read_kwargs = dict(
+        filepath=data_file,
+        x_column=None,
+        xerr_column=None,
+        y_column=y_column,
+        yerr_column=None,
+    )
+    assert_successful_result(
+        cli_args=["fit", FIT_FUNC.name, "-d", str(data_file), "--y-column", y_column],
+        base_read_kwargs=read_kwargs,
+        read_method=read_method,
+        mock_load_fit_func=mock_load_fit_func,
+        mock_fit_to_data=mock_fit_to_data,
+        sheet=sheet,
+    )
+
+
+@parametrize_with_cases(
+    argnames="data_file_name, read_method, sheet", cases=THIS_MODULE
+)
+def test_fit_with_specified_yerr_column(
+    data_file_name,
+    read_method,
+    sheet,
+    mock_fit_to_data,
+    mock_load_fit_func,
+    tmpdir,
+):
+    yerr_column = "yerr_column"
+    data_file = existing_data_file(data_file_name, tmpdir)
+    read_kwargs = dict(
+        filepath=data_file,
+        x_column=None,
+        xerr_column=None,
+        y_column=None,
+        yerr_column=yerr_column,
+    )
+    assert_successful_result(
+        cli_args=[
+            "fit",
+            FIT_FUNC.name,
+            "-d",
+            str(data_file),
+            "--yerr-column",
+            yerr_column,
+        ],
+        base_read_kwargs=read_kwargs,
+        read_method=read_method,
+        mock_load_fit_func=mock_load_fit_func,
+        mock_fit_to_data=mock_fit_to_data,
+        sheet=sheet,
+    )
+
+
+def test_read_data_from_excel_fails_for_no_sheet_name(tmpdir):
+    cli_runner = CliRunner()
     data_file = Path(tmpdir) / "data.xlsx"
     data_file.touch()
     result = cli_runner.invoke(
@@ -89,7 +229,8 @@ def test_read_data_from_excel_fails_for_no_sheet_name(cli_runner, tmpdir):
     ), "Output is different than expected"
 
 
-def test_read_data_from_unknown_type(cli_runner, tmpdir):
+def test_read_data_from_unknown_type(tmpdir):
+    cli_runner = CliRunner()
     data_file = Path(tmpdir) / "data.bla"
     data_file.touch()
     result = cli_runner.invoke(
@@ -99,3 +240,34 @@ def test_read_data_from_unknown_type(cli_runner, tmpdir):
     assert (
         result.output == 'Cannot read data with ".bla" suffix\n'
     ), "Output is different than expected"
+
+
+def existing_data_file(data_file_name, tmpdir):
+    data_file = Path(tmpdir) / data_file_name
+    data_file.touch()
+    return data_file
+
+
+def build_cli_args(args, sheet):
+    cli_args = args
+    if sheet is not None:
+        cli_args.append(f"--sheet={sheet}")
+    return cli_args
+
+
+def assert_successful_result(
+    cli_args, base_read_kwargs, read_method, mock_load_fit_func, mock_fit_to_data, sheet
+):
+    cli_runner = CliRunner()
+    cli_args = build_cli_args(cli_args, sheet)
+    result = cli_runner.invoke(eddington_cli, cli_args)
+    assert result.exit_code == 0, "Result code should be successful"
+    assert (
+        result.output == f"{FIT_RESULT.pretty_string}\n"
+    ), "Output is different than expected"
+
+    if sheet is not None:
+        base_read_kwargs["sheet"] = sheet
+    read_method.assert_called_once_with(**base_read_kwargs)
+    mock_load_fit_func.assert_called_with(FIT_FUNC.name)
+    mock_fit_to_data.assert_called_with(FIT_DATA, FIT_FUNC)
