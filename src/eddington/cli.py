@@ -2,11 +2,10 @@ import re
 from pathlib import Path
 from typing import Optional
 
+import click
 from prettytable import PrettyTable
 
-from eddington import __version__, FitFunctionsRegistry, FitData, fit_to_data
-
-import click
+from eddington import FitData, FitFunctionsRegistry, __version__, fit_to_data
 
 
 @click.group("eddington")

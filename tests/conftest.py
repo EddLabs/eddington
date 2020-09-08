@@ -1,6 +1,6 @@
 from pytest import fixture
 
-from eddington import FitFunctionsRegistry, FitData
+from eddington import FitData, FitFunctionsRegistry
 
 
 @fixture

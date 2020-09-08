@@ -1,4 +1,4 @@
-from pytest_cases import parametrize_with_cases, THIS_MODULE, case
+from pytest_cases import THIS_MODULE, case, parametrize_with_cases
 
 from eddington.cli import eddington_cli
 from tests.util import dummy_function
