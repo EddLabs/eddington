@@ -1,7 +1,7 @@
 """CLI for Eddington."""
 import re
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Union
 
 import click
 from prettytable import PrettyTable
@@ -73,8 +73,14 @@ def eddington_list(regex: Optional[str]):
 @click.option(
     "--plot-data/--no-plot-data",
     "should_plot_data",
-    default=True,
+    default=False,
     help="Should plot data.",
+)
+@click.option(
+    "-o",
+    "--output-dir",
+    type=click.Path(dir_okay=True, file_okay=False),
+    help="Output directory to save plots in.",
 )
 def eddington_fit(
     ctx: click.Context,
@@ -88,6 +94,7 @@ def eddington_fit(
     should_plot_fitting: bool,
     should_plot_residuals: bool,
     should_plot_data: bool,
+    output_dir: Union[Path, str],
 ):
     """Fit data file according to a fitting function."""
     # fmt: off
@@ -100,22 +107,31 @@ def eddington_fit(
     func = FitFunctionsRegistry.load(fit_func)
     result = fit_to_data(data, func)
     click.echo(result.pretty_string)
+    if output_dir is not None:
+        output_dir = Path(output_dir)
+        output_dir.mkdir(parents=True, exist_ok=True)
     if should_plot_data:
-        fig = plot_data(data=data, title_name=f"{func.title_name} - Data")
-        show_or_export(fig)
+        show_or_export(
+            plot_data(data=data, title_name=f"{func.title_name} - Data"),
+            output_path=__optional_path(output_dir, f"{func.name}_data.png"),
+        )
     if should_plot_fitting:
-        fig = plot_fitting(
-            func=func, data=data, a=result.a, title_name=f"{func.title_name}"
+        show_or_export(
+            plot_fitting(
+                func=func, data=data, a=result.a, title_name=f"{func.title_name}"
+            ),
+            output_path=__optional_path(output_dir, f"{func.name}.png"),
         )
-        show_or_export(fig)
     if should_plot_residuals:
-        fig = plot_residuals(
-            func=func,
-            data=data,
-            a=result.a,
-            title_name=f"{func.title_name} - Residuals",
+        show_or_export(
+            plot_residuals(
+                func=func,
+                data=data,
+                a=result.a,
+                title_name=f"{func.title_name} - Residuals",
+            ),
+            output_path=__optional_path(output_dir, f"{func.name}_residuals.png"),
         )
-        show_or_export(fig)
 
 
 def __load_data_file(
@@ -133,3 +149,9 @@ def __load_data_file(
         click.echo("Sheet name has not been specified!")
         ctx.exit(1)
     return FitData.read_from_excel(filepath=data_file, sheet=sheet, **kwargs)
+
+
+def __optional_path(directory: Optional[Path], file_name: str):
+    if directory is None:
+        return None
+    return directory / file_name

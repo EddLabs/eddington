@@ -137,6 +137,11 @@ def case_yerr_column():
     idgen="plot_data={should_plot_data}",
 )
 @parametrize(
+    argnames="should_output",
+    argvalues=[True, False],
+    idgen="output_directory={should_output}",
+)
+@parametrize(
     argnames="read_method, sheet, data_file_name",
     argvalues=[
         (fixture_ref(mock_read_from_csv), None, "data.csv"),
@@ -158,6 +163,7 @@ def test_fit_with_columns_set(
     should_plot_fitting,
     should_plot_residuals,
     should_plot_data,
+    should_output,
     tmpdir,
     mock_load_fit_func,
     mock_fit_to_data,
@@ -180,6 +186,11 @@ def test_fit_with_columns_set(
     extend_args_by_flag(
         extra_cli_args, should_plot_data, "--plot-data", "--no-plot-data"
     )
+    output_directory = None
+    if should_output:
+        output_directory = tmpdir / "output"
+        output_directory.mkdir()
+        extra_cli_args.extend(["--output-dir", str(output_directory)])
     result = cli_runner.invoke(
         eddington_cli,
         ["fit", FIT_FUNC.name, "-d", str(data_file), *cli_args, *extra_cli_args],
@@ -206,7 +217,12 @@ def test_fit_with_columns_set(
             ],
             rel=EPSILON,
         )
-        show_calls.append(([mock_plot_data.return_value], dict()))
+        output_data_path = None
+        if should_output:
+            output_data_path = output_directory / f"{FIT_FUNC.name}_data.png"
+        show_calls.append(
+            ([mock_plot_data.return_value], dict(output_path=output_data_path))
+        )
     else:
         mock_plot_data.assert_not_called()
     if should_plot_fitting:
@@ -225,7 +241,12 @@ def test_fit_with_columns_set(
             ],
             rel=EPSILON,
         )
-        show_calls.append(([mock_plot_fitting.return_value], dict()))
+        output_fitting_path = None
+        if should_output:
+            output_fitting_path = output_directory / f"{FIT_FUNC.name}.png"
+        show_calls.append(
+            ([mock_plot_fitting.return_value], dict(output_path=output_fitting_path))
+        )
     else:
         mock_plot_fitting.assert_not_called()
     if should_plot_residuals:
@@ -244,7 +265,15 @@ def test_fit_with_columns_set(
             ],
             rel=EPSILON,
         )
-        show_calls.append(([mock_plot_residuals.return_value], dict()))
+        output_residuals_path = None
+        if should_output:
+            output_residuals_path = output_directory / f"{FIT_FUNC.name}_residuals.png"
+        show_calls.append(
+            (
+                [mock_plot_residuals.return_value],
+                dict(output_path=output_residuals_path),
+            )
+        )
     else:
         mock_plot_residuals.assert_not_called()
     assert_calls(mock_show_or_export, show_calls, rel=EPSILON)
