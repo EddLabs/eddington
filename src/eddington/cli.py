@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Optional, Union
 
 import click
+import numpy as np
 from prettytable import PrettyTable
 
 from eddington import (
@@ -54,6 +55,14 @@ def eddington_list(regex: Optional[str]):
     help="Data file to read from.",
 )
 @click.option("-s", "--sheet", type=str, help="Sheet name for excel files.")
+@click.option(
+    "--a0",
+    type=str,
+    help=(
+        "Initial guess for the fitting algorithm. "
+        "Should be given as floating point numbers separated by commas"
+    ),
+)
 @click.option("--x-column", type=str, help="Column to read x values from.")
 @click.option("--xerr-column", type=str, help="Column to read x error values from.")
 @click.option("--y-column", type=str, help="Column to read y values from.")
@@ -93,6 +102,7 @@ def eddington_fit(
     fit_func: Optional[str],
     data_file: str,
     sheet: Optional[str],
+    a0: Optional[str],
     x_column: Optional[str],
     xerr_column: Optional[str],
     y_column: Optional[str],
@@ -112,7 +122,7 @@ def eddington_fit(
     )
     # fmt: on
     func = FitFunctionsRegistry.load(fit_func)
-    result = fit_to_data(data, func)
+    result = fit_to_data(data, func, a0=__calc_a0(a0))
     click.echo(result.pretty_string)
     if output_dir is not None:
         output_dir = Path(output_dir)
@@ -143,6 +153,12 @@ def eddington_fit(
             ),
             output_path=__optional_path(output_dir, f"{func.name}_residuals.png"),
         )
+
+
+def __calc_a0(a0):
+    if a0 is None:
+        return None
+    return np.array(list(map(float, re.split(",[ \t]*", a0))))
 
 
 def __load_data_file(

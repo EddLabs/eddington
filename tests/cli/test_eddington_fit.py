@@ -21,7 +21,7 @@ EPSILON = 1e-5
 COLUMNS_SET_TAG = "column_set"
 
 FIT_FUNC = dummy_function("dummy", "Dummy Syntax")
-A = np.array([1, 2])
+A = np.array([1.3, 2.9])
 FIT_DATA = FitData.random(linear, a=A)
 FIT_RESULT = FitResult(
     a0=[0.9, 2.3],
@@ -132,6 +132,11 @@ def case_yerr_column():
 
 
 @parametrize(
+    argnames="add_a0",
+    argvalues=[True, False],
+    idgen="add_a0={add_a0}",
+)
+@parametrize(
     argnames="should_plot_fitting",
     argvalues=[True, False],
     idgen="plot_fitting={should_plot_fitting}",
@@ -170,6 +175,7 @@ def test_fit_with_columns_set(
     sheet,
     data_file_name,
     cli_runner,
+    add_a0,
     should_plot_fitting,
     should_plot_residuals,
     should_plot_data,
@@ -189,6 +195,9 @@ def test_fit_with_columns_set(
     extra_cli_args = []
     if sheet is not None:
         extra_cli_args.extend(["--sheet", sheet])
+    extend_args_by_flag(
+        extra_cli_args, add_a0, f"--a0={','.join([str(a) for a in A])}", None
+    )
     extend_args_by_flag(
         extra_cli_args, should_plot_fitting, "--plot-fitting", "--no-plot-fitting"
     )
@@ -215,7 +224,8 @@ def test_fit_with_columns_set(
         filepath=data_file, **read_kwargs, **extra_read_kwargs
     )
     mock_load_fit_func.assert_called_with(FIT_FUNC.name)
-    mock_fit_to_data.assert_called_with(FIT_DATA, FIT_FUNC)
+    a0 = A if add_a0 else None
+    assert_calls(mock_fit_to_data, [([FIT_DATA, FIT_FUNC], dict(a0=a0))], rel=EPSILON)
     if output_format == "txt":
         mock_save_txt.assert_called_once_with(
             output_directory / f"{FIT_FUNC.name}_result.txt"
@@ -333,7 +343,7 @@ def test_read_data_from_unknown_type(tmpdir):
 def extend_args_by_flag(args, bool_flag, true_value, false_value):
     if bool_flag:
         args.append(true_value)
-    else:
+    elif false_value is not None:
         args.append(false_value)
 
 
