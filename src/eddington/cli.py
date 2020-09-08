@@ -1,3 +1,4 @@
+"""CLI for Eddington."""
 import re
 from pathlib import Path
 from typing import Optional
@@ -62,6 +63,6 @@ def __load_data_file(ctx: click.Context, data_file: Path, sheet: Optional[str]):
         click.echo(f'Cannot read data with "{suffix}" suffix')
         ctx.exit(1)
     if sheet is None:
-        click.echo(f"Sheet name has not been specified!")
+        click.echo("Sheet name has not been specified!")
         ctx.exit(1)
     return FitData.read_from_excel(filepath=data_file, sheet=sheet)

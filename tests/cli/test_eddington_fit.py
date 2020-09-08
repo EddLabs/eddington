@@ -1,15 +1,9 @@
 from pathlib import Path
 
 import numpy as np
-from pytest_cases import (
-    THIS_MODULE,
-    fixture,
-    fixture_ref,
-    parametrize,
-    parametrize_with_cases,
-)
+from pytest_cases import THIS_MODULE, fixture, parametrize_with_cases
 
-from eddington import FitData, FitFunctionsRegistry, FitResult, linear
+from eddington import FitData, FitResult, linear
 from eddington.cli import eddington_cli
 from tests.util import dummy_function
 

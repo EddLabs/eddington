@@ -19,7 +19,10 @@ def dummy_functions(clear_functions_registry):
     return saved_funcs, unsaved_funcs
 
 
-saved_dummy_functions, unsaved_dummy_functions = unpack_fixture(
+(  # pylint: disable=unbalanced-tuple-unpacking
+    saved_dummy_functions,
+    unsaved_dummy_functions,
+) = unpack_fixture(
     argnames="saved_dummy_functions, unsaved_dummy_functions", fixture=dummy_functions
 )
 
