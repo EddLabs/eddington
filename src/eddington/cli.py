@@ -67,6 +67,8 @@ def eddington_list(regex: Optional[str]):
 @click.option("--xerr-column", type=str, help="Column to read x error values from.")
 @click.option("--y-column", type=str, help="Column to read y values from.")
 @click.option("--yerr-column", type=str, help="Column to read y error values from.")
+@click.option("--x-label", type=str, help="Label for the x axis.")
+@click.option("--y-label", type=str, help="Label for the y axis.")
 @click.option(
     "--plot-fitting/--no-plot-fitting",
     "should_plot_fitting",
@@ -107,6 +109,8 @@ def eddington_fit(
     xerr_column: Optional[str],
     y_column: Optional[str],
     yerr_column: Optional[str],
+    x_label: Optional[str],
+    y_label: Optional[str],
     should_plot_fitting: bool,
     should_plot_residuals: bool,
     should_plot_data: bool,
@@ -131,15 +135,24 @@ def eddington_fit(
             result.save_json(output_dir / f"{func.name}_result.json")
         else:
             result.save_txt(output_dir / f"{func.name}_result.txt")
+    if x_label is None:
+        x_label = data.x_column
+    if y_label is None:
+        y_label = data.y_column
+    plot_kwargs = dict(xlabel=x_label, ylabel=y_label)
     if should_plot_data:
         show_or_export(
-            plot_data(data=data, title_name=f"{func.title_name} - Data"),
+            plot_data(data=data, title_name=f"{func.title_name} - Data", **plot_kwargs),
             output_path=__optional_path(output_dir, f"{func.name}_data.png"),
         )
     if should_plot_fitting:
         show_or_export(
             plot_fitting(
-                func=func, data=data, a=result.a, title_name=f"{func.title_name}"
+                func=func,
+                data=data,
+                a=result.a,
+                title_name=f"{func.title_name}",
+                **plot_kwargs,
             ),
             output_path=__optional_path(output_dir, f"{func.name}.png"),
         )
@@ -150,6 +163,7 @@ def eddington_fit(
                 data=data,
                 a=result.a,
                 title_name=f"{func.title_name} - Residuals",
+                **plot_kwargs,
             ),
             output_path=__optional_path(output_dir, f"{func.name}_residuals.png"),
         )
