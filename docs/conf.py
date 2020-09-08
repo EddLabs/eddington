@@ -281,4 +281,4 @@ spelling_ignore_pypi_package_names = True
 
 # -- Options for autodoc -------------------------------------------
 
-autodoc_mock_imports = ["numpy", "scipy", "openpyxl"]
+autodoc_mock_imports = ["numpy", "scipy", "openpyxl", "matplotlib"]
