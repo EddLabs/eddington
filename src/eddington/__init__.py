@@ -31,7 +31,7 @@ from eddington.fit_result import FitResult
 from eddington.fitting import fit_to_data
 from eddington.plot import plot_data, plot_fitting, plot_residuals, show_or_export
 
-__version__ = "0.0.16.dev0"
+__version__ = "0.0.16"
 
 __all__ = [
     "__version__",
