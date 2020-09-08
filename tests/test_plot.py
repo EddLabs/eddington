@@ -1,12 +1,12 @@
 from unittest.mock import Mock
 
 import numpy as np
-from pytest_cases import fixture, parametrize_with_cases, THIS_MODULE
+from pytest_cases import THIS_MODULE, fixture, parametrize_with_cases
 
 from eddington import (
-    plot_data,
     FitData,
     linear,
+    plot_data,
     plot_fitting,
     plot_residuals,
     show_or_export,
