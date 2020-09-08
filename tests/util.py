@@ -1,7 +1,11 @@
+import random
 from typing import Any, Dict, List
 
 import numpy as np
 import pytest
+
+# Assertions
+from eddington import fit_function
 
 
 def assert_list_equal(list1: List[Any], list2: List[Any], rel):
@@ -35,3 +39,16 @@ def assert_numpy_array_equal(array1, array2, rel):
     assert np.shape(array1) == np.shape(array2)
     for i in range(np.shape(array1)[0]):
         assert array1[i] == pytest.approx(array2[i], rel=rel)
+
+
+# Additional methods
+
+
+def dummy_function(name, syntax, save=True):
+    value = random.random()
+
+    @fit_function(n=2, name=name, syntax=syntax, save=save)
+    def dummy_func(a, x):  # pylint: disable=W0613
+        return value
+
+    return dummy_func
