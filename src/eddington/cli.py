@@ -69,6 +69,7 @@ def eddington_list(regex: Optional[str]):
 @click.option("--yerr-column", type=str, help="Column to read y error values from.")
 @click.option("--x-label", type=str, help="Label for the x axis.")
 @click.option("--y-label", type=str, help="Label for the y axis.")
+@click.option("--grid/--no-grid", default=False, help="Add grid lines to plots.")
 @click.option(
     "--plot-fitting/--no-plot-fitting",
     "should_plot_fitting",
@@ -111,6 +112,7 @@ def eddington_fit(
     yerr_column: Optional[str],
     x_label: Optional[str],
     y_label: Optional[str],
+    grid,
     should_plot_fitting: bool,
     should_plot_residuals: bool,
     should_plot_data: bool,
@@ -139,7 +141,7 @@ def eddington_fit(
         x_label = data.x_column
     if y_label is None:
         y_label = data.y_column
-    plot_kwargs = dict(xlabel=x_label, ylabel=y_label)
+    plot_kwargs = dict(xlabel=x_label, ylabel=y_label, grid=grid)
     if should_plot_data:
         show_or_export(
             plot_data(data=data, title_name=f"{func.title_name} - Data", **plot_kwargs),
