@@ -1,7 +1,16 @@
+from unittest.mock import Mock
+
 import numpy as np
 from pytest_cases import fixture, parametrize_with_cases, THIS_MODULE
 
-from eddington import plot_data, FitData, linear, plot_fitting, plot_residuals
+from eddington import (
+    plot_data,
+    FitData,
+    linear,
+    plot_fitting,
+    plot_residuals,
+    show_or_export,
+)
 from tests.util import assert_dict_equal, assert_list_equal
 
 EPSILON = 1e-5
@@ -171,3 +180,16 @@ def test_plot_residuals_with_xmax(base_dict, plot_method, mock_plt):
         dict(xmin=0.1, xmax=20, linestyles="dashed", figure=fig),
         rel=EPSILON,
     )
+
+
+def test_show_or_export_without_output(mock_plt):
+    fig = Mock()
+    show_or_export(fig, None)
+    mock_plt.show.assert_called_once_with()
+
+
+def test_show_or_export_with_output(mock_plt):
+    output = "/path/to/output"
+    fig = Mock()
+    show_or_export(fig, output)
+    fig.savefig.assert_called_once_with(output)
