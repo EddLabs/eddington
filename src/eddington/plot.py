@@ -7,6 +7,42 @@ import numpy as np
 from eddington import FitData
 
 
+def plot_residuals(
+    func,
+    data: FitData,
+    a: np.ndarray,
+    title_name,
+    xlabel: Optional[str] = None,
+    ylabel: Optional[str] = None,
+    grid: bool = False,
+    xmin: Optional[float] = None,
+    xmax: Optional[float] = None,
+):
+    """
+    Plot residuals plot.
+
+    :param func: Fitting function.
+    :param data: Fitting data
+    :param a: The parameters result
+    :param title_name: str or None. Title for the figure.
+    :param xlabel: str or None. Label of the x axis
+    :param ylabel: str or None. Label of the x axis
+    :param grid: bool. Add grid lines or not
+    :param xmin: Optional. minimum value for x in plot
+    :param xmax: Optional. maximum value for x in plot
+    """
+    fig = plot_data(
+        data=data.residuals(func, a),
+        title_name=title_name,
+        xlabel=xlabel,
+        ylabel=ylabel,
+        grid=grid,
+    )
+    xmin, xmax = get_plot_borders(x=data.x, xmin=xmin, xmax=xmax)
+    horizontal_line(fig=fig, xmin=xmin, xmax=xmax)
+    return fig
+
+
 def plot_fitting(  # pylint: disable=C0103,R0913
     func,
     data: FitData,
