@@ -63,6 +63,16 @@ def mock_plot_data(mocker):
 
 
 @fixture
+def mock_save_txt(mocker):
+    return mocker.patch.object(FitResult, "save_txt")
+
+
+@fixture
+def mock_save_json(mocker):
+    return mocker.patch.object(FitResult, "save_json")
+
+
+@fixture
 def mock_show_or_export(mocker):
     return mocker.patch("eddington.cli.show_or_export")
 
@@ -137,9 +147,9 @@ def case_yerr_column():
     idgen="plot_data={should_plot_data}",
 )
 @parametrize(
-    argnames="should_output",
-    argvalues=[True, False],
-    idgen="output_directory={should_output}",
+    argnames="output_format",
+    argvalues=[None, "txt", "json"],
+    idgen="output_format={output_format}",
 )
 @parametrize(
     argnames="read_method, sheet, data_file_name",
@@ -163,10 +173,12 @@ def test_fit_with_columns_set(
     should_plot_fitting,
     should_plot_residuals,
     should_plot_data,
-    should_output,
+    output_format,
     tmpdir,
     mock_load_fit_func,
     mock_fit_to_data,
+    mock_save_txt,
+    mock_save_json,
     mock_plot_fitting,
     mock_plot_residuals,
     mock_plot_data,
@@ -187,10 +199,12 @@ def test_fit_with_columns_set(
         extra_cli_args, should_plot_data, "--plot-data", "--no-plot-data"
     )
     output_directory = None
-    if should_output:
+    if output_format is not None:
         output_directory = tmpdir / "output"
         output_directory.mkdir()
         extra_cli_args.extend(["--output-dir", str(output_directory)])
+        if output_format == "json":
+            extra_cli_args.append("--json")
     result = cli_runner.invoke(
         eddington_cli,
         ["fit", FIT_FUNC.name, "-d", str(data_file), *cli_args, *extra_cli_args],
@@ -202,6 +216,14 @@ def test_fit_with_columns_set(
     )
     mock_load_fit_func.assert_called_with(FIT_FUNC.name)
     mock_fit_to_data.assert_called_with(FIT_DATA, FIT_FUNC)
+    if output_format == "txt":
+        mock_save_txt.assert_called_once_with(
+            output_directory / f"{FIT_FUNC.name}_result.txt"
+        )
+    if output_format == "json":
+        mock_save_json.assert_called_once_with(
+            output_directory / f"{FIT_FUNC.name}_result.json"
+        )
     show_calls = []
     if should_plot_data:
         assert_calls(
@@ -218,7 +240,7 @@ def test_fit_with_columns_set(
             rel=EPSILON,
         )
         output_data_path = None
-        if should_output:
+        if output_directory is not None:
             output_data_path = output_directory / f"{FIT_FUNC.name}_data.png"
         show_calls.append(
             ([mock_plot_data.return_value], dict(output_path=output_data_path))
@@ -242,7 +264,7 @@ def test_fit_with_columns_set(
             rel=EPSILON,
         )
         output_fitting_path = None
-        if should_output:
+        if output_directory is not None:
             output_fitting_path = output_directory / f"{FIT_FUNC.name}.png"
         show_calls.append(
             ([mock_plot_fitting.return_value], dict(output_path=output_fitting_path))
@@ -266,7 +288,7 @@ def test_fit_with_columns_set(
             rel=EPSILON,
         )
         output_residuals_path = None
-        if should_output:
+        if output_directory is not None:
             output_residuals_path = output_directory / f"{FIT_FUNC.name}_residuals.png"
         show_calls.append(
             (

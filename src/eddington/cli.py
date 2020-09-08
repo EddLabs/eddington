@@ -82,6 +82,12 @@ def eddington_list(regex: Optional[str]):
     type=click.Path(dir_okay=True, file_okay=False),
     help="Output directory to save plots in.",
 )
+@click.option(
+    "--json",
+    is_flag=True,
+    default=False,
+    help="Save result as json instead of text.",
+)
 def eddington_fit(
     ctx: click.Context,
     fit_func: Optional[str],
@@ -95,6 +101,7 @@ def eddington_fit(
     should_plot_residuals: bool,
     should_plot_data: bool,
     output_dir: Union[Path, str],
+    json: bool,
 ):
     """Fit data file according to a fitting function."""
     # fmt: off
@@ -110,6 +117,10 @@ def eddington_fit(
     if output_dir is not None:
         output_dir = Path(output_dir)
         output_dir.mkdir(parents=True, exist_ok=True)
+        if json:
+            result.save_json(output_dir / f"{func.name}_result.json")
+        else:
+            result.save_txt(output_dir / f"{func.name}_result.txt")
     if should_plot_data:
         show_or_export(
             plot_data(data=data, title_name=f"{func.title_name} - Data"),
