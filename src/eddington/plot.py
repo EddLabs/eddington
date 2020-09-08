@@ -1,5 +1,5 @@
 """Utility functions for plotting."""
-from typing import Optional
+from typing import Optional, Tuple
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -235,11 +235,16 @@ def errorbar(fig, x, y, xerr, yerr):  # pylint: disable=C0103
 
 def get_plot_borders(
     x: np.ndarray, xmin: Optional[float] = None, xmax: Optional[float] = None
-):  # pylint: disable=C0103
+) -> Tuple[float, float]:  # pylint: disable=C0103
     """
     Get borders for a plot based on its x values.
 
-    :param x: Array. x values of the fitting
+    :param x: x values list or array.
+    :type x: ``numpy.ndarray`` or ``list``
+    :param xmin: Minimum x value of line
+    :type xmin: float
+    :param xmax: Maximum x value of line
+    :type xmax: float
     :return: tuple. minimum and maximum values for the plot.
     """
     data_xmin = np.min(x)
