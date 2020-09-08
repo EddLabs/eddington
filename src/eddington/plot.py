@@ -1,4 +1,4 @@
-"""Utility functions for plotting."""
+"""Plotting methods."""
 from typing import Optional, Tuple
 
 import matplotlib.pyplot as plt
@@ -7,7 +7,7 @@ import numpy as np
 from eddington import FitData
 
 
-def plot_residuals(
+def plot_residuals(  # pylint: disable=invalid-name,too-many-arguments
     func,
     data: FitData,
     a: np.ndarray,
@@ -233,9 +233,9 @@ def errorbar(fig, x, y, xerr, yerr):  # pylint: disable=C0103
     )
 
 
-def get_plot_borders(
+def get_plot_borders(  # pylint: disable=invalid-name
     x: np.ndarray, xmin: Optional[float] = None, xmax: Optional[float] = None
-) -> Tuple[float, float]:  # pylint: disable=C0103
+) -> Tuple[float, float]:
     """
     Get borders for a plot based on its x values.
 
