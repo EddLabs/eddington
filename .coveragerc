@@ -1,5 +1,7 @@
 [run]
 source = src/eddington
+omit =
+    src/eddington/__main__.py
 
 [report]
 show_missing = True
