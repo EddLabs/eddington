@@ -58,6 +58,11 @@ def mock_plot_residuals(mocker):
 
 
 @fixture
+def mock_plot_data(mocker):
+    return mocker.patch("eddington.cli.plot_data")
+
+
+@fixture
 def mock_show_or_export(mocker):
     return mocker.patch("eddington.cli.show_or_export")
 
@@ -127,6 +132,11 @@ def case_yerr_column():
     idgen="plot_residuals={should_plot_residuals}",
 )
 @parametrize(
+    argnames="should_plot_data",
+    argvalues=[True, False],
+    idgen="plot_data={should_plot_data}",
+)
+@parametrize(
     argnames="read_method, sheet, data_file_name",
     argvalues=[
         (fixture_ref(mock_read_from_csv), None, "data.csv"),
@@ -147,11 +157,13 @@ def test_fit_with_columns_set(
     cli_runner,
     should_plot_fitting,
     should_plot_residuals,
+    should_plot_data,
     tmpdir,
     mock_load_fit_func,
     mock_fit_to_data,
     mock_plot_fitting,
     mock_plot_residuals,
+    mock_plot_data,
     mock_show_or_export,
 ):
     read_method.return_value = FIT_DATA
@@ -159,14 +171,15 @@ def test_fit_with_columns_set(
     extra_cli_args = []
     if sheet is not None:
         extra_cli_args.extend(["--sheet", sheet])
-    if should_plot_fitting:
-        extra_cli_args.append("--plot-fitting")
-    else:
-        extra_cli_args.append("--no-plot-fitting")
-    if should_plot_residuals:
-        extra_cli_args.append("--plot-residuals")
-    else:
-        extra_cli_args.append("--no-plot-residuals")
+    extend_args_by_flag(
+        extra_cli_args, should_plot_fitting, "--plot-fitting", "--no-plot-fitting"
+    )
+    extend_args_by_flag(
+        extra_cli_args, should_plot_residuals, "--plot-residuals", "--no-plot-residuals"
+    )
+    extend_args_by_flag(
+        extra_cli_args, should_plot_data, "--plot-data", "--no-plot-data"
+    )
     result = cli_runner.invoke(
         eddington_cli,
         ["fit", FIT_FUNC.name, "-d", str(data_file), *cli_args, *extra_cli_args],
@@ -179,6 +192,23 @@ def test_fit_with_columns_set(
     mock_load_fit_func.assert_called_with(FIT_FUNC.name)
     mock_fit_to_data.assert_called_with(FIT_DATA, FIT_FUNC)
     show_calls = []
+    if should_plot_data:
+        assert_calls(
+            mock_plot_data,
+            [
+                (
+                    [],
+                    dict(
+                        data=FIT_DATA,
+                        title_name=f"{FIT_FUNC.title_name} - Data",
+                    ),
+                ),
+            ],
+            rel=EPSILON,
+        )
+        show_calls.append(([mock_plot_data.return_value], dict()))
+    else:
+        mock_plot_data.assert_not_called()
     if should_plot_fitting:
         assert_calls(
             mock_plot_fitting,
@@ -247,6 +277,13 @@ def test_read_data_from_unknown_type(tmpdir):
 
 
 # Utility functions
+
+
+def extend_args_by_flag(args, bool_flag, true_value, false_value):
+    if bool_flag:
+        args.append(true_value)
+    else:
+        args.append(false_value)
 
 
 def make_existing(data_file_name, tmpdir):
