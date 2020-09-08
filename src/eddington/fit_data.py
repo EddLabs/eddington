@@ -351,16 +351,13 @@ class FitData:  # pylint: disable=too-many-instance-attributes,too-many-public-m
 
         workbook = openpyxl.load_workbook(filepath, data_only=True)
         rows = [list(row) for row in workbook[sheet].values]
-
+        # fmt: off
         return cls.__extract_data_from_rows(
-            rows=rows,
-            file_name=filepath.name,
-            sheet=sheet,
-            x_column=x_column,
-            xerr_column=xerr_column,
-            y_column=y_column,
-            yerr_column=yerr_column,
+            rows=rows, file_name=filepath.name, sheet=sheet,
+            x_column=x_column, xerr_column=xerr_column,
+            y_column=y_column, yerr_column=yerr_column,
         )
+        # fmt: on
 
     @classmethod
     def read_from_csv(  # pylint: disable=too-many-arguments
@@ -392,14 +389,13 @@ class FitData:  # pylint: disable=too-many-instance-attributes,too-many-public-m
         with open(filepath, mode="r") as csv_file:
             csv_obj = csv.reader(csv_file)
             rows = list(csv_obj)
+        # fmt: off
         return cls.__extract_data_from_rows(
-            rows=rows,
-            file_name=filepath.name,
-            x_column=x_column,
-            xerr_column=xerr_column,
-            y_column=y_column,
-            yerr_column=yerr_column,
+            rows=rows, file_name=filepath.name,
+            x_column=x_column, xerr_column=xerr_column,
+            y_column=y_column, yerr_column=yerr_column,
         )
+        # fmt: on
 
     @classmethod
     def read_from_json(  # pylint: disable=too-many-arguments
@@ -431,15 +427,15 @@ class FitData:  # pylint: disable=too-many-instance-attributes,too-many-public-m
         with open(filepath, mode="r") as file:
             data = json.load(file, object_pairs_hook=OrderedDict)
         try:
+            # fmt: off
             return FitData(
                 OrderedDict(
                     [(key, list(map(float, row))) for key, row in data.items()]
                 ),
-                x_column=x_column,
-                xerr_column=xerr_column,
-                y_column=y_column,
-                yerr_column=yerr_column,
+                x_column=x_column, xerr_column=xerr_column,
+                y_column=y_column, yerr_column=yerr_column,
             )
+            # fmt: on
         except (ValueError, TypeError) as error:
             raise FitDataInvalidFileSyntax(filepath) from error
 
@@ -584,13 +580,13 @@ class FitData:  # pylint: disable=too-many-instance-attributes,too-many-public-m
         except (ValueError, TypeError) as error:
             raise FitDataInvalidFileSyntax(file_name, sheet=sheet) from error
         columns = [np.array(column) for column in zip(*content)]
+        # fmt: off
         return FitData(
             OrderedDict(zip(headers, columns)),
-            x_column=x_column,
-            xerr_column=xerr_column,
-            y_column=y_column,
-            yerr_column=yerr_column,
+            x_column=x_column, xerr_column=xerr_column,
+            y_column=y_column, yerr_column=yerr_column,
         )
+        # fmt: on
 
     @classmethod
     def __is_headers(cls, headers):
