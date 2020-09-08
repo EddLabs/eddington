@@ -13,6 +13,7 @@ from eddington import (
     fit_to_data,
     plot_fitting,
     show_or_export,
+    plot_residuals,
 )
 
 # pylint: disable=too-many-arguments
@@ -60,7 +61,13 @@ def eddington_list(regex: Optional[str]):
     "--plot-fitting/--no-plot-fitting",
     "should_plot_fitting",
     default=True,
-    help="Should plot fitting",
+    help="Should plot fitting.",
+)
+@click.option(
+    "--plot-residuals/--no-plot-residuals",
+    "should_plot_residuals",
+    default=True,
+    help="Should plot residuals.",
 )
 def eddington_fit(
     ctx: click.Context,
@@ -72,6 +79,7 @@ def eddington_fit(
     y_column: Optional[str],
     yerr_column: Optional[str],
     should_plot_fitting: bool,
+    should_plot_residuals: bool,
 ):
     """Fit data file according to a fitting function."""
     # fmt: off
@@ -87,6 +95,14 @@ def eddington_fit(
     if should_plot_fitting:
         fig = plot_fitting(
             func=func, data=data, a=result.a, title_name=f"{func.title_name}"
+        )
+        show_or_export(fig)
+    if should_plot_residuals:
+        fig = plot_residuals(
+            func=func,
+            data=data,
+            a=result.a,
+            title_name=f"{func.title_name} - Residuals",
         )
         show_or_export(fig)
 

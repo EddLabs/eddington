@@ -1,11 +1,19 @@
 import random
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Tuple
+from unittest.mock import Mock
 
 import numpy as np
 import pytest
 
 # Assertions
 from eddington import fit_function
+
+
+def assert_calls(mock_object: Mock, calls: List[Tuple[List[Any], Dict[str, Any]]], rel):
+    assert mock_object.call_count == len(calls), "Lists should have the same length"
+    for i, (args, kwargs) in enumerate(calls):
+        assert_list_equal(mock_object.call_args_list[i][0], args, rel)
+        assert_dict_equal(mock_object.call_args_list[i][1], kwargs, rel)
 
 
 def assert_list_equal(list1: List[Any], list2: List[Any], rel):

@@ -14,7 +14,9 @@ from pytest_cases import (
 from eddington import FitData, FitResult, linear
 from eddington.cli import eddington_cli
 from tests.conftest import mock_read_from_csv, mock_read_from_excel, mock_read_from_json
-from tests.util import assert_dict_equal, dummy_function
+from tests.util import dummy_function, assert_calls
+
+EPSILON = 1e-5
 
 COLUMNS_SET_TAG = "column_set"
 
@@ -48,6 +50,11 @@ def mock_fit_to_data(mocker):
 @fixture
 def mock_plot_fitting(mocker):
     return mocker.patch("eddington.cli.plot_fitting")
+
+
+@fixture
+def mock_plot_residuals(mocker):
+    return mocker.patch("eddington.cli.plot_residuals")
 
 
 @fixture
@@ -109,7 +116,17 @@ def case_yerr_column():
     )
 
 
-read_methods = parametrize(
+@parametrize(
+    argnames="should_plot_fitting",
+    argvalues=[True, False],
+    idgen="plot_fitting={should_plot_fitting}",
+)
+@parametrize(
+    argnames="should_plot_residuals",
+    argvalues=[True, False],
+    idgen="plot_residuals={should_plot_residuals}",
+)
+@parametrize(
     argnames="read_method, sheet, data_file_name",
     argvalues=[
         (fixture_ref(mock_read_from_csv), None, "data.csv"),
@@ -118,9 +135,6 @@ read_methods = parametrize(
     ],
     idgen="{data_file_name}",
 )
-
-
-@read_methods
 @parametrize_with_cases(
     argnames="cli_args, read_kwargs", cases=THIS_MODULE, has_tag=COLUMNS_SET_TAG
 )
@@ -131,15 +145,28 @@ def test_fit_with_columns_set(
     sheet,
     data_file_name,
     cli_runner,
+    should_plot_fitting,
+    should_plot_residuals,
     tmpdir,
     mock_load_fit_func,
     mock_fit_to_data,
     mock_plot_fitting,
+    mock_plot_residuals,
     mock_show_or_export,
 ):
     read_method.return_value = FIT_DATA
     data_file = make_existing(data_file_name, tmpdir)
-    extra_cli_args = ["--sheet", sheet] if sheet is not None else []
+    extra_cli_args = []
+    if sheet is not None:
+        extra_cli_args.extend(["--sheet", sheet])
+    if should_plot_fitting:
+        extra_cli_args.append("--plot-fitting")
+    else:
+        extra_cli_args.append("--no-plot-fitting")
+    if should_plot_residuals:
+        extra_cli_args.append("--plot-residuals")
+    else:
+        extra_cli_args.append("--no-plot-residuals")
     result = cli_runner.invoke(
         eddington_cli,
         ["fit", FIT_FUNC.name, "-d", str(data_file), *cli_args, *extra_cli_args],
@@ -151,58 +178,46 @@ def test_fit_with_columns_set(
     )
     mock_load_fit_func.assert_called_with(FIT_FUNC.name)
     mock_fit_to_data.assert_called_with(FIT_DATA, FIT_FUNC)
-    assert mock_plot_fitting.call_count == 1
-    assert_dict_equal(
-        mock_plot_fitting.call_args_list[0][1],
-        dict(
-            a=FIT_RESULT.a, data=FIT_DATA, func=FIT_FUNC, title_name=FIT_FUNC.title_name
-        ),
-        rel=1e-5,
-    )
-    mock_show_or_export.assert_called_once_with(mock_plot_fitting.return_value)
-
-
-@read_methods
-def test_fit_without_plot_fitting(
-    read_method,
-    sheet,
-    data_file_name,
-    cli_runner,
-    tmpdir,
-    mock_read_from_csv,
-    mock_load_fit_func,
-    mock_fit_to_data,
-    mock_plot_fitting,
-    mock_show_or_export,
-):
-    read_method.return_value = FIT_DATA
-    data_file = make_existing(data_file_name, tmpdir)
-    extra_cli_args = ["--sheet", sheet] if sheet is not None else []
-    result = cli_runner.invoke(
-        eddington_cli,
-        [
-            "fit",
-            FIT_FUNC.name,
-            "-d",
-            str(data_file),
-            "--no-plot-fitting",
-            *extra_cli_args,
-        ],
-    )
-    assert_code_and_output(result)
-    extra_read_kwargs = dict(sheet=sheet) if sheet is not None else dict()
-    read_method.assert_called_once_with(
-        filepath=data_file,
-        x_column=None,
-        xerr_column=None,
-        y_column=None,
-        yerr_column=None,
-        **extra_read_kwargs,
-    )
-    mock_load_fit_func.assert_called_with(FIT_FUNC.name)
-    mock_fit_to_data.assert_called_with(FIT_DATA, FIT_FUNC)
-    mock_plot_fitting.assert_not_called()
-    mock_show_or_export.assert_not_called()
+    show_calls = []
+    if should_plot_fitting:
+        assert_calls(
+            mock_plot_fitting,
+            [
+                (
+                    [],
+                    dict(
+                        a=FIT_RESULT.a,
+                        data=FIT_DATA,
+                        func=FIT_FUNC,
+                        title_name=FIT_FUNC.title_name,
+                    ),
+                ),
+            ],
+            rel=EPSILON,
+        )
+        show_calls.append(([mock_plot_fitting.return_value], dict()))
+    else:
+        mock_plot_fitting.assert_not_called()
+    if should_plot_residuals:
+        assert_calls(
+            mock_plot_residuals,
+            [
+                (
+                    [],
+                    dict(
+                        a=FIT_RESULT.a,
+                        data=FIT_DATA,
+                        func=FIT_FUNC,
+                        title_name=f"{FIT_FUNC.title_name} - Residuals",
+                    ),
+                ),
+            ],
+            rel=EPSILON,
+        )
+        show_calls.append(([mock_plot_residuals.return_value], dict()))
+    else:
+        mock_plot_residuals.assert_not_called()
+    assert_calls(mock_show_or_export, show_calls, rel=EPSILON)
 
 
 def test_read_data_from_excel_fails_for_no_sheet_name(tmpdir):
