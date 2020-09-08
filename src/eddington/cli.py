@@ -1,7 +1,7 @@
 """CLI for Eddington."""
 import re
 from pathlib import Path
-from typing import Optional, Union
+from typing import Any, Dict, Optional, Union
 
 import click
 import numpy as np
@@ -12,13 +12,13 @@ from eddington import (
     FitFunctionsRegistry,
     __version__,
     fit_to_data,
-    plot_fitting,
-    show_or_export,
-    plot_residuals,
     plot_data,
+    plot_fitting,
+    plot_residuals,
+    show_or_export,
 )
 
-# pylint: disable=too-many-arguments
+# pylint: disable=too-many-arguments,invalid-name,too-many-locals
 
 
 @click.group("eddington")
@@ -141,7 +141,7 @@ def eddington_fit(
         x_label = data.x_column
     if y_label is None:
         y_label = data.y_column
-    plot_kwargs = dict(xlabel=x_label, ylabel=y_label, grid=grid)
+    plot_kwargs: Dict[str, Any] = dict(xlabel=x_label, ylabel=y_label, grid=grid)
     if should_plot_data:
         show_or_export(
             plot_data(data=data, title_name=f"{func.title_name} - Data", **plot_kwargs),
