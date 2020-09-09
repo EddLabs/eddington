@@ -12,12 +12,12 @@ from eddington import (
     FitFunctionsRegistry,
     __version__,
     fit_to_data,
+    linear,
     plot_data,
     plot_fitting,
     plot_residuals,
-    show_or_export,
     polynomial,
-    linear,
+    show_or_export,
 )
 
 # pylint: disable=too-many-arguments,invalid-name,too-many-locals
