@@ -12,9 +12,11 @@ from eddington import (
     FitFunctionsRegistry,
     __version__,
     fit_to_data,
+    linear,
     plot_data,
     plot_fitting,
     plot_residuals,
+    polynomial,
     show_or_export,
 )
 
@@ -46,7 +48,14 @@ def eddington_list(regex: Optional[str]):
 
 @eddington_cli.command("fit")
 @click.pass_context
-@click.argument("fit_func", type=str, default="linear")
+@click.argument("fit_function_name", type=str, default="")
+@click.option(
+    "-p",
+    "--polynomial",
+    "polynomial_degree",
+    type=int,
+    help="Fit data to polynomial of nth degree.",
+)
 @click.option(
     "-d",
     "--data-file",
@@ -102,7 +111,8 @@ def eddington_list(regex: Optional[str]):
 )
 def eddington_fit(
     ctx: click.Context,
-    fit_func: Optional[str],
+    fit_function_name: Optional[str],
+    polynomial_degree: Optional[int],
     data_file: str,
     sheet: Optional[str],
     a0: Optional[str],
@@ -127,7 +137,9 @@ def eddington_fit(
         y_column=y_column, yerr_column=yerr_column,
     )
     # fmt: on
-    func = FitFunctionsRegistry.load(fit_func)
+    func = __load_fit_functions(
+        ctx=ctx, func_name=fit_function_name, polynomial_degree=polynomial_degree
+    )
     result = fit_to_data(data, func, a0=__calc_a0(a0))
     click.echo(result.pretty_string)
     if output_dir is not None:
@@ -192,6 +204,19 @@ def __load_data_file(
         click.echo("Sheet name has not been specified!")
         ctx.exit(1)
     return FitData.read_from_excel(filepath=data_file, sheet=sheet, **kwargs)
+
+
+def __load_fit_functions(
+    ctx: click.Context, func_name: Optional[str], polynomial_degree: Optional[int]
+):
+    if func_name == "":
+        if polynomial_degree is not None:
+            return polynomial(polynomial_degree)
+        return linear
+    if polynomial_degree is not None:
+        click.echo("Cannot accept both polynomial and fit function")
+        ctx.exit(1)
+    return FitFunctionsRegistry.load(func_name)
 
 
 def __optional_path(directory: Optional[Path], file_name: str):
