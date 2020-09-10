@@ -25,9 +25,10 @@ predicted the discovery of nuclear fusion inside stars.
 
 During the solar eclipse of 1919 he conducted the first experiment to demonstrate
 Einstein's theory of general relativity. Even though the reliability of the experiment
-is questionable, it was ground breaking in the sense that an English physicist agreed
-to even consider a theory by a German physicist, during World War I, a theory so
-radical, which contradicts another great English physicist, Sir Isaac Newton.
+is questionable, it was ground breaking. It was the first time that an English physicist
+agreed to even consider a theory that was published by a German physicist during World
+War I -- a theory so radical, which contradicts another great English physicist, Sir
+Isaac Newton.
 
 It was Eddington's dedication to the real, free scientific mind, one which isn't bound
 by geographical or political borders, that helped Einstein's theory make its first
