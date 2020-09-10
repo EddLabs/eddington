@@ -12,8 +12,8 @@ Core abilities
 
 With Eddington you can:
 
-* Fit data to according to fit functions.
-* Use a vast list of supported :ref:`out-of-the-box fit functions <fit_functions_list>`.
+* Fit data according to fitting functions.
+* Use a vast list of supported :ref:`out-of-the-box fitting functions <fit_functions_list>`.
 * Plot results into useful figures to evaluate your results.
 * Filter your data in order to get best results.
 * Save your results into files.
@@ -51,7 +51,7 @@ the command line:
 
 ::
 
-    >> eddington hyperbolic --csv-data=/path/to/data.csv
+    >> eddington fit hyperbolic --data=/path/to/data.csv
     Fitting hyperbolic (a[0] / (x + a[1]) + a[2])
     Results:
     ========
