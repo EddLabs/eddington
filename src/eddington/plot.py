@@ -1,9 +1,10 @@
 """Plotting methods."""
-from typing import Optional, Tuple
+from typing import Optional, Tuple, Union, List, Dict
 
 import matplotlib.pyplot as plt
 import numpy as np
 
+from eddington.exceptions import PlottingError
 from eddington.fitting_data import FittingData
 
 
@@ -56,11 +57,12 @@ def plot_residuals(  # pylint: disable=invalid-name,too-many-arguments
 def plot_fitting(  # pylint: disable=C0103,R0913
     func,
     data: FittingData,
-    a: np.ndarray,
+    a: Union[np.ndarray, List[np.ndarray], Dict[str, np.ndarray]],
     title_name,
     xlabel: Optional[str] = None,
     ylabel: Optional[str] = None,
     grid: bool = False,
+    legend: bool = True,
     step: Optional[float] = None,
     xmin: Optional[float] = None,
     xmax: Optional[float] = None,
@@ -82,6 +84,8 @@ def plot_fitting(  # pylint: disable=C0103,R0913
     :type ylabel: str
     :param grid: Add grid lines or not
     :type grid: bool
+    :param legend: Add legend or not
+    :type legend: bool
     :param step: Optional. Steps between samples for the fitting graph
     :type step: float
     :param xmin: Optional. minimum value for x in plot
@@ -97,8 +101,11 @@ def plot_fitting(  # pylint: disable=C0103,R0913
     if step is None:
         step = (xmax - xmin) / 1000.0
     x = np.arange(xmin, xmax, step=step)  # pylint: disable=invalid-name
-    y = func(a, x)  # pylint: disable=invalid-name
-    plot(fig=fig, x=x, y=y)
+    a_dict = __get_a_dict(a)
+    for label, a_value in a_dict.items():
+        plot(fig=fig, x=x, y=func(a_value, x), label=label)
+    if legend:
+        plt.legend()
     return fig
 
 
@@ -187,15 +194,16 @@ def add_grid(fig, is_grid):
         plt.grid(True, figure=fig)
 
 
-def plot(x, y, fig):  # pylint: disable=C0103
+def plot(x, y, fig, label=None):  # pylint: disable=C0103
     """
     Plot y as a function of x.
 
     :param x: X values
     :param y: Y values
     :param fig: Plot figure
+    :param label: Optional. Label for the plot that would be added to the legend
     """
-    plt.plot(x, y, figure=fig)
+    plt.plot(x, y, figure=fig, label=label)
 
 
 def horizontal_line(  # pylint: disable=C0103
@@ -207,6 +215,7 @@ def horizontal_line(  # pylint: disable=C0103
     :param xmin: Minimum x value of line
     :param xmax: Maximum x value of line
     :param y: The y value of the line
+    :param fig: Plot figure
     """
     plt.hlines(y, xmin=xmin, xmax=xmax, linestyles="dashed", figure=fig)
 
@@ -268,3 +277,20 @@ def show_or_export(fig: plt.Figure, output_path=None):
         plt.show()
         return
     fig.savefig(output_path)
+
+
+def __get_a_dict(a):
+    if isinstance(a, dict):
+        return a
+    if isinstance(a, list):
+        return dict([(__build_repr_string(a_value), a_value) for a_value in a])
+    if isinstance(a, np.ndarray):
+        return dict([(__build_repr_string(a), a)])
+    raise PlottingError(
+        f"{a} has unmatching type. Can except only numpy arrays, "
+        "lists of numpy arrays and dictionaries."
+    )
+
+
+def __build_repr_string(a):
+    return f"[{', '.join([f'a[{i}]={val}' for i, val in enumerate(a)])}]"

@@ -1,7 +1,7 @@
 from unittest.mock import Mock
 
 import numpy as np
-from pytest_cases import THIS_MODULE, fixture, parametrize_with_cases
+from pytest_cases import THIS_MODULE, parametrize_with_cases
 
 from eddington import (
     FittingData,
@@ -20,11 +20,6 @@ X = np.arange(1, 11)
 A = np.array([1, 2])
 FIT_DATA = FittingData.random(FUNC, x=X, a=A, measurements=X.shape[0])
 TITLE_NAME = "Title"
-
-
-@fixture
-def mock_plt(mocker):
-    return mocker.patch("eddington.plot.plt")
 
 
 def case_plot_data():
@@ -108,42 +103,6 @@ def test_residuals_error_bar(base_dict, plot_method, mock_plt):
         ),
         rel=1e-5,
     )
-
-
-@parametrize_with_cases(argnames="base_dict, plot_method", cases=[case_plot_fitting])
-def test_plot_fitting_without_boundaries(base_dict, plot_method, mock_plt):
-    fig = plot_method(**base_dict)
-    x = np.arange(0.1, 10.9, step=0.0108)
-    assert mock_plt.plot.call_count == 1
-    assert_list_equal(mock_plt.plot.call_args_list[0][0], [x, FUNC(A, x)], rel=EPSILON)
-    assert_dict_equal(mock_plt.plot.call_args_list[0][1], dict(figure=fig), rel=EPSILON)
-
-
-@parametrize_with_cases(argnames="base_dict, plot_method", cases=[case_plot_fitting])
-def test_plot_fitting_with_xmin(base_dict, plot_method, mock_plt):
-    fig = plot_method(**base_dict, xmin=-10)
-    x = np.arange(-10, 10.9, step=0.0209)
-    assert mock_plt.plot.call_count == 1
-    assert_list_equal(mock_plt.plot.call_args_list[0][0], [x, FUNC(A, x)], rel=EPSILON)
-    assert_dict_equal(mock_plt.plot.call_args_list[0][1], dict(figure=fig), rel=EPSILON)
-
-
-@parametrize_with_cases(argnames="base_dict, plot_method", cases=[case_plot_fitting])
-def test_plot_fitting_with_xmax(base_dict, plot_method, mock_plt):
-    fig = plot_method(**base_dict, xmax=20)
-    x = np.arange(0.1, 20, step=0.0199)
-    assert mock_plt.plot.call_count == 1
-    assert_list_equal(mock_plt.plot.call_args_list[0][0], [x, FUNC(A, x)], rel=EPSILON)
-    assert_dict_equal(mock_plt.plot.call_args_list[0][1], dict(figure=fig), rel=EPSILON)
-
-
-@parametrize_with_cases(argnames="base_dict, plot_method", cases=[case_plot_fitting])
-def test_plot_fitting_with_step(base_dict, plot_method, mock_plt):
-    fig = plot_method(**base_dict, step=0.1)
-    x = np.arange(0.1, 10.9, step=0.1)
-    assert mock_plt.plot.call_count == 1
-    assert_list_equal(mock_plt.plot.call_args_list[0][0], [x, FUNC(A, x)], rel=EPSILON)
-    assert_dict_equal(mock_plt.plot.call_args_list[0][1], dict(figure=fig), rel=EPSILON)
 
 
 @parametrize_with_cases(argnames="base_dict, plot_method", cases=[case_plot_residuals])
