@@ -9,8 +9,8 @@ Writing Your Own Fitting Function
 When Should You Do It?
 ----------------------
 
-Even though Eddington offers many fitting functions out-of-the-box, sometimes
-you may want to customize your own fitting function.
+Even though Eddington offers many default fitting functions, sometimes you may want to
+customize your own fitting function.
 
 Consider the following case: You conduct an experiment to demonstrate the *Thin Lens
 Equation*:
@@ -26,7 +26,7 @@ After rearranging the equation you get:
     v = \frac{uf}{u - f}
 
 You have data records of :math:`v` and :math:`u` and you want to estimate :math:`f`.
-You **can** use the out-of-the-box *hyperbolic* fitting function, but in order to find
+You **can** use our *hyperbolic* fitting function, but in order to find
 :math:`f` You'll have to do some more calculations with respect to the errors of
 the parameters you've found.
 
@@ -38,14 +38,14 @@ A somewhat easier approach would be to use the following fitting function:
 
 Now, after you fit the data, you get :math:`f` directly (which equals to :math:`a_0`)
 
-Since this fitting function is not implemented out-of-the-box, you'd have to implement
+Since this fitting function is not implemented by default, you'd have to implement
 it yourself.
 
 Basic implementation
 --------------------
 
 A basic implementation of the fitting function presented in the example above would
-look like that:
+look like this:
 
 .. code:: python
 
@@ -57,16 +57,16 @@ look like that:
 
 We wrap the :python:`lens` fitting function with the :python:`fit_function` decorator
 in order to indicate that this function is actually a fitting function. the :python:`n`
-variables indicates how many parameters the fitting function expects. In our example,
+variable indicates how many parameters the fitting function expects. In our example,
 we expect 2 parameters: :python:`a[0]` which is :math:`f`, and :python:`a[1]` which
-encapsulate the systematic errors in our :math:`v` samples.
+encapsulates the systematic errors in our :math:`v` samples.
 
 .. note::
 
     The inputs of the fitting function are :python:`a` which is the parameters vector
-    and :python:`x` which is the free variable. while :python:`a` can be from any
+    and :python:`x` which is the free variable. While :python:`a` can be from any
     array-like type such as :python:`list`, :python:`tuple`, :python:`numpy.ndarray`,
-    etc. :python:`x` can be both an :python:`numpy.ndarray` and :python:`float`.
+    etc. :python:`x` can be both a :python:`numpy.ndarray` and :python:`float`.
 
 Now, we can use the fitting function we've created in order to fit the data:
 
@@ -132,16 +132,16 @@ decorator. In our example:
 
     When implementing the derivatives pay attention that you take :python:`a` as the
     first parameter and :python:`x` as the second. Moreover, make sure that the
-    *dimension* of the output: :python:`x_derivative` returns a :python:`numpy.ndarray`
+    *dimension* of the output :python:`x_derivative` returns a :python:`numpy.ndarray`
     with dimension similar to :python:`x`, while :python:`a_derivative` returns a
     :python:`numpy.ndarray` with dimension equal to :python:`x` dimension times
     :python:`a` dimension.
 
 
-The Fit Functions Registry
---------------------------
+The Fitting Functions Registry
+-------------------------------
 
-By default, creating a new fit function adds it automatically to the
+By default, creating a new fitting function adds it automatically to the
 `FitFunctionsRegistry`, a singleton containing all fitting functions.
 Once the fitting function you've created is imported (for example, in the *__init__.py*
 file) it can be loaded from the registry in the following way:
@@ -183,7 +183,7 @@ For example:
     fit_func = FitFunctionsRegistry.load("lens")
     print(f"Syntax is: {fit_func.syntax}")  # Prints out the defined syntax
 
-Lastly, if you wish the fit function to do not be saved into the registry, specify
+Lastly, if you wish the fitting function to not be saved into the registry, specify
 :python:`save=False` in the `fit_function` decorator. For example:
 
 
@@ -196,3 +196,10 @@ Lastly, if you wish the fit function to do not be saved into the registry, speci
         return (a[0] * x) / (x - a[0]) + a[1]
 
 As mentioned earlier, by default `save` is set to :python:`True`.
+
+.. warning::
+
+    Two functions cannot be saved into the registry under the same name. Make sure that
+    every new fitting function you write has a unique name, which is not one of the
+    default fitting functions or another custom fitting function you expect to use
+    in your code.

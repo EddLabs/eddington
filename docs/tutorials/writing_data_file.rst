@@ -1,7 +1,7 @@
 .. _writing_data_file:
 
-Writing Data File
-=================
+Writing Data Files
+===================
 
 
 Data File Formats
@@ -13,7 +13,7 @@ will walk through the syntax of each format.
 CSV File
 ~~~~~~~~
 
-CSV data files should have a headers row followed by records row, each column represent
+CSV data files should have a headers row followed by records rows, each column represent
 a specific value of the record. For example:
 
 ::
@@ -30,7 +30,7 @@ a specific value of the record. For example:
 Excel File
 ~~~~~~~~~~~
 
-Those instructions are the same for excel files:
+Those instructions are the same for Excel files:
 
 .. figure:: /_static/excel_data.png
 
