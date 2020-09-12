@@ -6,7 +6,7 @@ import numpy as np
 import pytest
 from pytest_cases import THIS_MODULE, parametrize, parametrize_with_cases
 
-from eddington import FitData, FitFunctionsRegistry, fit_to_data
+from eddington import FittingData, FitFunctionsRegistry, fit_to_data
 
 
 def cases_paths():
@@ -24,7 +24,7 @@ def case_fitting(case_path):
         for index, value in fix:
             func.fix(index, value)
     data_dict = json_obj["data"]
-    data = FitData(
+    data = FittingData(
         OrderedDict(
             [
                 ("x", data_dict["x"]),

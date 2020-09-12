@@ -1,16 +1,16 @@
 """Core functionalities of the Eddington platform."""
 from eddington.exceptions import (
     EddingtonException,
-    FitDataColumnExistenceError,
-    FitDataColumnIndexError,
-    FitDataColumnsLengthError,
-    FitDataError,
-    FitDataInvalidFile,
-    FitDataInvalidFileSyntax,
+    FittingDataColumnExistenceError,
+    FittingDataColumnIndexError,
+    FittingDataColumnsLengthError,
+    FittingDataError,
+    FittingDataInvalidFile,
+    FittingDataInvalidFileSyntax,
     FitFunctionLoadError,
     FitFunctionRuntimeError,
 )
-from eddington.fit_data import FitData
+from eddington.fitting_data import FittingData
 from eddington.fit_function_class import FitFunction, fit_function
 from eddington.fit_functions_list import (
     constant,
@@ -58,14 +58,14 @@ __all__ = [
     "EddingtonException",
     "FitFunctionRuntimeError",
     "FitFunctionLoadError",
-    "FitDataError",
-    "FitDataColumnExistenceError",
-    "FitDataColumnIndexError",
-    "FitDataInvalidFile",
-    "FitDataColumnsLengthError",
-    "FitDataInvalidFileSyntax",
+    "FittingDataError",
+    "FittingDataColumnExistenceError",
+    "FittingDataColumnIndexError",
+    "FittingDataInvalidFile",
+    "FittingDataColumnsLengthError",
+    "FittingDataInvalidFileSyntax",
     # Data structures
-    "FitData",
+    "FittingData",
     "FitResult",
     # Plot
     "plot_data",

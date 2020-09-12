@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 from pytest_cases import parametrize_with_cases
 
-from eddington import FitData, FitDataInvalidFileSyntax
+from eddington import FittingData, FittingDataInvalidFileSyntax
 
 SOURCES_DIRECTORY = Path(__file__).parent.parent / "resources"
 
@@ -20,7 +20,7 @@ INVALID_JSON_FILE = SOURCES_DIRECTORY / "invalid_data.json"
 
 def read_excel_method(sheet_name):
     def read_method(**kwargs):
-        return FitData.read_from_excel(EXCEL_FILE, sheet_name, **kwargs)
+        return FittingData.read_from_excel(EXCEL_FILE, sheet_name, **kwargs)
 
     return read_method
 
@@ -35,7 +35,7 @@ def case_read_invalid_excel():
 
 def read_csv_method(file_path):
     def read_method(**kwargs):
-        return FitData.read_from_csv(file_path, **kwargs)
+        return FittingData.read_from_csv(file_path, **kwargs)
 
     return read_method
 
@@ -50,7 +50,7 @@ def case_read_invalid_csv():
 
 def read_json_method(file_path):
     def read_method(**kwargs):
-        return FitData.read_from_json(file_path, **kwargs)
+        return FittingData.read_from_json(file_path, **kwargs)
 
     return read_method
 
@@ -69,7 +69,7 @@ INVALID_CASES = [case_read_invalid_excel, case_read_invalid_csv, case_read_inval
 
 @parametrize_with_cases(argnames="read_method", cases=VALID_CASES)
 def test_simple_read(read_method):
-    fit_data: FitData = read_method()
+    fit_data: FittingData = read_method()
     assert fit_data.x == pytest.approx(
         [10, 20, 30, 40, 50, 60, 70]
     ), "x is different than expected"
@@ -86,7 +86,7 @@ def test_simple_read(read_method):
 
 @parametrize_with_cases(argnames="read_method", cases=VALID_CASES)
 def test_read_with_y_column(read_method):
-    fit_data: FitData = read_method(y_column=5)
+    fit_data: FittingData = read_method(y_column=5)
     assert fit_data.x == pytest.approx(
         [10, 20, 30, 40, 50, 60, 70]
     ), "x is different than expected"
@@ -103,5 +103,5 @@ def test_read_with_y_column(read_method):
 
 @parametrize_with_cases(argnames="read_method", cases=INVALID_CASES)
 def test_read_invalid_data_file(read_method):
-    with pytest.raises(FitDataInvalidFileSyntax):
+    with pytest.raises(FittingDataInvalidFileSyntax):
         read_method()

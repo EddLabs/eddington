@@ -1,6 +1,6 @@
 from pytest import fixture
 
-from eddington import FitData, FitFunctionsRegistry
+from eddington import FittingData, FitFunctionsRegistry
 
 
 @fixture
@@ -25,14 +25,14 @@ def mock_load_function(mocker):
 
 @fixture
 def mock_read_from_csv(mocker):
-    return mocker.patch.object(FitData, "read_from_csv")
+    return mocker.patch.object(FittingData, "read_from_csv")
 
 
 @fixture
 def mock_read_from_json(mocker):
-    return mocker.patch.object(FitData, "read_from_json")
+    return mocker.patch.object(FittingData, "read_from_json")
 
 
 @fixture
 def mock_read_from_excel(mocker):
-    return mocker.patch.object(FitData, "read_from_excel")
+    return mocker.patch.object(FittingData, "read_from_excel")

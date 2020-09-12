@@ -4,12 +4,12 @@ from typing import Optional, Tuple
 import matplotlib.pyplot as plt
 import numpy as np
 
-from eddington import FitData
+from eddington import FittingData
 
 
 def plot_residuals(  # pylint: disable=invalid-name,too-many-arguments
     func,
-    data: FitData,
+    data: FittingData,
     a: np.ndarray,
     title_name,
     xlabel: Optional[str] = None,
@@ -24,7 +24,7 @@ def plot_residuals(  # pylint: disable=invalid-name,too-many-arguments
     :param func: Fitting function.
     :type func: :class:`FitFunction`
     :param data: Fitting data
-    :type data: :class:`FitData`
+    :type data: :class:`FittingData`
     :param a: The parameters result
     :type a: ``numpy.ndarray`` or ``list``
     :param title_name: Optional. Title for the figure.
@@ -55,7 +55,7 @@ def plot_residuals(  # pylint: disable=invalid-name,too-many-arguments
 
 def plot_fitting(  # pylint: disable=C0103,R0913
     func,
-    data: FitData,
+    data: FittingData,
     a: np.ndarray,
     title_name,
     xlabel: Optional[str] = None,
@@ -71,7 +71,7 @@ def plot_fitting(  # pylint: disable=C0103,R0913
     :param func: Fitting function.
     :type func: :class:`FitFunction`
     :param data: Fitting data
-    :type data: :class:`FitData`
+    :type data: :class:`FittingData`
     :param a: The parameters result
     :type a: ``numpy.ndarray`` or ``list``
     :param title_name: Optional. Title for the figure.
@@ -103,7 +103,7 @@ def plot_fitting(  # pylint: disable=C0103,R0913
 
 
 def plot_data(
-    data: FitData,
+    data: FittingData,
     title_name,
     xlabel: Optional[str] = None,
     ylabel: Optional[str] = None,
@@ -113,7 +113,7 @@ def plot_data(
     Plot fitting data.
 
     :param data: Fitting data
-    :type data: :class:`FitData`
+    :type data: :class:`FittingData`
     :param title_name: Optional. Title for the figure.
     :type title_name: str
     :param xlabel: Optional. Label of the x axis

@@ -26,15 +26,15 @@ class FitFunctionRuntimeError(EddingtonException):  # noqa: D101
 # Fit Data Errors
 
 
-class FitDataError(EddingtonException):  # noqa: D101
+class FittingDataError(EddingtonException):  # noqa: D101
     pass
 
 
-class FitDataInvalidFile(FitDataError):  # noqa: D101
+class FittingDataInvalidFile(FittingDataError):  # noqa: D101
     pass
 
 
-class FitDataInvalidFileSyntax(FitDataInvalidFile):  # noqa: D101
+class FittingDataInvalidFileSyntax(FittingDataInvalidFile):  # noqa: D101
     def __init__(
         self, filepath: Union[str, Path], sheet: Optional[str] = None
     ) -> None:  # noqa: D107
@@ -43,14 +43,14 @@ class FitDataInvalidFileSyntax(FitDataInvalidFile):  # noqa: D101
         super().__init__(msg)
 
 
-class FitDataColumnsLengthError(FitDataInvalidFile):  # noqa: D101
+class FittingDataColumnsLengthError(FittingDataInvalidFile):  # noqa: D101
     msg = "All columns in FitData should have the same length"
 
     def __init__(self) -> None:  # noqa: D107
         super().__init__(self.msg)
 
 
-class FitDataColumnIndexError(FitDataError):  # noqa: D101
+class FittingDataColumnIndexError(FittingDataError):  # noqa: D101
     def __init__(self, index: int, max_index: int) -> None:  # noqa: D107
         super().__init__(
             f"No column number {index} in data. "
@@ -58,14 +58,14 @@ class FitDataColumnIndexError(FitDataError):  # noqa: D101
         )
 
 
-class FitDataColumnExistenceError(FitDataError):  # noqa: D101
+class FittingDataColumnExistenceError(FittingDataError):  # noqa: D101
     def __init__(self, column: str) -> None:  # noqa: D107
         super().__init__(f'Could not find column "{column}" in data')
 
 
-class FitDataColumnsSelectionError(FitDataError):  # noqa: D101
+class FittingDataColumnsSelectionError(FittingDataError):  # noqa: D101
     pass
 
 
-class FitDataSetError(FitDataError):  # noqa: D101
+class FittingDataSetError(FittingDataError):  # noqa: D101
     pass

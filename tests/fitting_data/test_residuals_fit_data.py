@@ -2,14 +2,14 @@ import numpy as np
 import pytest
 from pytest_cases import fixture, unpack_fixture
 
-from eddington import FitData, linear
+from eddington import linear, FittingData
 
 a = np.array([1, 2])
 
 
 @fixture
 def make_data():
-    data = FitData.random(linear, a=a)
+    data = FittingData.random(linear, a=a)
     return data, data.residuals(linear, a)
 
 

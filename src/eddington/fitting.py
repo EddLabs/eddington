@@ -4,11 +4,11 @@ from typing import Any, Dict, Optional
 import numpy as np
 from scipy.odr import ODR, Model, RealData
 
-from eddington import FitData, FitFunction, FitResult
+from eddington import FittingData, FitFunction, FitResult
 
 
 def fit_to_data(  # pylint: disable=invalid-name
-    data: FitData,
+    data: FittingData,
     func: FitFunction,
     a0: np.ndarray = None,
     use_x_derivative: bool = True,
@@ -21,7 +21,7 @@ def fit_to_data(  # pylint: disable=invalid-name
     `ODR <https://docs.scipy.org/doc/scipy/reference/odr.html>`_ algorithm.
 
     :param data: Fitting data to optimize
-    :type data: :class:`FitData`
+    :type data: :class:`FittingData`
     :param func: a function to fit the data according to.
     :type func: :class:`FitFunction`
     :param a0: initial guess for the parameters

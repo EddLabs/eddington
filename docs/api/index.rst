@@ -7,7 +7,7 @@ API
    :maxdepth: 1
    :glob:
 
-   Fit Data <fit_data>
+   Fit Data <fitting_data>
    Fit Function <fit_function>
    Fit Functions Registry <fit_functions_registry>
    Fit Result <fit_result>

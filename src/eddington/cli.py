@@ -8,7 +8,7 @@ import numpy as np
 from prettytable import PrettyTable
 
 from eddington import (
-    FitData,
+    FittingData,
     FitFunctionsRegistry,
     __version__,
     fit_to_data,
@@ -194,16 +194,16 @@ def __load_data_file(
 ):
     suffix = data_file.suffix
     if suffix == ".csv":
-        return FitData.read_from_csv(filepath=data_file, **kwargs)
+        return FittingData.read_from_csv(filepath=data_file, **kwargs)
     if suffix == ".json":
-        return FitData.read_from_json(filepath=data_file, **kwargs)
+        return FittingData.read_from_json(filepath=data_file, **kwargs)
     if suffix != ".xlsx":
         click.echo(f'Cannot read data with "{suffix}" suffix')
         ctx.exit(1)
     if sheet is None:
         click.echo("Sheet name has not been specified!")
         ctx.exit(1)
-    return FitData.read_from_excel(filepath=data_file, sheet=sheet, **kwargs)
+    return FittingData.read_from_excel(filepath=data_file, sheet=sheet, **kwargs)
 
 
 def __load_fit_functions(

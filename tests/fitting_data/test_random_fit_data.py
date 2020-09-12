@@ -3,7 +3,7 @@ import pytest
 from mock import call
 from pytest_cases import fixture, parametrize
 
-from eddington import FitData
+from eddington import FittingData
 from eddington.consts import (
     DEFAULT_MAX_COEFF,
     DEFAULT_MEASUREMENTS,
@@ -26,14 +26,14 @@ delta = 10e-5
 
 @fixture
 def random_sigma_mock(mocker):
-    random_sigma = mocker.patch("eddington.fit_data.random_sigma")
+    random_sigma = mocker.patch("eddington.fitting_data.random_sigma")
     random_sigma.side_effect = [xerr, yerr]
     return random_sigma
 
 
 @fixture
 def random_error_mock(mocker):
-    random_error = mocker.patch("eddington.fit_data.random_error")
+    random_error = mocker.patch("eddington.fitting_data.random_error")
     random_error.side_effect = [real_xerr, real_yerr]
     return random_error
 
@@ -60,8 +60,8 @@ def fit_arguments(args):
 
 
 @fixture
-def random_fit_data(mocker, fit_arguments, random_sigma_mock, random_error_mock):
-    random_array_mock = mocker.patch("eddington.fit_data.random_array")
+def random_fitting_data(mocker, fit_arguments, random_sigma_mock, random_error_mock):
+    random_array_mock = mocker.patch("eddington.fitting_data.random_array")
     random_array_side_effect = []
     if "a" not in fit_arguments:
         random_array_side_effect.append(a)
@@ -69,7 +69,7 @@ def random_fit_data(mocker, fit_arguments, random_sigma_mock, random_error_mock)
         random_array_side_effect.append(x)
     random_array_mock.side_effect = random_array_side_effect
     return (
-        FitData.random(dummy_func1, **fit_arguments),
+        FittingData.random(dummy_func1, **fit_arguments),
         dict(
             params=fit_arguments,
             random_array=random_array_mock,
@@ -79,22 +79,22 @@ def random_fit_data(mocker, fit_arguments, random_sigma_mock, random_error_mock)
     )
 
 
-def test_x_data(random_fit_data):
-    data, _ = random_fit_data
+def test_x_data(random_fitting_data):
+    data, _ = random_fitting_data
     assert data.x == pytest.approx(
         x, rel=delta
     ), "Random x value of data is different than expected"
 
 
-def test_xerr_data(random_fit_data):
-    data, _ = random_fit_data
+def test_xerr_data(random_fitting_data):
+    data, _ = random_fitting_data
     assert data.xerr == pytest.approx(
         xerr, rel=delta
     ), "Random x error value of data is different than expected"
 
 
-def test_y_data(random_fit_data):
-    data, expected = random_fit_data
+def test_y_data(random_fitting_data):
+    data, expected = random_fitting_data
     params = expected["params"]
     actual_a = params.get("a", a)
     y = dummy_func1(actual_a, x + real_xerr) + real_yerr
@@ -103,15 +103,15 @@ def test_y_data(random_fit_data):
     ), "Random y value of data is different than expected"
 
 
-def test_yerr_data(random_fit_data):
-    data, _ = random_fit_data
+def test_yerr_data(random_fitting_data):
+    data, _ = random_fitting_data
     assert data.yerr == pytest.approx(
         yerr, rel=delta
     ), "Random y error value of data is different than expected"
 
 
-def test_random_array_calls(random_fit_data):
-    _, expected = random_fit_data
+def test_random_array_calls(random_fitting_data):
+    _, expected = random_fitting_data
     random_array = expected["random_array"]
     params = expected["params"]
     amin = params.get("min_coeff", DEFAULT_MIN_COEFF)
@@ -134,8 +134,8 @@ def test_random_array_calls(random_fit_data):
     assert random_array.call_count == call_count
 
 
-def test_random_sigma_calls(random_fit_data):
-    _, expected = random_fit_data
+def test_random_sigma_calls(random_fitting_data):
+    _, expected = random_fitting_data
     random_sigma = expected["random_sigma"]
     params = expected["params"]
     xsigma = params.get("xsigma", DEFAULT_XSIGMA)
@@ -150,8 +150,8 @@ def test_random_sigma_calls(random_fit_data):
     )
 
 
-def test_random_error_calls(random_fit_data):
-    _, expected = random_fit_data
+def test_random_error_calls(random_fitting_data):
+    _, expected = random_fitting_data
     random_error = expected["random_error"]
     assert random_error.call_count == 2
     assert random_error.call_args_list[0] == call(scales=xerr)

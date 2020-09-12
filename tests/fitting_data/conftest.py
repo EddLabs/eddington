@@ -1,6 +1,6 @@
 import pytest
 
-from tests.fit_data import DEFAULT_SHEET
+from tests.fitting_data import DEFAULT_SHEET
 
 
 @pytest.fixture

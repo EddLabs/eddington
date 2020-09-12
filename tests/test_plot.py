@@ -4,7 +4,7 @@ import numpy as np
 from pytest_cases import THIS_MODULE, fixture, parametrize_with_cases
 
 from eddington import (
-    FitData,
+    FittingData,
     linear,
     plot_data,
     plot_fitting,
@@ -18,7 +18,7 @@ EPSILON = 1e-5
 FUNC = linear
 X = np.arange(1, 11)
 A = np.array([1, 2])
-FIT_DATA = FitData.random(FUNC, x=X, a=A, measurements=X.shape[0])
+FIT_DATA = FittingData.random(FUNC, x=X, a=A, measurements=X.shape[0])
 TITLE_NAME = "Title"
 
 
