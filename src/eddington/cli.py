@@ -92,6 +92,11 @@ def eddington_list(regex: Optional[str]):
     help="Should plot data.",
 )
 @click.option(
+    "--legend/--no-legend",
+    default=None,
+    help="Should add legend to fitting plot.",
+)
+@click.option(
     "-o",
     "--output-dir",
     type=click.Path(dir_okay=True, file_okay=False),
@@ -120,6 +125,7 @@ def eddington_fit(
     should_plot_fitting: bool,
     should_plot_residuals: bool,
     should_plot_data: bool,
+    legend: Optional[bool],
     output_dir: Union[Path, str],
     json: bool,
 ):
@@ -160,6 +166,7 @@ def eddington_fit(
                 data=data,
                 a=result.a,
                 title_name=f"{func.title_name}",
+                legend=legend,
                 **plot_kwargs,
             ),
             output_path=__optional_path(output_dir, f"{func.name}.png"),
