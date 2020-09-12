@@ -55,23 +55,25 @@ def random_error_mock(mocker):
         dict(x=x),
     ],
 )
-def fit_arguments(args):
+def fitting_arguments(args):
     return args
 
 
 @fixture
-def random_fitting_data(mocker, fit_arguments, random_sigma_mock, random_error_mock):
+def random_fitting_data(
+    mocker, fitting_arguments, random_sigma_mock, random_error_mock
+):
     random_array_mock = mocker.patch("eddington.fitting_data.random_array")
     random_array_side_effect = []
-    if "a" not in fit_arguments:
+    if "a" not in fitting_arguments:
         random_array_side_effect.append(a)
-    if "x" not in fit_arguments:
+    if "x" not in fitting_arguments:
         random_array_side_effect.append(x)
     random_array_mock.side_effect = random_array_side_effect
     return (
-        FittingData.random(dummy_func1, **fit_arguments),
+        FittingData.random(dummy_func1, **fitting_arguments),
         dict(
-            params=fit_arguments,
+            params=fitting_arguments,
             random_array=random_array_mock,
             random_sigma=random_sigma_mock,
             random_error=random_error_mock,

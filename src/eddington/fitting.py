@@ -4,7 +4,9 @@ from typing import Any, Dict, Optional
 import numpy as np
 from scipy.odr import ODR, Model, RealData
 
-from eddington import FittingData, FittingFunction, FittingResult
+from eddington.fitting_data import FittingData
+from eddington.fitting_function_class import FittingFunction
+from eddington.fitting_result import FittingResult
 
 
 def fit(  # pylint: disable=invalid-name

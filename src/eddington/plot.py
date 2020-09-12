@@ -4,7 +4,7 @@ from typing import Optional, Tuple
 import matplotlib.pyplot as plt
 import numpy as np
 
-from eddington import FittingData
+from eddington.fitting_data import FittingData
 
 
 def plot_residuals(  # pylint: disable=invalid-name,too-many-arguments

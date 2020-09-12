@@ -35,11 +35,11 @@ __version__ = "0.0.16"
 
 __all__ = [
     "__version__",
-    # Fit functions infrastructure
+    # Fitting functions infrastructure
     "FittingFunction",
     "fitting_function",
     "FittingFunctionsRegistry",
-    # Fit functions
+    # Fitting functions
     "constant",
     "exponential",
     "hyperbolic",

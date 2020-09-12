@@ -7,18 +7,12 @@ import click
 import numpy as np
 from prettytable import PrettyTable
 
-from eddington import (
-    FittingData,
-    FittingFunctionsRegistry,
-    __version__,
-    fit,
-    linear,
-    plot_data,
-    plot_fitting,
-    plot_residuals,
-    polynomial,
-    show_or_export,
-)
+from eddington import __version__
+from eddington.fitting import fit
+from eddington.fitting_data import FittingData
+from eddington.fitting_functions_list import linear, polynomial
+from eddington.fitting_functions_registry import FittingFunctionsRegistry
+from eddington.plot import plot_data, plot_fitting, plot_residuals, show_or_export
 
 # pylint: disable=too-many-arguments,invalid-name,too-many-locals
 
@@ -54,7 +48,7 @@ def eddington_list(regex: Optional[str]):
     "--polynomial",
     "polynomial_degree",
     type=int,
-    help="Fit data to polynomial of nth degree.",
+    help="Fitting data to polynomial of nth degree.",
 )
 @click.option(
     "-d",
@@ -129,7 +123,7 @@ def eddington_fit(
     output_dir: Union[Path, str],
     json: bool,
 ):
-    """Fit data file according to a fitting function."""
+    """Fitting data file according to a fitting function."""
     # fmt: off
     data = __load_data_file(
         ctx, Path(data_file), sheet,
