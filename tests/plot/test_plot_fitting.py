@@ -1,12 +1,13 @@
 import numpy as np
 import pytest
-from pytest_cases import THIS_MODULE, parametrize_with_cases, case
+from pytest_cases import THIS_MODULE, case, parametrize_with_cases
 
 from eddington import FittingData, linear, plot_fitting
 from eddington.exceptions import PlottingError
 from tests.util import assert_calls
 
 HAS_LEGEND = "has_legend"
+DOES_NOT_HAVE_LEGEND = "does_not_have_legend"
 
 EPSILON = 1e-5
 
@@ -22,6 +23,7 @@ FIT_DATA = FittingData.random(FUNC, x=X, a=np.array([1, 2]), measurements=X.shap
 TITLE_NAME = "Title"
 
 
+@case(tags=[DOES_NOT_HAVE_LEGEND])
 def case_no_args(mock_plt):
     x = np.arange(0.1, 10.9, step=0.0108)
 
@@ -32,6 +34,7 @@ def case_no_args(mock_plt):
     return kwargs, plot_calls, mock_plt
 
 
+@case(tags=[DOES_NOT_HAVE_LEGEND])
 def case_xmin(mock_plt):
     x = np.arange(-10, 10.9, step=0.0209)
 
@@ -42,6 +45,7 @@ def case_xmin(mock_plt):
     return kwargs, plot_calls, mock_plt
 
 
+@case(tags=[DOES_NOT_HAVE_LEGEND])
 def case_xmax(mock_plt):
     x = np.arange(0.1, 20, step=0.0199)
 
@@ -52,6 +56,7 @@ def case_xmax(mock_plt):
     return kwargs, plot_calls, mock_plt
 
 
+@case(tags=[DOES_NOT_HAVE_LEGEND])
 def case_step(mock_plt):
     x = np.arange(0.1, 10.9, step=0.1)
 
@@ -74,6 +79,7 @@ def case_a_list_with_legend(mock_plt):
     return kwargs, plot_calls, mock_plt
 
 
+@case(tags=[DOES_NOT_HAVE_LEGEND])
 def case_a_list_without_legend(mock_plt):
     x = np.arange(0.1, 10.9, step=0.0108)
 
@@ -98,6 +104,7 @@ def case_a_dict_with_legend(mock_plt):
     return kwargs, plot_calls, mock_plt
 
 
+@case(tags=[DOES_NOT_HAVE_LEGEND])
 def case_a_dict_without_legend(mock_plt):
     x = np.arange(0.1, 10.9, step=0.0108)
     one = "one"
@@ -110,6 +117,7 @@ def case_a_dict_without_legend(mock_plt):
     return kwargs, plot_calls, mock_plt
 
 
+@case(tags=[DOES_NOT_HAVE_LEGEND])
 def case_a_redundent_precision(mock_plt):
     x = np.arange(0.1, 10.9, step=0.0108)
 
@@ -135,9 +143,7 @@ def test_legend_was_called(kwargs, plot_calls, plt):
 
 
 @parametrize_with_cases(
-    argnames="kwargs, plot_calls, plt",
-    cases=THIS_MODULE,
-    filter=lambda case: HAS_LEGEND not in case._pytestcase.id,
+    argnames="kwargs, plot_calls, plt", cases=THIS_MODULE, has_tag=DOES_NOT_HAVE_LEGEND
 )
 def test_legend_was_not_called(kwargs, plot_calls, plt):
     plot_fitting(data=FIT_DATA, func=FUNC, a=A1, title_name=TITLE_NAME, legend=False)
