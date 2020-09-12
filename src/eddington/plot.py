@@ -63,7 +63,7 @@ def plot_fitting(  # pylint: disable=C0103,R0913,R0914
     xlabel: Optional[str] = None,
     ylabel: Optional[str] = None,
     grid: bool = False,
-    legend: bool = True,
+    legend: Optional[bool] = None,
     step: Optional[float] = None,
     xmin: Optional[float] = None,
     xmax: Optional[float] = None,
@@ -106,7 +106,7 @@ def plot_fitting(  # pylint: disable=C0103,R0913,R0914
     a_dict = __get_a_dict(a)
     for label, a_value in a_dict.items():
         plot(fig=fig, x=x, y=func(a_value, x), label=label)
-    if legend:
+    if __get_legend(legend, a_dict):
         plt.legend()
     return fig
 
@@ -297,3 +297,11 @@ def __get_a_dict(a):  # pylint: disable=invalid-name
 def __build_repr_string(a):  # pylint: disable=invalid-name
     arguments_values = [f"a[{i}]={to_precise_string(val)}" for i, val in enumerate(a)]
     return f"[{', '.join(arguments_values)}]"
+
+
+def __get_legend(legend, a):  # pylint: disable=invalid-name
+    if legend is not None:
+        return legend
+    if len(a) >= 2:
+        return True
+    return False

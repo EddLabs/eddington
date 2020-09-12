@@ -1,10 +1,12 @@
 import numpy as np
 import pytest
-from pytest_cases import THIS_MODULE, parametrize_with_cases
+from pytest_cases import THIS_MODULE, parametrize_with_cases, case
 
 from eddington import FittingData, linear, plot_fitting
 from eddington.exceptions import PlottingError
 from tests.util import assert_calls
+
+HAS_LEGEND = "has_legend"
 
 EPSILON = 1e-5
 
@@ -60,7 +62,8 @@ def case_step(mock_plt):
     return kwargs, plot_calls, mock_plt
 
 
-def case_a_list(mock_plt):
+@case(tags=[HAS_LEGEND])
+def case_a_list_with_legend(mock_plt):
     x = np.arange(0.1, 10.9, step=0.0108)
 
     kwargs = dict(a=[A1, A2])
@@ -71,11 +74,35 @@ def case_a_list(mock_plt):
     return kwargs, plot_calls, mock_plt
 
 
-def case_a_dict(mock_plt):
+def case_a_list_without_legend(mock_plt):
+    x = np.arange(0.1, 10.9, step=0.0108)
+
+    kwargs = dict(a=[A1, A2], legend=False)
+    plot_calls = [
+        ([x, FUNC(A1, x)], dict(figure=mock_plt.figure.return_value, label=A1_REPR)),
+        ([x, FUNC(A2, x)], dict(figure=mock_plt.figure.return_value, label=A2_REPR)),
+    ]
+    return kwargs, plot_calls, mock_plt
+
+
+@case(tags=[HAS_LEGEND])
+def case_a_dict_with_legend(mock_plt):
     x = np.arange(0.1, 10.9, step=0.0108)
     one = "one"
     two = "two"
     kwargs = dict(a={one: A1, two: A2})
+    plot_calls = [
+        ([x, FUNC(A1, x)], dict(figure=mock_plt.figure.return_value, label=one)),
+        ([x, FUNC(A2, x)], dict(figure=mock_plt.figure.return_value, label=two)),
+    ]
+    return kwargs, plot_calls, mock_plt
+
+
+def case_a_dict_without_legend(mock_plt):
+    x = np.arange(0.1, 10.9, step=0.0108)
+    one = "one"
+    two = "two"
+    kwargs = dict(a={one: A1, two: A2}, legend=False)
     plot_calls = [
         ([x, FUNC(A1, x)], dict(figure=mock_plt.figure.return_value, label=one)),
         ([x, FUNC(A2, x)], dict(figure=mock_plt.figure.return_value, label=two)),
@@ -99,15 +126,22 @@ def test_plot_fitting_without_boundaries(kwargs, plot_calls, plt):
     assert_calls(plt.plot, plot_calls, rel=EPSILON)
 
 
-@parametrize_with_cases(argnames="kwargs, plot_calls, plt", cases=THIS_MODULE)
+@parametrize_with_cases(
+    argnames="kwargs, plot_calls, plt", cases=THIS_MODULE, has_tag=HAS_LEGEND
+)
 def test_legend_was_called(kwargs, plot_calls, plt):
     plot_fitting(data=FIT_DATA, func=FUNC, title_name=TITLE_NAME, **kwargs)
     plt.legend.assert_called_once()
 
 
-def test_legend_was_not_called(mock_plt):
+@parametrize_with_cases(
+    argnames="kwargs, plot_calls, plt",
+    cases=THIS_MODULE,
+    filter=lambda case: HAS_LEGEND not in case._pytestcase.id,
+)
+def test_legend_was_not_called(kwargs, plot_calls, plt):
     plot_fitting(data=FIT_DATA, func=FUNC, a=A1, title_name=TITLE_NAME, legend=False)
-    mock_plt.legend.assert_not_called()
+    plt.legend.assert_not_called()
 
 
 def test_plot_unknown_a_type(mock_plt):
