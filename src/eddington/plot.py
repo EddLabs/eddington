@@ -1,5 +1,5 @@
 """Plotting methods."""
-from typing import Optional, Tuple, Union, List, Dict
+from typing import Dict, List, Optional, Tuple, Union
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -54,7 +54,7 @@ def plot_residuals(  # pylint: disable=invalid-name,too-many-arguments
     return fig
 
 
-def plot_fitting(  # pylint: disable=C0103,R0913
+def plot_fitting(  # pylint: disable=C0103,R0913,R0914
     func,
     data: FittingData,
     a: Union[np.ndarray, List[np.ndarray], Dict[str, np.ndarray]],
@@ -280,18 +280,18 @@ def show_or_export(fig: plt.Figure, output_path=None):
     fig.savefig(output_path)
 
 
-def __get_a_dict(a):
+def __get_a_dict(a):  # pylint: disable=invalid-name
     if isinstance(a, dict):
         return a
     if isinstance(a, list):
-        return dict([(__build_repr_string(a_value), a_value) for a_value in a])
+        return {__build_repr_string(a_value): a_value for a_value in a}
     if isinstance(a, np.ndarray):
-        return dict([(__build_repr_string(a), a)])
+        return {__build_repr_string(a): a}
     raise PlottingError(
         f"{a} has unmatching type. Can except only numpy arrays, "
         "lists of numpy arrays and dictionaries."
     )
 
 
-def __build_repr_string(a):
+def __build_repr_string(a):  # pylint: disable=invalid-name
     return f"[{', '.join([f'a[{i}]={val}' for i, val in enumerate(a)])}]"

@@ -1,7 +1,8 @@
 import numpy as np
 import pytest
-from pytest_cases import parametrize_with_cases, THIS_MODULE
-from eddington import plot_fitting, linear, FittingData
+from pytest_cases import THIS_MODULE, parametrize_with_cases
+
+from eddington import FittingData, linear, plot_fitting
 from eddington.exceptions import PlottingError
 from tests.util import assert_calls
 
