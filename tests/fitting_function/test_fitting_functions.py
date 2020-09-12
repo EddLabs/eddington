@@ -351,13 +351,6 @@ def test_title_name(case):
 
 
 @parametrize_with_cases(argnames="case", cases=THIS_MODULE)
-def test_signature(case):
-    assert (
-        case["func_name"] == case["func"].signature
-    ), "Func signature is different than expected"
-
-
-@parametrize_with_cases(argnames="case", cases=THIS_MODULE)
 def test_syntax(case):
     assert (
         case["syntax"] == case["func"].syntax
