@@ -6,7 +6,7 @@ import numpy as np
 import pytest
 
 # Assertions
-from eddington import fit_function
+from eddington import fitting_function
 
 
 def assert_calls(mock_object: Mock, calls: List[Tuple[List[Any], Dict[str, Any]]], rel):
@@ -55,7 +55,7 @@ def assert_numpy_array_equal(array1, array2, rel):
 def dummy_function(name, syntax, save=True):
     value = random.random()
 
-    @fit_function(n=2, name=name, syntax=syntax, save=save)
+    @fitting_function(n=2, name=name, syntax=syntax, save=save)
     def dummy_func(a, x):  # pylint: disable=W0613
         return value
 

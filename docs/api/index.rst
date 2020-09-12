@@ -7,10 +7,10 @@ API
    :maxdepth: 1
    :glob:
 
-   Fit Data <fit_data>
-   Fit Function <fit_function>
-   Fit Functions Registry <fit_functions_registry>
-   Fit Result <fit_result>
-   Fit To Data <fit_to_data>
-   Out-of-the-Box Fit Functions <fit_functions_list>
+   Fit Data <fitting_data>
+   Fit Function <fitting_function>
+   Fit Functions Registry <fitting_functions_registry>
+   Fit Result <fitting_result>
+   Fit To Data <fit>
+   Out-of-the-Box Fit Functions <fitting_functions_list>
    Plot Methods <plot>

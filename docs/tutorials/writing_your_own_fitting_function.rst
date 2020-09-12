@@ -49,13 +49,13 @@ look like this:
 
 .. code:: python
 
-    from eddington import fit_function
+    from eddington import fitting_function
 
-    @fit_function(n=2)
+    @fitting_function(n=2)
     def lens(a, x):
         return (a[0] * x) / (x - a[0]) + a[1]
 
-We wrap the :python:`lens` fitting function with the :python:`fit_function` decorator
+We wrap the :python:`lens` fitting function with the :python:`fitting_function` decorator
 in order to indicate that this function is actually a fitting function. the :python:`n`
 variable indicates how many parameters the fitting function expects. In our example,
 we expect 2 parameters: :python:`a[0]` which is :math:`f`, and :python:`a[1]` which
@@ -72,11 +72,11 @@ Now, we can use the fitting function we've created in order to fit the data:
 
 .. code:: python
 
-    from eddington import FitData, fit_to_data
+    from eddington import FittingData, fit
 
-    fit_data = FitData.read_from_csv("/path/to/data.csv")  # Load data from file.
-    fit_result = fit_to_data(fit_data, lens)  # Do the actual fitting
-    print(fit_result)  # Print the results
+    fitting_data = FittingData.read_from_csv("/path/to/data.csv")  # Load data from file.
+    fitting_result = fit(fitting_data, lens)  # Do the actual fitting
+    print(fitting_result)  # Print the results
 
 This usage is more than enough for most use-cases.
 
@@ -106,16 +106,16 @@ derivatives:
     \frac{\partial y}{\partial a_1}=1
 
 In order to add those derivatives to the fitting function, we should add the
-:python:`x_derivative` and :python:`a_derivative` to the :python:`fit_function`
+:python:`x_derivative` and :python:`a_derivative` to the :python:`fitting_function`
 decorator. In our example:
 
 .. code:: python
 
     import numpy as np
-    from eddington import fit_function, FitData, fit_to_data
+    from eddington import fitting_function, FittingData, fit
 
 
-    @fit_function(
+    @fitting_function(
         n=2,
         x_derivative=lambda a, x: -np.power(a[0], 2) / np.power(x - a[0], 2),
         a_derivative=lambda a, x: np.stack(
@@ -142,29 +142,29 @@ The Fitting Functions Registry
 -------------------------------
 
 By default, creating a new fitting function adds it automatically to the
-`FitFunctionsRegistry`, a singleton containing all fitting functions.
+`FittingFunctionsRegistry`, a singleton containing all fitting functions.
 Once the fitting function you've created is imported (for example, in the *__init__.py*
 file) it can be loaded from the registry in the following way:
 
 .. code:: python
 
-    from eddington import FitFunctionsRegistry
+    from eddington import FittingFunctionsRegistry
 
-    fit_func = FitFunctionsRegistry.load("lens")
+    fit_func = FittingFunctionsRegistry.load("lens")
 
 If you wish to specify a different name to the fitting function by which it can be
-loaded from the registry, use the `name` parameter in the `fit_function` decorator
+loaded from the registry, use the `name` parameter in the `fitting_function` decorator
 in the following way:
 
 .. code:: python
 
-    from eddington import fit_function, FitFunctionsRegistry
+    from eddington import fitting_function, FittingFunctionsRegistry
 
-    @fit_function(n=2, name="my_amazing_func")
+    @fitting_function(n=2, name="my_amazing_func")
     def lens(a, x):
         return (a[0] * x) / (x - a[0]) + a[1]
 
-    fit_func = FitFunctionsRegistry.load("my_amazing_func")  # Returns the "lens" function
+    fit_func = FittingFunctionsRegistry.load("my_amazing_func")  # Returns the "lens" function
 
 If you expect others to use your new fitting function, consider adding a `syntax` string
 indicating how the fitting functions fit the data. This can be printed out when needed.
@@ -172,26 +172,26 @@ For example:
 
 .. code:: python
 
-    from eddington import fit_function, FitFunctionsRegistry
+    from eddington import fitting_function, FittingFunctionsRegistry
 
-    @fit_function(n=2, syntax="(a[0] * x) / (x - a[0]) + a[1]")
+    @fitting_function(n=2, syntax="(a[0] * x) / (x - a[0]) + a[1]")
     def lens(a, x):
         return (a[0] * x) / (x - a[0]) + a[1]
 
     ...
 
-    fit_func = FitFunctionsRegistry.load("lens")
+    fit_func = FittingFunctionsRegistry.load("lens")
     print(f"Syntax is: {fit_func.syntax}")  # Prints out the defined syntax
 
 Lastly, if you wish the fitting function to not be saved into the registry, specify
-:python:`save=False` in the `fit_function` decorator. For example:
+:python:`save=False` in the `fitting_function` decorator. For example:
 
 
 .. code:: python
 
-    from eddington import fit_function
+    from eddington import fitting_function
 
-    @fit_function(n=2, save=False)
+    @fitting_function(n=2, save=False)
     def lens(a, x):
         return (a[0] * x) / (x - a[0]) + a[1]
 

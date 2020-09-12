@@ -4,16 +4,18 @@ from typing import Any, Dict, Optional
 import numpy as np
 from scipy.odr import ODR, Model, RealData
 
-from eddington import FitData, FitFunction, FitResult
+from eddington.fitting_data import FittingData
+from eddington.fitting_function_class import FittingFunction
+from eddington.fitting_result import FittingResult
 
 
-def fit_to_data(  # pylint: disable=invalid-name
-    data: FitData,
-    func: FitFunction,
+def fit(  # pylint: disable=invalid-name
+    data: FittingData,
+    func: FittingFunction,
     a0: np.ndarray = None,
     use_x_derivative: bool = True,
     use_a_derivative: bool = True,
-) -> FitResult:
+) -> FittingResult:
     """
     Implementation of the fitting algorithm.
 
@@ -21,16 +23,16 @@ def fit_to_data(  # pylint: disable=invalid-name
     `ODR <https://docs.scipy.org/doc/scipy/reference/odr.html>`_ algorithm.
 
     :param data: Fitting data to optimize
-    :type data: :class:`FitData`
+    :type data: :class:`FittingData`
     :param func: a function to fit the data according to.
-    :type func: :class:`FitFunction`
+    :type func: :class:`FittingFunction`
     :param a0: initial guess for the parameters
     :type a0: ``np.ndarray``
     :param use_x_derivative: indicates whether to use x derivative or not.
     :type use_x_derivative: ``bool``
     :param use_a_derivative: indicates whether to use a derivative or not.
     :type use_a_derivative: ``bool``
-    :returns: :class:`FitResult`
+    :returns: :class:`FittingResult`
     """
     model = Model(
         **__get_odr_model_kwargs(
@@ -46,7 +48,7 @@ def fit_to_data(  # pylint: disable=invalid-name
     a = output.beta  # pylint: disable=invalid-name
     chi2 = output.sum_square  # pylint: disable=no-member
     degrees_of_freedom = len(data.x) - func.active_parameters
-    return FitResult(
+    return FittingResult(
         a0=a0,
         a=a,
         aerr=output.sd_beta,
@@ -57,7 +59,7 @@ def fit_to_data(  # pylint: disable=invalid-name
 
 
 def __get_odr_model_kwargs(
-    func: FitFunction,
+    func: FittingFunction,
     use_x_derivative: bool = True,
     use_a_derivative: bool = True,
 ) -> Dict[str, Any]:

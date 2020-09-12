@@ -4,8 +4,8 @@ import numpy as np
 import pytest
 from mock import call, mock_open, patch
 
-from eddington import FitData
-from tests.fit_data import (
+from eddington import FittingData
+from tests.fitting_data import (
     COLUMNS,
     COLUMNS_NAMES,
     CONTENT,
@@ -18,10 +18,10 @@ DECIMAL = 5
 DIRECTORY_PATH = Path("/path/to/directory")
 EPSILON = 1e-5
 
-FIT_DATA = FitData(COLUMNS)
+FIT_DATA = FittingData(COLUMNS)
 
 
-def assert_workbook_calls(workbook, sheet_name=DEFAULT_SHEET, name="fit_data"):
+def assert_workbook_calls(workbook, sheet_name=DEFAULT_SHEET, name="fitting_data"):
     worksheet = workbook.active
     assert worksheet.title == sheet_name
     assert (
@@ -59,10 +59,10 @@ def test_save_to_excel_with_name(mock_create_workbook):
 
 def test_save_to_csv_without_name(mock_csv_write):
     m_open = mock_open()
-    with patch("eddington.fit_data.open", m_open):
+    with patch("eddington.fitting_data.open", m_open):
         FIT_DATA.save_csv(DIRECTORY_PATH)
         m_open.assert_called_once_with(
-            DIRECTORY_PATH / "fit_data.csv", mode="w+", newline=""
+            DIRECTORY_PATH / "fitting_data.csv", mode="w+", newline=""
         )
         mock_csv_write.assert_called_once_with(m_open.return_value)
     csv_writer = mock_csv_write.return_value
@@ -78,7 +78,7 @@ def test_save_to_csv_without_name(mock_csv_write):
 def test_save_to_csv_with_name(mock_csv_write):
     name = "some_csv_name"
     m_open = mock_open()
-    with patch("eddington.fit_data.open", m_open):
+    with patch("eddington.fitting_data.open", m_open):
         FIT_DATA.save_csv(DIRECTORY_PATH, name=name)
         m_open.assert_called_once_with(
             DIRECTORY_PATH / f"{name}.csv", mode="w+", newline=""

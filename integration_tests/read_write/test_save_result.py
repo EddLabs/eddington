@@ -1,6 +1,6 @@
-from eddington import FitResult
+from eddington import FittingResult
 
-FIT_RESULT = FitResult(
+FIT_RESULT = FittingResult(
     a0=[1.0, 3.0],
     a=[1.1, 2.98],
     aerr=[0.1, 0.76],

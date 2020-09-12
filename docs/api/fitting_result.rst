@@ -1,9 +1,9 @@
-.. _fit_result:
+.. _fitting_result:
 
 Fit Result
 ===========
 
-.. autoclass:: eddington.fit_result.FitResult
+.. autoclass:: eddington.fitting_result.FittingResult
    :members:
    :undoc-members:
    :inherited-members:

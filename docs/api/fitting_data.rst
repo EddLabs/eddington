@@ -1,9 +1,9 @@
-.. _fit_data:
+.. _fitting_data:
 
 Fit Data
 ========
 
-.. autoclass:: eddington.fit_data.FitData
+.. autoclass:: eddington.fitting_data.FittingData
    :members:
    :undoc-members:
    :inherited-members:
