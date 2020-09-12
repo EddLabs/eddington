@@ -3,6 +3,11 @@ color = "72db98"
 name = "CI/CD"
 description = "This involves the CI/CD process (Github Actions, PyPi, ReadTheDocs, etc.)"
 
+[CLI]
+color = "e71cea"
+name = "CLI"
+description = "Command line interface (CLI) related."
+
 [blocked]
 color = "000000"
 name = "blocked"
@@ -47,6 +52,11 @@ description = "Extra attention is needed"
 color = "e4e669"
 name = "invalid"
 description = "This doesn't seem right"
+
+[plot]
+color = "8a4bb7"
+name = "plot"
+description = "Plots related issues, for visualizing purposes"
 
 [quality]
 color = "f98943"
