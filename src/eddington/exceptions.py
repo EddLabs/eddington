@@ -69,3 +69,10 @@ class FittingDataColumnsSelectionError(FittingDataError):  # noqa: D101
 
 class FittingDataSetError(FittingDataError):  # noqa: D101
     pass
+
+
+# Plot Errors
+
+
+class PlottingError(EddingtonException):  # noqa: D101
+    pass

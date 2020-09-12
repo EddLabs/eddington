@@ -2,6 +2,8 @@
 import math
 from typing import Tuple
 
+from eddington.consts import DEFAULT_PRECISION
+
 
 def to_relevant_precision(decimal: float) -> Tuple[float, int]:
     """
@@ -22,7 +24,7 @@ def to_relevant_precision(decimal: float) -> Tuple[float, int]:
     return abs_a, precision
 
 
-def to_precise_string(decimal: float, precision: int) -> str:
+def to_precise_string(decimal: float, precision: int = DEFAULT_PRECISION) -> str:
     """
     Returns a decimal as string with desired precision.
 
