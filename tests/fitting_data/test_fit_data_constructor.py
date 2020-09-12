@@ -76,7 +76,9 @@ def case_x_and_y_column():
 
 
 def case_jumbled_columns():
-    fitting_data = FittingData(COLUMNS, x_column=3, xerr_column=1, y_column="b", yerr_column=9)
+    fitting_data = FittingData(
+        COLUMNS, x_column=3, xerr_column=1, y_column="b", yerr_column=9
+    )
     expected_columns = Columns(x="c", xerr="a", y="b", yerr="i")
     return fitting_data, expected_columns
 
@@ -139,7 +141,9 @@ def test_yerr_data(fitting_data, expected_columns):
 
 @parametrize_with_cases(argnames="fitting_data, expected_columns", cases=THIS_MODULE)
 def test_all_columns(fitting_data, expected_columns):
-    assert COLUMNS_NAMES == fitting_data.all_columns, "Columns are different than expected"
+    assert (
+        COLUMNS_NAMES == fitting_data.all_columns
+    ), "Columns are different than expected"
 
 
 @parametrize_with_cases(argnames="fitting_data, expected_columns", cases=THIS_MODULE)

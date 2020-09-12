@@ -181,7 +181,9 @@ def test_read_with_x_column(read, mocks):
 
     actual_fitting_data = read(FILE_PATH, x_column=3)
 
-    check_columns(actual_fitting_data, x_column=2, xerr_column=3, y_column=4, yerr_column=5)
+    check_columns(
+        actual_fitting_data, x_column=2, xerr_column=3, y_column=4, yerr_column=5
+    )
 
 
 @parametrize(
@@ -193,7 +195,9 @@ def test_read_with_xerr_column(read, mocks):
 
     actual_fitting_data = read(FILE_PATH, xerr_column=3)
 
-    check_columns(actual_fitting_data, x_column=0, xerr_column=2, y_column=3, yerr_column=4)
+    check_columns(
+        actual_fitting_data, x_column=0, xerr_column=2, y_column=3, yerr_column=4
+    )
 
 
 @parametrize(
@@ -205,7 +209,9 @@ def test_read_with_y_column(read, mocks):
 
     actual_fitting_data = read(FILE_PATH, y_column=5)
 
-    check_columns(actual_fitting_data, x_column=0, xerr_column=1, y_column=4, yerr_column=5)
+    check_columns(
+        actual_fitting_data, x_column=0, xerr_column=1, y_column=4, yerr_column=5
+    )
 
 
 @parametrize(
@@ -217,7 +223,9 @@ def test_read_with_yerr_column(read, mocks):
 
     actual_fitting_data = read(FILE_PATH, yerr_column=5)
 
-    check_columns(actual_fitting_data, x_column=0, xerr_column=1, y_column=2, yerr_column=4)
+    check_columns(
+        actual_fitting_data, x_column=0, xerr_column=1, y_column=2, yerr_column=4
+    )
 
 
 @parametrize(

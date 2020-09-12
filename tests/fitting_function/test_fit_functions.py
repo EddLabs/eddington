@@ -322,7 +322,8 @@ def case_poisson():
 
 def assert_raises_unfit_parameters(case, n0):
     with pytest.raises(
-        FittingFunctionRuntimeError, match=f"^Input length should be {case['n']}, got {n0}$"
+        FittingFunctionRuntimeError,
+        match=f"^Input length should be {case['n']}, got {n0}$",
     ):
         case["func"](np.random.random(n0), np.random.random())
 

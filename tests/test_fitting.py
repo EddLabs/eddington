@@ -3,7 +3,7 @@ from argparse import Namespace
 import numpy as np
 import pytest
 
-from eddington import FittingData, fitting_function, fit
+from eddington import FittingData, fit, fitting_function
 
 a0 = np.array([8, 5])
 a = np.array([3, 4])

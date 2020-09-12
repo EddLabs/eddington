@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 from pytest_cases import fixture, unpack_fixture
 
-from eddington import linear, FittingData
+from eddington import FittingData, linear
 
 a = np.array([1, 2])
 

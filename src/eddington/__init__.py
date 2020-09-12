@@ -10,6 +10,7 @@ from eddington.exceptions import (
     FittingFunctionLoadError,
     FittingFunctionRuntimeError,
 )
+from eddington.fitting import fit
 from eddington.fitting_data import FittingData
 from eddington.fitting_function_class import FittingFunction, fitting_function
 from eddington.fitting_functions_list import (
@@ -28,7 +29,6 @@ from eddington.fitting_functions_list import (
 )
 from eddington.fitting_functions_registry import FittingFunctionsRegistry
 from eddington.fitting_result import FittingResult
-from eddington.fitting import fit
 from eddington.plot import plot_data, plot_fitting, plot_residuals, show_or_export
 
 __version__ = "0.0.16"

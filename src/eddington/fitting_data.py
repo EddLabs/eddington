@@ -30,7 +30,7 @@ from eddington.random_util import random_array, random_error, random_sigma
 Columns = namedtuple("ColumnsResult", ["x", "y", "xerr", "yerr"])
 
 
-class FittingData:
+class FittingData:  # pylint: disable=R0902,R0904
     """Fitting data class."""
 
     def __init__(  # pylint: disable=too-many-arguments

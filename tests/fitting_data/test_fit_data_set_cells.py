@@ -102,7 +102,9 @@ def test_set_header_with_same_header_does_not_change_anything(header_name):
 @parametrize("header_name", COLUMNS_NAMES)
 def test_header_cannot_be_set_to_be_empty(header_name):
     fitting_data = FittingData(COLUMNS)
-    with pytest.raises(FittingDataSetError, match="^Cannot set new header to be empty$"):
+    with pytest.raises(
+        FittingDataSetError, match="^Cannot set new header to be empty$"
+    ):
         fitting_data.set_header(header_name, "")
 
 
