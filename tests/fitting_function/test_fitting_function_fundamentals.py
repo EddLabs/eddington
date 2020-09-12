@@ -23,12 +23,6 @@ def test_name(dummy_func1_fixture):
     assert dummy_func1_fixture.name == "dummy_func1", "Name is different than expected"
 
 
-def test_signature(dummy_func1_fixture):
-    assert (
-        dummy_func1_fixture.signature == "dummy_func1"
-    ), "Signature is different than expected"
-
-
 def test_title_name(dummy_func1_fixture):
     assert (
         dummy_func1_fixture.title_name == "Dummy Func1"

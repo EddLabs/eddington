@@ -123,11 +123,6 @@ class FittingFunction:  # pylint: disable=invalid-name,too-many-instance-attribu
         self.fixed.clear()
 
     @property
-    def signature(self):
-        """Same as name."""
-        return self.name
-
-    @property
     def active_parameters(self):
         """Number of active parameters (aka, unfixed)."""
         return self.n - len(self.fixed)

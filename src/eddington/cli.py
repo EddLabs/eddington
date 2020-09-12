@@ -36,7 +36,7 @@ def eddington_list(regex: Optional[str]):
     table = PrettyTable(field_names=["Function", "Syntax"])
     for func in FittingFunctionsRegistry.all():
         if regex is None or re.search(regex, func.name):
-            table.add_row([func.signature, func.syntax])
+            table.add_row([func.name, func.syntax])
     click.echo(table)
 
 
