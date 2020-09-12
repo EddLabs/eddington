@@ -22,7 +22,7 @@ def plot_residuals(  # pylint: disable=invalid-name,too-many-arguments
     Plot residuals plot.
 
     :param func: Fitting function.
-    :type func: :class:`FitFunction`
+    :type func: :class:`FittingFunction`
     :param data: Fitting data
     :type data: :class:`FittingData`
     :param a: The parameters result
@@ -69,7 +69,7 @@ def plot_fitting(  # pylint: disable=C0103,R0913
     Plot fitting plot.
 
     :param func: Fitting function.
-    :type func: :class:`FitFunction`
+    :type func: :class:`FittingFunction`
     :param data: Fitting data
     :type data: :class:`FittingData`
     :param a: The parameters result

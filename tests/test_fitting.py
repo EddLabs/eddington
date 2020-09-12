@@ -3,7 +3,7 @@ from argparse import Namespace
 import numpy as np
 import pytest
 
-from eddington import FittingData, fit_function, fit_to_data
+from eddington import FittingData, fitting_function, fit_to_data
 
 a0 = np.array([8, 5])
 a = np.array([3, 4])
@@ -20,22 +20,22 @@ def dummy_func_a_derivative(a, x):  # pylint: disable=W0613
     return np.stack([x ** 2, np.ones(shape=x.shape)])
 
 
-@fit_function(n=2, save=False)
+@fitting_function(n=2, save=False)
 def dummy_func(a, x):
     return a[0] * x ** 2 + a[1]
 
 
-@fit_function(n=2, x_derivative=dummy_func_x_derivative, save=False)
+@fitting_function(n=2, x_derivative=dummy_func_x_derivative, save=False)
 def dummy_func_with_x_derivative(a, x):
     return a[0] * x ** 2 + a[1]
 
 
-@fit_function(n=2, a_derivative=dummy_func_a_derivative, save=False)
+@fitting_function(n=2, a_derivative=dummy_func_a_derivative, save=False)
 def dummy_func_with_a_derivative(a, x):
     return a[0] * x ** 2 + a[1]
 
 
-@fit_function(
+@fitting_function(
     n=2,
     x_derivative=dummy_func_x_derivative,
     a_derivative=dummy_func_a_derivative,

@@ -9,7 +9,7 @@ from prettytable import PrettyTable
 
 from eddington import (
     FittingData,
-    FitFunctionsRegistry,
+    FittingFunctionsRegistry,
     __version__,
     fit_to_data,
     linear,
@@ -38,9 +38,9 @@ def eddington_cli():
     help="Filter functions by a regular expression",
 )
 def eddington_list(regex: Optional[str]):
-    """Prints all fit functions in a pretty table."""
+    """Prints all fitting functions in a pretty table."""
     table = PrettyTable(field_names=["Function", "Syntax"])
-    for func in FitFunctionsRegistry.all():
+    for func in FittingFunctionsRegistry.all():
         if regex is None or re.search(regex, func.name):
             table.add_row([func.signature, func.syntax])
     click.echo(table)
@@ -48,7 +48,7 @@ def eddington_list(regex: Optional[str]):
 
 @eddington_cli.command("fit")
 @click.pass_context
-@click.argument("fit_function_name", type=str, default="")
+@click.argument("fitting_function_name", type=str, default="")
 @click.option(
     "-p",
     "--polynomial",
@@ -111,7 +111,7 @@ def eddington_list(regex: Optional[str]):
 )
 def eddington_fit(
     ctx: click.Context,
-    fit_function_name: Optional[str],
+    fitting_function_name: Optional[str],
     polynomial_degree: Optional[int],
     data_file: str,
     sheet: Optional[str],
@@ -137,8 +137,8 @@ def eddington_fit(
         y_column=y_column, yerr_column=yerr_column,
     )
     # fmt: on
-    func = __load_fit_functions(
-        ctx=ctx, func_name=fit_function_name, polynomial_degree=polynomial_degree
+    func = __load_fitting_functions(
+        ctx=ctx, func_name=fitting_function_name, polynomial_degree=polynomial_degree
     )
     result = fit_to_data(data, func, a0=__calc_a0(a0))
     click.echo(result.pretty_string)
@@ -206,7 +206,7 @@ def __load_data_file(
     return FittingData.read_from_excel(filepath=data_file, sheet=sheet, **kwargs)
 
 
-def __load_fit_functions(
+def __load_fitting_functions(
     ctx: click.Context, func_name: Optional[str], polynomial_degree: Optional[int]
 ):
     if func_name == "":
@@ -214,9 +214,9 @@ def __load_fit_functions(
             return polynomial(polynomial_degree)
         return linear
     if polynomial_degree is not None:
-        click.echo("Cannot accept both polynomial and fit function")
+        click.echo("Cannot accept both polynomial and fitting function")
         ctx.exit(1)
-    return FitFunctionsRegistry.load(func_name)
+    return FittingFunctionsRegistry.load(func_name)
 
 
 def __optional_path(directory: Optional[Path], file_name: str):

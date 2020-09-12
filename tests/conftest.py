@@ -1,6 +1,6 @@
 from pytest import fixture
 
-from eddington import FittingData, FitFunctionsRegistry
+from eddington import FittingData, FittingFunctionsRegistry
 
 
 @fixture
@@ -10,17 +10,17 @@ def json_dump_mock(mocker):
 
 @fixture
 def clear_functions_registry():
-    backup = list(FitFunctionsRegistry.all())
-    FitFunctionsRegistry.clear()
+    backup = list(FittingFunctionsRegistry.all())
+    FittingFunctionsRegistry.clear()
     yield
-    FitFunctionsRegistry.clear()
+    FittingFunctionsRegistry.clear()
     for func in backup:
-        FitFunctionsRegistry.add(func)
+        FittingFunctionsRegistry.add(func)
 
 
 @fixture
 def mock_load_function(mocker):
-    return mocker.patch.object(FitFunctionsRegistry, "load")
+    return mocker.patch.object(FittingFunctionsRegistry, "load")
 
 
 @fixture

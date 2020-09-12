@@ -13,7 +13,7 @@ from eddington.consts import (
     DEFAULT_XSIGMA,
     DEFAULT_YSIGMA,
 )
-from tests.fit_function.dummy_functions import dummy_func1
+from tests.fitting_function.dummy_functions import dummy_func1
 
 a = [2, 1]
 x = np.arange(0, DEFAULT_MEASUREMENTS)

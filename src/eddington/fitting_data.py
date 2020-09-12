@@ -246,9 +246,9 @@ class FittingData:
         """
         Creates residuals :class:`FittingData` objects.
 
-        :param fit_func: :class:`FitFunction` to evaluate with the fit data
-        :type fit_func: ``FitFunction``
-        :param a: the parameters of the given fit function
+        :param fit_func: :class:`FittingFunction` to evaluate with the fit data
+        :type fit_func: ``FittingFunction``
+        :param a: the parameters of the given fitting function
         :type a: ``numpy.ndarray``
         :returns: residuals :class:`FittingData`
         """
@@ -283,8 +283,8 @@ class FittingData:
         """
         Generate a random fit data.
 
-        :param fit_func: :class:`FitFunction` to evaluate with the fit data
-        :type fit_func: ``FitFunction``
+        :param fit_func: :class:`FittingFunction` to evaluate with the fit data
+        :type fit_func: ``FittingFunction``
         :param x: Optional. The input for the fitting algorithm.
          If not given, generated randomly.
         :type x: ``numpy.ndarray``

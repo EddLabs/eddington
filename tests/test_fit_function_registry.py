@@ -1,8 +1,8 @@
 import pytest
 from pytest_cases import fixture, unpack_fixture
 
-from eddington import FitFunctionLoadError, FitFunctionsRegistry
-from eddington.exceptions import FitFunctionSaveError
+from eddington import FittingFunctionLoadError, FittingFunctionsRegistry
+from eddington.exceptions import FittingFunctionSaveError
 from tests.util import dummy_function
 
 
@@ -29,7 +29,7 @@ def dummy_functions(clear_functions_registry):
 
 def test_load_function(saved_dummy_functions):
     for func in saved_dummy_functions:
-        actual_func = FitFunctionsRegistry.load(func.name)
+        actual_func = FittingFunctionsRegistry.load(func.name)
         assert (
             func == actual_func
         ), "Registry get name function returns different function than expected."
@@ -37,34 +37,34 @@ def test_load_function(saved_dummy_functions):
 
 def test_exists(saved_dummy_functions):
     for func in saved_dummy_functions:
-        assert FitFunctionsRegistry.exists(
+        assert FittingFunctionsRegistry.exists(
             func.name
         ), f"Expected {func.name} to exists. It does not."
 
 
 def test_remove(saved_dummy_functions):
     for func in saved_dummy_functions:
-        FitFunctionsRegistry.remove(func.name)
-        assert not FitFunctionsRegistry.exists(
+        FittingFunctionsRegistry.remove(func.name)
+        assert not FittingFunctionsRegistry.exists(
             func.name
         ), f"Expected {func.name} to not exist. It does."
 
 
 def test_all(saved_dummy_functions):
     assert list(saved_dummy_functions) == list(
-        FitFunctionsRegistry.all()
+        FittingFunctionsRegistry.all()
     ), "Functions are different than expected"
 
 
 def test_names(saved_dummy_functions):
     assert [func.name for func in saved_dummy_functions] == list(
-        FitFunctionsRegistry.names()
+        FittingFunctionsRegistry.names()
     ), "Functions names are different than expected"
 
 
 def test_add_dummy_function_without_saving(unsaved_dummy_functions):
     for func in unsaved_dummy_functions:
-        assert not FitFunctionsRegistry.exists(
+        assert not FittingFunctionsRegistry.exists(
             func.name
         ), "Function was saved, even though it wasn't supposed to"
 
@@ -72,16 +72,16 @@ def test_add_dummy_function_without_saving(unsaved_dummy_functions):
 def test_load_non_existing_function(unsaved_dummy_functions):
     for func in unsaved_dummy_functions:
         with pytest.raises(
-            FitFunctionLoadError, match=f"^No fit function named {func.name}$"
+            FittingFunctionLoadError, match=f"^No fit function named {func.name}$"
         ):
-            FitFunctionsRegistry.load(func.name)
+            FittingFunctionsRegistry.load(func.name)
 
 
-def test_saving_two_fit_functions_with_the_same_name(saved_dummy_functions):
+def test_saving_two_fitting_functions_with_the_same_name(saved_dummy_functions):
     for func in saved_dummy_functions:
         name = func.name
         with pytest.raises(
-            FitFunctionSaveError,
+            FittingFunctionSaveError,
             match=(
                 f'^Cannot save "{name}" to registry '
                 "since there is another fit function with this name$"

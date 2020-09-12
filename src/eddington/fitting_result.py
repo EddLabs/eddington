@@ -15,7 +15,7 @@ class FittingResult:
     """
     Dataclass that contains the relevant parameters returned by a fitting algorithm.
 
-    :param a0: The initial guess for the fit function parameters.
+    :param a0: The initial guess for the fitting function parameters.
     :param a: The result for the fitting parameters.
     :param aerr: Estimated errors of a.
     :param arerr: Estimated relative errors of a (equivalent to aerr/a).

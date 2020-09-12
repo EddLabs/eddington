@@ -7,12 +7,12 @@ from eddington.exceptions import (
     FittingDataError,
     FittingDataInvalidFile,
     FittingDataInvalidFileSyntax,
-    FitFunctionLoadError,
-    FitFunctionRuntimeError,
+    FittingFunctionLoadError,
+    FittingFunctionRuntimeError,
 )
 from eddington.fitting_data import FittingData
-from eddington.fit_function_class import FitFunction, fit_function
-from eddington.fit_functions_list import (
+from eddington.fitting_function_class import FittingFunction, fitting_function
+from eddington.fitting_functions_list import (
     constant,
     cos,
     exponential,
@@ -26,7 +26,7 @@ from eddington.fit_functions_list import (
     sin,
     straight_power,
 )
-from eddington.fit_functions_registry import FitFunctionsRegistry
+from eddington.fitting_functions_registry import FittingFunctionsRegistry
 from eddington.fitting_result import FittingResult
 from eddington.fitting import fit_to_data
 from eddington.plot import plot_data, plot_fitting, plot_residuals, show_or_export
@@ -36,9 +36,9 @@ __version__ = "0.0.16"
 __all__ = [
     "__version__",
     # Fit functions infrastructure
-    "FitFunction",
-    "fit_function",
-    "FitFunctionsRegistry",
+    "FittingFunction",
+    "fitting_function",
+    "FittingFunctionsRegistry",
     # Fit functions
     "constant",
     "exponential",
@@ -56,8 +56,8 @@ __all__ = [
     "fit_to_data",
     # Exceptions
     "EddingtonException",
-    "FitFunctionRuntimeError",
-    "FitFunctionLoadError",
+    "FittingFunctionRuntimeError",
+    "FittingFunctionLoadError",
     "FittingDataError",
     "FittingDataColumnExistenceError",
     "FittingDataColumnIndexError",

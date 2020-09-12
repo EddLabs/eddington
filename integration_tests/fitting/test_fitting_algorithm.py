@@ -6,7 +6,7 @@ import numpy as np
 import pytest
 from pytest_cases import THIS_MODULE, parametrize, parametrize_with_cases
 
-from eddington import FittingData, FitFunctionsRegistry, fit_to_data
+from eddington import FittingData, FittingFunctionsRegistry, fit_to_data
 
 
 def cases_paths():
@@ -18,7 +18,7 @@ def case_fitting(case_path):
     with open(str(case_path), mode="r") as json_file:
         json_obj = json.load(json_file)
     func_name = json_obj["fit_function"]
-    func = FitFunctionsRegistry.load(func_name)
+    func = FittingFunctionsRegistry.load(func_name)
     fix = json_obj.get("fix", None)
     if fix is not None:
         for index, value in fix:

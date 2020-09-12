@@ -1,47 +1,47 @@
-"""List of common fit functions."""
+"""List of common fitting functions."""
 from typing import Union
 
 import numpy as np
 import scipy.special
 
-from eddington.exceptions import FitFunctionLoadError
-from eddington.fit_function_class import FitFunction, fit_function
+from eddington.exceptions import FittingFunctionLoadError
+from eddington.fitting_function_class import FittingFunction, fitting_function
 
 
-@fit_function(
+@fitting_function(
     n=2,
     syntax="a[0] + a[1] * x",
     x_derivative=lambda a, x: np.full(shape=np.shape(x), fill_value=a[1]),
     a_derivative=lambda a, x: np.stack([np.ones(shape=np.shape(x)), x]),
 )  # pylint: disable=C0103
 def linear(a: np.ndarray, x: Union[np.ndarray, float]) -> Union[np.ndarray, float]:
-    """Simple linear fit function."""
+    """Simple linear fitting function."""
     return a[0] + a[1] * x
 
 
-@fit_function(
+@fitting_function(
     n=1,
     syntax="a[0]",
     x_derivative=lambda a, x: np.zeros(shape=np.shape(x)),
     a_derivative=lambda a, x: np.stack([np.ones(shape=np.shape(x))]),
 )  # pylint: disable=C0103
 def constant(a: np.ndarray, x: Union[np.ndarray, float]) -> Union[np.ndarray, float]:
-    """Constant fit function."""
+    """Constant fitting function."""
     return np.full(fill_value=a[0], shape=np.shape(x))
 
 
-@fit_function(
+@fitting_function(
     n=3,
     syntax="a[0] + a[1] * x + a[2] * x ^ 2",
     x_derivative=lambda a, x: a[1] + 2 * a[2] * x,
     a_derivative=lambda a, x: np.stack([np.ones(shape=np.shape(x)), x, x ** 2]),
 )  # pylint: disable=C0103
 def parabolic(a: np.ndarray, x: Union[np.ndarray, float]) -> Union[np.ndarray, float]:
-    """Parabolic fit function."""
+    """Parabolic fitting function."""
     return a[0] + a[1] * x + a[2] * x ** 2
 
 
-@fit_function(
+@fitting_function(
     n=4,
     syntax="a[0] * (x + a[1]) ^ a[2] + a[3]",
     x_derivative=lambda a, x: a[2] * a[0] * (x + a[1]) ** (a[2] - 1),
@@ -61,7 +61,7 @@ def straight_power(
     return a[0] * (x + a[1]) ** a[2] + a[3]
 
 
-@fit_function(
+@fitting_function(
     n=4,
     syntax="a[0] / (x + a[1]) ^ a[2] + a[3]",
     x_derivative=lambda a, x: -a[2] * a[0] / (x + a[1]) ** (a[2] + 1),
@@ -81,7 +81,7 @@ def inverse_power(
     return a[0] / (x + a[1]) ** a[2] + a[3]
 
 
-@fit_function(
+@fitting_function(
     n=3,
     syntax="a[0] / (x + a[1]) + a[2]",
     x_derivative=lambda a, x: -a[0] / ((x + a[1]) ** 2),
@@ -90,11 +90,11 @@ def inverse_power(
     ),
 )  # pylint: disable=C0103
 def hyperbolic(a: np.ndarray, x: Union[np.ndarray, float]) -> Union[np.ndarray, float]:
-    """Hyperbolic fit function."""
+    """Hyperbolic fitting function."""
     return a[0] / (x + a[1]) + a[2]
 
 
-@fit_function(
+@fitting_function(
     n=3,
     syntax="a[0] * exp(a[1] * x) + a[2]",
     x_derivative=lambda a, x: a[0] * a[1] * np.exp(a[1] * x),
@@ -103,11 +103,11 @@ def hyperbolic(a: np.ndarray, x: Union[np.ndarray, float]) -> Union[np.ndarray, 
     ),
 )  # pylint: disable=C0103
 def exponential(a: np.ndarray, x: Union[np.ndarray, float]) -> Union[np.ndarray, float]:
-    """Exponential fit function."""
+    """Exponential fitting function."""
     return a[0] * np.exp(a[1] * x) + a[2]
 
 
-@fit_function(
+@fitting_function(
     n=4,
     syntax="a[0] * cos(a[1] * x + a[2]) + a[3]",
     x_derivative=lambda a, x: -a[0] * a[1] * np.sin(a[1] * x + a[2]),
@@ -121,11 +121,11 @@ def exponential(a: np.ndarray, x: Union[np.ndarray, float]) -> Union[np.ndarray,
     ),
 )  # pylint: disable=C0103
 def cos(a: np.ndarray, x: Union[np.ndarray, float]) -> Union[np.ndarray, float]:
-    """Cosines fit function."""
+    """Cosines fitting function."""
     return a[0] * np.cos(a[1] * x + a[2]) + a[3]
 
 
-@fit_function(
+@fitting_function(
     n=4,
     syntax="a[0] * sin(a[1] * x + a[2]) + a[3]",
     x_derivative=lambda a, x: a[0] * a[1] * np.cos(a[1] * x + a[2]),
@@ -139,11 +139,11 @@ def cos(a: np.ndarray, x: Union[np.ndarray, float]) -> Union[np.ndarray, float]:
     ),
 )  # pylint: disable=C0103
 def sin(a: np.ndarray, x: Union[np.ndarray, float]) -> Union[np.ndarray, float]:
-    """Sine fit function."""
+    """Sine fitting function."""
     return a[0] * np.sin(a[1] * x + a[2]) + a[3]
 
 
-@fit_function(
+@fitting_function(
     n=4,
     syntax="a[0] * exp( - ((x - a[1]) / a[2]) ^ 2) + a[3]",
     x_derivative=lambda a, x: a[0]
@@ -159,11 +159,11 @@ def sin(a: np.ndarray, x: Union[np.ndarray, float]) -> Union[np.ndarray, float]:
     ),
 )  # pylint: disable=C0103
 def normal(a: np.ndarray, x: Union[np.ndarray, float]) -> Union[np.ndarray, float]:
-    """Normal distribution fit function."""
+    """Normal distribution fitting function."""
     return a[0] * np.exp(-(((x - a[1]) / a[2]) ** 2)) + a[3]
 
 
-@fit_function(
+@fitting_function(
     n=3,
     syntax="a[0] * (a[1] ^ x) * exp(-a[1]) / gamma(x+1) + a[2]",
     x_derivative=lambda a, x: (
@@ -180,20 +180,20 @@ def normal(a: np.ndarray, x: Union[np.ndarray, float]) -> Union[np.ndarray, floa
     ),
 )  # pylint: disable=C0103
 def poisson(a: np.ndarray, x: Union[np.ndarray, float]) -> Union[np.ndarray, float]:
-    """Poisson fit function."""
+    """Poisson fitting function."""
     return a[0] * np.power(a[1], x) * np.exp(-a[1]) / scipy.special.gamma(x + 1) + a[2]
 
 
-def polynomial(n: int) -> FitFunction:  # pylint: disable=C0103
+def polynomial(n: int) -> FittingFunction:  # pylint: disable=C0103
     """
-    Creates a polynomial fit function with parameters as coefficients.
+    Creates a polynomial fitting function with parameters as coefficients.
 
     :param n: Degree of the polynom.
-    :return: :class:`FitFunction`
+    :return: :class:`FittingFunction`
     """
     n = int(n)
     if n <= 0:
-        raise FitFunctionLoadError(f"n must be positive, got {n}")
+        raise FittingFunctionLoadError(f"n must be positive, got {n}")
 
     if n == 1:
         return linear
@@ -204,7 +204,7 @@ def polynomial(n: int) -> FitFunction:  # pylint: disable=C0103
         [f"a[{i}] * x ^ {i}" for i in arange[1:]]
     )
 
-    @fit_function(
+    @fitting_function(
         n=n + 1,
         name=f"polynomial_{n}",
         syntax=syntax,

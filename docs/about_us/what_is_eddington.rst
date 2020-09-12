@@ -13,7 +13,7 @@ Core abilities
 With Eddington you can:
 
 * Fit data according to fitting functions.
-* Use a vast list of supported :ref:`out-of-the-box fitting functions <fit_functions_list>`.
+* Use a vast list of supported :ref:`out-of-the-box fitting functions <fitting_functions_list>`.
 * Plot results into useful figures to evaluate your results.
 * Filter your data in order to get best results.
 * Save your results into files.

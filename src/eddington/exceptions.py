@@ -8,22 +8,22 @@ class EddingtonException(Exception):  # noqa: D101
     pass
 
 
-# Fit Function Errors
+# Fitting Function Errors
 
 
-class FitFunctionLoadError(EddingtonException):  # noqa: D101
+class FittingFunctionLoadError(EddingtonException):  # noqa: D101
     pass
 
 
-class FitFunctionSaveError(EddingtonException):  # noqa: D101
+class FittingFunctionSaveError(EddingtonException):  # noqa: D101
     pass
 
 
-class FitFunctionRuntimeError(EddingtonException):  # noqa: D101
+class FittingFunctionRuntimeError(EddingtonException):  # noqa: D101
     pass
 
 
-# Fit Data Errors
+# Fitting Data Errors
 
 
 class FittingDataError(EddingtonException):  # noqa: D101

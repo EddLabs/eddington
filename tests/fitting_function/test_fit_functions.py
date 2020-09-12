@@ -3,8 +3,8 @@ import pytest
 from pytest_cases import THIS_MODULE, parametrize_with_cases
 
 from eddington import (
-    FitFunctionLoadError,
-    FitFunctionRuntimeError,
+    FittingFunctionLoadError,
+    FittingFunctionRuntimeError,
     constant,
     cos,
     exponential,
@@ -322,7 +322,7 @@ def case_poisson():
 
 def assert_raises_unfit_parameters(case, n0):
     with pytest.raises(
-        FitFunctionRuntimeError, match=f"^Input length should be {case['n']}, got {n0}$"
+        FittingFunctionRuntimeError, match=f"^Input length should be {case['n']}, got {n0}$"
     ):
         case["func"](np.random.random(n0), np.random.random())
 
@@ -435,10 +435,10 @@ def test_execute_a_derivative_on_array(case):  # pylint: disable=W0613
 
 
 def test_initialize_polynomial_with_0_degree_raises_error():
-    with pytest.raises(FitFunctionLoadError, match="^n must be positive, got 0$"):
+    with pytest.raises(FittingFunctionLoadError, match="^n must be positive, got 0$"):
         polynomial(0)
 
 
 def test_initialize_polynomial_with_negative_degree_raises_error():
-    with pytest.raises(FitFunctionLoadError, match="^n must be positive, got -1$"):
+    with pytest.raises(FittingFunctionLoadError, match="^n must be positive, got -1$"):
         polynomial(-1)

@@ -5,12 +5,12 @@ from typing import Callable, Dict, Optional, Union
 
 import numpy as np
 
-from eddington.exceptions import FitFunctionRuntimeError
-from eddington.fit_functions_registry import FitFunctionsRegistry
+from eddington.exceptions import FittingFunctionRuntimeError
+from eddington.fitting_functions_registry import FittingFunctionsRegistry
 
 
 @dataclass(unsafe_hash=True)
-class FitFunction:  # pylint: disable=invalid-name,too-many-instance-attributes
+class FittingFunction:  # pylint: disable=invalid-name,too-many-instance-attributes
     """
     Fitting function class.
 
@@ -38,7 +38,7 @@ class FitFunction:  # pylint: disable=invalid-name,too-many-instance-attributes
     :type a_derivative: callable
     :param title_name: same as `name` but in title case
     :type title_name: str
-    :param save: Should this function be saved in the :class:`FitFunctionsRegistry`
+    :param save: Should this function be saved in the :class:`FittingFunctionsRegistry`
     :type save: bool
     """
 
@@ -59,7 +59,7 @@ class FitFunction:  # pylint: disable=invalid-name,too-many-instance-attributes
         self.x_derivative = self.__wrap_x_derivative(self.x_derivative)
         self.a_derivative = self.__wrap_a_derivative(self.a_derivative)
         if save:
-            FitFunctionsRegistry.add(self)
+            FittingFunctionsRegistry.add(self)
 
     def __get_title_name(self):
         return self.name.title().replace("_", " ")
@@ -67,13 +67,13 @@ class FitFunction:  # pylint: disable=invalid-name,too-many-instance-attributes
     def __validate_parameters_number(self, a):
         a_length = len(a)
         if a_length != self.n:
-            raise FitFunctionRuntimeError(
+            raise FittingFunctionRuntimeError(
                 f"Input length should be {self.active_parameters}, "
                 f"got {a_length - len(self.fixed)}"
             )
 
     def __call__(self, *args):
-        """Call the fit function as a regular callable."""
+        """Call the fitting function as a regular callable."""
         a, x = self.__extract_a_and_x(args)
         self.__validate_parameters_number(a)
         return self.fit_func(a, x)
@@ -93,10 +93,10 @@ class FitFunction:  # pylint: disable=invalid-name,too-many-instance-attributes
         :type index: int
         :param value: The value to fix
         :type value: float
-        :return: self :class:`FitFunction`
+        :return: self :class:`FittingFunction`
         """
         if index < 0 or index >= self.n:
-            raise FitFunctionRuntimeError(
+            raise FittingFunctionRuntimeError(
                 f"Cannot fix index {index}. "
                 f"Indices should be between 0 and {self.n - 1}"
             )
@@ -109,7 +109,7 @@ class FitFunction:  # pylint: disable=invalid-name,too-many-instance-attributes
 
         :param index: The index of the parameter to unfix
         :type index: int
-        :return: self :class:`FitFunction`
+        :return: self :class:`FittingFunction`
         """
         del self.fixed[index]
         return self
@@ -118,7 +118,7 @@ class FitFunction:  # pylint: disable=invalid-name,too-many-instance-attributes
         """
         Clear all fixed parameters.
 
-        :return: self :class:`FitFunction`
+        :return: self :class:`FittingFunction`
         """
         self.fixed.clear()
 
@@ -161,7 +161,7 @@ class FitFunction:  # pylint: disable=invalid-name,too-many-instance-attributes
 
     def __extract_a_and_x(self, args):
         if len(args) == 0:
-            raise FitFunctionRuntimeError(
+            raise FittingFunctionRuntimeError(
                 f'No parameters has been given to "{self.name}"'
             )
         if len(args) == 1:
@@ -178,7 +178,7 @@ class FitFunction:  # pylint: disable=invalid-name,too-many-instance-attributes
         return a
 
 
-def fit_function(  # pylint: disable=invalid-name,too-many-arguments
+def fitting_function(  # pylint: disable=invalid-name,too-many-arguments
     n: int,
     name: Optional[str] = None,
     syntax: Optional[str] = None,
@@ -191,10 +191,10 @@ def fit_function(  # pylint: disable=invalid-name,too-many-arguments
     save: bool = True,
 ) -> Callable[
     [Callable[[np.ndarray, Union[np.ndarray, float]], Union[np.ndarray, float]]],
-    FitFunction,
+    FittingFunction,
 ]:
     """
-    Wrapper making a simple callable into a :class:`FitFunction`.
+    Wrapper making a simple callable into a :class:`FittingFunction`.
 
     :param n: Number of parameters. The length of parameter ``a`` of the fitting
      function.
@@ -203,15 +203,15 @@ def fit_function(  # pylint: disable=invalid-name,too-many-arguments
     :type name: str
     :param syntax: The syntax of the fitting function.
     :type syntax: str
-    :param a_derivative: a function representing the derivative of the fit function
+    :param a_derivative: a function representing the derivative of the fitting function
      according to the "a" parameter array
     :type a_derivative: callable
-    :param x_derivative: a function representing the derivative of the fit function
+    :param x_derivative: a function representing the derivative of the fitting function
      according to x
     :param save: Should this function be saved in the
-     :class:`FitFunctionsRegistry`
+     :class:`FittingFunctionsRegistry`
     :type save: bool
-    :return: :class:`FitFunction` instance.
+    :return: :class:`FittingFunction` instance.
     """
 
     def wrapper(func):
@@ -229,7 +229,7 @@ Syntax: :code:`y = {syntax}`
 :returns: ``numpy.ndarray`` or ``float``
     """
         return functools.wraps(func)(
-            FitFunction(
+            FittingFunction(
                 fit_func=func,
                 n=n,
                 name=func_name,

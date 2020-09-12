@@ -4,12 +4,12 @@ from typing import Any, Dict, Optional
 import numpy as np
 from scipy.odr import ODR, Model, RealData
 
-from eddington import FittingData, FitFunction, FittingResult
+from eddington import FittingData, FittingFunction, FittingResult
 
 
 def fit_to_data(  # pylint: disable=invalid-name
     data: FittingData,
-    func: FitFunction,
+    func: FittingFunction,
     a0: np.ndarray = None,
     use_x_derivative: bool = True,
     use_a_derivative: bool = True,
@@ -23,7 +23,7 @@ def fit_to_data(  # pylint: disable=invalid-name
     :param data: Fitting data to optimize
     :type data: :class:`FittingData`
     :param func: a function to fit the data according to.
-    :type func: :class:`FitFunction`
+    :type func: :class:`FittingFunction`
     :param a0: initial guess for the parameters
     :type a0: ``np.ndarray``
     :param use_x_derivative: indicates whether to use x derivative or not.
@@ -57,7 +57,7 @@ def fit_to_data(  # pylint: disable=invalid-name
 
 
 def __get_odr_model_kwargs(
-    func: FitFunction,
+    func: FittingFunction,
     use_x_derivative: bool = True,
     use_a_derivative: bool = True,
 ) -> Dict[str, Any]:
