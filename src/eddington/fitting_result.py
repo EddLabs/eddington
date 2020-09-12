@@ -7,6 +7,7 @@ from typing import List, Optional, Union
 import numpy as np
 import scipy.stats as stats
 
+from eddington.consts import DEFAULT_PRECISION
 from eddington.print_util import to_precise_string
 
 
@@ -38,7 +39,7 @@ class FittingResult:
     chi2: float
     chi2_reduced: float = field(init=False)
     p_probability: float = field(init=False)
-    precision: int = field(default=3)
+    precision: int = field(default=DEFAULT_PRECISION)
     __pretty_string: Optional[str] = field(default=None, init=False)
 
     def __post_init__(self) -> None:

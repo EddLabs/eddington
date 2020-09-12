@@ -6,6 +6,7 @@ import numpy as np
 
 from eddington.exceptions import PlottingError
 from eddington.fitting_data import FittingData
+from eddington.print_util import to_precise_string
 
 
 def plot_residuals(  # pylint: disable=invalid-name,too-many-arguments
@@ -294,4 +295,5 @@ def __get_a_dict(a):  # pylint: disable=invalid-name
 
 
 def __build_repr_string(a):  # pylint: disable=invalid-name
-    return f"[{', '.join([f'a[{i}]={val}' for i, val in enumerate(a)])}]"
+    arguments_values = [f"a[{i}]={to_precise_string(val)}" for i, val in enumerate(a)]
+    return f"[{', '.join(arguments_values)}]"

@@ -10,8 +10,12 @@ EPSILON = 1e-5
 
 FUNC = linear
 X = np.arange(1, 11)
-A1, A2 = np.array([1, 1]), np.array([3, 2])
-A1_REPR, A2_REPR = "[a[0]=1, a[1]=1]", "[a[0]=3, a[1]=2]"
+A1, A2, A3 = np.array([1, 1]), np.array([3, 2]), np.array([3.924356, 1.2345e-5])
+A1_REPR, A2_REPR, A3_REPR = (
+    "[a[0]=1.000, a[1]=1.000]",
+    "[a[0]=3.000, a[1]=2.000]",
+    "[a[0]=3.924, a[1]=1.234e-05]",
+)
 FIT_DATA = FittingData.random(FUNC, x=X, a=np.array([1, 2]), measurements=X.shape[0])
 TITLE_NAME = "Title"
 
@@ -75,6 +79,16 @@ def case_a_dict(mock_plt):
     plot_calls = [
         ([x, FUNC(A1, x)], dict(figure=mock_plt.figure.return_value, label=one)),
         ([x, FUNC(A2, x)], dict(figure=mock_plt.figure.return_value, label=two)),
+    ]
+    return kwargs, plot_calls, mock_plt
+
+
+def case_a_redundent_precision(mock_plt):
+    x = np.arange(0.1, 10.9, step=0.0108)
+
+    kwargs = dict(a=A3)
+    plot_calls = [
+        ([x, FUNC(A3, x)], dict(figure=mock_plt.figure.return_value, label=A3_REPR))
     ]
     return kwargs, plot_calls, mock_plt
 
