@@ -72,7 +72,7 @@ def test_add_dummy_function_without_saving(unsaved_dummy_functions):
 def test_load_non_existing_function(unsaved_dummy_functions):
     for func in unsaved_dummy_functions:
         with pytest.raises(
-            FittingFunctionLoadError, match=f"^No fit function named {func.name}$"
+            FittingFunctionLoadError, match=f"^No fitting function named {func.name}$"
         ):
             FittingFunctionsRegistry.load(func.name)
 
@@ -84,7 +84,7 @@ def test_saving_two_fitting_functions_with_the_same_name(saved_dummy_functions):
             FittingFunctionSaveError,
             match=(
                 f'^Cannot save "{name}" to registry '
-                "since there is another fit function with this name$"
+                "since there is another fitting function with this name$"
             ),
         ):
             dummy_function(name, "new syntax", save=True)

@@ -191,6 +191,6 @@ def test_exception_risen_because_of_columns_length():
     data["a"] = data["a"][:-2]
     with pytest.raises(
         FittingDataColumnsLengthError,
-        match="^All columns in FitData should have the same length$",
+        match="^All columns in FittingData should have the same length$",
     ):
         FittingData(data=data)

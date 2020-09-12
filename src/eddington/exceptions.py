@@ -44,7 +44,7 @@ class FittingDataInvalidFileSyntax(FittingDataInvalidFile):  # noqa: D101
 
 
 class FittingDataColumnsLengthError(FittingDataInvalidFile):  # noqa: D101
-    msg = "All columns in FitData should have the same length"
+    msg = "All columns in FittingData should have the same length"
 
     def __init__(self) -> None:  # noqa: D107
         super().__init__(self.msg)

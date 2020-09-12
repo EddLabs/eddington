@@ -30,7 +30,7 @@ def fit_to_data(  # pylint: disable=invalid-name
     :type use_x_derivative: ``bool``
     :param use_a_derivative: indicates whether to use a derivative or not.
     :type use_a_derivative: ``bool``
-    :returns: :class:`FitResult`
+    :returns: :class:`FittingResult`
     """
     model = Model(
         **__get_odr_model_kwargs(
