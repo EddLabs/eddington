@@ -30,13 +30,13 @@ With just 4 lines of code you can fit your data easily and surely:
 
 .. code:: python
 
-    from eddington import FittingData, fit_to_data
+    from eddington import FittingData, fit
 
     from eddington import linear  # Import the needed fitting function
 
     data = FittingData.read_from_csv("/path/to/data.csv")  # Read the data from a file
 
-    result = fit_to_data(data, linear)  # Fit the data
+    result = fit(data, linear)  # Fit the data
 
     print(result)  # Print the result or export to file
 

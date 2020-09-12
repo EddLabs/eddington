@@ -72,10 +72,10 @@ Now, we can use the fitting function we've created in order to fit the data:
 
 .. code:: python
 
-    from eddington import FittingData, fit_to_data
+    from eddington import FittingData, fit
 
     fitting_data = FittingData.read_from_csv("/path/to/data.csv")  # Load data from file.
-    fitting_result = fit_to_data(fitting_data, lens)  # Do the actual fitting
+    fitting_result = fit(fitting_data, lens)  # Do the actual fitting
     print(fitting_result)  # Print the results
 
 This usage is more than enough for most use-cases.
@@ -112,7 +112,7 @@ decorator. In our example:
 .. code:: python
 
     import numpy as np
-    from eddington import fitting_function, FittingData, fit_to_data
+    from eddington import fitting_function, FittingData, fit
 
 
     @fitting_function(

@@ -28,7 +28,7 @@ from eddington.fitting_functions_list import (
 )
 from eddington.fitting_functions_registry import FittingFunctionsRegistry
 from eddington.fitting_result import FittingResult
-from eddington.fitting import fit_to_data
+from eddington.fitting import fit
 from eddington.plot import plot_data, plot_fitting, plot_residuals, show_or_export
 
 __version__ = "0.0.16"
@@ -53,7 +53,7 @@ __all__ = [
     "normal",
     "poisson",
     # Fitting algorithm
-    "fit_to_data",
+    "fit",
     # Exceptions
     "EddingtonException",
     "FittingFunctionRuntimeError",

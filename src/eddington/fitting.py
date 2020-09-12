@@ -7,7 +7,7 @@ from scipy.odr import ODR, Model, RealData
 from eddington import FittingData, FittingFunction, FittingResult
 
 
-def fit_to_data(  # pylint: disable=invalid-name
+def fit(  # pylint: disable=invalid-name
     data: FittingData,
     func: FittingFunction,
     a0: np.ndarray = None,

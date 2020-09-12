@@ -3,7 +3,7 @@ from argparse import Namespace
 import numpy as np
 import pytest
 
-from eddington import FittingData, fitting_function, fit_to_data
+from eddington import FittingData, fitting_function, fit
 
 a0 = np.array([8, 5])
 a = np.array([3, 4])
@@ -99,7 +99,7 @@ def function_cases(odr_mock, request):
         request.param.get("a0", a0),
     )
     data = FittingData.random(fit_func=func)
-    result = fit_to_data(data=data, func=func, a0=fit_a0, **kwargs)
+    result = fit(data=data, func=func, a0=fit_a0, **kwargs)
     return dict(
         func=func,
         data=data,

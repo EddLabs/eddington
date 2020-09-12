@@ -11,7 +11,7 @@ from eddington import (
     FittingData,
     FittingFunctionsRegistry,
     __version__,
-    fit_to_data,
+    fit,
     linear,
     plot_data,
     plot_fitting,
@@ -140,7 +140,7 @@ def eddington_fit(
     func = __load_fitting_functions(
         ctx=ctx, func_name=fitting_function_name, polynomial_degree=polynomial_degree
     )
-    result = fit_to_data(data, func, a0=__calc_a0(a0))
+    result = fit(data, func, a0=__calc_a0(a0))
     click.echo(result.pretty_string)
     if output_dir is not None:
         output_dir = Path(output_dir)
