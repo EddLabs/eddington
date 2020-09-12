@@ -75,8 +75,8 @@ def plot_fitting(  # pylint: disable=C0103,R0913,R0914
     :param data: Fitting data
     :type data: :class:`FittingData`
     :param a: The parameters result
-    :type a: ``numpy.ndarray``, a list of ``numpy.ndarray``s or a dictionary from
-     strings to ``numpy.ndarray``s
+    :type a: ``numpy.ndarray``, a list of ``numpy.ndarray`` items or a dictionary from
+     strings to ``numpy.ndarray``
     :param title_name: Optional. Title for the figure.
     :type title_name: str
     :param xlabel: Optional. Label of the x axis
