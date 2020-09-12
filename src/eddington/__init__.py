@@ -27,7 +27,7 @@ from eddington.fit_functions_list import (
     straight_power,
 )
 from eddington.fit_functions_registry import FitFunctionsRegistry
-from eddington.fit_result import FitResult
+from eddington.fitting_result import FittingResult
 from eddington.fitting import fit_to_data
 from eddington.plot import plot_data, plot_fitting, plot_residuals, show_or_export
 
@@ -66,7 +66,7 @@ __all__ = [
     "FittingDataInvalidFileSyntax",
     # Data structures
     "FittingData",
-    "FitResult",
+    "FittingResult",
     # Plot
     "plot_data",
     "plot_fitting",

@@ -3,7 +3,7 @@ import numpy as np
 import pytest
 from pytest_cases import THIS_MODULE, parametrize_with_cases
 
-from eddington import FitResult
+from eddington import FittingResult
 from tests.util import assert_dict_equal
 
 
@@ -36,7 +36,7 @@ Degrees of freedom: 5
 Chi squared reduced: 1.655
 P-probability: 0.1417
 """
-    fit_result = FitResult(**kwargs)
+    fitting_result = FittingResult(**kwargs)
     return (
         dict(
             chi2_reduced=chi2_reduced,
@@ -46,7 +46,7 @@ P-probability: 0.1417
             delta=10e-5,
             **kwargs,
         ),
-        fit_result,
+        fitting_result,
     )
 
 
@@ -78,7 +78,7 @@ Degrees of freedom: 5
 Chi squared reduced: 1.655
 P-probability: 0.1417
 """
-    fit_result = FitResult(**kwargs)
+    fitting_result = FittingResult(**kwargs)
     return (
         dict(
             chi2_reduced=chi2_reduced,
@@ -88,7 +88,7 @@ P-probability: 0.1417
             delta=10e-5,
             **kwargs,
         ),
-        fit_result,
+        fitting_result,
     )
 
 
@@ -121,7 +121,7 @@ Degrees of freedom: 5
 Chi squared reduced: 1.655
 P-probability: 0.1417
 """
-    fit_result = FitResult(**kwargs)
+    fitting_result = FittingResult(**kwargs)
     return (
         dict(
             chi2_reduced=chi2_reduced,
@@ -131,7 +131,7 @@ P-probability: 0.1417
             delta=10e-5,
             **kwargs,
         ),
-        fit_result,
+        fitting_result,
     )
 
 
@@ -164,7 +164,7 @@ Degrees of freedom: 5
 Chi squared reduced: 8.745
 P-probability: 2.633e-08
 """
-    fit_result = FitResult(**kwargs)
+    fitting_result = FittingResult(**kwargs)
     return (
         dict(
             chi2_reduced=chi2_reduced,
@@ -174,42 +174,42 @@ P-probability: 2.633e-08
             delta=10e-5,
             **kwargs,
         ),
-        fit_result,
+        fitting_result,
     )
 
 
-@parametrize_with_cases(argnames="expected, fit_result", cases=THIS_MODULE)
-def test_a0(expected, fit_result):
-    assert fit_result.a0 == pytest.approx(
+@parametrize_with_cases(argnames="expected, fitting_result", cases=THIS_MODULE)
+def test_a0(expected, fitting_result):
+    assert fitting_result.a0 == pytest.approx(
         expected["a0"], rel=expected["delta"]
     ), "Initial Guess is different than expected"
 
 
-@parametrize_with_cases(argnames="expected, fit_result", cases=THIS_MODULE)
-def test_a(expected, fit_result):
-    assert fit_result.a == pytest.approx(
+@parametrize_with_cases(argnames="expected, fitting_result", cases=THIS_MODULE)
+def test_a(expected, fitting_result):
+    assert fitting_result.a == pytest.approx(
         expected["a"], rel=expected["delta"]
     ), "Calculated parameters are different than expected"
 
 
-@parametrize_with_cases(argnames="expected, fit_result", cases=THIS_MODULE)
-def test_aerr(expected, fit_result):
-    assert fit_result.aerr == pytest.approx(
+@parametrize_with_cases(argnames="expected, fitting_result", cases=THIS_MODULE)
+def test_aerr(expected, fitting_result):
+    assert fitting_result.aerr == pytest.approx(
         expected["aerr"], rel=expected["delta"]
     ), "Parameters errors are different than expected"
 
 
-@parametrize_with_cases(argnames="expected, fit_result", cases=THIS_MODULE)
-def test_arerr(expected, fit_result):
-    assert fit_result.arerr == pytest.approx(
+@parametrize_with_cases(argnames="expected, fitting_result", cases=THIS_MODULE)
+def test_arerr(expected, fitting_result):
+    assert fitting_result.arerr == pytest.approx(
         expected["arerr"], rel=expected["delta"]
     ), "Parameters relative errors are different than expected"
 
 
-@parametrize_with_cases(argnames="expected, fit_result", cases=THIS_MODULE)
-def test_acov(expected, fit_result):
+@parametrize_with_cases(argnames="expected, fitting_result", cases=THIS_MODULE)
+def test_acov(expected, fitting_result):
     expected_acov = np.array(expected["acov"])
-    actual_acov = fit_result.acov
+    actual_acov = fitting_result.acov
     assert actual_acov.shape == expected_acov.shape
     for i in range(actual_acov.shape[0]):
         assert actual_acov[i, :] == pytest.approx(
@@ -217,57 +217,57 @@ def test_acov(expected, fit_result):
         ), f"Parameters covariance are different than expected in row {i}"
 
 
-@parametrize_with_cases(argnames="expected, fit_result", cases=THIS_MODULE)
-def test_chi2(expected, fit_result):
-    assert fit_result.chi2 == pytest.approx(
+@parametrize_with_cases(argnames="expected, fitting_result", cases=THIS_MODULE)
+def test_chi2(expected, fitting_result):
+    assert fitting_result.chi2 == pytest.approx(
         expected["chi2"], rel=expected["delta"]
     ), "Chi2 is different than expected"
 
 
-@parametrize_with_cases(argnames="expected, fit_result", cases=THIS_MODULE)
-def test_chi2_reduced(expected, fit_result):
-    assert fit_result.chi2_reduced == pytest.approx(
+@parametrize_with_cases(argnames="expected, fitting_result", cases=THIS_MODULE)
+def test_chi2_reduced(expected, fitting_result):
+    assert fitting_result.chi2_reduced == pytest.approx(
         expected["chi2_reduced"], rel=expected["delta"]
     ), "Chi2 reduced is different than expected"
 
 
-@parametrize_with_cases(argnames="expected, fit_result", cases=THIS_MODULE)
-def test_degrees_of_freedom(expected, fit_result):
+@parametrize_with_cases(argnames="expected, fitting_result", cases=THIS_MODULE)
+def test_degrees_of_freedom(expected, fitting_result):
     assert (
-        fit_result.degrees_of_freedom == expected["degrees_of_freedom"]
+        fitting_result.degrees_of_freedom == expected["degrees_of_freedom"]
     ), "Degrees of freedom are different than expected"
 
 
-@parametrize_with_cases(argnames="expected, fit_result", cases=THIS_MODULE)
-def test_p_probability(expected, fit_result):
-    assert fit_result.p_probability == pytest.approx(
+@parametrize_with_cases(argnames="expected, fitting_result", cases=THIS_MODULE)
+def test_p_probability(expected, fitting_result):
+    assert fitting_result.p_probability == pytest.approx(
         expected["p_probability"], rel=expected["delta"]
     ), "Chi2 reduced is different than expected"
 
 
-@parametrize_with_cases(argnames="expected, fit_result", cases=THIS_MODULE)
-def test_representation(expected, fit_result):
+@parametrize_with_cases(argnames="expected, fitting_result", cases=THIS_MODULE)
+def test_representation(expected, fitting_result):
     assert expected["repr_string"] == str(
-        fit_result
+        fitting_result
     ), "Representation is different than expected"
 
 
-@parametrize_with_cases(argnames="expected, fit_result", cases=THIS_MODULE)
-def test_export_to_text_file(expected, fit_result):
+@parametrize_with_cases(argnames="expected, fitting_result", cases=THIS_MODULE)
+def test_export_to_text_file(expected, fitting_result):
     path = "/path/to/output.txt"
     mock_open_obj = mock.mock_open()
-    with mock.patch("eddington.fit_result.open", mock_open_obj):
-        fit_result.save_txt(path)
+    with mock.patch("eddington.fitting_result.open", mock_open_obj):
+        fitting_result.save_txt(path)
         mock_open_obj.assert_called_once_with(path, mode="w")
         mock_open_obj.return_value.write.assert_called_with(expected["repr_string"])
 
 
-@parametrize_with_cases(argnames="expected, fit_result", cases=THIS_MODULE)
-def test_export_to_json_file(expected, fit_result, json_dump_mock):
+@parametrize_with_cases(argnames="expected, fitting_result", cases=THIS_MODULE)
+def test_export_to_json_file(expected, fitting_result, json_dump_mock):
     path = "/path/to/output.json"
     mock_open_obj = mock.mock_open()
-    with mock.patch("eddington.fit_result.open", mock_open_obj):
-        fit_result.save_json(path)
+    with mock.patch("eddington.fitting_result.open", mock_open_obj):
+        fitting_result.save_json(path)
         mock_open_obj.assert_called_once_with(path, mode="w")
         assert_dict_equal(
             json_dump_mock.call_args_list[0][0][0],

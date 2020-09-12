@@ -75,8 +75,8 @@ Now, we can use the fitting function we've created in order to fit the data:
     from eddington import FittingData, fit_to_data
 
     fitting_data = FittingData.read_from_csv("/path/to/data.csv")  # Load data from file.
-    fit_result = fit_to_data(fitting_data, lens)  # Do the actual fitting
-    print(fit_result)  # Print the results
+    fitting_result = fit_to_data(fitting_data, lens)  # Do the actual fitting
+    print(fitting_result)  # Print the results
 
 This usage is more than enough for most use-cases.
 

@@ -4,7 +4,7 @@ from typing import Any, Dict, Optional
 import numpy as np
 from scipy.odr import ODR, Model, RealData
 
-from eddington import FittingData, FitFunction, FitResult
+from eddington import FittingData, FitFunction, FittingResult
 
 
 def fit_to_data(  # pylint: disable=invalid-name
@@ -13,7 +13,7 @@ def fit_to_data(  # pylint: disable=invalid-name
     a0: np.ndarray = None,
     use_x_derivative: bool = True,
     use_a_derivative: bool = True,
-) -> FitResult:
+) -> FittingResult:
     """
     Implementation of the fitting algorithm.
 
@@ -46,7 +46,7 @@ def fit_to_data(  # pylint: disable=invalid-name
     a = output.beta  # pylint: disable=invalid-name
     chi2 = output.sum_square  # pylint: disable=no-member
     degrees_of_freedom = len(data.x) - func.active_parameters
-    return FitResult(
+    return FittingResult(
         a0=a0,
         a=a,
         aerr=output.sd_beta,
