@@ -5,7 +5,7 @@ from setuptools import setup
 
 READTHEDOCS = "READTHEDOCS"
 
-version = "0.0.16"
+version = "0.0.17"
 on_rtd = os.environ.get(READTHEDOCS) == "True"
 install_requires = ["click >= 7.1.2", "ptable >= 0.7.2"]
 if not on_rtd:
