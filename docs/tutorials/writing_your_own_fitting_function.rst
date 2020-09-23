@@ -1,4 +1,4 @@
-.. writing_your_own_fitting_function:
+.. _writing_your_own_fitting_function:
 
 .. role:: python(code)
    :language: python

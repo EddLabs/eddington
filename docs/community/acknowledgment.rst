@@ -1,4 +1,4 @@
-.. acknowledgment:
+.. _acknowledgment:
 
 Acknowledgement
 ===============
