@@ -129,7 +129,9 @@ def plot_data(
     :type grid: bool
     :returns: ``matplotlib.pyplot.Figure``
     """
-    ax, fig = get_figure(title_name=title_name, xlabel=xlabel, ylabel=ylabel, grid=grid)
+    ax, fig = get_figure(  # pylint: disable=invalid-name
+        title_name=title_name, xlabel=xlabel, ylabel=ylabel, grid=grid
+    )
     errorbar(ax=ax, x=data.x, y=data.y, xerr=data.xerr, yerr=data.yerr)
     return fig
 
@@ -150,14 +152,14 @@ def get_figure(
     :return: Figure instance
     """
     fig = plt.figure()
-    ax = fig.add_subplot()
+    ax = fig.add_subplot()  # pylint: disable=invalid-name
     title(ax=ax, title_name=title_name)
     label_axes(ax=ax, xlabel=xlabel, ylabel=ylabel)
     add_grid(ax=ax, is_grid=grid)
     return ax, fig
 
 
-def title(ax: plt.Axes, title_name: Optional[str]):
+def title(ax: plt.Axes, title_name: Optional[str]):  # pylint: disable=invalid-name
     """
     Add/remove title to figure.
 
@@ -170,7 +172,9 @@ def title(ax: plt.Axes, title_name: Optional[str]):
         ax.set_title(title_name)
 
 
-def label_axes(ax: plt.Axes, xlabel: Optional[str], ylabel: Optional[str]):
+def label_axes(  # pylint: disable=invalid-name
+    ax: plt.Axes, xlabel: Optional[str], ylabel: Optional[str]
+):
     """
     Add/remove labels to figure.
 
@@ -187,7 +191,7 @@ def label_axes(ax: plt.Axes, xlabel: Optional[str], ylabel: Optional[str]):
         ax.set_ylabel(ylabel)
 
 
-def add_grid(ax: plt.Axes, is_grid: bool):
+def add_grid(ax: plt.Axes, is_grid: bool):  # pylint: disable=invalid-name
     """
     Add/remove grid to figure.
 
@@ -225,7 +229,6 @@ def horizontal_line(  # pylint: disable=C0103
 ):
     """
     Add horizontal line to figure.
-
 
     :param ax: Figure axes.
     :type ax: matplotlib.pyplot.Axes

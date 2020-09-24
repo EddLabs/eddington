@@ -1,5 +1,5 @@
-from pytest_cases import fixture
 import matplotlib.pyplot as plt
+from pytest_cases import fixture
 
 
 @fixture
