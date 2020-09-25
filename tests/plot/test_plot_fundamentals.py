@@ -35,42 +35,52 @@ def case_plot_residuals():
 
 
 @parametrize_with_cases(argnames="base_dict, plot_method", cases=THIS_MODULE)
-def test_simple_plot(base_dict, plot_method, mock_plt):
+def test_simple_plot(base_dict, plot_method, mock_figure):
     fig = plot_method(**base_dict)
-    assert fig == mock_plt.figure.return_value, "Figure is different than expected"
-    mock_plt.title.assert_called_once_with(TITLE_NAME, figure=fig)
-    mock_plt.xlabel.assert_not_called()
-    mock_plt.ylabel.assert_not_called()
-    mock_plt.grid.assert_not_called()
+    assert fig == mock_figure, "Figure is different than expected"
+    ax = mock_figure.add_subplot.return_value
+    ax.set_title.assert_called_once_with(TITLE_NAME)
+    ax.set_xlabel.assert_not_called()
+    ax.set_ylabel.assert_not_called()
+    ax.grid.assert_called_with(False)
 
 
 @parametrize_with_cases(argnames="base_dict, plot_method", cases=THIS_MODULE)
-def test_plot_with_xlabel(base_dict, plot_method, mock_plt):
+def test_plot_with_xlabel(base_dict, plot_method, mock_figure):
     xlabel = "X Label"
     fig = plot_method(**base_dict, xlabel=xlabel)
-    mock_plt.xlabel.assert_called_once_with(xlabel, figure=fig)
+    assert fig == mock_figure, "Figure is different than expected"
+    ax = mock_figure.add_subplot.return_value
+    ax.set_xlabel.assert_called_once_with(xlabel)
 
 
 @parametrize_with_cases(argnames="base_dict, plot_method", cases=THIS_MODULE)
-def test_plot_with_ylabel(base_dict, plot_method, mock_plt):
+def test_plot_with_ylabel(base_dict, plot_method, mock_figure):
     ylabel = "Y Label"
     fig = plot_method(**base_dict, ylabel=ylabel)
-    mock_plt.ylabel.assert_called_once_with(ylabel, figure=fig)
+    assert fig == mock_figure, "Figure is different than expected"
+    ax = mock_figure.add_subplot.return_value
+    ax.set_ylabel.assert_called_once_with(ylabel)
 
 
 @parametrize_with_cases(argnames="base_dict, plot_method", cases=THIS_MODULE)
-def test_plot_with_grid(base_dict, plot_method, mock_plt):
+def test_plot_with_grid(base_dict, plot_method, mock_figure):
     fig = plot_method(**base_dict, grid=True)
-    mock_plt.grid.assert_called_once_with(True, figure=fig)
+    assert fig == mock_figure, "Figure is different than expected"
+    ax = mock_figure.add_subplot.return_value
+    ax.grid.assert_called_once_with(True)
 
 
 @parametrize_with_cases(
     argnames="base_dict, plot_method", cases=[case_plot_data, case_plot_fitting]
 )
-def test_error_bar(base_dict, plot_method, mock_plt):
+def test_error_bar(base_dict, plot_method, mock_figure):
     fig = plot_method(**base_dict)
+    assert fig == mock_figure, "Figure is different than expected"
+    ax = mock_figure.add_subplot.return_value
+    assert ax.errorbar.call_count == 1
     assert_dict_equal(
-        mock_plt.errorbar.call_args_list[0][1],
+        ax.errorbar.call_args_list[0][1],
         dict(
             x=FIT_DATA.x,
             y=FIT_DATA.y,
@@ -79,18 +89,20 @@ def test_error_bar(base_dict, plot_method, mock_plt):
             markersize=1,
             marker="o",
             linestyle="None",
-            figure=fig,
         ),
         rel=1e-5,
     )
 
 
 @parametrize_with_cases(argnames="base_dict, plot_method", cases=[case_plot_residuals])
-def test_residuals_error_bar(base_dict, plot_method, mock_plt):
+def test_residuals_error_bar(base_dict, plot_method, mock_figure):
     fig = plot_method(**base_dict)
+    assert fig == mock_figure, "Figure is different than expected"
     y_residuals = FIT_DATA.y - FUNC(A, FIT_DATA.x)
+    ax = mock_figure.add_subplot.return_value
+    assert ax.errorbar.call_count == 1
     assert_dict_equal(
-        mock_plt.errorbar.call_args_list[0][1],
+        ax.errorbar.call_args_list[0][1],
         dict(
             x=FIT_DATA.x,
             y=y_residuals,
@@ -99,55 +111,60 @@ def test_residuals_error_bar(base_dict, plot_method, mock_plt):
             markersize=1,
             marker="o",
             linestyle="None",
-            figure=fig,
         ),
         rel=1e-5,
     )
 
 
 @parametrize_with_cases(argnames="base_dict, plot_method", cases=[case_plot_residuals])
-def test_plot_residuals_without_boundaries(base_dict, plot_method, mock_plt):
+def test_plot_residuals_without_boundaries(base_dict, plot_method, mock_figure):
     fig = plot_method(**base_dict)
-    assert mock_plt.hlines.call_count == 1
-    assert_list_equal(mock_plt.hlines.call_args_list[0][0], [0], rel=EPSILON)
+    assert fig == mock_figure, "Figure is different than expected"
+    ax = mock_figure.add_subplot.return_value
+    assert ax.hlines.call_count == 1
+    assert_list_equal(ax.hlines.call_args_list[0][0], [0], rel=EPSILON)
     assert_dict_equal(
-        mock_plt.hlines.call_args_list[0][1],
-        dict(xmin=0.1, xmax=10.9, linestyles="dashed", figure=fig),
+        ax.hlines.call_args_list[0][1],
+        dict(xmin=0.1, xmax=10.9, linestyles="dashed"),
         rel=EPSILON,
     )
 
 
 @parametrize_with_cases(argnames="base_dict, plot_method", cases=[case_plot_residuals])
-def test_plot_residuals_with_xmin(base_dict, plot_method, mock_plt):
+def test_plot_residuals_with_xmin(base_dict, plot_method, mock_figure):
     fig = plot_method(**base_dict, xmin=-10)
-    assert mock_plt.hlines.call_count == 1
-    assert_list_equal(mock_plt.hlines.call_args_list[0][0], [0], rel=EPSILON)
+    assert fig == mock_figure, "Figure is different than expected"
+    ax = mock_figure.add_subplot.return_value
+    assert ax.hlines.call_count == 1
+    assert_list_equal(ax.hlines.call_args_list[0][0], [0], rel=EPSILON)
     assert_dict_equal(
-        mock_plt.hlines.call_args_list[0][1],
-        dict(xmin=-10, xmax=10.9, linestyles="dashed", figure=fig),
+        ax.hlines.call_args_list[0][1],
+        dict(xmin=-10, xmax=10.9, linestyles="dashed"),
         rel=EPSILON,
     )
 
 
 @parametrize_with_cases(argnames="base_dict, plot_method", cases=[case_plot_residuals])
-def test_plot_residuals_with_xmax(base_dict, plot_method, mock_plt):
+def test_plot_residuals_with_xmax(base_dict, plot_method, mock_figure):
     fig = plot_method(**base_dict, xmax=20)
-    assert mock_plt.hlines.call_count == 1
-    assert_list_equal(mock_plt.hlines.call_args_list[0][0], [0], rel=EPSILON)
+    assert fig == mock_figure, "Figure is different than expected"
+    ax = mock_figure.add_subplot.return_value
+    assert ax.hlines.call_count == 1
+    assert_list_equal(ax.hlines.call_args_list[0][0], [0], rel=EPSILON)
     assert_dict_equal(
-        mock_plt.hlines.call_args_list[0][1],
-        dict(xmin=0.1, xmax=20, linestyles="dashed", figure=fig),
+        ax.hlines.call_args_list[0][1],
+        dict(xmin=0.1, xmax=20, linestyles="dashed"),
         rel=EPSILON,
     )
 
 
-def test_show_or_export_without_output(mock_plt):
+def test_show_or_export_without_output(mock_figure, mock_plt_show):
     fig = Mock()
     show_or_export(fig, None)
-    mock_plt.show.assert_called_once_with()
+    mock_plt_show.assert_called_once_with()
 
 
-def test_show_or_export_with_output(mock_plt):
+def test_show_or_export_with_output(mock_figure):
     output = "/path/to/output"
     fig = Mock()
     show_or_export(fig, output)

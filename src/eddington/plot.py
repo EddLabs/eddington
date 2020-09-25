@@ -43,15 +43,12 @@ def plot_residuals(  # pylint: disable=invalid-name,too-many-arguments
     :type xmax: float
     :returns: ``matplotlib.pyplot.Figure``
     """
-    fig = plot_data(
-        data=data.residuals(func, a),
-        title_name=title_name,
-        xlabel=xlabel,
-        ylabel=ylabel,
-        grid=grid,
+    ax, fig = get_figure(title_name=title_name, xlabel=xlabel, ylabel=ylabel, grid=grid)
+    errorbar(
+        ax=ax, x=data.x, y=data.residuals(func, a).y, xerr=data.xerr, yerr=data.yerr
     )
     xmin, xmax = get_plot_borders(x=data.x, xmin=xmin, xmax=xmax)
-    horizontal_line(fig=fig, xmin=xmin, xmax=xmax)
+    horizontal_line(ax=ax, xmin=xmin, xmax=xmax)
     return fig
 
 
@@ -96,18 +93,17 @@ def plot_fitting(  # pylint: disable=C0103,R0913,R0914
     :type xmax: float
     :returns: ``matplotlib.pyplot.Figure``
     """
-    fig = plot_data(
-        data=data, title_name=title_name, xlabel=xlabel, ylabel=ylabel, grid=grid
-    )
+    ax, fig = get_figure(title_name=title_name, xlabel=xlabel, ylabel=ylabel, grid=grid)
+    errorbar(ax=ax, x=data.x, y=data.y, xerr=data.xerr, yerr=data.yerr)
     xmin, xmax = get_plot_borders(x=data.x, xmin=xmin, xmax=xmax)
     if step is None:
         step = (xmax - xmin) / 1000.0
     x = np.arange(xmin, xmax, step=step)  # pylint: disable=invalid-name
     a_dict = __get_a_dict(a)
     for label, a_value in a_dict.items():
-        plot(fig=fig, x=x, y=func(a_value, x), label=label)
+        plot(ax=ax, x=x, y=func(a_value, x), label=label)
     if __get_legend(legend, a_dict):
-        plt.legend()
+        ax.legend()
     return fig
 
 
@@ -133,8 +129,10 @@ def plot_data(
     :type grid: bool
     :returns: ``matplotlib.pyplot.Figure``
     """
-    fig = get_figure(title_name=title_name, xlabel=xlabel, ylabel=ylabel, grid=grid)
-    errorbar(fig=fig, x=data.x, y=data.y, xerr=data.xerr, yerr=data.yerr)
+    ax, fig = get_figure(  # pylint: disable=invalid-name
+        title_name=title_name, xlabel=xlabel, ylabel=ylabel, grid=grid
+    )
+    errorbar(ax=ax, x=data.x, y=data.y, xerr=data.xerr, yerr=data.yerr)
     return fig
 
 
@@ -154,75 +152,103 @@ def get_figure(
     :return: Figure instance
     """
     fig = plt.figure()
-    title(fig=fig, title_name=title_name)
-    label_axes(fig=fig, xlabel=xlabel, ylabel=ylabel)
-    add_grid(fig=fig, is_grid=grid)
-    return fig
+    ax = fig.add_subplot()  # pylint: disable=invalid-name
+    title(ax=ax, title_name=title_name)
+    label_axes(ax=ax, xlabel=xlabel, ylabel=ylabel)
+    add_grid(ax=ax, is_grid=grid)
+    return ax, fig
 
 
-def title(fig, title_name):
+def title(ax: plt.Axes, title_name: Optional[str]):  # pylint: disable=invalid-name
     """
     Add/remove title to figure.
 
+    :param ax: Figure axes.
+    :type ax: matplotlib.pyplot.Axes
     :param title_name: Optional. If None, don't add title. otherwise, add given title
-    :param fig: Plot figure.
+    :type title_name: str
     """
     if title_name is not None:
-        plt.title(title_name, figure=fig)
+        ax.set_title(title_name)
 
 
-def label_axes(fig, xlabel, ylabel):
+def label_axes(  # pylint: disable=invalid-name
+    ax: plt.Axes, xlabel: Optional[str], ylabel: Optional[str]
+):
     """
     Add/remove labels to figure.
 
-    :param fig: Plot figure.
+    :param ax: Figure axes.
+    :type ax: matplotlib.pyplot.Axes
     :param xlabel: Optional. If None, don't add label. otherwise, add given label
+    :type xlabel: str
     :param ylabel: Optional. If None, don't add label. otherwise, add given label
+    :type ylabel: str
     """
     if xlabel is not None:
-        plt.xlabel(xlabel, figure=fig)
+        ax.set_xlabel(xlabel)
     if ylabel is not None:
-        plt.ylabel(ylabel, figure=fig)
+        ax.set_ylabel(ylabel)
 
 
-def add_grid(fig, is_grid):
+def add_grid(ax: plt.Axes, is_grid: bool):  # pylint: disable=invalid-name
     """
     Add/remove grid to figure.
 
-    :param fig: Plot figure
-    :param is_grid: Boolean. add or remote grid to plot
+    :param ax: Figure axes.
+    :type ax: matplotlib.pyplot.Axes
+    :param is_grid: Add or remote grid to plot
+    :type is_grid: bool
     """
-    if is_grid:
-        plt.grid(True, figure=fig)
+    ax.grid(is_grid)
 
 
-def plot(x, y, fig, label=None):  # pylint: disable=C0103
+def plot(
+    ax: plt.Axes,
+    x: Union[np.ndarray, List[float]],
+    y: Union[np.ndarray, List[float]],
+    label: Optional[str] = None,
+):  # pylint: disable=C0103
     """
     Plot y as a function of x.
 
+    :param ax: Figure axes.
+    :type ax: matplotlib.pyplot.Axes
     :param x: X values
+    :type x: list of floats or ``numpy.ndarray``
     :param y: Y values
-    :param fig: Plot figure
+    :type y: list of floats or ``numpy.ndarray``
     :param label: Optional. Label for the plot that would be added to the legend
+    :type label: str
     """
-    plt.plot(x, y, figure=fig, label=label)
+    ax.plot(x, y, label=label)
 
 
 def horizontal_line(  # pylint: disable=C0103
-    fig: plt.Figure, xmin: float, xmax: float, y=0
+    ax: plt.Axes, xmin: float, xmax: float, y: float = 0
 ):
     """
     Add horizontal line to figure.
 
+    :param ax: Figure axes.
+    :type ax: matplotlib.pyplot.Axes
     :param xmin: Minimum x value of line
+    :type xmin: float
     :param xmax: Maximum x value of line
+    :type xmax: float
     :param y: The y value of the line
-    :param fig: Plot figure
+    :type y: float
     """
-    plt.hlines(y, xmin=xmin, xmax=xmax, linestyles="dashed", figure=fig)
+    ax.hlines(y, xmin=xmin, xmax=xmax, linestyles="dashed")
 
 
-def errorbar(fig, x, y, xerr, yerr):  # pylint: disable=C0103
+def errorbar(
+    ax: plt.Axes,
+    x: Union[np.ndarray, List[float]],
+    y: Union[np.ndarray, List[float]],
+    xerr: Union[np.ndarray, List[float]],
+    yerr: Union[np.ndarray, List[float]],
+):  # pylint: disable=C0103
     """
     Plot error bar to figure.
 
@@ -232,15 +258,8 @@ def errorbar(fig, x, y, xerr, yerr):  # pylint: disable=C0103
     :param yerr: Errors of y
     :param fig: Plot figure
     """
-    plt.errorbar(
-        x=x,
-        y=y,
-        xerr=xerr,
-        yerr=yerr,
-        markersize=1,
-        marker="o",
-        linestyle="None",
-        figure=fig,
+    ax.errorbar(
+        x=x, y=y, xerr=xerr, yerr=yerr, markersize=1, marker="o", linestyle="None"
     )
 
 

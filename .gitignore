@@ -51,6 +51,7 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 *junit.xml
+.statue/
 
 # Translations
 *.mo
