@@ -10,14 +10,21 @@ from eddington import fitting_function
 
 
 def assert_calls(mock_object: Mock, calls: List[Tuple[List[Any], Dict[str, Any]]], rel):
-    assert mock_object.call_count == len(calls), "Lists should have the same length"
+    expected_number_of_calls = len(calls)
+    assert mock_object.call_count == expected_number_of_calls, (
+        f"Lists should have the same length. Expected {expected_number_of_calls}, "
+        f"but got {mock_object.call_count}"
+    )
     for i, (args, kwargs) in enumerate(calls):
         assert_list_equal(mock_object.call_args_list[i][0], args, rel)
         assert_dict_equal(mock_object.call_args_list[i][1], kwargs, rel)
 
 
 def assert_list_equal(list1: List[Any], list2: List[Any], rel):
-    assert len(list1) == len(list2), "Lists should have the same length"
+    length1, length2 = len(list1), len(list2)
+    assert (
+        length1 == length2
+    ), f"Lists should have the same length. {length1} != {length2}"
     for item1, item2 in zip(list1, list2):
         assert_equal_item(item1, item2, rel)
 

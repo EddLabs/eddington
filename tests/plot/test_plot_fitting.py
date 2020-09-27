@@ -142,7 +142,7 @@ def test_legend_was_called(kwargs, plot_calls, figure):
 def test_legend_was_not_called(kwargs, plot_calls, figure):
     plot_fitting(data=FIT_DATA, func=FUNC, a=A1, title_name=TITLE_NAME, legend=False)
     ax = figure.add_subplot.return_value
-    ax.legend.assert_not_called()
+    ax.legend.assert_called_once_with(False)
 
 
 def test_plot_unknown_a_type(mock_figure):

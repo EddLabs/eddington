@@ -29,7 +29,20 @@ from eddington.fitting_functions_list import (
 )
 from eddington.fitting_functions_registry import FittingFunctionsRegistry
 from eddington.fitting_result import FittingResult
-from eddington.plot import plot_data, plot_fitting, plot_residuals, show_or_export
+from eddington.plot import (
+    add_grid,
+    add_legend,
+    add_plot,
+    errorbar,
+    get_figure,
+    horizontal_line,
+    label_axes,
+    plot_data,
+    plot_fitting,
+    plot_residuals,
+    show_or_export,
+    title,
+)
 
 __version__ = "0.0.17"
 
@@ -72,4 +85,12 @@ __all__ = [
     "plot_fitting",
     "plot_residuals",
     "show_or_export",
+    "get_figure",
+    "errorbar",
+    "add_legend",
+    "add_grid",
+    "add_plot",
+    "horizontal_line",
+    "label_axes",
+    "title",
 ]

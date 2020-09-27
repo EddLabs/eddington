@@ -44,9 +44,7 @@ def plot_residuals(  # pylint: disable=invalid-name,too-many-arguments
     :returns: ``matplotlib.pyplot.Figure``
     """
     ax, fig = get_figure(title_name=title_name, xlabel=xlabel, ylabel=ylabel, grid=grid)
-    errorbar(
-        ax=ax, x=data.x, y=data.residuals(func, a).y, xerr=data.xerr, yerr=data.yerr
-    )
+    errorbar(ax=ax, data=data.residuals(func, a))
     xmin, xmax = get_plot_borders(x=data.x, xmin=xmin, xmax=xmax)
     horizontal_line(ax=ax, xmin=xmin, xmax=xmax)
     return fig
@@ -83,7 +81,8 @@ def plot_fitting(  # pylint: disable=C0103,R0913,R0914
     :type ylabel: str
     :param grid: Add grid lines or not
     :type grid: bool
-    :param legend: Add legend or not
+    :param legend: Optional. Add legend or not. If None, add legend when more than
+     one parameters values has been presented.
     :type legend: bool
     :param step: Optional. Steps between samples for the fitting graph
     :type step: float
@@ -94,24 +93,25 @@ def plot_fitting(  # pylint: disable=C0103,R0913,R0914
     :returns: ``matplotlib.pyplot.Figure``
     """
     ax, fig = get_figure(title_name=title_name, xlabel=xlabel, ylabel=ylabel, grid=grid)
-    errorbar(ax=ax, x=data.x, y=data.y, xerr=data.xerr, yerr=data.yerr)
+    errorbar(ax=ax, data=data)
     xmin, xmax = get_plot_borders(x=data.x, xmin=xmin, xmax=xmax)
     if step is None:
         step = (xmax - xmin) / 1000.0
     x = np.arange(xmin, xmax, step=step)  # pylint: disable=invalid-name
     a_dict = __get_a_dict(a)
     for label, a_value in a_dict.items():
-        plot(ax=ax, x=x, y=func(a_value, x), label=label)
-    if __get_legend(legend, a_dict):
-        ax.legend()
+        add_plot(ax=ax, x=x, y=func(a_value, x), label=label)
+    add_legend(ax, __should_add_legend(legend, a_dict))
     return fig
 
 
-def plot_data(
+def plot_data(  # pylint: disable=too-many-arguments
     data: FittingData,
     title_name,
     xlabel: Optional[str] = None,
     ylabel: Optional[str] = None,
+    xmin: Optional[float] = None,
+    xmax: Optional[float] = None,
     grid: bool = False,
 ):
     """
@@ -125,6 +125,10 @@ def plot_data(
     :type xlabel: str
     :param ylabel: Optional. Label of the x axis
     :type ylabel: str
+    :param xmin: Optional. Minimum value for x. if None, calculated from given data
+    :type xmin: float
+    :param xmax: Optional. Maximum value for x. if None, calculated from given data
+    :type xmax: float
     :param grid: Add grid lines or not
     :type grid: bool
     :returns: ``matplotlib.pyplot.Figure``
@@ -132,7 +136,9 @@ def plot_data(
     ax, fig = get_figure(  # pylint: disable=invalid-name
         title_name=title_name, xlabel=xlabel, ylabel=ylabel, grid=grid
     )
-    errorbar(ax=ax, x=data.x, y=data.y, xerr=data.xerr, yerr=data.yerr)
+    errorbar(ax=ax, data=data)
+    xmin, xmax = get_plot_borders(x=data.x, xmin=xmin, xmax=xmax)
+    limit_axes(ax=ax, xmin=xmin, xmax=xmax)
     return fig
 
 
@@ -191,6 +197,25 @@ def label_axes(  # pylint: disable=invalid-name
         ax.set_ylabel(ylabel)
 
 
+def limit_axes(  # pylint: disable=invalid-name
+    ax: plt.Axes, xmin: Optional[float] = None, xmax: Optional[float] = None
+):
+    """
+    Set limits on axes.
+
+    :param ax: Figure axes.
+    :type ax: matplotlib.pyplot.Axes
+    :param xmin: Optional. Minimum value for x. if None, calculated from given data
+    :type xmin: float
+    :param xmax: Optional. Maximum value for x. if None, calculated from given data
+    :type xmax: float
+    """
+    if xmin is not None:
+        ax.set_xlim(left=xmin)
+    if xmax is not None:
+        ax.set_xlim(right=xmax)
+
+
 def add_grid(ax: plt.Axes, is_grid: bool):  # pylint: disable=invalid-name
     """
     Add/remove grid to figure.
@@ -203,7 +228,19 @@ def add_grid(ax: plt.Axes, is_grid: bool):  # pylint: disable=invalid-name
     ax.grid(is_grid)
 
 
-def plot(
+def add_legend(ax: plt.Axes, is_legend: bool):  # pylint: disable=invalid-name
+    """
+    Add/remove legend to figure.
+
+    :param ax: Figure axes.
+    :type ax: matplotlib.pyplot.Axes
+    :param is_legend: Add or remote legend to plot
+    :type is_legend: bool
+    """
+    ax.legend(is_legend)
+
+
+def add_plot(
     ax: plt.Axes,
     x: Union[np.ndarray, List[float]],
     y: Union[np.ndarray, List[float]],
@@ -242,24 +279,23 @@ def horizontal_line(  # pylint: disable=C0103
     ax.hlines(y, xmin=xmin, xmax=xmax, linestyles="dashed")
 
 
-def errorbar(
-    ax: plt.Axes,
-    x: Union[np.ndarray, List[float]],
-    y: Union[np.ndarray, List[float]],
-    xerr: Union[np.ndarray, List[float]],
-    yerr: Union[np.ndarray, List[float]],
-):  # pylint: disable=C0103
+def errorbar(ax: plt.Axes, data: FittingData):  # pylint: disable=C0103
     """
     Plot error bar to figure.
 
-    :param x: X values
-    :param y: Y values
-    :param xerr: Errors of x
-    :param yerr: Errors of y
-    :param fig: Plot figure
+    :param ax: Figure axes.
+    :type ax: matplotlib.pyplot.Axes
+    :param data: Data to visualize
+    :type data: eddington.fitting_data.FittingData
     """
     ax.errorbar(
-        x=x, y=y, xerr=xerr, yerr=yerr, markersize=1, marker="o", linestyle="None"
+        x=data.x,
+        y=data.y,
+        xerr=data.xerr,
+        yerr=data.yerr,
+        markersize=1,
+        marker="o",
+        linestyle="None",
     )
 
 
@@ -318,9 +354,9 @@ def __build_repr_string(a):  # pylint: disable=invalid-name
     return f"[{', '.join(arguments_values)}]"
 
 
-def __get_legend(legend, a):  # pylint: disable=invalid-name
+def __should_add_legend(legend, a_dict):  # pylint: disable=invalid-name
     if legend is not None:
         return legend
-    if len(a) >= 2:
+    if len(a_dict) >= 2:
         return True
     return False
