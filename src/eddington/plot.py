@@ -81,8 +81,8 @@ def plot_fitting(  # pylint: disable=C0103,R0913,R0914
     :type ylabel: str
     :param grid: Add grid lines or not
     :type grid: bool
-    :param legend: Optional.Add legend or not. If None, add legend when more than one parameters
-     values has been presented.
+    :param legend: Optional. Add legend or not. If None, add legend when more than
+     one parameters values has been presented.
     :type legend: bool
     :param step: Optional. Steps between samples for the fitting graph
     :type step: float
