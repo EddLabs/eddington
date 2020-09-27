@@ -100,7 +100,7 @@ def plot_fitting(  # pylint: disable=C0103,R0913,R0914
     x = np.arange(xmin, xmax, step=step)  # pylint: disable=invalid-name
     a_dict = __get_a_dict(a)
     for label, a_value in a_dict.items():
-        plot(ax=ax, x=x, y=func(a_value, x), label=label)
+        add_plot(ax=ax, x=x, y=func(a_value, x), label=label)
     add_legend(ax, __should_add_legend(legend, a_dict))
     return fig
 
@@ -240,7 +240,7 @@ def add_legend(ax: plt.Axes, is_legend: bool):  # pylint: disable=invalid-name
     ax.legend(is_legend)
 
 
-def plot(
+def add_plot(
     ax: plt.Axes,
     x: Union[np.ndarray, List[float]],
     y: Union[np.ndarray, List[float]],
