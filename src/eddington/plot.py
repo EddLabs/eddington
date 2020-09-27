@@ -44,9 +44,7 @@ def plot_residuals(  # pylint: disable=invalid-name,too-many-arguments
     :returns: ``matplotlib.pyplot.Figure``
     """
     ax, fig = get_figure(title_name=title_name, xlabel=xlabel, ylabel=ylabel, grid=grid)
-    errorbar(
-        ax=ax, x=data.x, y=data.residuals(func, a).y, xerr=data.xerr, yerr=data.yerr
-    )
+    errorbar(ax=ax, data=data.residuals(func, a))
     xmin, xmax = get_plot_borders(x=data.x, xmin=xmin, xmax=xmax)
     horizontal_line(ax=ax, xmin=xmin, xmax=xmax)
     return fig
@@ -95,7 +93,7 @@ def plot_fitting(  # pylint: disable=C0103,R0913,R0914
     :returns: ``matplotlib.pyplot.Figure``
     """
     ax, fig = get_figure(title_name=title_name, xlabel=xlabel, ylabel=ylabel, grid=grid)
-    errorbar(ax=ax, x=data.x, y=data.y, xerr=data.xerr, yerr=data.yerr)
+    errorbar(ax=ax, data=data)
     xmin, xmax = get_plot_borders(x=data.x, xmin=xmin, xmax=xmax)
     if step is None:
         step = (xmax - xmin) / 1000.0
@@ -132,7 +130,7 @@ def plot_data(
     ax, fig = get_figure(  # pylint: disable=invalid-name
         title_name=title_name, xlabel=xlabel, ylabel=ylabel, grid=grid
     )
-    errorbar(ax=ax, x=data.x, y=data.y, xerr=data.xerr, yerr=data.yerr)
+    errorbar(ax=ax, data=data)
     return fig
 
 
@@ -254,24 +252,23 @@ def horizontal_line(  # pylint: disable=C0103
     ax.hlines(y, xmin=xmin, xmax=xmax, linestyles="dashed")
 
 
-def errorbar(
-    ax: plt.Axes,
-    x: Union[np.ndarray, List[float]],
-    y: Union[np.ndarray, List[float]],
-    xerr: Union[np.ndarray, List[float]],
-    yerr: Union[np.ndarray, List[float]],
-):  # pylint: disable=C0103
+def errorbar(ax: plt.Axes, data: FittingData):  # pylint: disable=C0103
     """
     Plot error bar to figure.
 
-    :param x: X values
-    :param y: Y values
-    :param xerr: Errors of x
-    :param yerr: Errors of y
-    :param fig: Plot figure
+    :param ax: Figure axes.
+    :type ax: matplotlib.pyplot.Axes
+    :param data: Data to visualize
+    :type data: eddington.fitting_data.FittingData
     """
     ax.errorbar(
-        x=x, y=y, xerr=xerr, yerr=yerr, markersize=1, marker="o", linestyle="None"
+        x=data.x,
+        y=data.y,
+        xerr=data.xerr,
+        yerr=data.yerr,
+        markersize=1,
+        marker="o",
+        linestyle="None",
     )
 
 
