@@ -12,9 +12,9 @@ if not on_rtd:
     install_requires.extend(
         [
             "scipy >= 1.5.2",
-            "numpy >= 1.19.1",
+            "numpy >= 1.19.2",
             "openpyxl >= 3.0.5",
-            "matplotlib >= 3.3.1",
+            "matplotlib >= 3.3.2",
         ]
     )
 setup(version=version, install_requires=install_requires)
