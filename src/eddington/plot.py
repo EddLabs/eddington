@@ -83,7 +83,8 @@ def plot_fitting(  # pylint: disable=C0103,R0913,R0914
     :type ylabel: str
     :param grid: Add grid lines or not
     :type grid: bool
-    :param legend: Add legend or not
+    :param legend: Optional.Add legend or not. If None, add legend when more than one parameters
+     values has been presented.
     :type legend: bool
     :param step: Optional. Steps between samples for the fitting graph
     :type step: float
@@ -102,8 +103,7 @@ def plot_fitting(  # pylint: disable=C0103,R0913,R0914
     a_dict = __get_a_dict(a)
     for label, a_value in a_dict.items():
         plot(ax=ax, x=x, y=func(a_value, x), label=label)
-    if __get_legend(legend, a_dict):
-        ax.legend()
+    add_legend(ax, __should_add_legend(legend, a_dict))
     return fig
 
 
@@ -201,6 +201,18 @@ def add_grid(ax: plt.Axes, is_grid: bool):  # pylint: disable=invalid-name
     :type is_grid: bool
     """
     ax.grid(is_grid)
+
+
+def add_legend(ax: plt.Axes, is_legend: bool):  # pylint: disable=invalid-name
+    """
+    Add/remove legend to figure.
+
+    :param ax: Figure axes.
+    :type ax: matplotlib.pyplot.Axes
+    :param is_legend: Add or remote legend to plot
+    :type is_legend: bool
+    """
+    ax.legend(is_legend)
 
 
 def plot(
@@ -318,9 +330,9 @@ def __build_repr_string(a):  # pylint: disable=invalid-name
     return f"[{', '.join(arguments_values)}]"
 
 
-def __get_legend(legend, a):  # pylint: disable=invalid-name
+def __should_add_legend(legend, a_dict):  # pylint: disable=invalid-name
     if legend is not None:
         return legend
-    if len(a) >= 2:
+    if len(a_dict) >= 2:
         return True
     return False
