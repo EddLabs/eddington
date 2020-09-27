@@ -105,11 +105,13 @@ def plot_fitting(  # pylint: disable=C0103,R0913,R0914
     return fig
 
 
-def plot_data(
+def plot_data(  # pylint: disable=too-many-arguments
     data: FittingData,
     title_name,
     xlabel: Optional[str] = None,
     ylabel: Optional[str] = None,
+    xmin: Optional[float] = None,
+    xmax: Optional[float] = None,
     grid: bool = False,
 ):
     """
@@ -123,6 +125,10 @@ def plot_data(
     :type xlabel: str
     :param ylabel: Optional. Label of the x axis
     :type ylabel: str
+    :param xmin: Optional. Minimum value for x. if None, calculated from given data
+    :type xmin: float
+    :param xmax: Optional. Maximum value for x. if None, calculated from given data
+    :type xmax: float
     :param grid: Add grid lines or not
     :type grid: bool
     :returns: ``matplotlib.pyplot.Figure``
@@ -131,6 +137,8 @@ def plot_data(
         title_name=title_name, xlabel=xlabel, ylabel=ylabel, grid=grid
     )
     errorbar(ax=ax, data=data)
+    xmin, xmax = get_plot_borders(x=data.x, xmin=xmin, xmax=xmax)
+    limit_axes(ax=ax, xmin=xmin, xmax=xmax)
     return fig
 
 
@@ -187,6 +195,25 @@ def label_axes(  # pylint: disable=invalid-name
         ax.set_xlabel(xlabel)
     if ylabel is not None:
         ax.set_ylabel(ylabel)
+
+
+def limit_axes(  # pylint: disable=invalid-name
+    ax: plt.Axes, xmin: Optional[float] = None, xmax: Optional[float] = None
+):
+    """
+    Set limits on axes.
+
+    :param ax: Figure axes.
+    :type ax: matplotlib.pyplot.Axes
+    :param xmin: Optional. Minimum value for x. if None, calculated from given data
+    :type xmin: float
+    :param xmax: Optional. Maximum value for x. if None, calculated from given data
+    :type xmax: float
+    """
+    if xmin is not None:
+        ax.set_xlim(left=xmin)
+    if xmax is not None:
+        ax.set_xlim(right=xmax)
 
 
 def add_grid(ax: plt.Axes, is_grid: bool):  # pylint: disable=invalid-name
