@@ -11,8 +11,8 @@ from eddington.consts import DEFAULT_PRECISION
 from eddington.print_util import to_precise_string
 
 
-@dataclass(repr=False)  # pylint: disable=too-many-instance-attributes
-class FittingResult:
+@dataclass(repr=False)
+class FittingResult:  # pylint: disable=too-many-instance-attributes
     """
     Dataclass that contains the relevant parameters returned by a fitting algorithm.
 
@@ -31,9 +31,7 @@ class FittingResult:
     a0: Union[List[float], np.ndarray]  # pylint: disable=invalid-name
     a: Union[List[float], np.ndarray]  # pylint: disable=invalid-name
     aerr: Union[List[float], np.ndarray]
-    arerr: Union[List[float], np.ndarray] = field(
-        init=False,
-    )
+    arerr: Union[List[float], np.ndarray] = field(init=False)
     acov: Union[List[List[float]], np.ndarray]
     degrees_of_freedom: int
     chi2: float
