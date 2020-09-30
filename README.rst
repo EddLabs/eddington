@@ -37,6 +37,13 @@ open-source libraries such as *numpy*, *scipy*, and *matplotlib*.
 *Eddington* can be integrated with python code as a library, can be used as a CLI and
 has an easy to use GUI.
 
+Installation
+------------
+
+In order to install eddington use::
+
+   pip install eddington
+
 Documentation
 -------------
 
