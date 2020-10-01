@@ -24,12 +24,12 @@ class ModifiedODR():
     def run(self):
         data  = self.data
         model = self.model
-        if model.jacd is None:
+        if model.fjacd is None:
             # use a simple 2-point finnite difference scheme
             # TODO: add support for controllable FD stepsize, as in ODR
             xderr = lambda params, x:(model.fcn(params, x + 1e-8) - model.fcn(params, x - 1e-8))/(2e-8)
         else:
-            xderr = model.jacd
+            xderr = model.fjacd
         
         #fit. FOR NOW, NUMERICALLY DERIVATES CHI2 (REQUIRES f_xa FOR ANALYTICAL)
         res = least_squares(chi2, self.beta0, '3-point', method='trf',
