@@ -3,7 +3,7 @@ from typing import Any, Dict, Optional
 
 import numpy as np
 from scipy.odr import Model, RealData
-from true_stats import ModifiedODR
+from eddington.true_stats import ModifiedODR
 
 from eddington.fitting_data import FittingData
 from eddington.fitting_function_class import FittingFunction
