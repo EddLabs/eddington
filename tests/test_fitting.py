@@ -46,12 +46,12 @@ def dummy_func_with_both_derivatives(a, x):
 
 
 @pytest.fixture
-def odr_mock(mocker):
-    odr = mocker.patch("eddington.fitting.ODR")
+def modified_odr_mock(mocker):
+    odr = mocker.patch("eddington.fitting.ModifiedODR")
     real_data = mocker.patch("eddington.fitting.RealData")
     model = mocker.patch("eddington.fitting.Model")
     odr.return_value.run.return_value = Namespace(
-        beta=a, sum_square=chi2, sd_beta=aerr, cov_beta=acov
+        beta=a, chi2=chi2, sd_beta=aerr, cov_beta=acov
     )
     return dict(odr=odr, real_data=real_data, model=model)
 
@@ -91,7 +91,7 @@ def odr_mock(mocker):
         dict(func=dummy_func, a0=None),
     ]
 )
-def function_cases(odr_mock, request):
+def function_cases(modified_odr_mock, request):
     func, kwargs, model_extra_kwargs, fit_a0 = (
         request.param["func"],
         request.param.get("kwargs", {}),
@@ -106,7 +106,7 @@ def function_cases(odr_mock, request):
         result=result,
         model_extra_kwargs=model_extra_kwargs,
         a0=fit_a0,
-        mocks=odr_mock,
+        mocks=modified_odr_mock,
     )
 
 
