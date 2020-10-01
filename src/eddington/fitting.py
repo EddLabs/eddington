@@ -20,8 +20,8 @@ def fit(  # pylint: disable=invalid-name
     """
     Implementation of the fitting algorithm.
 
-    This functions wraps *scipy*'s
-    `ODR <https://docs.scipy.org/doc/scipy/reference/odr.html>`_ algorithm.
+    This functions uses *scipy*'s
+    `optimize.least_squares <https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.least_squares.html>`_ algorithm with a custom chi squared cost function.
 
     :param data: Fitting data to optimize
     :type data: :class:`FittingData`
