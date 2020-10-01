@@ -9,7 +9,7 @@ def chi2(params, *args):
     # function, x, y, x_variance, y_variance, func_derivative_by_x
     func, x, y, xvar, yvar, derr = args
 
-    return (y - func(params, x))/np.sqrt(xvar*derr(params, x) + yvar)
+    return (y - func(params, x))/np.sqrt(xvar*np.square(derr(params, x)) + yvar)
 
 
 
