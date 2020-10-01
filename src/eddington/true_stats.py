@@ -3,8 +3,6 @@ from scipy.optimize import least_squares
 from scipy.linalg import inv
 
 
-
-
 def chi2(params, *args):
     # function, x, y, x_variance, y_variance, func_derivative_by_x
     func, x, y, xvar, yvar, derr = args
@@ -12,13 +10,20 @@ def chi2(params, *args):
     return (y - func(params, x))/np.sqrt(xvar*np.square(derr(params, x)) + yvar)
 
 
+class ModifiedOutput():
+    # a small output class to have all the needed attributes
+    def __init__(self, params, cost, cov_mat):
+        self.beta = params
+        self.chi2 = cost
+        self.sd_beta = np.sqrt(np.diag(cov_mat)) #std(x) = sqrt(cov(x, x))
+        self.cov_beta = cov_mat
 
 
 class ModifiedODR():
     def __init__(self, data, model, beta0=None):
         self.data = data
         self.model = model
-        if beta0 is None: do_something
+        if beta0 is None: raise IOError("Initial guess is None!")
         self.beta0 = beta0
 
     def run(self):
@@ -42,9 +47,5 @@ class ModifiedODR():
         cov_mat = inv(res.jac.T@res.jac)
 
         # make "output" object
-        output = object()
-        output.beta = res.x
-        output.chi2 = res.cost
-        output.sd_beta = np.sqrt(np.diag(cov_mat)) #std(x) = sqrt(cov(x, x))
-        output.cov_beta = cov_mat
+        output = ModifiedOutput(res.x, res.cost, cov_mat)
         return output
