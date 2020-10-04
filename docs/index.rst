@@ -19,7 +19,7 @@ has an easy to use GUI.
 
    This is the Eddington python library documentation. In order to read about the
    Eddington user interface go
-   `here <https://eddington-gui.readthedocs.io/en/latest/index.html>`_.
+   `here <https://eddington-gui.readthedocs.io/en/latest>`_.
 
 Installation
 ------------
