@@ -17,11 +17,14 @@ def plot_residuals(  # pylint: disable=invalid-name,too-many-arguments
     xlabel: Optional[str] = None,
     ylabel: Optional[str] = None,
     grid: bool = False,
+    x_log_scale: bool = False,
+    y_log_scale: bool = False,
     xmin: Optional[float] = None,
     xmax: Optional[float] = None,
 ):
     """
     Plot residuals plot.
+
 
     :param func: Fitting function.
     :type func: :class:`FittingFunction`
@@ -43,7 +46,8 @@ def plot_residuals(  # pylint: disable=invalid-name,too-many-arguments
     :type xmax: float
     :returns: ``matplotlib.pyplot.Figure``
     """
-    ax, fig = get_figure(title_name=title_name, xlabel=xlabel, ylabel=ylabel, grid=grid)
+    ax, fig = get_figure(title_name=title_name, xlabel=xlabel, ylabel=ylabel, grid=grid,
+                         x_log_scale=x_log_scale, y_log_scale=y_log_scale,)
     errorbar(ax=ax, data=data.residuals(func, a))
     xmin, xmax = get_plot_borders(x=data.x, xmin=xmin, xmax=xmax)
     horizontal_line(ax=ax, xmin=xmin, xmax=xmax)
@@ -59,6 +63,8 @@ def plot_fitting(  # pylint: disable=C0103,R0913,R0914
     ylabel: Optional[str] = None,
     grid: bool = False,
     legend: Optional[bool] = None,
+    x_log_scale: bool = False,
+    y_log_scale: bool = False,
     step: Optional[float] = None,
     xmin: Optional[float] = None,
     xmax: Optional[float] = None,
@@ -92,7 +98,8 @@ def plot_fitting(  # pylint: disable=C0103,R0913,R0914
     :type xmax: float
     :returns: ``matplotlib.pyplot.Figure``
     """
-    ax, fig = get_figure(title_name=title_name, xlabel=xlabel, ylabel=ylabel, grid=grid)
+    ax, fig = get_figure(title_name=title_name, xlabel=xlabel, ylabel=ylabel, grid=grid,
+                         x_log_scale=x_log_scale, y_log_scale=y_log_scale)
     errorbar(ax=ax, data=data)
     xmin, xmax = get_plot_borders(x=data.x, xmin=xmin, xmax=xmax)
     if step is None:
@@ -113,6 +120,8 @@ def plot_data(  # pylint: disable=too-many-arguments
     xmin: Optional[float] = None,
     xmax: Optional[float] = None,
     grid: bool = False,
+    x_log_scale: bool = False,
+    y_log_scale: bool = False,
 ):
     """
     Plot fitting data.
@@ -134,7 +143,8 @@ def plot_data(  # pylint: disable=too-many-arguments
     :returns: ``matplotlib.pyplot.Figure``
     """
     ax, fig = get_figure(  # pylint: disable=invalid-name
-        title_name=title_name, xlabel=xlabel, ylabel=ylabel, grid=grid
+        title_name=title_name, xlabel=xlabel, ylabel=ylabel, grid=grid, x_log_scale=x_log_scale,
+        y_log_scale=y_log_scale,
     )
     errorbar(ax=ax, data=data)
     xmin, xmax = get_plot_borders(x=data.x, xmin=xmin, xmax=xmax)
@@ -147,6 +157,8 @@ def get_figure(
     xlabel: Optional[str] = None,
     ylabel: Optional[str] = None,
     grid: bool = False,
+    x_log_scale: bool = False,
+    y_log_scale: bool = False,
 ):
     """
     Gets a figure from matplotlib.
@@ -162,6 +174,10 @@ def get_figure(
     title(ax=ax, title_name=title_name)
     label_axes(ax=ax, xlabel=xlabel, ylabel=ylabel)
     add_grid(ax=ax, is_grid=grid)
+    set_x_scale(ax=ax, is_x_log_scale=x_log_scale)
+    set_y_scale(ax=ax, is_y_log_scale=y_log_scale)
+
+
     return ax, fig
 
 
@@ -238,6 +254,16 @@ def add_legend(ax: plt.Axes, is_legend: bool):  # pylint: disable=invalid-name
     :type is_legend: bool
     """
     ax.legend(is_legend)
+
+
+def set_x_scale(ax: plt.Axes, is_x_log_scale: bool):
+    if is_x_log_scale:
+        ax.set_xscale("log")
+
+
+def set_y_scale(ax: plt.Axes, is_y_log_scale: bool):
+    if is_y_log_scale:
+        ax.set_yscale("log")
 
 
 def add_plot(
