@@ -237,7 +237,8 @@ def add_legend(ax: plt.Axes, is_legend: bool):  # pylint: disable=invalid-name
     :param is_legend: Add or remote legend to plot
     :type is_legend: bool
     """
-    ax.legend(is_legend)
+    if is_legend:
+        ax.legend()
 
 
 def add_plot(
