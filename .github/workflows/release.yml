@@ -20,5 +20,5 @@ jobs:
         with:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
-          draft: true
-          prerelease: contains(github.ref, "dev")
+          draft: false
+          prerelease: ${{ contains(github.ref, "dev") }}
