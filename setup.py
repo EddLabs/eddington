@@ -4,7 +4,7 @@ import os
 from setuptools import setup
 
 
-version = "0.0.19.dev0"
+version = "0.0.19"
 install_requires = [
     "click >= 7.1.2",
     "ptable >= 0.7.2",
