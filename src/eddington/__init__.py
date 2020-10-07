@@ -44,7 +44,7 @@ from eddington.plot import (
     title,
 )
 
-__version__ = "0.0.18.dev2"
+__version__ = "0.0.18.dev3"
 
 __all__ = [
     "__version__",
