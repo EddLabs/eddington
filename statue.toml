@@ -1,3 +1,7 @@
+[commands.pylint]
+# This is a bummer. Waiting for issue #748 to be resolved
+add_args = ["--disable=duplicate-code"]
+
 [sources.src]
 
 [sources.tests]

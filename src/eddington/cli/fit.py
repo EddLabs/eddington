@@ -1,31 +1,38 @@
 """Fit CLI method."""
 import re
 from pathlib import Path
-from typing import Any, Dict, Optional, Union
+from typing import Optional, Union
 
 import click
 import numpy as np
 
+from eddington.cli.common_flags import (
+    fitting_function_argument,
+    is_grid_option,
+    is_json_option,
+    is_legend_option,
+    is_x_log_scale_option,
+    is_y_log_scale_option,
+    output_dir_option,
+    polynomial_option,
+    should_plot_data_option,
+    should_plot_fitting_option,
+    should_plot_residuls_option,
+    x_label_option,
+    y_label_option,
+)
 from eddington.cli.main_cli import eddington_cli
+from eddington.cli.util import load_fitting_function, plot_all
 from eddington.fitting import fit
 from eddington.fitting_data import FittingData
-from eddington.fitting_functions_list import linear, polynomial
-from eddington.fitting_functions_registry import FittingFunctionsRegistry
-from eddington.plot import plot_data, plot_fitting, plot_residuals, show_or_export
 
-# pylint: disable=invalid-name,too-many-arguments,too-many-locals
+# pylint: disable=invalid-name,too-many-arguments,too-many-locals,duplicate-code
 
 
 @eddington_cli.command("fit")
 @click.pass_context
-@click.argument("fitting_function_name", type=str, default="")
-@click.option(
-    "-p",
-    "--polynomial",
-    "polynomial_degree",
-    type=int,
-    help="Fitting data to polynomial of nth degree.",
-)
+@fitting_function_argument
+@polynomial_option
 @click.option(
     "-d",
     "--data-file",
@@ -46,54 +53,17 @@ from eddington.plot import plot_data, plot_fitting, plot_residuals, show_or_expo
 @click.option("--xerr-column", type=str, help="Column to read x error values from.")
 @click.option("--y-column", type=str, help="Column to read y values from.")
 @click.option("--yerr-column", type=str, help="Column to read y error values from.")
-@click.option("--x-label", type=str, help="Label for the x axis.")
-@click.option("--y-label", type=str, help="Label for the y axis.")
-@click.option("--grid/--no-grid", default=False, help="Add grid lines to plots.")
-@click.option(
-    "--plot-fitting/--no-plot-fitting",
-    "should_plot_fitting",
-    default=True,
-    help="Should plot fitting.",
-)
-@click.option(
-    "--plot-residuals/--no-plot-residuals",
-    "should_plot_residuals",
-    default=True,
-    help="Should plot residuals.",
-)
-@click.option(
-    "--plot-data/--no-plot-data",
-    "should_plot_data",
-    default=False,
-    help="Should plot data.",
-)
-@click.option(
-    "--legend/--no-legend",
-    default=None,
-    help="Should add legend to fitting plot.",
-)
-@click.option(
-    "--x-log-scale/--no-x-log-scale",
-    default=False,
-    help="Change x axis scale to logarithmic.",
-)
-@click.option(
-    "--y-log-scale/--no-y-log-scale",
-    default=False,
-    help="Change y axis scale to logarithmic.",
-)
-@click.option(
-    "-o",
-    "--output-dir",
-    type=click.Path(dir_okay=True, file_okay=False),
-    help="Output directory to save plots in.",
-)
-@click.option(
-    "--json",
-    is_flag=True,
-    default=False,
-    help="Save result as json instead of text.",
-)
+@x_label_option
+@y_label_option
+@is_grid_option
+@should_plot_fitting_option
+@should_plot_residuls_option
+@should_plot_data_option
+@is_legend_option
+@is_x_log_scale_option
+@is_y_log_scale_option
+@output_dir_option
+@is_json_option
 def eddington_fit(
     ctx: click.Context,
     fitting_function_name: Optional[str],
@@ -125,59 +95,28 @@ def eddington_fit(
         y_column=y_column, yerr_column=yerr_column,
     )
     # fmt: on
-    func = __load_fitting_functions(
+    func = load_fitting_function(
         ctx=ctx, func_name=fitting_function_name, polynomial_degree=polynomial_degree
     )
     result = fit(data, func, a0=__calc_a0(a0))
-    click.echo(result.pretty_string)
-    if output_dir is not None:
-        output_dir = Path(output_dir)
-        output_dir.mkdir(parents=True, exist_ok=True)
-        if json:
-            result.save_json(output_dir / f"{func.name}_result.json")
-        else:
-            result.save_txt(output_dir / f"{func.name}_result.txt")
-    x_label = data.x_column if x_label is None else x_label
-    y_label = data.y_column if y_label is None else y_label
-    plot_kwargs: Dict[str, Any] = dict(
+    plot_all(
+        data=data,
+        func=func,
+        result=result,
+        legend=legend,
+        output_dir=output_dir,
+        is_json=json,
+        x_label=x_label,
+        y_label=y_label,
+        should_plot_data=should_plot_data,
+        should_plot_fitting=should_plot_fitting,
+        should_plot_residuals=should_plot_residuals,
         x_log_scale=x_log_scale,
         y_log_scale=y_log_scale,
         xlabel=x_label,
         ylabel=y_label,
         grid=grid,
     )
-    if should_plot_data:
-        show_or_export(
-            plot_data(
-                data=data,
-                title_name=f"{func.title_name} - Data",
-                **plot_kwargs,
-            ),
-            output_path=__optional_path(output_dir, f"{func.name}_data.png"),
-        )
-    if should_plot_fitting:
-        show_or_export(
-            plot_fitting(
-                func=func,
-                data=data,
-                a=result.a,
-                title_name=f"{func.title_name}",
-                legend=legend,
-                **plot_kwargs,
-            ),
-            output_path=__optional_path(output_dir, f"{func.name}.png"),
-        )
-    if should_plot_residuals:
-        show_or_export(
-            plot_residuals(
-                func=func,
-                data=data,
-                a=result.a,
-                title_name=f"{func.title_name} - Residuals",
-                **plot_kwargs,
-            ),
-            output_path=__optional_path(output_dir, f"{func.name}_residuals.png"),
-        )
 
 
 def __calc_a0(a0):
@@ -201,22 +140,3 @@ def __load_data_file(
         click.echo("Sheet name has not been specified!")
         ctx.exit(1)
     return FittingData.read_from_excel(filepath=data_file, sheet=sheet, **kwargs)
-
-
-def __load_fitting_functions(
-    ctx: click.Context, func_name: Optional[str], polynomial_degree: Optional[int]
-):
-    if func_name == "":
-        if polynomial_degree is not None:
-            return polynomial(polynomial_degree)
-        return linear
-    if polynomial_degree is not None:
-        click.echo("Cannot accept both polynomial and fitting function")
-        ctx.exit(1)
-    return FittingFunctionsRegistry.load(func_name)
-
-
-def __optional_path(directory: Optional[Path], file_name: str):
-    if directory is None:
-        return None
-    return directory / file_name
