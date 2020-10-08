@@ -27,6 +27,8 @@ from eddington.consts import (
     DEFAULT_XMAX,
     DEFAULT_MIN_COEFF,
     DEFAULT_MAX_COEFF,
+    DEFAULT_XSIGMA,
+    DEFAULT_YSIGMA,
 )
 from eddington.fitting_data import FittingData
 
@@ -49,6 +51,18 @@ from eddington.fitting_data import FittingData
     type=float,
     default=DEFAULT_XMAX,
     help="Maximum x value for the random data",
+)
+@click.option(
+    "--x-sigma",
+    type=float,
+    default=DEFAULT_XSIGMA,
+    help="Standard deviation of the random x values",
+)
+@click.option(
+    "--y-sigma",
+    type=float,
+    default=DEFAULT_YSIGMA,
+    help="Standard deviation of the random y values",
 )
 @click.option(
     "--min-coeff",
@@ -82,6 +96,8 @@ def eddington_fit_random(
     random_x_max: float,
     min_coeff: float,
     max_coeff: float,
+    x_sigma: float,
+    y_sigma: float,
     x_label: Optional[str],
     y_label: Optional[str],
     grid,
@@ -108,6 +124,8 @@ def eddington_fit_random(
         xmax=random_x_max,
         min_coeff=min_coeff,
         max_coeff=max_coeff,
+        xsigma=x_sigma,
+        ysigma=y_sigma,
     )
     fit_and_plot(
         data=data,
