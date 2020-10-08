@@ -136,8 +136,8 @@ def eddington_fit(
     should_plot_residuals: bool,
     should_plot_data: bool,
     legend: Optional[bool],
-    x_log_scale,
-    y_log_scale,
+    x_log_scale: bool,
+    y_log_scale: bool,
     output_dir: Union[Path, str],
     json: bool,
 ):
@@ -161,18 +161,20 @@ def eddington_fit(
             result.save_json(output_dir / f"{func.name}_result.json")
         else:
             result.save_txt(output_dir / f"{func.name}_result.txt")
-    if x_label is None:
-        x_label = data.x_column
-    if y_label is None:
-        y_label = data.y_column
-    plot_kwargs: Dict[str, Any] = dict(xlabel=x_label, ylabel=y_label, grid=grid)
+    x_label = data.x_column if x_label is None else x_label
+    y_label = data.y_column if y_label is None else y_label
+    plot_kwargs: Dict[str, Any] = dict(
+        x_log_scale=x_log_scale,
+        y_log_scale=y_log_scale,
+        xlabel=x_label,
+        ylabel=y_label,
+        grid=grid,
+    )
     if should_plot_data:
         show_or_export(
             plot_data(
                 data=data,
                 title_name=f"{func.title_name} - Data",
-                x_log_scale=x_log_scale,
-                y_log_scale=y_log_scale,
                 **plot_kwargs,
             ),
             output_path=__optional_path(output_dir, f"{func.name}_data.png"),
