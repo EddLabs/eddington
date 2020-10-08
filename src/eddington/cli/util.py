@@ -89,7 +89,7 @@ def fit_and_plot(  # pylint: disable=too-many-arguments,invalid-name
         )
 
 
-def calculate_a0(a0: Optional[str]):  # pylint: disable=invalid-name
+def extract_array_from_string(a0: Optional[str]):  # pylint: disable=invalid-name
     """Split a0 string to an array."""
     if a0 is None:
         return None

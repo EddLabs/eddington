@@ -21,7 +21,11 @@ from eddington.cli.common_flags import (
     y_label_option,
 )
 from eddington.cli.main_cli import eddington_cli
-from eddington.cli.util import calculate_a0, fit_and_plot, load_fitting_function
+from eddington.cli.util import (
+    extract_array_from_string,
+    fit_and_plot,
+    load_fitting_function,
+)
 from eddington.fitting_data import FittingData
 
 # pylint: disable=invalid-name,too-many-arguments,too-many-locals,duplicate-code
@@ -94,7 +98,7 @@ def eddington_fit(
     fit_and_plot(
         data=data,
         func=func,
-        a0=calculate_a0(a0),
+        a0=extract_array_from_string(a0),
         legend=legend,
         output_dir=output_dir,
         is_json=json,
