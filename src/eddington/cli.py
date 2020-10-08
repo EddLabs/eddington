@@ -96,8 +96,16 @@ def eddington_list(regex: Optional[str]):
     default=None,
     help="Should add legend to fitting plot.",
 )
-@click.option("--x-log-scale/--no-x-log-scale", default=False, help="Change x axis scale to logarithmic.")
-@click.option("--y-log-scale/--no-y-log-scale", default=False, help="Change y axis scale to logarithmic.")
+@click.option(
+    "--x-log-scale/--no-x-log-scale",
+    default=False,
+    help="Change x axis scale to logarithmic.",
+)
+@click.option(
+    "--y-log-scale/--no-y-log-scale",
+    default=False,
+    help="Change y axis scale to logarithmic.",
+)
 @click.option(
     "-o",
     "--output-dir",
@@ -158,10 +166,17 @@ def eddington_fit(
     if y_label is None:
         y_label = data.y_column
     plot_kwargs: Dict[str, Any] = dict(xlabel=x_label, ylabel=y_label, grid=grid)
-    log_scale_kwargs: Dict[str, Any] = dict(x_log_scale=x_log_scale, y_log_scale=y_log_scale)
+    log_scale_kwargs: Dict[str, Any] = dict(
+        x_log_scale=x_log_scale, y_log_scale=y_log_scale
+    )
     if should_plot_data:
         show_or_export(
-            plot_data(data=data, title_name=f"{func.title_name} - Data", **plot_kwargs, **log_scale_kwargs),
+            plot_data(
+                data=data,
+                title_name=f"{func.title_name} - Data",
+                **plot_kwargs,
+                **log_scale_kwargs,
+            ),
             output_path=__optional_path(output_dir, f"{func.name}_data.png"),
         )
     if should_plot_fitting:
@@ -173,7 +188,7 @@ def eddington_fit(
                 title_name=f"{func.title_name}",
                 legend=legend,
                 **plot_kwargs,
-                **log_scale_kwargs
+                **log_scale_kwargs,
             ),
             output_path=__optional_path(output_dir, f"{func.name}.png"),
         )

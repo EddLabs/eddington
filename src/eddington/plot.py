@@ -10,7 +10,6 @@ from eddington.fitting_data import FittingData
 from eddington.print_util import to_precise_string
 
 
-
 def plot_residuals(  # pylint: disable=invalid-name,too-many-arguments
     func,
     data: FittingData,
@@ -26,7 +25,6 @@ def plot_residuals(  # pylint: disable=invalid-name,too-many-arguments
 ):
     """
     Plot residuals plot.
-
 
     :param func: Fitting function.
     :type func: :class:`FittingFunction`
@@ -48,8 +46,14 @@ def plot_residuals(  # pylint: disable=invalid-name,too-many-arguments
     :type xmax: float
     :returns: ``matplotlib.pyplot.Figure``
     """
-    ax, fig = get_figure(title_name=title_name, xlabel=xlabel, ylabel=ylabel, grid=grid,
-                         x_log_scale=x_log_scale, y_log_scale=y_log_scale,)
+    ax, fig = get_figure(
+        title_name=title_name,
+        xlabel=xlabel,
+        ylabel=ylabel,
+        grid=grid,
+        x_log_scale=x_log_scale,
+        y_log_scale=y_log_scale,
+    )
     errorbar(ax=ax, data=data.residuals(func, a))
     xmin, xmax = get_plot_borders(x=data.x, xmin=xmin, xmax=xmax)
     horizontal_line(ax=ax, xmin=xmin, xmax=xmax)
@@ -100,8 +104,14 @@ def plot_fitting(  # pylint: disable=C0103,R0913,R0914
     :type xmax: float
     :returns: ``matplotlib.pyplot.Figure``
     """
-    ax, fig = get_figure(title_name=title_name, xlabel=xlabel, ylabel=ylabel, grid=grid,
-                         x_log_scale=x_log_scale, y_log_scale=y_log_scale)
+    ax, fig = get_figure(
+        title_name=title_name,
+        xlabel=xlabel,
+        ylabel=ylabel,
+        grid=grid,
+        x_log_scale=x_log_scale,
+        y_log_scale=y_log_scale,
+    )
     errorbar(ax=ax, data=data)
     xmin, xmax = get_plot_borders(x=data.x, xmin=xmin, xmax=xmax)
     if step is None:
@@ -145,7 +155,11 @@ def plot_data(  # pylint: disable=too-many-arguments
     :returns: ``matplotlib.pyplot.Figure``
     """
     ax, fig = get_figure(  # pylint: disable=invalid-name
-        title_name=title_name, xlabel=xlabel, ylabel=ylabel, grid=grid, x_log_scale=x_log_scale,
+        title_name=title_name,
+        xlabel=xlabel,
+        ylabel=ylabel,
+        grid=grid,
+        x_log_scale=x_log_scale,
         y_log_scale=y_log_scale,
     )
     errorbar(ax=ax, data=data)
@@ -178,7 +192,6 @@ def get_figure(
     add_grid(ax=ax, is_grid=grid)
     set_x_scale(ax=ax, is_x_log_scale=x_log_scale)
     set_y_scale(ax=ax, is_y_log_scale=y_log_scale)
-
 
     return ax, fig
 
@@ -259,24 +272,34 @@ def add_legend(ax: plt.Axes, is_legend: bool):  # pylint: disable=invalid-name
         ax.legend()
 
 
-def set_x_scale(ax: plt.Axes, is_x_log_scale: bool):
+def set_x_scale(ax: plt.Axes, is_x_log_scale: bool):  # pylint: disable=invalid-name
+    """
+    Change x axis scale to logarithmic.
+
+    :param ax: Figure axes
+    :type ax: matplotlib.pyplot.Axes
+    :param is_x_log_scale: Change x axis scale to logarithmic or not.
+    :type is_x_log_scale: bool
+    """
     if is_x_log_scale:
         ax.set_xscale("log")
-        formatter = FuncFormatter(lambda y, _: '{:.16g}'.format(y))
+        formatter = FuncFormatter(lambda y, _: "{:.16g}".format(y))
         ax.xaxis.set_major_formatter(formatter)
 
 
+def set_y_scale(ax: plt.Axes, is_y_log_scale: bool):  # pylint: disable=invalid-name
+    """
+    Change y axis scale to logarithmic.
 
-
-
-def set_y_scale(ax: plt.Axes, is_y_log_scale: bool):
+    :param ax: Figure axes
+    :type ax: matplotlib.pyplot.Axes
+    :param is_y_log_scale: Change x axis scale to logarithmic or not.
+    :type is_y_log_scale: bool
+    """
     if is_y_log_scale:
         ax.set_yscale("log")
-        formatter = FuncFormatter(lambda y, _: '{:.16g}'.format(y))
+        formatter = FuncFormatter(lambda y, _: "{:.16g}".format(y))
         ax.yaxis.set_major_formatter(formatter)
-
-
-
 
 
 def add_plot(
