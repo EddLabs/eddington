@@ -3,10 +3,12 @@ from typing import Dict, List, Optional, Tuple, Union
 
 import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib.ticker import ScalarFormatter, LogFormatter
 
 from eddington.exceptions import PlottingError
 from eddington.fitting_data import FittingData
 from eddington.print_util import to_precise_string
+
 
 
 def plot_residuals(  # pylint: disable=invalid-name,too-many-arguments
@@ -253,17 +255,30 @@ def add_legend(ax: plt.Axes, is_legend: bool):  # pylint: disable=invalid-name
     :param is_legend: Add or remote legend to plot
     :type is_legend: bool
     """
-    ax.legend(is_legend)
+    if is_legend:
+        ax.legend()
 
 
 def set_x_scale(ax: plt.Axes, is_x_log_scale: bool):
     if is_x_log_scale:
         ax.set_xscale("log")
+        for axis in [ax.xaxis, ax.yaxis]:
+            formatter = ScalarFormatter()
+            formatter.set_scientific(False)
+            axis.set_major_formatter(formatter)
+
+
 
 
 def set_y_scale(ax: plt.Axes, is_y_log_scale: bool):
     if is_y_log_scale:
         ax.set_yscale("log")
+        for axis in [ax.xaxis, ax.yaxis]:
+            formatter = ScalarFormatter()
+            formatter.set_scientific(False)
+            axis.set_major_formatter(formatter)
+
+
 
 
 def add_plot(
