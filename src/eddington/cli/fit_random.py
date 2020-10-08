@@ -22,6 +22,7 @@ from eddington.cli.common_flags import (
 )
 from eddington.cli.main_cli import eddington_cli
 from eddington.cli.util import calculate_a0, fit_and_plot, load_fitting_function
+from eddington.consts import DEFAULT_XMIN, DEFAULT_XMAX
 from eddington.fitting_data import FittingData
 
 # pylint: disable=invalid-name,too-many-arguments,too-many-locals,duplicate-code
@@ -32,6 +33,18 @@ from eddington.fitting_data import FittingData
 @fitting_function_argument
 @polynomial_option
 @a0_option
+@click.option(
+    "--random-x-min",
+    type=float,
+    default=DEFAULT_XMIN,
+    help="Minimum x value for the random data",
+)
+@click.option(
+    "--random-x-max",
+    type=float,
+    default=DEFAULT_XMAX,
+    help="Maximum x value for the random data",
+)
 @x_label_option
 @y_label_option
 @is_grid_option
@@ -48,6 +61,8 @@ def eddington_fit_random(
     fitting_function_name: Optional[str],
     polynomial_degree: Optional[int],
     a0: Optional[str],
+    random_x_min: float,
+    random_x_max: float,
     x_label: Optional[str],
     y_label: Optional[str],
     grid,
@@ -68,7 +83,7 @@ def eddington_fit_random(
     func = load_fitting_function(
         ctx=ctx, func_name=fitting_function_name, polynomial_degree=polynomial_degree
     )
-    data = FittingData.random(func)
+    data = FittingData.random(func, xmin=random_x_min, xmax=random_x_max)
     fit_and_plot(
         data=data,
         func=func,
