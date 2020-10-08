@@ -1,9 +1,12 @@
 """Utility methods for the Eddington CLI."""
+import re
 from pathlib import Path
 from typing import Optional
 
 import click
+import numpy as np
 
+from eddington import fit
 from eddington.fitting_functions_list import linear, polynomial
 from eddington.fitting_functions_registry import FittingFunctionsRegistry
 from eddington.fitting_result import FittingResult
@@ -24,27 +27,10 @@ def load_fitting_function(
     return FittingFunctionsRegistry.load(func_name)
 
 
-def write_and_export_result(
-    result: FittingResult,
-    func_name: str,
-    output_dir: Optional[Path] = None,
-    is_json: bool = False,
-):
-    """Write result to console and to file if specified so."""
-    click.echo(result.pretty_string)
-    if output_dir is None:
-        return
-    output_dir.mkdir(parents=True, exist_ok=True)
-    if is_json:
-        result.save_json(output_dir / f"{func_name}_result.json")
-    else:
-        result.save_txt(output_dir / f"{func_name}_result.txt")
-
-
-def plot_all(  # pylint: disable=too-many-arguments
+def fit_and_plot(  # pylint: disable=too-many-arguments,invalid-name
     data,
     func,
-    result,
+    a0,
     legend,
     output_dir,
     is_json,
@@ -57,6 +43,7 @@ def plot_all(  # pylint: disable=too-many-arguments
 ):
     """Plot everything needed."""
     output_dir = None if output_dir is None else Path(output_dir)
+    result = fit(data, func, a0=a0)
     write_and_export_result(
         result, func_name=func.name, output_dir=output_dir, is_json=is_json
     )
@@ -100,6 +87,30 @@ def plot_all(  # pylint: disable=too-many-arguments
             ),
             output_path=__optional_path(output_dir, f"{func.name}_residuals.png"),
         )
+
+
+def calculate_a0(a0: Optional[str]):  # pylint: disable=invalid-name
+    """Split a0 string to an array."""
+    if a0 is None:
+        return None
+    return np.array(list(map(float, re.split(",[ \t]*", a0))))
+
+
+def write_and_export_result(
+    result: FittingResult,
+    func_name: str,
+    output_dir: Optional[Path] = None,
+    is_json: bool = False,
+):
+    """Write result to console and to file if specified so."""
+    click.echo(result.pretty_string)
+    if output_dir is None:
+        return
+    output_dir.mkdir(parents=True, exist_ok=True)
+    if is_json:
+        result.save_json(output_dir / f"{func_name}_result.json")
+    else:
+        result.save_txt(output_dir / f"{func_name}_result.txt")
 
 
 def __optional_path(directory: Optional[Path], file_name: str):

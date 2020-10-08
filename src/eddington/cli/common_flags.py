@@ -1,7 +1,8 @@
 """List of common flags in use of the Eddington CLI."""
 import click
 
-# Fitting function
+# Fitting
+
 fitting_function_argument = click.argument(
     "fitting_function_name", type=str, default=""
 )
@@ -12,9 +13,18 @@ polynomial_option = click.option(
     type=int,
     help="Fitting data to polynomial of nth degree.",
 )
+a0_option = click.option(
+    "--a0",
+    type=str,
+    help=(
+        "Initial guess for the fitting algorithm. "
+        "Should be given as floating point numbers separated by commas"
+    ),
+)
 
 
 # Plot
+
 x_label_option = click.option("--x-label", type=str, help="Label for the x axis.")
 
 y_label_option = click.option("--y-label", type=str, help="Label for the y axis.")

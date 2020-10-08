@@ -5,6 +5,7 @@ from typing import Optional, Union
 import click
 
 from eddington.cli.common_flags import (
+    a0_option,
     fitting_function_argument,
     is_grid_option,
     is_json_option,
@@ -20,8 +21,7 @@ from eddington.cli.common_flags import (
     y_label_option,
 )
 from eddington.cli.main_cli import eddington_cli
-from eddington.cli.util import load_fitting_function, plot_all
-from eddington.fitting import fit
+from eddington.cli.util import calculate_a0, fit_and_plot, load_fitting_function
 from eddington.fitting_data import FittingData
 
 # pylint: disable=invalid-name,too-many-arguments,too-many-locals,duplicate-code
@@ -31,6 +31,7 @@ from eddington.fitting_data import FittingData
 @click.pass_context
 @fitting_function_argument
 @polynomial_option
+@a0_option
 @x_label_option
 @y_label_option
 @is_grid_option
@@ -46,6 +47,7 @@ def eddington_fit_random(
     ctx: click.Context,
     fitting_function_name: Optional[str],
     polynomial_degree: Optional[int],
+    a0: Optional[str],
     x_label: Optional[str],
     y_label: Optional[str],
     grid,
@@ -67,11 +69,10 @@ def eddington_fit_random(
         ctx=ctx, func_name=fitting_function_name, polynomial_degree=polynomial_degree
     )
     data = FittingData.random(func)
-    result = fit(data, func)
-    plot_all(
+    fit_and_plot(
         data=data,
         func=func,
-        result=result,
+        a0=calculate_a0(a0),
         legend=legend,
         output_dir=output_dir,
         is_json=json,
@@ -79,8 +80,6 @@ def eddington_fit_random(
         y_label=y_label,
         x_log_scale=x_log_scale,
         y_log_scale=y_log_scale,
-        xlabel=x_label,
-        ylabel=y_label,
         grid=grid,
         should_plot_data=should_plot_data,
         should_plot_fitting=should_plot_fitting,

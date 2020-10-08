@@ -1,12 +1,11 @@
 """Fit CLI method."""
-import re
 from pathlib import Path
 from typing import Optional, Union
 
 import click
-import numpy as np
 
 from eddington.cli.common_flags import (
+    a0_option,
     fitting_function_argument,
     is_grid_option,
     is_json_option,
@@ -22,8 +21,7 @@ from eddington.cli.common_flags import (
     y_label_option,
 )
 from eddington.cli.main_cli import eddington_cli
-from eddington.cli.util import load_fitting_function, plot_all
-from eddington.fitting import fit
+from eddington.cli.util import calculate_a0, fit_and_plot, load_fitting_function
 from eddington.fitting_data import FittingData
 
 # pylint: disable=invalid-name,too-many-arguments,too-many-locals,duplicate-code
@@ -33,6 +31,7 @@ from eddington.fitting_data import FittingData
 @click.pass_context
 @fitting_function_argument
 @polynomial_option
+@a0_option
 @click.option(
     "-d",
     "--data-file",
@@ -41,14 +40,6 @@ from eddington.fitting_data import FittingData
     help="Data file to read from.",
 )
 @click.option("-s", "--sheet", type=str, help="Sheet name for excel files.")
-@click.option(
-    "--a0",
-    type=str,
-    help=(
-        "Initial guess for the fitting algorithm. "
-        "Should be given as floating point numbers separated by commas"
-    ),
-)
 @click.option("--x-column", type=str, help="Column to read x values from.")
 @click.option("--xerr-column", type=str, help="Column to read x error values from.")
 @click.option("--y-column", type=str, help="Column to read y values from.")
@@ -68,9 +59,9 @@ def eddington_fit(
     ctx: click.Context,
     fitting_function_name: Optional[str],
     polynomial_degree: Optional[int],
+    a0: Optional[str],
     data_file: str,
     sheet: Optional[str],
-    a0: Optional[str],
     x_column: Optional[str],
     xerr_column: Optional[str],
     y_column: Optional[str],
@@ -88,21 +79,22 @@ def eddington_fit(
     json: bool,
 ):
     """Fitting data file according to a fitting function."""
-    # fmt: off
     data = __load_data_file(
-        ctx, Path(data_file), sheet,
-        x_column=x_column, xerr_column=xerr_column,
-        y_column=y_column, yerr_column=yerr_column,
+        ctx,
+        Path(data_file),
+        sheet,
+        x_column=x_column,
+        xerr_column=xerr_column,
+        y_column=y_column,
+        yerr_column=yerr_column,
     )
-    # fmt: on
     func = load_fitting_function(
         ctx=ctx, func_name=fitting_function_name, polynomial_degree=polynomial_degree
     )
-    result = fit(data, func, a0=__calc_a0(a0))
-    plot_all(
+    fit_and_plot(
         data=data,
         func=func,
-        result=result,
+        a0=calculate_a0(a0),
         legend=legend,
         output_dir=output_dir,
         is_json=json,
@@ -117,12 +109,6 @@ def eddington_fit(
         ylabel=y_label,
         grid=grid,
     )
-
-
-def __calc_a0(a0):
-    if a0 is None:
-        return None
-    return np.array(list(map(float, re.split(",[ \t]*", a0))))
 
 
 def __load_data_file(
