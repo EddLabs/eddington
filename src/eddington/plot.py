@@ -3,7 +3,7 @@ from typing import Dict, List, Optional, Tuple, Union
 
 import matplotlib.pyplot as plt
 import numpy as np
-from matplotlib.ticker import ScalarFormatter, LogFormatter
+from matplotlib.ticker import FuncFormatter
 
 from eddington.exceptions import PlottingError
 from eddington.fitting_data import FittingData
@@ -262,10 +262,9 @@ def add_legend(ax: plt.Axes, is_legend: bool):  # pylint: disable=invalid-name
 def set_x_scale(ax: plt.Axes, is_x_log_scale: bool):
     if is_x_log_scale:
         ax.set_xscale("log")
-        for axis in [ax.xaxis, ax.yaxis]:
-            formatter = ScalarFormatter()
-            formatter.set_scientific(False)
-            axis.set_major_formatter(formatter)
+        formatter = FuncFormatter(lambda y, _: '{:.16g}'.format(y))
+        ax.xaxis.set_major_formatter(formatter)
+
 
 
 
@@ -273,10 +272,9 @@ def set_x_scale(ax: plt.Axes, is_x_log_scale: bool):
 def set_y_scale(ax: plt.Axes, is_y_log_scale: bool):
     if is_y_log_scale:
         ax.set_yscale("log")
-        for axis in [ax.xaxis, ax.yaxis]:
-            formatter = ScalarFormatter()
-            formatter.set_scientific(False)
-            axis.set_major_formatter(formatter)
+        formatter = FuncFormatter(lambda y, _: '{:.16g}'.format(y))
+        ax.yaxis.set_major_formatter(formatter)
+
 
 
 
