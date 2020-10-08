@@ -16,6 +16,8 @@ def test_simple_plot(base_dict, plot_method, mock_figure):
     ax.set_xlabel.assert_not_called()
     ax.set_ylabel.assert_not_called()
     ax.grid.assert_called_with(False)
+    ax.set_xscale.assert_not_called()
+    ax.set_yscale.assert_not_called()
 
 
 @parametrize_with_cases(argnames="base_dict, plot_method", cases=cases)
@@ -50,6 +52,7 @@ def test_plot_with_x_log_scale(base_dict, plot_method, mock_figure):
     assert fig == mock_figure, "Figure is different than expected"
     ax = mock_figure.add_subplot.return_value
     ax.set_xscale.assert_called_once_with("log")
+    ax.set_yscale.assert_not_called()
 
 
 @parametrize_with_cases(argnames="base_dict, plot_method", cases=cases)
@@ -57,6 +60,7 @@ def test_plot_with_y_log_scale(base_dict, plot_method, mock_figure):
     fig = plot_method(**base_dict, y_log_scale=True)
     assert fig == mock_figure, "Figure is different than expected"
     ax = mock_figure.add_subplot.return_value
+    ax.set_xscale.assert_not_called()
     ax.set_yscale.assert_called_once_with("log")
 
 
