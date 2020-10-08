@@ -272,6 +272,7 @@ def add_legend(ax: plt.Axes, is_legend: bool):  # pylint: disable=invalid-name
         ax.legend()
 
 
+
 def set_x_scale(ax: plt.Axes, is_x_log_scale: bool):  # pylint: disable=invalid-name
     """
     Change x axis scale to logarithmic.
@@ -300,6 +301,7 @@ def set_y_scale(ax: plt.Axes, is_y_log_scale: bool):  # pylint: disable=invalid-
         ax.set_yscale("log")
         formatter = FuncFormatter(lambda y, _: "{:.16g}".format(y))
         ax.yaxis.set_major_formatter(formatter)
+
 
 
 def add_plot(
