@@ -191,11 +191,17 @@ def get_figure(  # pylint: disable=too-many-arguments
     Gets a figure from matplotlib.
 
     :param title_name: Optional. Title for the figure.
+    :type title_name: str
     :param xlabel: Optional. Label of the x axis
+    :type xlabel: str
     :param ylabel: Optional. Label of the x axis
+    :type ylabel: str
     :param grid: Add grid lines or not
+    :type grid: bool
     :param x_log_scale: Set the scale of the  x axis to be logarithmic.
+    :type x_log_scale: bool
     :param y_log_scale: Set the scale of the y axis to be logarithmic.
+    :type y_log_scale: bool
     :return: Figure instance
     """
     fig = plt.figure()
