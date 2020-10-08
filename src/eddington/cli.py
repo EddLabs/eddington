@@ -166,16 +166,14 @@ def eddington_fit(
     if y_label is None:
         y_label = data.y_column
     plot_kwargs: Dict[str, Any] = dict(xlabel=x_label, ylabel=y_label, grid=grid)
-    log_scale_kwargs: Dict[str, Any] = dict(
-        x_log_scale=x_log_scale, y_log_scale=y_log_scale
-    )
     if should_plot_data:
         show_or_export(
             plot_data(
                 data=data,
                 title_name=f"{func.title_name} - Data",
+                x_log_scale=x_log_scale,
+                y_log_scale=y_log_scale,
                 **plot_kwargs,
-                **log_scale_kwargs,
             ),
             output_path=__optional_path(output_dir, f"{func.name}_data.png"),
         )
@@ -188,7 +186,6 @@ def eddington_fit(
                 title_name=f"{func.title_name}",
                 legend=legend,
                 **plot_kwargs,
-                **log_scale_kwargs,
             ),
             output_path=__optional_path(output_dir, f"{func.name}.png"),
         )
