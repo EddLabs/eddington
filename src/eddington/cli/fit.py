@@ -1,43 +1,19 @@
-"""CLI for Eddington."""
+"""Fit CLI method."""
 import re
 from pathlib import Path
 from typing import Any, Dict, Optional, Union
 
 import click
 import numpy as np
-from prettytable import PrettyTable
 
-from eddington import __version__
+from eddington.cli.main_cli import eddington_cli
 from eddington.fitting import fit
 from eddington.fitting_data import FittingData
 from eddington.fitting_functions_list import linear, polynomial
 from eddington.fitting_functions_registry import FittingFunctionsRegistry
 from eddington.plot import plot_data, plot_fitting, plot_residuals, show_or_export
 
-# pylint: disable=too-many-arguments,invalid-name,too-many-locals
-
-
-@click.group("eddington")
-@click.version_option(version=__version__)
-def eddington_cli():
-    """Command line for Eddington."""
-
-
-@eddington_cli.command("list")
-@click.option(
-    "-r",
-    "--regex",
-    type=str,
-    default=None,
-    help="Filter functions by a regular expression",
-)
-def eddington_list(regex: Optional[str]):
-    """Prints all fitting functions in a pretty table."""
-    table = PrettyTable(field_names=["Function", "Syntax"])
-    for func in FittingFunctionsRegistry.all():
-        if regex is None or re.search(regex, func.name):
-            table.add_row([func.name, func.syntax])
-    click.echo(table)
+# pylint: disable=invalid-name,too-many-arguments,too-many-locals
 
 
 @eddington_cli.command("fit")
