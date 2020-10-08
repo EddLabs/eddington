@@ -1,4 +1,14 @@
+[contexts.no_duplicate]
+parent = "standard"
+help = "Don't check duplications in pylint"
+
+[commands.pylint.no_duplicate]
+# This is a bummer...
+# Waiting for https://github.com/PyCQA/pylint/issues/748 to be resolved.
+add_args = ["--disable=duplicate-code"]
+
 [sources.src]
+contexts = ["no_duplicate"]
 
 [sources.tests]
 contexts = ["test"]
