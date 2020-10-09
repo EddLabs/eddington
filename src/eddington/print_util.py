@@ -5,7 +5,21 @@ from typing import Tuple
 from eddington.consts import DEFAULT_PRECISION
 
 
-def to_relevant_precision(decimal: float) -> Tuple[float, int]:
+def to_precise_string(decimal: float, precision: int = DEFAULT_PRECISION) -> str:
+    """
+    Returns a decimal as string with desired precision.
+
+    :param decimal: a floating point number.
+    :param precision: the desired precision to return the number.
+    :return: a string representing the decimal with given precision.
+    """
+    new_decimal, relevant_precision = __to_relevant_precision(decimal)
+    if relevant_precision < 3:
+        return f"{decimal:.{precision + relevant_precision}f}"
+    return f"{new_decimal:.{precision}f}e-0{relevant_precision}"
+
+
+def __to_relevant_precision(decimal: float) -> Tuple[float, int]:
     """
     Get relevant precision of a decimal number.
 
@@ -22,17 +36,3 @@ def to_relevant_precision(decimal: float) -> Tuple[float, int]:
     if decimal < 0:
         return -abs_a, precision
     return abs_a, precision
-
-
-def to_precise_string(decimal: float, precision: int = DEFAULT_PRECISION) -> str:
-    """
-    Returns a decimal as string with desired precision.
-
-    :param decimal: a floating point number.
-    :param precision: the desired precision to return the number.
-    :return: a string representing the decimal with given precision.
-    """
-    new_decimal, relevant_precision = to_relevant_precision(decimal)
-    if relevant_precision < 3:
-        return f"{decimal:.{precision + relevant_precision}f}"
-    return f"{new_decimal:.{precision}f}e-0{relevant_precision}"

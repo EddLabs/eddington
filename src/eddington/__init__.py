@@ -43,6 +43,7 @@ from eddington.plot import (
     show_or_export,
     title,
 )
+from eddington.print_util import to_precise_string
 
 __version__ = "0.0.19"
 
@@ -93,4 +94,6 @@ __all__ = [
     "horizontal_line",
     "label_axes",
     "title",
+    # Print
+    "to_precise_string",
 ]
