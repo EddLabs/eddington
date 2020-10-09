@@ -1,12 +1,3 @@
----
-name: Pull request
-about: Code contribution to Eddington
-title: "*Your title here*"
-labels: 
-assignees: ''
-
----
-
 **Description**
 Please provide a clear and concise description of what you did in this PR (pull request)
 
@@ -15,3 +6,9 @@ Did you think of other implementation ideas other than what you presented in the
 
 **Additional context**
 Please add any other context or screenshots you think may be beneficial.
+
+**Declaration**
+Please declare the following:
+
+- [ ] I have read the CODE_OF_CONDUCT
+- [ ] I have read and followed the contribution guide in [here](https://eddington.readthedocs.io/en/latest/community/contribution_guide.html)
