@@ -16,22 +16,21 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: 3.8
-      - name: Install depecndencies
+      - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
           pip install tox
       - name: Run tests
         run: |
           tox -e py
-      - uses: codecov/codecov-action@v1
+      - uses: actions/upload-artifact@v2
+        if: ${{ always() }}
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          file: ./coverage.xml
-          flags: unittests
-          fail_ci_if_error: true
+          name: coverage-report
+          path: ./coverage.xml
 
-  backward_compatability:
-    name: Backward Compatability Tests
+  backward_compatibility:
+    name: Backward Compatibility Tests
     needs: unit_tests
     runs-on: ubuntu-latest
     strategy:
@@ -44,7 +43,7 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Install depecndencies
+      - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
           pip install tox
@@ -54,7 +53,7 @@ jobs:
 
   validations:
     name: Post-Test Checks
-    needs: backward_compatability
+    needs: backward_compatibility
     runs-on: ubuntu-latest
     strategy:
       max-parallel: 4
@@ -69,7 +68,7 @@ jobs:
       uses: actions/setup-python@v1
       with:
         python-version: 3.8
-    - name: Install dependencies
+    - name: Install Dependencies
       run: |
         python -m pip install --upgrade pip
         pip install tox
