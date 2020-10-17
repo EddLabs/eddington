@@ -79,7 +79,7 @@ jobs:
       run: |
         tox -e ${{ matrix.task }} -- ${{ matrix.posargs }}
     - uses: actions/upload-artifact@v2
-      if: atrix.task == 'static'
+      if: matrix.task == 'static'
       with:
         name: statue-report
         path: ./statue-report.json
