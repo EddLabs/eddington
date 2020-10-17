@@ -61,7 +61,7 @@ jobs:
         task: [integration, docs, static]
         include:
           - task: static
-            posargs: --no-cache
+            posargs: --no-cache -o ./statue-report.json
     steps:
     - uses: actions/checkout@v1
     - name: Set up Python 3.8
@@ -78,3 +78,8 @@ jobs:
     - name: Run Post-Test check
       run: |
         tox -e ${{ matrix.task }} -- ${{ matrix.posargs }}
+    - uses: actions/upload-artifact@v2
+      if: atrix.task == 'static'
+      with:
+        name: statue-report
+        path: ./statue-report.json
