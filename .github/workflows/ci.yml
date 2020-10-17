@@ -59,6 +59,9 @@ jobs:
       max-parallel: 4
       matrix:
         task: [integration, docs, static]
+        include:
+          - task: static
+            posargs: --no-cache
     steps:
     - uses: actions/checkout@v1
     - name: Set up Python 3.8
@@ -74,4 +77,4 @@ jobs:
       if: matrix.task == 'docs'
     - name: Run Post-Test check
       run: |
-        tox -e ${{ matrix.task }}
+        tox -e ${{ matrix.task }} -- ${{ matrix.posargs }}
