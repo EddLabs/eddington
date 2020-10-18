@@ -1,82 +1,83 @@
+import numpy as np
 from pytest_cases import THIS_MODULE, parametrize_with_cases
 
 from eddington.print_util import to_precise_string
 
 
-def case_int_with_2_zeroes():
-    inp = dict(a=14, n=2)
-    out = dict(relevant_precision=0, precise_string="14.00")
-    return inp, out
+def case_positive_int_add_zeros():
+    return 31, 2, "31.00"
 
 
-def case_int_with_4_zeroes():
-    inp = dict(a=3, n=4)
-    out = dict(relevant_precision=0, precise_string="3.0000")
-    return inp, out
+def case_big_positive_int_reduce_digits():
+    return 31415, 3, "3.141e+4"
 
 
-def case_negative_int_with_2_zeroes():
-    inp = dict(a=-14, n=2)
-    out = dict(relevant_precision=0, precise_string="-14.00")
-    return inp, out
+def case_small_positive_int_reduce_digits():
+    return 25.5033557, 3, "25.503"
 
 
-def case_one_with_3_zeroes():
-    inp = dict(a=1, n=3)
-    out = dict(relevant_precision=0, precise_string="1.000")
-    return inp, out
+def case_negative_int_add_zeros():
+    return -31, 2, "-31.00"
 
 
-def case_negative_one_with_3_zeroes():
-    inp = dict(a=-1, n=3)
-    out = dict(relevant_precision=0, precise_string="-1.000")
-    return inp, out
+def case_negative_int_reduce_digits():
+    return -31415, 3, "-3.141e+4"
 
 
-def case_zero_with_3_zeroes():
-    inp = dict(a=0, n=3)
-    out = dict(relevant_precision=0, precise_string="0.000")
-    return inp, out
+def case_one_adds_zeros():
+    return 1, 3, "1.000"
+
+
+def case_negative_one_add_zeros():
+    return -1, 3, "-1.000"
+
+
+def case_zero_add_zeros():
+    return 0.0, 3, "0.000"
+
+
+def case_minus_zero_add_zeros():
+    return -0.0, 3, "-0.000"
 
 
 def case_float_bigger_than_one_reduce_digits():
-    inp = dict(a=3.141592, n=2)
-    out = dict(relevant_precision=0, precise_string="3.14")
-    return inp, out
+    return np.pi, 2, "3.14"
 
 
 def case_float_bigger_than_one_add_zeroes():
-    inp = dict(a=3.52, n=5)
-    out = dict(relevant_precision=0, precise_string="3.52000")
-    return inp, out
+    return np.pi, 5, "3.14159"
 
 
 def case_float_smaller_than_one_reduce_digits():
-    inp = dict(a=0.3289, n=1)
-    out = dict(relevant_precision=1, precise_string="0.33")
-    return inp, out
+    return 0.712, 1, "0.7"
 
 
 def case_float_smaller_than_one_add_zeroes():
-    inp = dict(a=0.52, n=3)
-    out = dict(relevant_precision=1, precise_string="0.5200")
-    return inp, out
+    return 0.712, 4, "0.7120"
 
 
 def case_small_float_reduce_digits():
-    inp = dict(a=3.289e-5, n=1)
-    out = dict(relevant_precision=5, precise_string="3.3e-05")
-    return inp, out
+    return 3.289e-5, 1, "3.3e-5"
 
 
 def case_small_float_add_zeroes():
-    inp = dict(a=3.289e-5, n=4)
-    out = dict(relevant_precision=5, precise_string="3.2890e-05")
-    return inp, out
+    return 3.289e-5, 4, "3.2890e-5"
 
 
-@parametrize_with_cases(argnames="inp, out", cases=THIS_MODULE)
-def test_precise_string(inp, out):
+def case_infinity():
+    return np.inf, 3, "inf"
+
+
+def case_negative_infinity():
+    return -np.inf, 3, "-inf"
+
+
+def case_nan():
+    return np.nan, 3, "nan"
+
+
+@parametrize_with_cases(argnames=["a", "n", "string"], cases=THIS_MODULE)
+def test_precise_string(a, n, string):
     assert (
-        to_precise_string(inp["a"], inp["n"]) == out["precise_string"]
+        to_precise_string(a, precision=n) == string
     ), "Relevant precision is different than expected"
