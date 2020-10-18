@@ -45,7 +45,7 @@ from eddington.plot import (
 )
 from eddington.print_util import to_precise_string
 
-__version__ = "0.0.19"
+__version__ = "0.0.20.dev0"
 
 __all__ = [
     "__version__",
