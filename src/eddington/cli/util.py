@@ -50,43 +50,44 @@ def fit_and_plot(  # pylint: disable=too-many-arguments,invalid-name
     x_label = data.x_column if x_label is None else x_label
     y_label = data.y_column if y_label is None else y_label
     if should_plot_data:
-        show_or_export(
-            plot_data(
-                data=data,
-                title_name=f"{func.title_name} - Data",
-                xlabel=x_label,
-                ylabel=y_label,
-                **plot_kwargs,
-            ),
-            output_path=__optional_path(output_dir, f"{func.name}_data.png"),
-        )
+        with plot_data(
+            data=data,
+            title_name=f"{func.title_name} - Data",
+            xlabel=x_label,
+            ylabel=y_label,
+            **plot_kwargs,
+        ) as fig:
+            show_or_export(
+                fig, output_path=__optional_path(output_dir, f"{func.name}_data.png")
+            )
     if should_plot_fitting:
-        show_or_export(
-            plot_fitting(
-                func=func,
-                data=data,
-                a=result.a,
-                title_name=f"{func.title_name}",
-                legend=legend,
-                xlabel=x_label,
-                ylabel=y_label,
-                **plot_kwargs,
-            ),
-            output_path=__optional_path(output_dir, f"{func.name}.png"),
-        )
+        with plot_fitting(
+            func=func,
+            data=data,
+            a=result.a,
+            title_name=f"{func.title_name}",
+            legend=legend,
+            xlabel=x_label,
+            ylabel=y_label,
+            **plot_kwargs,
+        ) as fig:
+            show_or_export(
+                fig, output_path=__optional_path(output_dir, f"{func.name}.png")
+            )
     if should_plot_residuals:
-        show_or_export(
-            plot_residuals(
-                func=func,
-                data=data,
-                a=result.a,
-                title_name=f"{func.title_name} - Residuals",
-                xlabel=x_label,
-                ylabel=y_label,
-                **plot_kwargs,
-            ),
-            output_path=__optional_path(output_dir, f"{func.name}_residuals.png"),
-        )
+        with plot_residuals(
+            func=func,
+            data=data,
+            a=result.a,
+            title_name=f"{func.title_name} - Residuals",
+            xlabel=x_label,
+            ylabel=y_label,
+            **plot_kwargs,
+        ) as fig:
+            show_or_export(
+                fig,
+                output_path=__optional_path(output_dir, f"{func.name}_residuals.png"),
+            )
 
 
 def extract_array_from_string(a0: Optional[str]):  # pylint: disable=invalid-name
