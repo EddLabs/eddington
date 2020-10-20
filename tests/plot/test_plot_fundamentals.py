@@ -10,7 +10,9 @@ from tests.util import assert_dict_equal
 @parametrize_with_cases(argnames="base_dict, plot_method", cases=cases)
 def test_simple_plot(base_dict, plot_method, mock_figure):
     fig = plot_method(**base_dict)
-    assert fig._actual_fig == mock_figure, "Figure is different than expected"
+    assert (
+        fig._actual_fig == mock_figure  # pylint: disable=protected-access
+    ), "Figure is different than expected"
     ax = mock_figure.add_subplot.return_value
     ax.set_title.assert_called_once_with(cases.TITLE_NAME)
     ax.set_xlabel.assert_not_called()
@@ -24,7 +26,9 @@ def test_simple_plot(base_dict, plot_method, mock_figure):
 def test_plot_with_xlabel(base_dict, plot_method, mock_figure):
     xlabel = "X Label"
     fig = plot_method(**base_dict, xlabel=xlabel)
-    assert fig._actual_fig == mock_figure, "Figure is different than expected"
+    assert (
+        fig._actual_fig == mock_figure  # pylint: disable=protected-access
+    ), "Figure is different than expected"
     ax = mock_figure.add_subplot.return_value
     ax.set_xlabel.assert_called_once_with(xlabel)
 
@@ -33,7 +37,9 @@ def test_plot_with_xlabel(base_dict, plot_method, mock_figure):
 def test_plot_with_ylabel(base_dict, plot_method, mock_figure):
     ylabel = "Y Label"
     fig = plot_method(**base_dict, ylabel=ylabel)
-    assert fig._actual_fig == mock_figure, "Figure is different than expected"
+    assert (
+        fig._actual_fig == mock_figure  # pylint: disable=protected-access
+    ), "Figure is different than expected"
     ax = mock_figure.add_subplot.return_value
     ax.set_ylabel.assert_called_once_with(ylabel)
 
@@ -41,7 +47,9 @@ def test_plot_with_ylabel(base_dict, plot_method, mock_figure):
 @parametrize_with_cases(argnames="base_dict, plot_method", cases=cases)
 def test_plot_with_grid(base_dict, plot_method, mock_figure):
     fig = plot_method(**base_dict, grid=True)
-    assert fig._actual_fig == mock_figure, "Figure is different than expected"
+    assert (
+        fig._actual_fig == mock_figure  # pylint: disable=protected-access
+    ), "Figure is different than expected"
     ax = mock_figure.add_subplot.return_value
     ax.grid.assert_called_once_with(True)
 
@@ -49,7 +57,9 @@ def test_plot_with_grid(base_dict, plot_method, mock_figure):
 @parametrize_with_cases(argnames="base_dict, plot_method", cases=cases)
 def test_plot_with_x_log_scale(base_dict, plot_method, mock_figure):
     fig = plot_method(**base_dict, x_log_scale=True)
-    assert fig._actual_fig == mock_figure, "Figure is different than expected"
+    assert (
+        fig._actual_fig == mock_figure  # pylint: disable=protected-access
+    ), "Figure is different than expected"
     ax = mock_figure.add_subplot.return_value
     ax.set_xscale.assert_called_once_with("log")
     ax.set_yscale.assert_not_called()
@@ -58,7 +68,9 @@ def test_plot_with_x_log_scale(base_dict, plot_method, mock_figure):
 @parametrize_with_cases(argnames="base_dict, plot_method", cases=cases)
 def test_plot_with_y_log_scale(base_dict, plot_method, mock_figure):
     fig = plot_method(**base_dict, y_log_scale=True)
-    assert fig._actual_fig == mock_figure, "Figure is different than expected"
+    assert (
+        fig._actual_fig == mock_figure  # pylint: disable=protected-access
+    ), "Figure is different than expected"
     ax = mock_figure.add_subplot.return_value
     ax.set_xscale.assert_not_called()
     ax.set_yscale.assert_called_once_with("log")
@@ -70,7 +82,9 @@ def test_plot_with_y_log_scale(base_dict, plot_method, mock_figure):
 )
 def test_error_bar(base_dict, plot_method, mock_figure):
     fig = plot_method(**base_dict)
-    assert fig._actual_fig == mock_figure, "Figure is different than expected"
+    assert (
+        fig._actual_fig == mock_figure  # pylint: disable=protected-access
+    ), "Figure is different than expected"
     ax = mock_figure.add_subplot.return_value
     assert ax.errorbar.call_count == 1
     assert_dict_equal(

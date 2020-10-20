@@ -11,7 +11,9 @@ EPSILON = 1e-5
 )
 def test_residuals_error_bar(base_dict, plot_method, mock_figure):
     fig = plot_method(**base_dict)
-    assert fig._actual_fig == mock_figure, "Figure is different than expected"
+    assert (
+        fig._actual_fig == mock_figure  # pylint: disable=protected-access
+    ), "Figure is different than expected"
     y_residuals = cases.FIT_DATA.y - cases.FUNC(cases.A, cases.FIT_DATA.x)
     ax = mock_figure.add_subplot.return_value
     assert_calls(
@@ -39,7 +41,9 @@ def test_residuals_error_bar(base_dict, plot_method, mock_figure):
 )
 def test_plot_residuals_without_boundaries(base_dict, plot_method, mock_figure):
     fig = plot_method(**base_dict)
-    assert fig._actual_fig == mock_figure, "Figure is different than expected"
+    assert (
+        fig._actual_fig == mock_figure  # pylint: disable=protected-access
+    ), "Figure is different than expected"
     ax = mock_figure.add_subplot.return_value
     assert_calls(
         ax.hlines, [([0], dict(xmin=0.1, xmax=10.9, linestyles="dashed"))], rel=EPSILON
@@ -51,7 +55,9 @@ def test_plot_residuals_without_boundaries(base_dict, plot_method, mock_figure):
 )
 def test_plot_residuals_with_xmin(base_dict, plot_method, mock_figure):
     fig = plot_method(**base_dict, xmin=-10)
-    assert fig._actual_fig == mock_figure, "Figure is different than expected"
+    assert (
+        fig._actual_fig == mock_figure  # pylint: disable=protected-access
+    ), "Figure is different than expected"
     ax = mock_figure.add_subplot.return_value
     assert_calls(
         ax.hlines, [([0], dict(xmin=-10, xmax=10.9, linestyles="dashed"))], rel=EPSILON
@@ -63,7 +69,9 @@ def test_plot_residuals_with_xmin(base_dict, plot_method, mock_figure):
 )
 def test_plot_residuals_with_xmax(base_dict, plot_method, mock_figure):
     fig = plot_method(**base_dict, xmax=20)
-    assert fig._actual_fig == mock_figure, "Figure is different than expected"
+    assert (
+        fig._actual_fig == mock_figure  # pylint: disable=protected-access
+    ), "Figure is different than expected"
     ax = mock_figure.add_subplot.return_value
     assert_calls(
         ax.hlines, [([0], dict(xmin=0.1, xmax=20, linestyles="dashed"))], rel=EPSILON

@@ -10,16 +10,26 @@ from eddington.print_util import to_precise_string
 
 
 class Figure:
+    """
+    Wraps matplotlib Figure class.
+
+    It releases the memory when the figure is not longer in use.
+    """
+
     def __init__(self, fig):
+        """Figure constructor."""
         self._actual_fig = fig
 
     def __enter__(self):
+        """Return self when entering as context."""
         return self
 
     def __getattr__(self, item):
+        """Get attributes from wrapped figure."""
         return getattr(self._actual_fig, item)
 
     def __exit__(self, exc_type, exc_val, exc_tb):
+        """Clear memory on exit."""
         plt.clf()
         plt.close("all")
 
