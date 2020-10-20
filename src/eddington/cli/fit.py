@@ -109,8 +109,6 @@ def eddington_fit(
         should_plot_residuals=should_plot_residuals,
         x_log_scale=x_log_scale,
         y_log_scale=y_log_scale,
-        xlabel=x_label,
-        ylabel=y_label,
         grid=grid,
     )
 

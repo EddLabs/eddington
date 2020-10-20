@@ -9,6 +9,31 @@ from eddington.fitting_data import FittingData
 from eddington.print_util import to_precise_string
 
 
+class Figure:
+    """
+    Wraps matplotlib Figure class.
+
+    It releases the memory when the figure is not longer in use.
+    """
+
+    def __init__(self, fig):
+        """Figure constructor."""
+        self._actual_fig = fig
+
+    def __enter__(self):
+        """Return self when entering as context."""
+        return self
+
+    def __getattr__(self, item):
+        """Get attributes from wrapped figure."""
+        return getattr(self._actual_fig, item)
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """Clear memory on exit."""
+        plt.clf()
+        plt.close("all")
+
+
 def plot_residuals(  # pylint: disable=invalid-name,too-many-arguments
     func,
     data: FittingData,
@@ -211,7 +236,7 @@ def get_figure(  # pylint: disable=too-many-arguments
     add_grid(ax=ax, is_grid=grid)
     set_scales(ax=ax, is_x_log_scale=x_log_scale, is_y_log_scale=y_log_scale)
 
-    return ax, fig
+    return ax, Figure(fig)
 
 
 def title(ax: plt.Axes, title_name: Optional[str]):  # pylint: disable=invalid-name
