@@ -4,7 +4,7 @@ import os
 from setuptools import setup
 
 
-version = "0.0.20"
+version = "0.0.21"
 install_requires = [
     "click >= 7.1.2",
     "prettytable >= 1.0.1",
