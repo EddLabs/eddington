@@ -203,3 +203,30 @@ As mentioned earlier, by default `save` is set to :python:`True`.
     every new fitting function you write has a unique name, which is not one of the
     default fitting functions or another custom fitting function you expect to use
     in your code.
+
+
+Using External Packages
+-----------------------
+
+When writing a custom fitting function, one can use external packages such as
+:python:`numpy` and :python:`scipy` in the fitting code. Here is an example:
+
+
+.. code:: python
+
+    import numpy as np
+    from eddington import fitting_function
+
+    @fitting_function(n=2)
+    def test(a, x):
+        return a[0] / np.sqrt(x - a[0])
+
+
+In that way you can make more complex fitting functions.
+
+
+.. note::
+    The optimization algorithm uses :python:`numpy.array` in order to make parallel
+    calculations. Therefore, using the built-in :python:`math` package will fail most
+    of the times. In order to solve the problem, use :python:`numpy` methods (which
+    *do* excepts arrays) instead.
