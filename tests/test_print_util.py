@@ -84,4 +84,4 @@ def test_precise_string(a, n, string):
 
 
 def test_inf_to_digit_string():
-    assert "inf" == to_digit_string(np.inf, 5)
+    assert to_digit_string(np.inf, 5) == "inf"
