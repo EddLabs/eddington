@@ -6,7 +6,7 @@ import numpy as np
 
 from eddington.exceptions import PlottingError
 from eddington.fitting_data import FittingData
-from eddington.print_util import to_precise_string
+from eddington.print_util import to_relevant_precision_string
 
 
 class Figure:
@@ -444,7 +444,9 @@ def __get_a_dict(a):  # pylint: disable=invalid-name
 
 
 def __build_repr_string(a):  # pylint: disable=invalid-name
-    arguments_values = [f"a[{i}]={to_precise_string(val)}" for i, val in enumerate(a)]
+    arguments_values = [
+        f"a[{i}]={to_relevant_precision_string(val)}" for i, val in enumerate(a)
+    ]
     return f"[{', '.join(arguments_values)}]"
 
 

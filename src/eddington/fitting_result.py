@@ -8,7 +8,11 @@ import numpy as np
 import scipy.stats as stats
 
 from eddington.consts import DEFAULT_PRECISION
-from eddington.print_util import to_precise_string
+from eddington.print_util import (
+    order_of_magnitude,
+    to_digit_string,
+    to_relevant_precision_string,
+)
 
 
 @dataclass(repr=False)
@@ -116,10 +120,10 @@ Fitted parameters' values:
 {a_value_string}
 Fitted parameters covariance:
 {self.acov}
-Chi squared: {to_precise_string(self.chi2, self.precision)}
+Chi squared: {to_relevant_precision_string(self.chi2, self.precision)}
 Degrees of freedom: {self.degrees_of_freedom}
-Chi squared reduced: {to_precise_string(self.chi2_reduced, self.precision)}
-P-probability: {to_precise_string(self.p_probability, self.precision)}
+Chi squared reduced: {to_relevant_precision_string(self.chi2_reduced, self.precision)}
+P-probability: {to_relevant_precision_string(self.p_probability, self.precision)}
 """
         np.set_printoptions(precision=old_precision)
         return repr_string
@@ -127,7 +131,9 @@ P-probability: {to_precise_string(self.p_probability, self.precision)}
     def __a_value_string(  # pylint: disable=invalid-name
         self, i: int, a: float, aerr: float, arerr: float
     ) -> str:
-        a_string = to_precise_string(a, self.precision)
-        aerr_string = to_precise_string(aerr, self.precision)
-        arerr_string = to_precise_string(arerr, self.precision)
+        order = min(order_of_magnitude(a), order_of_magnitude(aerr))
+        digit = order - self.precision
+        a_string = to_digit_string(a, digit)
+        aerr_string = to_digit_string(aerr, digit)
+        arerr_string = to_relevant_precision_string(arerr, self.precision)
         return f"\ta[{i}] = {a_string} \u00B1 {aerr_string} ({arerr_string}% error)"

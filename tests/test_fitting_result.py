@@ -26,15 +26,15 @@ def case_standard():
 Initial parameters' values:
 \t1.0 3.0
 Fitted parameters' values:
-\ta[0] = 1.100 \u00B1 0.100 (9.091% error)
-\ta[1] = 2.980 \u00B1 0.760 (25.503% error)
+\ta[0] = 1.1000 \u00B1 0.1000 (9.091% error)
+\ta[1] = 2.9800 \u00B1 0.7600 (25.50% error)
 Fitted parameters covariance:
 [[0.01  2.3  ]
  [2.3   0.988]]
 Chi squared: 8.276
 Degrees of freedom: 5
 Chi squared reduced: 1.655
-P-probability: 0.142
+P-probability: 0.1417
 """
     fitting_result = FittingResult(**kwargs)
     return (
@@ -68,15 +68,15 @@ def case_with_zero_error():
 Initial parameters' values:
 \t1.0 3.0
 Fitted parameters' values:
-\ta[0] = 1.100 ± 0.000 (0.000% error)
-\ta[1] = 2.980 ± 0.000 (0.000% error)
+\ta[0] = 1.100 \u00B1 0.000 (0.000% error)
+\ta[1] = 2.980 \u00B1 0.000 (0.000% error)
 Fitted parameters covariance:
 [[0. 0.]
  [0. 0.]]
 Chi squared: 8.276
 Degrees of freedom: 5
 Chi squared reduced: 1.655
-P-probability: 0.142
+P-probability: 0.1417
 """
     fitting_result = FittingResult(**kwargs)
     return (
@@ -111,15 +111,15 @@ def case_with_zero_value():
 Initial parameters' values:
 \t1.0 3.0
 Fitted parameters' values:
-\ta[0] = 0.000 \u00B1 0.100 (inf% error)
-\ta[1] = 0.000 \u00B1 0.760 (inf% error)
+\ta[0] = 0.0000 \u00B1 0.1000 (inf% error)
+\ta[1] = 0.0000 \u00B1 0.7600 (inf% error)
 Fitted parameters covariance:
 [[0.01  2.3  ]
  [2.3   0.988]]
 Chi squared: 8.276
 Degrees of freedom: 5
 Chi squared reduced: 1.655
-P-probability: 0.142
+P-probability: 0.1417
 """
     fitting_result = FittingResult(**kwargs)
     return (
@@ -154,12 +154,12 @@ def case_with_small_p_probability():
 Initial parameters' values:
 \t1.0 3.0
 Fitted parameters' values:
-\ta[0] = 1.100 \u00B1 0.100 (9.091% error)
-\ta[1] = 2.980 \u00B1 0.760 (25.503% error)
+\ta[0] = 1.1000 \u00B1 0.1000 (9.091% error)
+\ta[1] = 2.9800 \u00B1 0.7600 (25.50% error)
 Fitted parameters covariance:
 [[0.01  2.3  ]
  [2.3   0.988]]
-Chi squared: 43.726
+Chi squared: 43.73
 Degrees of freedom: 5
 Chi squared reduced: 8.745
 P-probability: 2.633e-8
@@ -251,7 +251,7 @@ def test_representation(expected, fitting_result):
     actual_repr = str(fitting_result).split("\n")
     for i, (expected_line, actual_line) in enumerate(zip(expected_repr, actual_repr)):
         assert (
-            expected_line == actual_line
+            actual_line == expected_line
         ), f"Representation is different than expected on line {i}"
 
 
@@ -262,7 +262,9 @@ def test_export_to_text_file(expected, fitting_result):
     with mock.patch("eddington.fitting_result.open", mock_open_obj):
         fitting_result.save_txt(path)
         mock_open_obj.assert_called_once_with(path, mode="w")
-        mock_open_obj.return_value.write.assert_called_with(expected["repr_string"])
+        mock_open_obj.return_value.write.assert_called_once_with(
+            expected["repr_string"]
+        )
 
 
 @parametrize_with_cases(argnames="expected, fitting_result", cases=THIS_MODULE)

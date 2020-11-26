@@ -1,44 +1,64 @@
 """Printing functions for displaying numbers with given precision."""
-import math
-from typing import Tuple
-
 import numpy as np
 
-from eddington.consts import DEFAULT_PRECISION
+from eddington.consts import DEFAULT_MAX_STRING_LENGTH, DEFAULT_PRECISION
 
 
-def to_precise_string(decimal: float, precision: int = DEFAULT_PRECISION) -> str:
+def to_relevant_precision_string(
+    decimal: float,
+    relevant_digits: int = DEFAULT_PRECISION,
+    max_string_length: int = DEFAULT_MAX_STRING_LENGTH,
+) -> str:
     """
-    Returns a decimal as string with desired precision.
+    Convert a decimal into string while preserving relevant digits.
 
-    :param decimal: a floating point number.
-    :param precision: the desired precision to return the number.
-    :return: a string representing the decimal with given precision.
+    :param decimal: The float to convert to string.
+    :type decimal: float
+    :param relevant_digits: number of relevant digits to preserve while converting to
+        string.
+    :type relevant_digits: int
+    :param max_string_length: maximum string length when decimal is not normalized.
+    :type max_string_length: int
+    :returns: decimal as string
+    :rtype: str
     """
-    new_decimal, relevant_precision = __to_relevant_precision(decimal)
-    if -precision <= relevant_precision <= precision:
-        return f"{decimal:.{precision}f}"
-    sign = "-" if relevant_precision < 0 else "+"
-    return f"{new_decimal:.{precision}f}e{sign}{abs(relevant_precision)}"
+    if decimal in [np.inf, np.nan, -np.inf]:
+        return str(decimal)
+    order = order_of_magnitude(decimal)
+    digit = order - relevant_digits
+    return to_digit_string(decimal, digit, max_string_length)
 
 
-def __to_relevant_precision(decimal: float) -> Tuple[float, int]:
+def to_digit_string(
+    decimal: float, digit: int, max_string_length: int = DEFAULT_MAX_STRING_LENGTH
+) -> str:
     """
-    Get relevant precision of a decimal number.
+    Convert a decimal into string while preserving given digit.
 
-    :param decimal: a floating point number.
-    :return: a tuple of a and n such that: decimal = a * 10^(-b).
+    :param decimal: The float to convert to string.
+    :type decimal: float
+    :param digit: The lowest digit to preserve while converting to string.
+    :type digit: int
+    :param max_string_length: maximum string length when decimal is not normalized.
+    :type max_string_length: int
+    :returns: decimal as string
+    :rtype: str
     """
+    if decimal == 0 and digit < 0:
+        return f"{0:.{-digit}f}"
+    if decimal in [np.inf, np.nan, -np.inf]:
+        return str(decimal)
+    order = order_of_magnitude(decimal)
+    number_of_digits = order - digit
+    if number_of_digits < max_string_length and -DEFAULT_MAX_STRING_LENGTH < digit < 0:
+        return f"{decimal:.{-digit}f}"
+    order_sign = "+" if order > 0 else "-"
+    normalized_value = decimal * np.power(10.0, -order)
+    return f"{normalized_value:.{number_of_digits}f}e{order_sign}{np.abs(order)}"
+
+
+def order_of_magnitude(decimal: float) -> int:
+    """Get the order of magnitude of the given number."""
     if decimal in [0, np.inf, np.nan, -np.inf]:
-        return decimal, 0
-    precision = 0
-    abs_a = math.fabs(decimal)
-    while abs_a < 1.0:
-        abs_a *= 10
-        precision -= 1
-    while abs_a >= 10.0:
-        abs_a /= 10
-        precision += 1
-    if decimal < 0:
-        return -abs_a, precision
-    return abs_a, precision
+        return 0
+    return int(np.floor(np.log10(np.abs(decimal))))

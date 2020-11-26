@@ -43,7 +43,7 @@ from eddington.plot import (
     show_or_export,
     title,
 )
-from eddington.print_util import to_precise_string
+from eddington.print_util import to_relevant_precision_string
 
 __version__ = "0.0.21"
 
@@ -95,5 +95,5 @@ __all__ = [
     "label_axes",
     "title",
     # Print
-    "to_precise_string",
+    "to_relevant_precision_string",
 ]
