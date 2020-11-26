@@ -79,5 +79,5 @@ def case_nan():
 @parametrize_with_cases(argnames=["a", "n", "string"], cases=THIS_MODULE)
 def test_precise_string(a, n, string):
     assert (
-            to_relevant_precision_string(a, relevant_digits=n) == string
+        to_relevant_precision_string(a, relevant_digits=n) == string
     ), "Relevant precision is different than expected"

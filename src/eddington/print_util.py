@@ -1,13 +1,13 @@
 """Printing functions for displaying numbers with given precision."""
 import numpy as np
 
-from eddington.consts import DEFAULT_PRECISION, DEFAULT_MAX_STRING_LENGTH
+from eddington.consts import DEFAULT_MAX_STRING_LENGTH, DEFAULT_PRECISION
 
 
 def to_relevant_precision_string(
-        decimal: float,
-        relevant_digits: int = DEFAULT_PRECISION,
-        max_string_length: int = DEFAULT_MAX_STRING_LENGTH
+    decimal: float,
+    relevant_digits: int = DEFAULT_PRECISION,
+    max_string_length: int = DEFAULT_MAX_STRING_LENGTH,
 ) -> str:
     if decimal in [np.inf, np.nan, -np.inf]:
         return str(decimal)
@@ -17,9 +17,7 @@ def to_relevant_precision_string(
 
 
 def to_digit_string(
-        decimal: float,
-        digit: int,
-        max_string_length: int = DEFAULT_MAX_STRING_LENGTH
+    decimal: float, digit: int, max_string_length: int = DEFAULT_MAX_STRING_LENGTH
 ) -> str:
     if decimal == 0 and digit < 0:
         return f"{0:.{-digit}f}"

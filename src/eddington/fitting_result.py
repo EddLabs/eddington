@@ -8,8 +8,11 @@ import numpy as np
 import scipy.stats as stats
 
 from eddington.consts import DEFAULT_PRECISION
-from eddington.print_util import to_relevant_precision_string, order_of_magnitude, \
-    to_digit_string
+from eddington.print_util import (
+    order_of_magnitude,
+    to_digit_string,
+    to_relevant_precision_string,
+)
 
 
 @dataclass(repr=False)

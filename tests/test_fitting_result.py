@@ -262,7 +262,9 @@ def test_export_to_text_file(expected, fitting_result):
     with mock.patch("eddington.fitting_result.open", mock_open_obj):
         fitting_result.save_txt(path)
         mock_open_obj.assert_called_once_with(path, mode="w")
-        mock_open_obj.return_value.write.assert_called_once_with(expected["repr_string"])
+        mock_open_obj.return_value.write.assert_called_once_with(
+            expected["repr_string"]
+        )
 
 
 @parametrize_with_cases(argnames="expected, fitting_result", cases=THIS_MODULE)
