@@ -17,6 +17,7 @@ from eddington.cli.common_flags import (
     should_plot_data_option,
     should_plot_fitting_option,
     should_plot_residuls_option,
+    title_option,
     x_label_option,
     y_label_option,
 )
@@ -85,6 +86,7 @@ from eddington.fitting_data import FittingData
     default=DEFAULT_MAX_COEFF,
     help="Maximum value for the parameters",
 )
+@title_option
 @x_label_option
 @y_label_option
 @is_grid_option
@@ -108,6 +110,7 @@ def eddington_fit_random(
     max_coeff: float,
     x_sigma: float,
     y_sigma: float,
+    title: Optional[str],
     x_label: Optional[str],
     y_label: Optional[str],
     grid,
@@ -145,6 +148,7 @@ def eddington_fit_random(
         legend=legend,
         output_dir=output_dir,
         is_json=json,
+        title=title,
         x_label=x_label,
         y_label=y_label,
         x_log_scale=x_log_scale,
