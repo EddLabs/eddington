@@ -25,6 +25,8 @@ a0_option = click.option(
 
 # Plot
 
+title_option = click.option("--title", type=str, help="Title for the fitting plot.")
+
 x_label_option = click.option("--x-label", type=str, help="Label for the x axis.")
 
 y_label_option = click.option("--y-label", type=str, help="Label for the y axis.")

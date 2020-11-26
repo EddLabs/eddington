@@ -34,6 +34,7 @@ def fit_and_plot(  # pylint: disable=too-many-arguments,invalid-name
     legend,
     output_dir,
     is_json,
+    title,
     x_label,
     y_label,
     should_plot_data,
@@ -47,12 +48,13 @@ def fit_and_plot(  # pylint: disable=too-many-arguments,invalid-name
     write_and_export_result(
         result, func_name=func.name, output_dir=output_dir, is_json=is_json
     )
+    title = func.name.title() if title is None else title
     x_label = data.x_column if x_label is None else x_label
     y_label = data.y_column if y_label is None else y_label
     if should_plot_data:
         with plot_data(
             data=data,
-            title_name=f"{func.title_name} - Data",
+            title_name=f"{title} - Data",
             xlabel=x_label,
             ylabel=y_label,
             **plot_kwargs,
@@ -65,7 +67,7 @@ def fit_and_plot(  # pylint: disable=too-many-arguments,invalid-name
             func=func,
             data=data,
             a=result.a,
-            title_name=f"{func.title_name}",
+            title_name=f"{title}",
             legend=legend,
             xlabel=x_label,
             ylabel=y_label,
@@ -79,7 +81,7 @@ def fit_and_plot(  # pylint: disable=too-many-arguments,invalid-name
             func=func,
             data=data,
             a=result.a,
-            title_name=f"{func.title_name} - Residuals",
+            title_name=f"{title} - Residuals",
             xlabel=x_label,
             ylabel=y_label,
             **plot_kwargs,

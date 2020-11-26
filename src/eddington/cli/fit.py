@@ -17,6 +17,7 @@ from eddington.cli.common_flags import (
     should_plot_data_option,
     should_plot_fitting_option,
     should_plot_residuls_option,
+    title_option,
     x_label_option,
     y_label_option,
 )
@@ -48,6 +49,7 @@ from eddington.fitting_data import FittingData
 @click.option("--xerr-column", type=str, help="Column to read x error values from.")
 @click.option("--y-column", type=str, help="Column to read y values from.")
 @click.option("--yerr-column", type=str, help="Column to read y error values from.")
+@title_option
 @x_label_option
 @y_label_option
 @is_grid_option
@@ -70,6 +72,7 @@ def eddington_fit(
     xerr_column: Optional[str],
     y_column: Optional[str],
     yerr_column: Optional[str],
+    title: Optional[str],
     x_label: Optional[str],
     y_label: Optional[str],
     grid,
@@ -102,6 +105,7 @@ def eddington_fit(
         legend=legend,
         output_dir=output_dir,
         is_json=json,
+        title=title,
         x_label=x_label,
         y_label=y_label,
         should_plot_data=should_plot_data,
