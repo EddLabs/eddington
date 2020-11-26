@@ -1,7 +1,7 @@
 import numpy as np
 from pytest_cases import THIS_MODULE, parametrize_with_cases
 
-from eddington.print_util import to_relevant_precision_string
+from eddington.print_util import to_digit_string, to_relevant_precision_string
 
 
 def case_positive_int_add_zeros():
@@ -81,3 +81,7 @@ def test_precise_string(a, n, string):
     assert (
         to_relevant_precision_string(a, relevant_digits=n) == string
     ), "Relevant precision is different than expected"
+
+
+def test_inf_to_digit_string():
+    assert "inf" == to_digit_string(np.inf, 5)
