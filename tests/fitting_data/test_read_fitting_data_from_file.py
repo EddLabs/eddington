@@ -8,6 +8,7 @@ from mock import Mock, PropertyMock, mock_open, patch
 from pytest_cases import fixture_ref, parametrize
 
 from eddington import FittingData, FittingDataInvalidFileSyntax
+from eddington.exceptions import FittingDataHeaderDuplication
 from tests.fitting_data import COLUMNS, CONTENT, ROWS, VALUES
 
 DummyCell = namedtuple("DummyCell", "value")
@@ -159,6 +160,16 @@ def test_read_with_empty_header(read, mocks):
     mocks["row_setter"](mocks["reader"], rows)
 
     with pytest.raises(FittingDataInvalidFileSyntax):
+        read(FILE_PATH)
+
+
+@parametrize("read, mocks", [fixture_ref(read_csv), fixture_ref(read_excel)])
+def test_read_with_header_duplication(read, mocks):
+    rows = deepcopy(ROWS)
+    rows[0][0] = rows[0][1]
+    mocks["row_setter"](mocks["reader"], rows)
+
+    with pytest.raises(FittingDataHeaderDuplication):
         read(FILE_PATH)
 
 
