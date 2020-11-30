@@ -73,7 +73,9 @@ jobs:
         python -m pip install --upgrade pip
         pip install tox
     - name: Install Latex
-      run: sudo apt-get install texlive-latex-extra dvipng
+      run: |
+        sudo apt-get update
+        sudo apt-get install texlive-latex-extra dvipng
       if: matrix.task == 'docs'
     - name: Run Post-Test check
       run: |
