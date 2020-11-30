@@ -1,4 +1,5 @@
 """Fitting data class insert the fitting algorithm."""
+import collections
 import csv
 import json
 from collections import OrderedDict, namedtuple
@@ -22,6 +23,7 @@ from eddington.exceptions import (
     FittingDataColumnIndexError,
     FittingDataColumnsLengthError,
     FittingDataColumnsSelectionError,
+    FittingDataHeaderDuplication,
     FittingDataInvalidFileSyntax,
     FittingDataSetError,
 )
@@ -575,6 +577,13 @@ class FittingData:  # pylint: disable=R0902,R0904
         else:
             headers = [str(i) for i in range(len(headers))]
             content = rows
+        duplicate_headers = [
+            item for item, count in collections.Counter(headers).items() if count > 1
+        ]
+        if len(duplicate_headers) != 0:
+            raise FittingDataHeaderDuplication(
+                filepath=file_name, duplicate_headers=duplicate_headers
+            )
         try:
             content = [list(map(float, row)) for row in content]
         except (ValueError, TypeError) as error:
