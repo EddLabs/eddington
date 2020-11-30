@@ -73,7 +73,11 @@ jobs:
         python -m pip install --upgrade pip
         pip install tox
     - name: Install Latex
-      run: sudo apt-get install --fix-missing texlive-latex-extra dvipng
+      run: |
+        sudo apt-get install libopenjp2-7-dev libgdk-pixbuf2.0-dev cmake checkinstall
+        sudo apt-get build-dep libpoppler-cpp-dev
+        echo "export R_LD_LIBRARY_PATH=\$R_LD_LIBRARY_PATH:/usr/local/lib" >> .bashrc
+        sudo apt-get install texlive-latex-extra dvipng
       if: matrix.task == 'docs'
     - name: Run Post-Test check
       run: |
