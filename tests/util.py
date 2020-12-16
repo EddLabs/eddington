@@ -5,8 +5,10 @@ from unittest.mock import Mock
 import numpy as np
 import pytest
 
-# Assertions
 from eddington import fitting_function
+
+# Assertions
+from eddington.statistics import Statistics
 
 
 def assert_calls(mock_object: Mock, calls: List[Tuple[List[Any], Dict[str, Any]]], rel):
@@ -54,6 +56,31 @@ def assert_numpy_array_equal(array1, array2, rel):
     assert np.shape(array1) == np.shape(array2)
     for i in range(np.shape(array1)[0]):
         assert array1[i] == pytest.approx(array2[i], rel=rel)
+
+
+def assert_statistics(
+    actual_stats: Statistics,
+    expected_stats: Statistics,
+    rel: float,
+):
+    assert actual_stats.mean == pytest.approx(
+        expected_stats.mean, rel=rel
+    ), "Mean value is different than expected"
+    assert actual_stats.median == pytest.approx(
+        expected_stats.median, rel=rel
+    ), "Median value is different than expected"
+    assert actual_stats.variance == pytest.approx(
+        expected_stats.variance, rel=rel
+    ), "Variance value is different than expected"
+    assert actual_stats.standard_deviation == pytest.approx(
+        expected_stats.standard_deviation, rel=rel
+    ), "Standard deviation value is different than expected"
+    assert actual_stats.maximum_value == pytest.approx(
+        expected_stats.maximum_value, rel=rel
+    ), "Maximum value is different than expected"
+    assert actual_stats.minimum_value == pytest.approx(
+        expected_stats.minimum_value, rel=rel
+    ), "Minimum value is different than expected"
 
 
 # Additional methods
