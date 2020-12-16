@@ -6,6 +6,7 @@ import click
 
 from eddington.cli.common_flags import (
     a0_option,
+    data_file_option,
     fitting_function_argument,
     is_grid_option,
     is_json_option,
@@ -14,6 +15,7 @@ from eddington.cli.common_flags import (
     is_y_log_scale_option,
     output_dir_option,
     polynomial_option,
+    sheet_option,
     should_plot_data_option,
     should_plot_fitting_option,
     should_plot_residuls_option,
@@ -25,9 +27,9 @@ from eddington.cli.main_cli import eddington_cli
 from eddington.cli.util import (
     extract_array_from_string,
     fit_and_plot,
+    load_data_file,
     load_fitting_function,
 )
-from eddington.fitting_data import FittingData
 
 # pylint: disable=invalid-name,too-many-arguments,too-many-locals,duplicate-code
 
@@ -37,14 +39,8 @@ from eddington.fitting_data import FittingData
 @fitting_function_argument
 @polynomial_option
 @a0_option
-@click.option(
-    "-d",
-    "--data-file",
-    required=True,
-    type=click.Path(exists=True, dir_okay=False, file_okay=True),
-    help="Data file to read from.",
-)
-@click.option("-s", "--sheet", type=str, help="Sheet name for excel files.")
+@data_file_option
+@sheet_option
 @click.option("--x-column", type=str, help="Column to read x values from.")
 @click.option("--xerr-column", type=str, help="Column to read x error values from.")
 @click.option("--y-column", type=str, help="Column to read y values from.")
@@ -86,7 +82,7 @@ def eddington_fit(
     json: bool,
 ):
     """Fitting data file according to a fitting function."""
-    data = __load_data_file(
+    data = load_data_file(
         ctx,
         Path(data_file),
         sheet,
@@ -115,20 +111,3 @@ def eddington_fit(
         y_log_scale=y_log_scale,
         grid=grid,
     )
-
-
-def __load_data_file(
-    ctx: click.Context, data_file: Path, sheet: Optional[str], **kwargs
-):
-    suffix = data_file.suffix
-    if suffix == ".csv":
-        return FittingData.read_from_csv(filepath=data_file, **kwargs)
-    if suffix == ".json":
-        return FittingData.read_from_json(filepath=data_file, **kwargs)
-    if suffix != ".xlsx":
-        click.echo(f'Cannot read data with "{suffix}" suffix')
-        ctx.exit(1)
-    if sheet is None:
-        click.echo("Sheet name has not been specified!")
-        ctx.exit(1)
-    return FittingData.read_from_excel(filepath=data_file, sheet=sheet, **kwargs)

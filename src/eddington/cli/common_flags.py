@@ -3,6 +3,17 @@ import click
 
 # Fitting
 
+
+data_file_option = click.option(
+    "-d",
+    "--data-file",
+    required=True,
+    type=click.Path(exists=True, dir_okay=False, file_okay=True),
+    help="Data file to read from.",
+)
+sheet_option = click.option(
+    "-s", "--sheet", type=str, help="Sheet name for excel files."
+)
 fitting_function_argument = click.argument(
     "fitting_function_name", type=str, default=""
 )

@@ -28,6 +28,7 @@ from eddington.exceptions import (
     FittingDataSetError,
 )
 from eddington.random_util import random_array, random_error, random_sigma
+from eddington.statistics import Statistics
 
 Columns = namedtuple("ColumnsResult", ["x", "y", "xerr", "yerr"])
 
@@ -62,12 +63,14 @@ class FittingData:  # pylint: disable=R0902,R0904
         self._data = OrderedDict(
             [(key, np.array(value)) for key, value in data.items()]
         )
+        self._all_columns = list(self.data.keys())
         lengths = {value.size for value in self.data.values()}
         if len(lengths) != 1:
             raise FittingDataColumnsLengthError()
         self._length = next(iter(lengths))
+        self._statistics_map: Dict[str, Statistics] = dict()
         self.select_all_records()
-        self._all_columns = list(self.data.keys())
+        self.__update_statistics()
         self.x_column = x_column
         self.xerr_column = xerr_column
         self.y_column = y_column
@@ -100,25 +103,36 @@ class FittingData:  # pylint: disable=R0902,R0904
             yerr=self.yerr_column,
         )
 
+    def column_data(self, column_header: str):
+        """
+        Get the data of a column.
+
+        :param column_header: The header name of the desired column.
+        :type column_header: str
+        :returns: The data of the given column
+        :rtype: numpy.array
+        """
+        return self.data[column_header][self.records_indices]
+
     @property
     def x(self):  # pylint: disable=invalid-name
         """X values."""
-        return self.data[self.x_column][self.records_indices]
+        return self.column_data(self.x_column)
 
     @property
     def xerr(self):
         """X error values."""
-        return self.data[self.xerr_column][self.records_indices]
+        return self.column_data(self.xerr_column)
 
     @property
     def y(self):  # pylint: disable=invalid-name
         """Y values."""
-        return self.data[self.y_column][self.records_indices]
+        return self.column_data(self.y_column)
 
     @property
     def yerr(self):
         """Y error values."""
-        return self.data[self.yerr_column][self.records_indices]
+        return self.column_data(self.yerr_column)
 
     # Records indices methods
 
@@ -130,6 +144,7 @@ class FittingData:  # pylint: disable=R0902,R0904
         :type index: int
         """
         self.records_indices[index - 1] = True
+        self.__update_statistics()
 
     def unselect_record(self, index: int):
         """
@@ -139,6 +154,7 @@ class FittingData:  # pylint: disable=R0902,R0904
         :type index: int
         """
         self.records_indices[index - 1] = False
+        self.__update_statistics()
 
     def select_all_records(self):
         """Select all records to be used in fitting."""
@@ -175,6 +191,7 @@ class FittingData:  # pylint: disable=R0902,R0904
                 "When setting record indices, all values should be booleans."
             )
         self._records_indices = records_indices
+        self.__update_statistics()
 
     # Columns can be set
 
@@ -241,6 +258,17 @@ class FittingData:  # pylint: disable=R0902,R0904
             self._yerr_column_index = self.__covert_to_index(yerr_column)
         self.__validate_index(self._yerr_column_index, yerr_column)
         self._yerr_column = self.all_columns[self._yerr_column_index]
+
+    def statistics(self, column_name: str) -> Statistics:
+        """
+        Get statistics of the values in a column.
+
+        :param column_name: The column name to get statistics of
+        :type column_name: str
+        :returns: Statistics of the given column
+        :rtype: Statistics
+        """
+        return self._statistics_map[column_name]
 
     # More functionalities
 
@@ -518,6 +546,7 @@ class FittingData:  # pylint: disable=R0902,R0904
             raise FittingDataSetError(f'The column name:"{new}" is already used.')
         self._data[new] = self._data.pop(old)
         self._all_columns = list(self.data.keys())
+        self.__update_statistics()
 
     def set_cell(self, record_number, column_name, value):
         """
@@ -545,13 +574,7 @@ class FittingData:  # pylint: disable=R0902,R0904
             raise FittingDataSetError(
                 f"Record number {record_number} does not exists"
             ) from error
-
-    @classmethod
-    def __covert_to_index(cls, column):
-        try:
-            return int(column) - 1
-        except ValueError:
-            return None
+        self.__update_statistics()
 
     def __validate_index(self, index, column):
         if index is None:
@@ -559,6 +582,23 @@ class FittingData:  # pylint: disable=R0902,R0904
         max_index = len(self._all_columns)
         if index < 0 or index >= max_index:
             raise FittingDataColumnIndexError(index + 1, max_index)
+
+    def __update_statistics(self):
+        self._statistics_map.clear()
+        for column in self.all_columns:
+            try:
+                self._statistics_map[column] = Statistics.from_array(
+                    self.column_data(column)
+                )
+            except ValueError:
+                self._statistics_map[column] = None
+
+    @classmethod
+    def __covert_to_index(cls, column):
+        try:
+            return int(column) - 1
+        except ValueError:
+            return None
 
     @classmethod
     def __extract_data_from_rows(  # pylint: disable=too-many-arguments
