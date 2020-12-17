@@ -1,7 +1,5 @@
 import pytest
 
-from tests.fitting_data import DEFAULT_SHEET
-
 
 @pytest.fixture
 def mock_load_workbook(mocker):
@@ -14,12 +12,10 @@ def mock_load_json(mocker):
 
 
 @pytest.fixture
-def mock_create_workbook(mocker):
-    create_workbook = mocker.patch("openpyxl.Workbook")
-    create_workbook.return_value.active.title = DEFAULT_SHEET
-    return create_workbook
+def mock_save_as_excel(mocker):
+    return mocker.patch("eddington.io_util.save_as_excel")
 
 
 @pytest.fixture
-def mock_csv_write(mocker):
-    return mocker.patch("csv.writer")
+def mock_save_as_csv(mocker):
+    return mocker.patch("eddington.io_util.save_as_csv")

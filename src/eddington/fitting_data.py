@@ -9,6 +9,7 @@ from typing import Any, Dict, List, Optional, Union
 import numpy as np
 import openpyxl
 
+from eddington import io_util
 from eddington.consts import (
     DEFAULT_MAX_COEFF,
     DEFAULT_MEASUREMENTS,
@@ -68,7 +69,7 @@ class FittingData:  # pylint: disable=R0902,R0904
         if len(lengths) != 1:
             raise FittingDataColumnsLengthError()
         self._length = next(iter(lengths))
-        self._statistics_map: Dict[str, Statistics] = dict()
+        self._statistics_map: Dict[str, Optional[Statistics]] = OrderedDict()
         self.select_all_records()
         self.__update_statistics()
         self.x_column = x_column
@@ -205,8 +206,6 @@ class FittingData:  # pylint: disable=R0902,R0904
         self._records_indices = records_indices
         self.__update_statistics()
 
-    # Columns can be set
-
     @property
     def x_column(self):
         """Name of the x column."""
@@ -271,7 +270,7 @@ class FittingData:  # pylint: disable=R0902,R0904
         self.__validate_index(self._yerr_column_index, yerr_column)
         self._yerr_column = self.all_columns[self._yerr_column_index]
 
-    def statistics(self, column_name: str) -> Statistics:
+    def statistics(self, column_name: str) -> Optional[Statistics]:
         """
         Get statistics of the values in a column.
 
@@ -306,7 +305,7 @@ class FittingData:  # pylint: disable=R0902,R0904
             )
         )
 
-    # Class methods
+    # Read and generate methods
 
     @classmethod
     def random(  # pylint: disable=invalid-name,too-many-arguments
@@ -481,58 +480,7 @@ class FittingData:  # pylint: disable=R0902,R0904
         except (ValueError, TypeError) as error:
             raise FittingDataInvalidFileSyntax(filepath) from error
 
-    def save_excel(
-        self,
-        output_directory: Union[str, Path],
-        name: Optional[str] = "fitting_data",
-        sheet: Optional[str] = None,
-    ):
-        """
-        Save :class:`FittingData` to xlsx file.
-
-        :param output_directory: Path to the directory for the new excel file to be
-         saved.
-        :type output_directory: ``Path`` or ``str``
-        :param name: Optional. The name of the file, without the .xlsx suffix.
-         "fitting_data" by default.
-        :type name: str
-        :param sheet: Optional. Name of the sheet that the data will be saved to.
-        :type sheet: str
-        """
-        workbook = openpyxl.Workbook()
-        worksheet = workbook.active
-
-        if sheet:
-            worksheet.title = sheet
-
-        worksheet.append(self.all_columns)
-
-        for row in self.all_records:
-            worksheet.append(row)
-
-        path = Path(output_directory / Path(f"{name}.xlsx"))
-
-        workbook.save(path)
-
-    def save_csv(
-        self, output_directory: Union[str, Path], name: Optional[str] = "fitting_data"
-    ):
-        """
-        Save :class:`FittingData` to csv file.
-
-        :param output_directory:
-         Path to the directory for the new excel file to be saved.
-        :type output_directory: ``Path`` or ``str``
-        :param name: Optional. The name of the file, without the .csv suffix.
-         "fitting_data" by default.
-        :type name: str
-        """
-        path = Path(output_directory / Path(f"{name}.csv"))
-
-        with open(path, mode="w+", newline="") as csv_file:
-            writer = csv.writer(csv_file)
-            writer.writerow(self.all_columns)
-            writer.writerows(self.all_records)
+    # Set methods
 
     def set_header(self, old, new):
         """
@@ -581,6 +529,100 @@ class FittingData:  # pylint: disable=R0902,R0904
             ) from error
         self.__update_statistics()
 
+    # Save methods
+
+    def save_excel(
+        self,
+        output_directory: Union[str, Path],
+        name: str = "fitting_data",
+        sheet: Optional[str] = None,
+    ):
+        """
+        Save :class:`FittingData` to xlsx file.
+
+        :param output_directory: Path to the directory for the new excel file to be
+         saved.
+        :type output_directory: ``Path`` or ``str``
+        :param name: Optional. The name of the file, without the .xlsx suffix.
+         "fitting_data" by default.
+        :type name: str
+        :param sheet: Optional. Name of the sheet that the data will be saved to.
+        :type sheet: str
+        """
+        io_util.save_as_excel(
+            content=[self.all_columns, *self.all_records],
+            output_directory=output_directory,
+            file_name=name,
+            sheet=sheet,
+        )
+
+    def save_csv(self, output_directory: Union[str, Path], name: str = "fitting_data"):
+        """
+        Save :class:`FittingData` to csv file.
+
+        :param output_directory:
+         Path to the directory for the new excel file to be saved.
+        :type output_directory: ``Path`` or ``str``
+        :param name: Optional. The name of the file, without the .csv suffix.
+         "fitting_data" by default.
+        :type name: str
+        """
+        io_util.save_as_csv(
+            content=[self.all_columns, *self.all_records],
+            output_directory=output_directory,
+            file_name=name,
+        )
+
+    def save_statistics_excel(
+        self,
+        output_directory: Union[str, Path],
+        name: Optional[str] = None,
+        sheet: Optional[str] = None,
+    ):
+        """
+        Save the fitting data statistics to xlsx file.
+
+        :param output_directory: Path to the directory for the new excel file to be
+         saved.
+        :type output_directory: ``Path`` or ``str``
+        :param name: Optional. The name of the file, without the .xlsx suffix.
+         "fitting_data_statistics" by default.
+        :type name: str
+        :param sheet: Optional. Name of the sheet that the data will be saved to.
+        :type sheet: str
+        """
+        if name is None:
+            name = "fitting_data_statistics"
+        io_util.save_as_excel(
+            content=self.__statistics_as_records(),
+            output_directory=output_directory,
+            file_name=name,
+            sheet=sheet,
+        )
+
+    def save_statistics_csv(
+        self, output_directory: Union[str, Path], name: Optional[str] = None
+    ):
+        """
+        Save the fitting data statistics to csv file.
+
+        :param output_directory:
+         Path to the directory for the new excel file to be saved.
+        :type output_directory: ``Path`` or ``str``
+        :param name: Optional. The name of the file, without the .csv suffix.
+         "fitting_data" by default.
+        :type name: str
+        """
+        if name is None:
+            name = "fitting_data_statistics"
+        io_util.save_as_csv(
+            content=self.__statistics_as_records(),
+            output_directory=output_directory,
+            file_name=name,
+        )
+
+    # Private methods
+
     def __validate_index(self, index, column):
         if index is None:
             raise FittingDataColumnExistenceError(column)
@@ -597,6 +639,20 @@ class FittingData:  # pylint: disable=R0902,R0904
                 )
             except ValueError:
                 self._statistics_map[column] = None
+
+    def __statistics_as_records(self):
+        records = [["Parameters", *self.all_columns]]
+        for parameter in Statistics.parameters():
+            records.append(
+                [
+                    parameter.replace("_", " ").title(),
+                    *[
+                        getattr(statistics, parameter)
+                        for statistics in self._statistics_map.values()
+                    ],
+                ]
+            )
+        return records
 
     @classmethod
     def __covert_to_index(cls, column):

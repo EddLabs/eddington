@@ -6,6 +6,17 @@ from tests.util import assert_statistics
 EPSILON = 1e-3
 
 
+def test_statistics_parameters():
+    assert Statistics.parameters() == [
+        "mean",
+        "median",
+        "variance",
+        "standard_deviation",
+        "maximum_value",
+        "minimum_value",
+    ]
+
+
 def test_calculate_statistics_for_one_value():
     k = 6
     values = [k]
