@@ -4,7 +4,7 @@ import csv
 import json
 from collections import OrderedDict, namedtuple
 from pathlib import Path
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, Union, Any
 
 import numpy as np
 import openpyxl
@@ -89,7 +89,17 @@ class FittingData:  # pylint: disable=R0902,R0904
         return self._data
 
     @property
-    def all_columns(self):
+    def all_records(self) -> List[List[Any]]:
+        return [list(record) for record in zip(*self.data.values())]
+
+    @property
+    def records(self):
+        return list(
+            zip(*[column[self.records_indices] for column in self.data.values()])
+        )
+
+    @property
+    def all_columns(self) -> List[str]:
         """Columns list."""
         return self._all_columns
 
@@ -486,7 +496,6 @@ class FittingData:  # pylint: disable=R0902,R0904
         :type name: str
         :param sheet: Optional. Name of the sheet that the data will be saved to.
         :type sheet: str
-        :returns: :class:`FittingData` read from the excel file.
         """
         workbook = openpyxl.Workbook()
         worksheet = workbook.active
@@ -494,12 +503,9 @@ class FittingData:  # pylint: disable=R0902,R0904
         if sheet:
             worksheet.title = sheet
 
-        headers = list(self.data.keys())
-        columns = list(self.data.values())
+        worksheet.append(self.all_columns)
 
-        worksheet.append(headers)
-
-        for row in zip(*columns):
+        for row in self.all_records:
             worksheet.append(row)
 
         path = Path(output_directory / Path(f"{name}.xlsx"))
@@ -519,15 +525,13 @@ class FittingData:  # pylint: disable=R0902,R0904
          "fitting_data" by default.
         :type name: str
         """
-        headers = list(self.data.keys())
-        columns = list(self.data.values())
 
         path = Path(output_directory / Path(f"{name}.csv"))
 
         with open(path, mode="w+", newline="") as csv_file:
             writer = csv.writer(csv_file)
-            writer.writerow(headers)
-            writer.writerows(zip(*columns))
+            writer.writerow(self.all_columns)
+            writer.writerows(self.all_records)
 
     def set_header(self, old, new):
         """

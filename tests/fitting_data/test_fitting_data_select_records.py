@@ -4,7 +4,10 @@ from pytest_cases import THIS_MODULE, parametrize_with_cases
 
 from eddington import FittingData
 from eddington.exceptions import FittingDataColumnsSelectionError
-from tests.fitting_data import COLUMNS, NUMBER_OF_RECORDS, VALUES
+from tests.fitting_data import COLUMNS, NUMBER_OF_RECORDS, VALUES, CONTENT
+from tests.util import assert_list_equal
+
+EPSILON = 1e-3
 
 
 def extract_values(column, indices):
@@ -128,6 +131,15 @@ def test_is_selected(fitting_data, selected_indices):
             assert fitting_data.is_selected(i), f"Record {i} was not selected"
         else:
             assert not fitting_data.is_selected(i), f"Record {i} was selected"
+
+
+@parametrize_with_cases(argnames="fitting_data, selected_indices", cases=THIS_MODULE)
+def test_records(fitting_data, selected_indices):
+    selected_records = [
+        record for i, record in enumerate(CONTENT, start=1) if i in selected_indices
+    ]
+    for actual_record, expected_record in zip(selected_records, fitting_data.records):
+        assert_list_equal(actual_record, expected_record, rel=EPSILON)
 
 
 def test_set_selection_with_different_size():
