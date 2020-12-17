@@ -1,20 +1,8 @@
-import pytest
-
 from eddington import FittingData
 from tests.fitting_data import COLUMNS
 from tests.util import assert_calls
 
 EPSILON = 1e-3
-
-
-@pytest.fixture
-def mock_save_as_excel(mocker):
-    return mocker.patch("eddington.io_util.save_as_excel")
-
-
-@pytest.fixture
-def mock_save_as_csv(mocker):
-    return mocker.patch("eddington.io_util.save_as_csv")
 
 
 def test_default_save_as_excel(mock_save_as_excel):

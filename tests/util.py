@@ -1,4 +1,5 @@
 import random
+from numbers import Number
 from typing import Any, Dict, List, Tuple
 from unittest.mock import Mock
 
@@ -40,7 +41,10 @@ def assert_dict_equal(dict1: Dict[Any, Any], dict2: Dict[Any, Any], rel):
 
 def assert_equal_item(value1, value2, rel):
     if isinstance(value1, (list, np.ndarray)):
-        assert_numpy_array_equal(value1, value2, rel)
+        if all(isinstance(item, Number) for item in value1):
+            assert_numpy_array_equal(value1, value2, rel)
+        else:
+            assert_list_equal(value1, value2, rel)
     elif isinstance(value1, float):
         assert value1 == pytest.approx(
             value2, rel=rel

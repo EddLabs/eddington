@@ -18,5 +18,3 @@ VALUES = list(COLUMNS.values())
 STATISTICS = {
     column: Statistics.from_array(values) for column, values in COLUMNS.items()
 }
-
-DEFAULT_SHEET = "default_sheet"
