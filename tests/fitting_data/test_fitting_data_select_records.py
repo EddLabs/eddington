@@ -4,7 +4,7 @@ from pytest_cases import THIS_MODULE, parametrize_with_cases
 
 from eddington import FittingData
 from eddington.exceptions import FittingDataColumnsSelectionError
-from tests.fitting_data import COLUMNS, NUMBER_OF_RECORDS, VALUES, CONTENT
+from tests.fitting_data import COLUMNS, CONTENT, NUMBER_OF_RECORDS, VALUES
 from tests.util import assert_list_equal
 
 EPSILON = 1e-3

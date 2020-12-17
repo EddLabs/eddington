@@ -4,7 +4,7 @@ import csv
 import json
 from collections import OrderedDict, namedtuple
 from pathlib import Path
-from typing import Dict, List, Optional, Union, Any
+from typing import Any, Dict, List, Optional, Union
 
 import numpy as np
 import openpyxl
@@ -90,10 +90,12 @@ class FittingData:  # pylint: disable=R0902,R0904
 
     @property
     def all_records(self) -> List[List[Any]]:
+        """Get all records in data as a list."""
         return [list(record) for record in zip(*self.data.values())]
 
     @property
     def records(self):
+        """Get all selected records in data as a list."""
         return list(
             zip(*[column[self.records_indices] for column in self.data.values()])
         )
@@ -525,7 +527,6 @@ class FittingData:  # pylint: disable=R0902,R0904
          "fitting_data" by default.
         :type name: str
         """
-
         path = Path(output_directory / Path(f"{name}.csv"))
 
         with open(path, mode="w+", newline="") as csv_file:
