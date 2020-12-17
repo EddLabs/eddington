@@ -1,5 +1,5 @@
 """Module for handling statistical values."""
-from dataclasses import dataclass
+from dataclasses import dataclass, fields
 from typing import List, Union
 
 import numpy as np
@@ -38,3 +38,8 @@ class Statistics:
             maximum_value=np.max(values_array),
             minimum_value=np.min(values_array),
         )
+
+    @classmethod
+    def parameters(cls):
+        """Get list of available statistics parameters."""
+        return [field.name for field in fields(cls)]
