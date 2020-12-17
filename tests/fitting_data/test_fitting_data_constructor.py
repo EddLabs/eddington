@@ -10,8 +10,10 @@ from eddington import (
     FittingDataColumnsLengthError,
 )
 from eddington.fitting_data import Columns
-from tests.fitting_data import COLUMNS, COLUMNS_NAMES
+from tests.fitting_data import COLUMNS, COLUMNS_NAMES, CONTENT
+from tests.util import assert_list_equal
 
+EPSILON = 1e-3
 COLUMNS_OPTIONS = ["x_column", "xerr_column", "y_column", "yerr_column"]
 
 
@@ -162,6 +164,12 @@ def test_data(fitting_data, expected_columns):
         assert item == pytest.approx(
             COLUMNS[key]
         ), f"Value of {key} is different than expected."
+
+
+@parametrize_with_cases(argnames="fitting_data, expected_columns", cases=THIS_MODULE)
+def test_records(fitting_data, expected_columns):
+    for actual_record, expected_record in zip(CONTENT, fitting_data.all_records):
+        assert_list_equal(actual_record, expected_record, rel=EPSILON)
 
 
 @pytest.mark.parametrize("column", COLUMNS_OPTIONS)
