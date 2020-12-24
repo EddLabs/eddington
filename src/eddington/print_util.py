@@ -22,7 +22,7 @@ def to_relevant_precision_string(
     :returns: decimal as string
     :rtype: str
     """
-    if decimal in [np.inf, np.nan, -np.inf]:
+    if is_nan_or_infinity(decimal):
         return str(decimal)
     order = order_of_magnitude(decimal)
     digit = order - relevant_digits
@@ -59,6 +59,11 @@ def to_digit_string(
 
 def order_of_magnitude(decimal: float) -> int:
     """Get the order of magnitude of the given number."""
-    if decimal in [0, np.inf, np.nan, -np.inf]:
+    if decimal == 0 or is_nan_or_infinity(decimal):
         return 0
     return int(np.floor(np.log10(np.abs(decimal))))
+
+
+def is_nan_or_infinity(decimal: float) -> bool:
+    """Whether a floating number is infinity or NaN (Not a Number)."""
+    return np.isnan(decimal) or np.isinf(decimal)
