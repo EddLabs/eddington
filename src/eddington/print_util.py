@@ -65,5 +65,5 @@ def order_of_magnitude(decimal: float) -> int:
 
 
 def is_nan_or_infinity(decimal: float) -> bool:
-    """Whether a floating number is infinity or NaN (Not a Number)"""
+    """Whether a floating number is infinity or NaN (Not a Number)."""
     return np.isnan(decimal) or np.isinf(decimal)
