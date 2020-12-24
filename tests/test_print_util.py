@@ -1,3 +1,5 @@
+import math
+
 import numpy as np
 from pytest_cases import THIS_MODULE, parametrize_with_cases
 
@@ -64,16 +66,28 @@ def case_small_float_add_zeroes():
     return 3.289e-5, 4, "3.2890e-5"
 
 
-def case_infinity():
+def case_numpy_infinity():
     return np.inf, 3, "inf"
 
 
-def case_negative_infinity():
+def case_python_infinity():
+    return math.inf, 3, "inf"
+
+
+def case_numpy_negative_infinity():
     return -np.inf, 3, "-inf"
 
 
-def case_nan():
+def case_python_negative_infinity():
+    return -math.inf, 3, "-inf"
+
+
+def case_numpy_nan():
     return np.nan, 3, "nan"
+
+
+def case_python_nan():
+    return math.nan, 3, "nan"
 
 
 @parametrize_with_cases(argnames=["a", "n", "string"], cases=THIS_MODULE)
