@@ -47,9 +47,9 @@ def parabolic(a: np.ndarray, x: Union[np.ndarray, float]) -> Union[np.ndarray, f
     x_derivative=lambda a, x: a[2] * a[0] * (x + a[1]) ** (a[2] - 1),
     a_derivative=lambda a, x: np.stack(
         [
-            (x + a[1]) ** a[2],
-            a[2] * a[0] * (x + a[1]) ** (a[2] - 1),
-            a[0] * np.log(x + a[1]) * (x + a[1]) ** a[2],
+            np.power(x + a[1], a[2]),
+            a[2] * a[0] * np.power(x + a[1], a[2] - 1),
+            a[0] * np.log(x + a[1]) * np.power(x + a[1], a[2]),
             np.ones(shape=np.shape(x)),
         ]
     ),
@@ -58,18 +58,18 @@ def straight_power(
     a: np.ndarray, x: Union[np.ndarray, float]
 ) -> Union[np.ndarray, float]:  # pylint: disable=C0103
     """Represent fitting of y ~ x^n."""
-    return a[0] * (x + a[1]) ** a[2] + a[3]
+    return a[0] * np.power(x + a[1], a[2]) + a[3]
 
 
 @fitting_function(
     n=4,
     syntax="a[0] / (x + a[1]) ^ a[2] + a[3]",
-    x_derivative=lambda a, x: -a[2] * a[0] / (x + a[1]) ** (a[2] + 1),
+    x_derivative=lambda a, x: -a[2] * a[0] / np.power(x + a[1], a[2] + 1),
     a_derivative=lambda a, x: np.stack(
         [
-            1 / (x + a[1]) ** a[2],
-            -a[2] * a[0] / (x + a[1]) ** (a[2] + 1),
-            -a[0] * np.log(x + a[1]) * (x + a[1]) ** a[2],
+            1 / np.power(x + a[1], a[2]),
+            -a[2] * a[0] / np.power(x + a[1], a[2] + 1),
+            -a[0] * np.log(x + a[1]) * np.power(x + a[1], a[2]),
             np.ones(shape=np.shape(x)),
         ]
     ),
@@ -78,7 +78,7 @@ def inverse_power(
     a: np.ndarray, x: Union[np.ndarray, float]
 ) -> Union[np.ndarray, float]:  # pylint: disable=C0103
     """Represent fitting of y ~ x^(-n)."""
-    return a[0] / (x + a[1]) ** a[2] + a[3]
+    return a[0] / np.power(x + a[1], a[2]) + a[3]
 
 
 @fitting_function(
