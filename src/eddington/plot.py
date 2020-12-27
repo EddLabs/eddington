@@ -82,8 +82,8 @@ def plot_residuals(  # pylint: disable=invalid-name,too-many-arguments
         x_log_scale=x_log_scale,
         y_log_scale=y_log_scale,
     )
-    errorbar(ax=ax, data=data.residuals(func, a))
     xmin, xmax = get_plot_borders(x=data.x, xmin=xmin, xmax=xmax)
+    errorbar(ax=ax, data=data.residuals(func, a), xmin=xmin, xmax=xmax)
     horizontal_line(ax=ax, xmin=xmin, xmax=xmax)
     return fig
 
@@ -144,8 +144,8 @@ def plot_fitting(  # pylint: disable=C0103,R0913,R0914
         x_log_scale=x_log_scale,
         y_log_scale=y_log_scale,
     )
-    errorbar(ax=ax, data=data)
     xmin, xmax = get_plot_borders(x=data.x, xmin=xmin, xmax=xmax)
+    errorbar(ax=ax, data=data, xmin=xmin, xmax=xmax)
     if step is None:
         step = (xmax - xmin) / 1000.0
     x = np.arange(xmin, xmax, step=step)  # pylint: disable=invalid-name
@@ -198,8 +198,8 @@ def plot_data(  # pylint: disable=too-many-arguments
         x_log_scale=x_log_scale,
         y_log_scale=y_log_scale,
     )
-    errorbar(ax=ax, data=data)
     xmin, xmax = get_plot_borders(x=data.x, xmin=xmin, xmax=xmax)
+    errorbar(ax=ax, data=data, xmin=xmin, xmax=xmax)
     limit_axes(ax=ax, xmin=xmin, xmax=xmax)
     return fig
 
@@ -373,7 +373,12 @@ def horizontal_line(  # pylint: disable=C0103
     ax.hlines(y, xmin=xmin, xmax=xmax, linestyles="dashed")
 
 
-def errorbar(ax: plt.Axes, data: FittingData):  # pylint: disable=C0103
+def errorbar(  # pylint: disable=invalid-name
+    ax: plt.Axes,
+    data: FittingData,
+    xmin: Optional[float] = None,
+    xmax: Optional[float] = None,
+):
     """
     Plot error bar to figure.
 
@@ -381,12 +386,17 @@ def errorbar(ax: plt.Axes, data: FittingData):  # pylint: disable=C0103
     :type ax: matplotlib.pyplot.Axes
     :param data: Data to visualize
     :type data: eddington.fitting_data.FittingData
+    :param xmin: Optional. Minimum value of X. Used for filtering data points
+    :type xmin: Optional float
+    :param xmax: Optional. Maximum value of X. Used for filtering data points
+    :type xmax: Optional float
     """
+    checkers_list = [__in_bounds(val, min_val=xmin, max_val=xmax) for val in data.x]
     ax.errorbar(
-        x=data.x,
-        y=data.y,
-        xerr=data.xerr,
-        yerr=data.yerr,
+        x=data.x[checkers_list],
+        y=data.y[checkers_list],
+        xerr=data.xerr[checkers_list],
+        yerr=data.yerr[checkers_list],
         markersize=1,
         marker="o",
         linestyle="None",
@@ -456,3 +466,11 @@ def __should_add_legend(legend, a_dict):  # pylint: disable=invalid-name
     if len(a_dict) >= 2:
         return True
     return False
+
+
+def __in_bounds(val, min_val=None, max_val=None):  # pylint: disable=invalid-name
+    if min_val is not None and val < min_val:
+        return False
+    if max_val is not None and val > max_val:
+        return False
+    return True

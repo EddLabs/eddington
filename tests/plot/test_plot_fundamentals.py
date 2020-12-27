@@ -4,7 +4,7 @@ from pytest_cases import parametrize_with_cases
 
 from eddington import show_or_export
 from tests.plot import cases
-from tests.util import assert_dict_equal
+from tests.util import assert_calls
 
 
 @parametrize_with_cases(argnames="base_dict, plot_method", cases=cases)
@@ -80,24 +80,89 @@ def test_plot_with_y_log_scale(base_dict, plot_method, mock_figure):
     argnames="base_dict, plot_method",
     cases=[cases.case_plot_data, cases.case_plot_fitting],
 )
-def test_error_bar(base_dict, plot_method, mock_figure):
+def test_error_bar_without_boundaries(base_dict, plot_method, mock_figure):
     fig = plot_method(**base_dict)
     assert (
         fig._actual_fig == mock_figure  # pylint: disable=protected-access
     ), "Figure is different than expected"
-    ax = mock_figure.add_subplot.return_value
-    assert ax.errorbar.call_count == 1
-    assert_dict_equal(
-        ax.errorbar.call_args_list[0][1],
-        dict(
-            x=cases.FIT_DATA.x,
-            y=cases.FIT_DATA.y,
-            xerr=cases.FIT_DATA.xerr,
-            yerr=cases.FIT_DATA.yerr,
-            markersize=1,
-            marker="o",
-            linestyle="None",
-        ),
+    assert_calls(
+        mock_figure.add_subplot.return_value.errorbar,
+        calls=[
+            (
+                [],
+                dict(
+                    x=cases.FIT_DATA.x,
+                    y=cases.FIT_DATA.y,
+                    xerr=cases.FIT_DATA.xerr,
+                    yerr=cases.FIT_DATA.yerr,
+                    markersize=1,
+                    marker="o",
+                    linestyle="None",
+                ),
+            ),
+        ],
+        rel=1e-5,
+    )
+
+
+@parametrize_with_cases(
+    argnames="base_dict, plot_method",
+    cases=[cases.case_plot_data, cases.case_plot_fitting],
+)
+def test_error_bar_with_xmin(base_dict, plot_method, mock_figure):
+    xmin = 4
+    fig = plot_method(**base_dict, xmin=xmin)
+    assert (
+        fig._actual_fig == mock_figure  # pylint: disable=protected-access
+    ), "Figure is different than expected"
+    data_filter = [val >= xmin for val in cases.FIT_DATA.x]
+    assert_calls(
+        mock_figure.add_subplot.return_value.errorbar,
+        calls=[
+            (
+                [],
+                dict(
+                    x=cases.FIT_DATA.x[data_filter],
+                    y=cases.FIT_DATA.y[data_filter],
+                    xerr=cases.FIT_DATA.xerr[data_filter],
+                    yerr=cases.FIT_DATA.yerr[data_filter],
+                    markersize=1,
+                    marker="o",
+                    linestyle="None",
+                ),
+            ),
+        ],
+        rel=1e-5,
+    )
+
+
+@parametrize_with_cases(
+    argnames="base_dict, plot_method",
+    cases=[cases.case_plot_data, cases.case_plot_fitting],
+)
+def test_error_bar_with_xmax(base_dict, plot_method, mock_figure):
+    xmax = 4
+    fig = plot_method(**base_dict, xmax=xmax)
+    assert (
+        fig._actual_fig == mock_figure  # pylint: disable=protected-access
+    ), "Figure is different than expected"
+    data_filter = [val <= xmax for val in cases.FIT_DATA.x]
+    assert_calls(
+        mock_figure.add_subplot.return_value.errorbar,
+        calls=[
+            (
+                [],
+                dict(
+                    x=cases.FIT_DATA.x[data_filter],
+                    y=cases.FIT_DATA.y[data_filter],
+                    xerr=cases.FIT_DATA.xerr[data_filter],
+                    yerr=cases.FIT_DATA.yerr[data_filter],
+                    markersize=1,
+                    marker="o",
+                    linestyle="None",
+                ),
+            ),
+        ],
         rel=1e-5,
     )
 
