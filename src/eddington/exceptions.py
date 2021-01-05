@@ -30,11 +30,18 @@ class FittingDataError(EddingtonException):  # noqa: D101
     pass
 
 
+class FittingDataColumnsLengthError(FittingDataError):  # noqa: D101
+    msg = "All columns in FittingData should have the same length"
+
+    def __init__(self) -> None:  # noqa: D107
+        super().__init__(self.msg)
+
+
 class FittingDataInvalidFile(FittingDataError):  # noqa: D101
     pass
 
 
-class FittingDataHeaderDuplication(FittingDataError):  # noqa: D101
+class FittingDataHeaderDuplication(FittingDataInvalidFile):  # noqa: D101
     def __init__(self, filepath, duplicate_headers):  # noqa: D107
         super().__init__(
             f'The following headers appear more than once in "{filepath}": '
@@ -49,13 +56,6 @@ class FittingDataInvalidFileSyntax(FittingDataInvalidFile):  # noqa: D101
         sheet_msg = "" if sheet is None else f' in sheet "{sheet}"'
         msg = f'"{filepath}" has invalid syntax{sheet_msg}.'
         super().__init__(msg)
-
-
-class FittingDataColumnsLengthError(FittingDataInvalidFile):  # noqa: D101
-    msg = "All columns in FittingData should have the same length"
-
-    def __init__(self) -> None:  # noqa: D107
-        super().__init__(self.msg)
 
 
 class FittingDataColumnIndexError(FittingDataError):  # noqa: D101
