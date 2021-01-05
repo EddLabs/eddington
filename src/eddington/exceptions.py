@@ -1,7 +1,5 @@
 # pylint: disable=missing-class-docstring
 """Exception classes for Eddington."""
-from pathlib import Path
-from typing import Optional, Union
 
 
 class EddingtonException(Exception):  # noqa: D101
@@ -39,23 +37,6 @@ class FittingDataColumnsLengthError(FittingDataError):  # noqa: D101
 
 class FittingDataInvalidFile(FittingDataError):  # noqa: D101
     pass
-
-
-class FittingDataHeaderDuplication(FittingDataInvalidFile):  # noqa: D101
-    def __init__(self, filepath, duplicate_headers):  # noqa: D107
-        super().__init__(
-            f'The following headers appear more than once in "{filepath}": '
-            f'{", ".join(duplicate_headers)}'
-        )
-
-
-class FittingDataInvalidFileSyntax(FittingDataInvalidFile):  # noqa: D101
-    def __init__(
-        self, filepath: Union[str, Path], sheet: Optional[str] = None
-    ) -> None:  # noqa: D107
-        sheet_msg = "" if sheet is None else f' in sheet "{sheet}"'
-        msg = f'"{filepath}" has invalid syntax{sheet_msg}.'
-        super().__init__(msg)
 
 
 class FittingDataColumnIndexError(FittingDataError):  # noqa: D101

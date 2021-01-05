@@ -24,8 +24,7 @@ from eddington.exceptions import (
     FittingDataColumnIndexError,
     FittingDataColumnsLengthError,
     FittingDataColumnsSelectionError,
-    FittingDataHeaderDuplication,
-    FittingDataInvalidFileSyntax,
+    FittingDataInvalidFile,
     FittingDataSetError,
 )
 from eddington.random_util import random_array, random_error, random_sigma
@@ -392,13 +391,13 @@ class FittingData:  # pylint: disable=R0902,R0904
 
         workbook = openpyxl.load_workbook(filepath, data_only=True)
         rows = [list(row) for row in workbook[sheet].values]
-        # fmt: off
-        return cls.__extract_data_from_rows(
-            rows=rows, file_name=filepath.name, sheet=sheet,
-            x_column=x_column, xerr_column=xerr_column,
-            y_column=y_column, yerr_column=yerr_column,
+        return cls.__build_from_rows(
+            rows=rows,
+            x_column=x_column,
+            xerr_column=xerr_column,
+            y_column=y_column,
+            yerr_column=yerr_column,
         )
-        # fmt: on
 
     @classmethod
     def read_from_csv(  # pylint: disable=too-many-arguments
@@ -430,13 +429,13 @@ class FittingData:  # pylint: disable=R0902,R0904
         with open(filepath, mode="r") as csv_file:
             csv_obj = csv.reader(csv_file)
             rows = list(csv_obj)
-        # fmt: off
-        return cls.__extract_data_from_rows(
-            rows=rows, file_name=filepath.name,
-            x_column=x_column, xerr_column=xerr_column,
-            y_column=y_column, yerr_column=yerr_column,
+        return cls.__build_from_rows(
+            rows=rows,
+            x_column=x_column,
+            xerr_column=xerr_column,
+            y_column=y_column,
+            yerr_column=yerr_column,
         )
-        # fmt: on
 
     @classmethod
     def read_from_json(  # pylint: disable=too-many-arguments
@@ -478,7 +477,9 @@ class FittingData:  # pylint: disable=R0902,R0904
             )
             # fmt: on
         except (ValueError, TypeError) as error:
-            raise FittingDataInvalidFileSyntax(filepath) from error
+            raise FittingDataInvalidFile(
+                f'"{filepath.name}" has invalid syntax.'
+            ) from error
 
     # Set methods
 
@@ -621,6 +622,99 @@ class FittingData:  # pylint: disable=R0902,R0904
             file_name=name,
         )
 
+    # Build from rows
+
+    @classmethod
+    def __build_from_rows(  # pylint: disable=too-many-arguments
+        cls,
+        rows,
+        x_column: Optional[Union[str, int]] = None,
+        xerr_column: Optional[Union[str, int]] = None,
+        y_column: Optional[Union[str, int]] = None,
+        yerr_column: Optional[Union[str, int]] = None,
+    ):
+        # rows = cls.trim_rows(rows)
+        headers, content = cls.__extract_headers(rows)
+        cls.__validate_headers(headers)
+        data = cls.__build_raw_data(headers, content)
+        return FittingData(
+            data=data,
+            x_column=x_column,
+            xerr_column=xerr_column,
+            y_column=y_column,
+            yerr_column=yerr_column,
+        )
+
+    @classmethod
+    def __extract_headers(cls, rows: List[List[Optional[str]]]):
+        headers: List[Optional[str]] = rows[0]
+        if cls.__are_headers(headers):
+            content = rows[1:]
+        else:
+            headers = [str(i) for i in range(len(headers))]
+            content = rows
+        return headers, content
+
+    @classmethod
+    def __validate_headers(cls, headers):
+        duplicate_headers = [
+            item for item, count in collections.Counter(headers).items() if count > 1
+        ]
+        if len(duplicate_headers) != 0:
+            raise FittingDataInvalidFile(
+                f"The following headers appear more than once: "
+                f'{", ".join(duplicate_headers)}'
+            )
+
+    @classmethod
+    def __build_raw_data(cls, headers, content):
+        content = [cls.__build_row(i, row) for i, row in enumerate(content, start=1)]
+        columns = [np.array(column) for column in zip(*content)]
+        return collections.OrderedDict(zip(headers, columns))
+
+    @classmethod
+    def __build_row(cls, row_number, row):
+        return [
+            cls.__build_cell(row_number, column_number, val)
+            for column_number, val in enumerate(row, start=1)
+        ]
+
+    @classmethod
+    def __build_cell(cls, row_number, column_number, val):
+        if isinstance(val, str):
+            val = val.strip()
+        if val is None or val == "":
+            raise FittingDataInvalidFile(
+                f"Empty cell at column {column_number} row {row_number}."
+            )
+        try:
+            return float(val)
+        except ValueError as error:
+            raise FittingDataInvalidFile(
+                f"Cell should be a number at column {column_number} row {row_number}, "
+                f'got "{val}".'
+            ) from error
+
+    @classmethod
+    def __are_headers(cls, headers):
+        return all([cls.__is_header(header) for header in headers])
+
+    @classmethod
+    def __is_header(cls, string):
+        if not isinstance(string, str):
+            return False
+        if string == "":
+            return False
+        return not cls.__is_number(string)
+
+    @classmethod
+    def __is_number(cls, string):
+        try:
+            float(string)
+            return True
+        except ValueError:
+            return False
+
     # Private methods
 
     def __validate_index(self, index, column):
@@ -660,60 +754,3 @@ class FittingData:  # pylint: disable=R0902,R0904
             return int(column) - 1
         except ValueError:
             return None
-
-    @classmethod
-    def __extract_data_from_rows(  # pylint: disable=too-many-arguments
-        cls,
-        rows,
-        file_name,
-        sheet=None,
-        x_column=None,
-        xerr_column=None,
-        y_column=None,
-        yerr_column=None,
-    ):
-        headers: List[str] = rows[0]
-        if cls.__is_headers(headers):
-            content = rows[1:]
-        else:
-            headers = [str(i) for i in range(len(headers))]
-            content = rows
-        duplicate_headers = [
-            item for item, count in collections.Counter(headers).items() if count > 1
-        ]
-        if len(duplicate_headers) != 0:
-            raise FittingDataHeaderDuplication(
-                filepath=file_name, duplicate_headers=duplicate_headers
-            )
-        try:
-            content = [list(map(float, row)) for row in content]
-        except (ValueError, TypeError) as error:
-            raise FittingDataInvalidFileSyntax(file_name, sheet=sheet) from error
-        columns = [np.array(column) for column in zip(*content)]
-        # fmt: off
-        return FittingData(
-            OrderedDict(zip(headers, columns)),
-            x_column=x_column, xerr_column=xerr_column,
-            y_column=y_column, yerr_column=yerr_column,
-        )
-        # fmt: on
-
-    @classmethod
-    def __is_headers(cls, headers):
-        return all([cls.__is_header(header) for header in headers])
-
-    @classmethod
-    def __is_header(cls, string):
-        if not isinstance(string, str):
-            return False
-        if string == "":
-            return False
-        return not cls.__is_number(string)
-
-    @classmethod
-    def __is_number(cls, string):
-        try:
-            float(string)
-            return True
-        except ValueError:
-            return False

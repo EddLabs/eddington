@@ -7,14 +7,14 @@ import pytest
 from mock import Mock, PropertyMock, mock_open, patch
 from pytest_cases import fixture_ref, parametrize
 
-from eddington import FittingData, FittingDataInvalidFileSyntax
-from eddington.exceptions import FittingDataHeaderDuplication
+from eddington import FittingData, FittingDataInvalidFile
 from tests.fitting_data import COLUMNS, CONTENT, ROWS, VALUES
 
 DummyCell = namedtuple("DummyCell", "value")
 FILENAME = "file"
 FILE_PATH = Path("path/to") / FILENAME
 SHEET_NAME = "sheet"
+JSON_INVALID_MESSAGE = f'^"{FILE_PATH.name}" has invalid syntax.$'
 
 
 def check_data_by_keys(actual_fitting_data):
@@ -129,27 +129,47 @@ def test_read_without_headers_successful(read, mocks):
 
 @parametrize(
     "read, mocks",
-    [fixture_ref(read_csv), fixture_ref(read_excel), fixture_ref(read_json)],
+    [fixture_ref(read_csv), fixture_ref(read_excel)],
 )
 def test_read_with_invalid_string_in_row(read, mocks):
     rows = deepcopy(ROWS)
     rows[1][0] = "f"
     mocks["row_setter"](mocks["reader"], rows)
 
-    with pytest.raises(FittingDataInvalidFileSyntax):
+    with pytest.raises(
+        FittingDataInvalidFile,
+        match='^Cell should be a number at column 1 row 1, got "f".$',
+    ):
         read(FILE_PATH)
 
 
-@parametrize(
-    "read, mocks",
-    [fixture_ref(read_csv), fixture_ref(read_excel), fixture_ref(read_json)],
-)
+@parametrize("read, mocks", [fixture_ref(read_json)])
+def test_read_json_with_invalid_string_in_row(read, mocks):
+    rows = deepcopy(ROWS)
+    rows[1][0] = "f"
+    mocks["row_setter"](mocks["reader"], rows)
+
+    with pytest.raises(FittingDataInvalidFile, match=JSON_INVALID_MESSAGE):
+        read(FILE_PATH)
+
+
+@parametrize("read, mocks", [fixture_ref(read_csv), fixture_ref(read_excel)])
 def test_read_with_none_in_row(read, mocks):
     rows = deepcopy(ROWS)
     rows[1][0] = None
     mocks["row_setter"](mocks["reader"], rows)
 
-    with pytest.raises(FittingDataInvalidFileSyntax):
+    with pytest.raises(FittingDataInvalidFile, match="^Empty cell at column 1 row 1.$"):
+        read(FILE_PATH)
+
+
+@parametrize("read, mocks", [fixture_ref(read_json)])
+def test_read_json_with_none_in_row(read, mocks):
+    rows = deepcopy(ROWS)
+    rows[1][0] = None
+    mocks["row_setter"](mocks["reader"], rows)
+
+    with pytest.raises(FittingDataInvalidFile, match=JSON_INVALID_MESSAGE):
         read(FILE_PATH)
 
 
@@ -159,7 +179,7 @@ def test_read_with_empty_header(read, mocks):
     rows[0][0] = ""
     mocks["row_setter"](mocks["reader"], rows)
 
-    with pytest.raises(FittingDataInvalidFileSyntax):
+    with pytest.raises(FittingDataInvalidFile, match="^Empty cell at column 1 row 1.$"):
         read(FILE_PATH)
 
 
@@ -169,7 +189,9 @@ def test_read_with_header_duplication(read, mocks):
     rows[0][0] = rows[0][1]
     mocks["row_setter"](mocks["reader"], rows)
 
-    with pytest.raises(FittingDataHeaderDuplication):
+    with pytest.raises(
+        FittingDataInvalidFile, match="^The following headers appear more than once: b$"
+    ):
         read(FILE_PATH)
 
 
@@ -179,7 +201,10 @@ def test_read_with_float_header(read, mocks):
     rows[0][0] = "1.25"
     mocks["row_setter"](mocks["reader"], rows)
 
-    with pytest.raises(FittingDataInvalidFileSyntax):
+    with pytest.raises(
+        FittingDataInvalidFile,
+        match='^Cell should be a number at column 2 row 1, got "b".$',
+    ):
         read(FILE_PATH)
 
 

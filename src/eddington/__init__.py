@@ -6,7 +6,6 @@ from eddington.exceptions import (
     FittingDataColumnsLengthError,
     FittingDataError,
     FittingDataInvalidFile,
-    FittingDataInvalidFileSyntax,
     FittingFunctionLoadError,
     FittingFunctionRuntimeError,
 )
@@ -77,7 +76,6 @@ __all__ = [
     "FittingDataColumnIndexError",
     "FittingDataInvalidFile",
     "FittingDataColumnsLengthError",
-    "FittingDataInvalidFileSyntax",
     # Data structures
     "FittingData",
     "FittingResult",
