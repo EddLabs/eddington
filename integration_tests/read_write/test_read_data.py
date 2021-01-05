@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 from pytest_cases import parametrize_with_cases
 
-from eddington import FittingData, FittingDataInvalidFileSyntax
+from eddington import FittingData, FittingDataInvalidFile
 
 SOURCES_DIRECTORY = Path(__file__).parent.parent / "resources"
 
@@ -103,5 +103,5 @@ def test_read_with_y_column(read_method):
 
 @parametrize_with_cases(argnames="read_method", cases=INVALID_CASES)
 def test_read_invalid_data_file(read_method):
-    with pytest.raises(FittingDataInvalidFileSyntax):
+    with pytest.raises(FittingDataInvalidFile):
         read_method()
