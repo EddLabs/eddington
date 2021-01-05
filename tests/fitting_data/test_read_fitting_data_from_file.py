@@ -8,7 +8,7 @@ from mock import Mock, PropertyMock, mock_open, patch
 from pytest_cases import fixture_ref, parametrize
 
 from eddington import FittingData, FittingDataInvalidFile
-from tests.fitting_data import COLUMNS, CONTENT, ROWS, VALUES, NUMBER_OF_COLUMNS
+from tests.fitting_data import COLUMNS, CONTENT, NUMBER_OF_COLUMNS, ROWS, VALUES
 
 DummyCell = namedtuple("DummyCell", "value")
 FILENAME = "file"
@@ -194,9 +194,7 @@ def test_read_empty_data(read, mocks):
     rows = []
     mocks["row_setter"](mocks["reader"], rows)
 
-    with pytest.raises(
-        FittingDataInvalidFile, match="^All rows are empty.$"
-    ):
+    with pytest.raises(FittingDataInvalidFile, match="^All rows are empty.$"):
         read(FILE_PATH)
 
 
@@ -211,7 +209,7 @@ def test_read_fails_due_to_extra_term_in_data(read, mocks):
 
     with pytest.raises(
         FittingDataInvalidFile,
-        match=f'^Cell should be empty at row 2 column {NUMBER_OF_COLUMNS + 1}.$',
+        match=f"^Cell should be empty at row 2 column {NUMBER_OF_COLUMNS + 1}.$",
     ):
         read(FILE_PATH)
 
@@ -260,7 +258,7 @@ def test_read_with_none_in_end_of_row(read, mocks):
 
     with pytest.raises(
         FittingDataInvalidFile,
-        match=f"^Empty cell at column {NUMBER_OF_COLUMNS} row 3.$"
+        match=f"^Empty cell at column {NUMBER_OF_COLUMNS} row 3.$",
     ):
         read(FILE_PATH)
 
