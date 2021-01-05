@@ -633,7 +633,9 @@ class FittingData:  # pylint: disable=R0902,R0904
         y_column: Optional[Union[str, int]] = None,
         yerr_column: Optional[Union[str, int]] = None,
     ):
-        # rows = cls.trim_rows(rows)
+        rows = cls.__trim_data(rows)
+        if len(rows) == 0:
+            raise FittingDataInvalidFile("All rows are empty.")
         headers, content = cls.__extract_headers(rows)
         cls.__validate_headers(headers)
         data = cls.__build_raw_data(headers, content)
@@ -644,6 +646,36 @@ class FittingData:  # pylint: disable=R0902,R0904
             y_column=y_column,
             yerr_column=yerr_column,
         )
+
+    @classmethod
+    def __trim_data(cls, rows):
+        if len(rows) == 0:
+            return rows
+        first_row = rows[0]
+        row_length = None
+        for i, val in enumerate(first_row):
+            if cls.__is_empty_value(val):
+                row_length = i
+                break
+        if row_length is None:
+            row_length = len(first_row)
+        new_rows = []
+        for i, row in enumerate(rows):
+            row = list(row)
+            if len(row) > row_length:
+                if not cls.__is_empty_value(row[row_length]):
+                    raise FittingDataInvalidFile(
+                        f"Cell should be empty at row {i} column {row_length + 1}."
+                    )
+                row = row[:row_length]
+            while len(row) != 0 and cls.__is_empty_value(row[-1]):
+                row = row[:-1]
+            if len(row) == 0:
+                break
+            if len(row) < row_length:
+                row.extend([None for _ in range(row_length - len(row))])
+            new_rows.append(row)
+        return new_rows
 
     @classmethod
     def __extract_headers(cls, rows: List[List[Optional[str]]]):
@@ -683,7 +715,7 @@ class FittingData:  # pylint: disable=R0902,R0904
     def __build_cell(cls, row_number, column_number, val):
         if isinstance(val, str):
             val = val.strip()
-        if val is None or val == "":
+        if cls.__is_empty_value(val):
             raise FittingDataInvalidFile(
                 f"Empty cell at column {column_number} row {row_number}."
             )
@@ -696,16 +728,20 @@ class FittingData:  # pylint: disable=R0902,R0904
             ) from error
 
     @classmethod
+    def __is_empty_value(cls, val: Optional[Union[str, float]]):
+        if val is None:
+            return True
+        if isinstance(val, str) and val.strip() == "":
+            return True
+        return False
+
+    @classmethod
     def __are_headers(cls, headers):
         return all([cls.__is_header(header) for header in headers])
 
     @classmethod
     def __is_header(cls, string):
-        if not isinstance(string, str):
-            return False
-        if string == "":
-            return False
-        return not cls.__is_number(string)
+        return isinstance(string, str) and not cls.__is_number(string)
 
     @classmethod
     def __is_number(cls, string):
