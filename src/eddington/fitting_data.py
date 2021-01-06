@@ -23,7 +23,7 @@ from eddington.exceptions import (
     FittingDataColumnExistenceError,
     FittingDataColumnIndexError,
     FittingDataColumnsLengthError,
-    FittingDataColumnsSelectionError,
+    FittingDataRecordsSelectionError,
     FittingDataInvalidFile,
     FittingDataSetError,
 )
@@ -194,12 +194,12 @@ class FittingData:  # pylint: disable=R0902,R0904
     @records_indices.setter
     def records_indices(self, records_indices):
         if len(records_indices) != self.length:
-            raise FittingDataColumnsSelectionError(
+            raise FittingDataRecordsSelectionError(
                 f"Should select {self.length} records,"
                 f" only {len(records_indices)} selected."
             )
         if not all([isinstance(element, bool) for element in records_indices]):
-            raise FittingDataColumnsSelectionError(
+            raise FittingDataRecordsSelectionError(
                 "When setting record indices, all values should be booleans."
             )
         self._records_indices = records_indices
