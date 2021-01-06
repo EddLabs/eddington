@@ -23,8 +23,8 @@ from eddington.exceptions import (
     FittingDataColumnExistenceError,
     FittingDataColumnIndexError,
     FittingDataColumnsLengthError,
-    FittingDataRecordsSelectionError,
     FittingDataInvalidFile,
+    FittingDataRecordsSelectionError,
     FittingDataSetError,
 )
 from eddington.random_util import random_array, random_error, random_sigma
