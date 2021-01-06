@@ -3,7 +3,7 @@ import pytest
 from pytest_cases import THIS_MODULE, parametrize_with_cases
 
 from eddington import FittingData
-from eddington.exceptions import FittingDataColumnsSelectionError
+from eddington.exceptions import FittingDataRecordsSelectionError
 from tests.fitting_data import COLUMNS, CONTENT, NUMBER_OF_RECORDS, VALUES
 from tests.util import assert_list_equal
 
@@ -149,7 +149,7 @@ def test_set_selection_with_different_size():
         fitting_data.records_indices = [False, False, True]
 
     with pytest.raises(
-        FittingDataColumnsSelectionError,
+        FittingDataRecordsSelectionError,
         match=f"^Should select {NUMBER_OF_RECORDS} records, only 3 selected.$",
     ):
         set_records_indices()
@@ -164,7 +164,7 @@ def test_set_selection_with_non_boolean_values():
         )
 
     with pytest.raises(
-        FittingDataColumnsSelectionError,
+        FittingDataRecordsSelectionError,
         match="^When setting record indices, all values should be booleans.$",
     ):
         set_records_indices()
