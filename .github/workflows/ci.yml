@@ -58,7 +58,7 @@ jobs:
     strategy:
       max-parallel: 4
       matrix:
-        task: [integration, docs, static]
+        task: [integration, docs, static, darglint]
         include:
           - task: static
             posargs: --no-cache -o ./statue-report.json
