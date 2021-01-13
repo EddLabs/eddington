@@ -98,7 +98,7 @@ from eddington.fitting_data import FittingData
 @is_y_log_scale_option
 @output_dir_option
 @is_json_option
-def eddington_fit_random(
+def fit_random_cli(
     ctx: click.Context,
     fitting_function_name: Optional[str],
     polynomial_degree: Optional[int],

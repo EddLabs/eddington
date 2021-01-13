@@ -24,7 +24,7 @@ from eddington.cli.util import load_data_file
     default="xlsx",
     help="Output file name.",
 )
-def eddington_statistics(
+def statistics_cli(
     ctx: click.Context,
     data_file: str,
     sheet: Optional[str],
