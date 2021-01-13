@@ -23,6 +23,7 @@ from eddington.exceptions import (
     FittingDataColumnExistenceError,
     FittingDataColumnIndexError,
     FittingDataColumnsLengthError,
+    FittingDataError,
     FittingDataInvalidFile,
     FittingDataRecordsSelectionError,
     FittingDataSetError,
@@ -390,6 +391,10 @@ class FittingData:  # pylint: disable=R0902,R0904
             filepath = Path(filepath)
 
         workbook = openpyxl.load_workbook(filepath, data_only=True)
+        if sheet not in workbook:
+            raise FittingDataError(
+                f'Sheet named "{sheet}" does not exist in "{filepath.name}"'
+            )
         rows = [list(row) for row in workbook[sheet].values]
         return cls.__build_from_rows(
             rows=rows,
