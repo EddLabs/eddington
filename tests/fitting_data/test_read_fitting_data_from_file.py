@@ -7,7 +7,7 @@ import pytest
 from mock import Mock, PropertyMock, mock_open, patch
 from pytest_cases import fixture_ref, parametrize
 
-from eddington import FittingData, FittingDataInvalidFile, FittingDataError
+from eddington import FittingData, FittingDataError, FittingDataInvalidFile
 from tests.fitting_data import COLUMNS, CONTENT, NUMBER_OF_COLUMNS, ROWS, VALUES
 
 DummyCell = namedtuple("DummyCell", "value")
@@ -67,7 +67,9 @@ def set_csv_rows(reader, rows):
 @pytest.fixture
 def mock_load_workbook(mocker):
     load_workbook = mocker.patch("openpyxl.load_workbook")
-    load_workbook.return_value.__contains__.side_effect = lambda sheet: sheet == SHEET_NAME
+    load_workbook.return_value.__contains__.side_effect = (
+        lambda sheet: sheet == SHEET_NAME
+    )
     return load_workbook
 
 
