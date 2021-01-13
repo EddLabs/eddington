@@ -2,11 +2,6 @@ import pytest
 
 
 @pytest.fixture
-def mock_load_workbook(mocker):
-    return mocker.patch("openpyxl.load_workbook")
-
-
-@pytest.fixture
 def mock_load_json(mocker):
     return mocker.patch("json.load")
 

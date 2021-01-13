@@ -7,7 +7,7 @@ import pytest
 from mock import Mock, PropertyMock, mock_open, patch
 from pytest_cases import fixture_ref, parametrize
 
-from eddington import FittingData, FittingDataInvalidFile
+from eddington import FittingData, FittingDataError, FittingDataInvalidFile
 from tests.fitting_data import COLUMNS, CONTENT, NUMBER_OF_COLUMNS, ROWS, VALUES
 
 DummyCell = namedtuple("DummyCell", "value")
@@ -62,6 +62,15 @@ def check_columns(
 
 def set_csv_rows(reader, rows):
     reader.return_value = rows
+
+
+@pytest.fixture
+def mock_load_workbook(mocker):
+    load_workbook = mocker.patch("openpyxl.load_workbook")
+    load_workbook.return_value.__contains__.side_effect = (
+        lambda sheet: sheet == SHEET_NAME
+    )
+    return load_workbook
 
 
 @pytest.fixture
@@ -365,3 +374,14 @@ def test_read_string_path_successful(read, mocks):
 
     check_data_by_keys(actual_fitting_data)
     check_columns(actual_fitting_data)
+
+
+def test_read_excel_with_no_existing_sheet(mock_load_workbook):
+    non_existing_sheet = "bla bla"
+    with pytest.raises(
+        FittingDataError,
+        match=(
+            f'^Sheet named "{non_existing_sheet}" does not exist in "{FILE_PATH.name}"'
+        ),
+    ):
+        FittingData.read_from_excel(FILE_PATH, sheet=non_existing_sheet)
