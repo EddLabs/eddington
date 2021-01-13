@@ -57,7 +57,7 @@ from eddington.cli.util import (
 @is_y_log_scale_option
 @output_dir_option
 @is_json_option
-def eddington_fit(
+def fit_cli(
     ctx: click.Context,
     fitting_function_name: Optional[str],
     polynomial_degree: Optional[int],
