@@ -7,6 +7,7 @@ import click
 import numpy as np
 
 from eddington import FittingDataInvalidFile
+from eddington.exceptions import EddingtonCLIError
 from eddington.fitting import fit
 from eddington.fitting_data import FittingData
 from eddington.fitting_functions_list import linear, polynomial
@@ -30,7 +31,7 @@ def load_data_file(data_file: Path, **kwargs):
 
 
 def load_fitting_function(
-    ctx: click.Context, func_name: Optional[str], polynomial_degree: Optional[int]
+    func_name: Optional[str], polynomial_degree: Optional[int]
 ):
     """Load appropriate fitting function."""
     if func_name == "":
@@ -38,8 +39,7 @@ def load_fitting_function(
             return polynomial(polynomial_degree)
         return linear
     if polynomial_degree is not None:
-        click.echo("Cannot accept both polynomial and fitting function")
-        ctx.exit(1)
+        raise EddingtonCLIError("Cannot accept both polynomial and fitting function")
     return FittingFunctionsRegistry.load(func_name)
 
 

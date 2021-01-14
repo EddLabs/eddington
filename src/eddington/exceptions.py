@@ -65,3 +65,10 @@ class FittingDataSetError(FittingDataError):  # noqa: D101
 
 class PlottingError(EddingtonException):  # noqa: D101
     pass
+
+
+# CLI Errors
+
+
+class EddingtonCLIError(EddingtonException):  # noqa: D101
+    pass
