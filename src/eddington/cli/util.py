@@ -53,7 +53,8 @@ def load_fitting_function(
     :type func_name: Optional[str]
     :param polynomial_degree: Degree of the polynomial.
     :type polynomial_degree: Optional[int]
-    :return: FittingFunction
+    :return: Matching fitting function.
+    :rtype: FittingFunction
     :raises EddingtonCLIError: If both function name and polynomial degree are given
         raise an exception.
 
@@ -144,7 +145,8 @@ def extract_array_from_string(  # pylint: disable=invalid-name
 
     :param a0: Initial guess values separated by commas.
     :type a0: Optional[str]
-    :return: Optional[np.ndarray]
+    :return: Parsed a0 or None.
+    :rtype: Optional[np.ndarray]
     """
     if a0 is None:
         return None
