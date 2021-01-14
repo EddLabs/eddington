@@ -7,6 +7,9 @@ help = "Don't check duplications in pylint"
 # Waiting for https://github.com/PyCQA/pylint/issues/748 to be resolved.
 add_args = ["--disable=duplicate-code"]
 
+[commands.flake8]
+args = ["--max-line-length=88", "--ignore=DAR"]
+
 [sources.src]
 contexts = ["no_duplicate"]
 
