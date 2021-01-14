@@ -30,9 +30,7 @@ def load_data_file(data_file: Path, **kwargs):
     raise FittingDataInvalidFile(f"Cannot read fitting data from a {suffix} file.")
 
 
-def load_fitting_function(
-    func_name: Optional[str], polynomial_degree: Optional[int]
-):
+def load_fitting_function(func_name: Optional[str], polynomial_degree: Optional[int]):
     """Load appropriate fitting function."""
     if func_name == "":
         if polynomial_degree is not None:

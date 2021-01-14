@@ -12,7 +12,6 @@ from eddington.cli.util import load_data_file
 
 
 @eddington_cli.command("statistics")
-@click.pass_context
 @data_file_option
 @sheet_option
 @output_dir_option
@@ -25,7 +24,6 @@ from eddington.cli.util import load_data_file
     help="Output file name.",
 )
 def statistics_cli(
-    ctx: click.Context,
     data_file: str,
     sheet: Optional[str],
     output_dir: Optional[Union[Path, str]],

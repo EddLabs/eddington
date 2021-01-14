@@ -41,7 +41,6 @@ from eddington.fitting_data import FittingData
 
 
 @eddington_cli.command("fit-random")
-@click.pass_context
 @fitting_function_argument
 @polynomial_option
 @a0_option

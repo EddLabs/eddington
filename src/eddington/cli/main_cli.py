@@ -3,12 +3,14 @@ import sys
 
 import click
 
-from eddington import __version__, EddingtonException
+from eddington import EddingtonException, __version__
 
 
 class CatchEddingtonExceptions(click.Group):
+    """Implementation for a commands group that catches Eddington exceptions."""
 
     def __call__(self, *args, **kwargs):
+        """Override of the call method that catches Eddington exceptions."""
         try:
             return self.main(*args, **kwargs)
         except EddingtonException as exc:
