@@ -1,27 +1,32 @@
+"""A helper class for building raw dat for fitting."""
 import collections
 from typing import List, Optional, Union
-
-import numpy as np
 
 from eddington import FittingDataInvalidFile
 
 
 class RawDataBuilder:
-    """Builder of raw data from file rows"""
+    """Builder of raw data from file rows."""
 
     @classmethod
     def build_raw_data(cls, rows):
+        """
+        Convert list of rows into a raw OrderedDict.
+
+        That can be used as data for the FittingData class.
+        """
         rows = cls.__trim_data(rows)
         if len(rows) == 0:
             raise FittingDataInvalidFile("All rows are empty.")
         headers, content = cls.__extract_headers(rows)
         cls.__validate_headers(headers)
-        columns = [column for column in zip(*content)]
+        columns = list(zip(*content))
         raw_dict = collections.OrderedDict(zip(headers, columns))
         return cls.fix_types_in_raw_dict(raw_dict)
 
     @classmethod
     def fix_types_in_raw_dict(cls, raw_dict: collections.OrderedDict):
+        """Convert the types of a given raw dictionary into numpy array with floats."""
         for column, key in enumerate(raw_dict.keys()):
             raw_dict[key] = cls.__convert_column(
                 column_number=column, column=raw_dict[key]

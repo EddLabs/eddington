@@ -24,7 +24,6 @@ from eddington.exceptions import (
     FittingDataColumnIndexError,
     FittingDataColumnsLengthError,
     FittingDataError,
-    FittingDataInvalidFile,
     FittingDataRecordsSelectionError,
     FittingDataSetError,
 )
