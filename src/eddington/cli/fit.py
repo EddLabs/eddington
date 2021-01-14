@@ -83,9 +83,8 @@ def fit_cli(
 ):
     """Fitting data file according to a fitting function."""
     data = load_data_file(
-        ctx,
         Path(data_file),
-        sheet,
+        sheet=sheet,
         x_column=x_column,
         xerr_column=xerr_column,
         y_column=y_column,

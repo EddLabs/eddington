@@ -6,6 +6,7 @@ from typing import Optional
 import click
 import numpy as np
 
+from eddington import FittingDataInvalidFile
 from eddington.fitting import fit
 from eddington.fitting_data import FittingData
 from eddington.fitting_functions_list import linear, polynomial
@@ -14,20 +15,18 @@ from eddington.fitting_result import FittingResult
 from eddington.plot import plot_data, plot_fitting, plot_residuals, show_or_export
 
 
-def load_data_file(ctx: click.Context, data_file: Path, sheet: Optional[str], **kwargs):
+def load_data_file(data_file: Path, **kwargs):
     """Load data file with any suffix."""
     suffix = data_file.suffix
+    if suffix == ".xlsx":
+        return FittingData.read_from_excel(filepath=data_file, **kwargs)
+    if "sheet" in kwargs:
+        del kwargs["sheet"]
     if suffix == ".csv":
         return FittingData.read_from_csv(filepath=data_file, **kwargs)
     if suffix == ".json":
         return FittingData.read_from_json(filepath=data_file, **kwargs)
-    if suffix != ".xlsx":
-        click.echo(f'Cannot read data with "{suffix}" suffix')
-        ctx.exit(1)
-    if sheet is None:
-        click.echo("Sheet name has not been specified!")
-        ctx.exit(1)
-    return FittingData.read_from_excel(filepath=data_file, sheet=sheet, **kwargs)
+    raise FittingDataInvalidFile(f"Cannot read fitting data from a {suffix} file.")
 
 
 def load_fitting_function(

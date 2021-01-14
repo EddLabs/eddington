@@ -33,11 +33,7 @@ def statistics_cli(
     file_format: str,
 ):
     """Print statistics of given data file."""
-    data = load_data_file(
-        ctx,
-        Path(data_file),
-        sheet,
-    )
+    data = load_data_file(Path(data_file), sheet=sheet)
     if output_dir is None:
         click.echo(f'Data statistics of "{data_file}"')
         for column in data.all_columns:
