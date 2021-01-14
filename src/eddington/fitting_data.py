@@ -1,8 +1,8 @@
 """Fitting data class insert the fitting algorithm."""
-import collections
 import csv
 import json
 from collections import OrderedDict, namedtuple
+from numbers import Number
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
@@ -24,11 +24,11 @@ from eddington.exceptions import (
     FittingDataColumnIndexError,
     FittingDataColumnsLengthError,
     FittingDataError,
-    FittingDataInvalidFile,
     FittingDataRecordsSelectionError,
     FittingDataSetError,
 )
 from eddington.random_util import random_array, random_error, random_sigma
+from eddington.raw_data_builder import RawDataBuilder
 from eddington.statistics import Statistics
 
 Columns = namedtuple("ColumnsResult", ["x", "y", "xerr", "yerr"])
@@ -391,7 +391,7 @@ class FittingData:  # pylint: disable=R0902,R0904
             filepath = Path(filepath)
 
         workbook = openpyxl.load_workbook(filepath, data_only=True)
-        if sheet not in workbook:
+        if sheet not in workbook.sheetnames:
             raise FittingDataError(
                 f'Sheet named "{sheet}" does not exist in "{filepath.name}"'
             )
@@ -471,20 +471,13 @@ class FittingData:  # pylint: disable=R0902,R0904
             filepath = Path(filepath)
         with open(filepath, mode="r") as file:
             data = json.load(file, object_pairs_hook=OrderedDict)
-        try:
-            # fmt: off
-            return FittingData(
-                OrderedDict(
-                    [(key, list(map(float, row))) for key, row in data.items()]
-                ),
-                x_column=x_column, xerr_column=xerr_column,
-                y_column=y_column, yerr_column=yerr_column,
-            )
-            # fmt: on
-        except (ValueError, TypeError) as error:
-            raise FittingDataInvalidFile(
-                f'"{filepath.name}" has invalid syntax.'
-            ) from error
+        # fmt: off
+        return FittingData(
+            RawDataBuilder.fix_types_in_raw_dict(data),
+            x_column=x_column, xerr_column=xerr_column,
+            y_column=y_column, yerr_column=yerr_column,
+        )
+        # fmt: on
 
     # Set methods
 
@@ -518,7 +511,7 @@ class FittingData:  # pylint: disable=R0902,R0904
         :param value: The new value to set for the cell
         :type value: float
         """
-        if not self.__is_number(value):
+        if not isinstance(value, Number):
             raise FittingDataSetError(
                 f'The cell at record number:"{record_number}", '
                 f'column:"{column_name}" has invalid syntax: {value}.'
@@ -627,7 +620,7 @@ class FittingData:  # pylint: disable=R0902,R0904
             file_name=name,
         )
 
-    # Build from rows
+    # Private methods
 
     @classmethod
     def __build_from_rows(  # pylint: disable=too-many-arguments
@@ -638,12 +631,7 @@ class FittingData:  # pylint: disable=R0902,R0904
         y_column: Optional[Union[str, int]] = None,
         yerr_column: Optional[Union[str, int]] = None,
     ):
-        rows = cls.__trim_data(rows)
-        if len(rows) == 0:
-            raise FittingDataInvalidFile("All rows are empty.")
-        headers, content = cls.__extract_headers(rows)
-        cls.__validate_headers(headers)
-        data = cls.__build_raw_data(headers, content)
+        data = RawDataBuilder.build_raw_data(rows)
         return FittingData(
             data=data,
             x_column=x_column,
@@ -651,112 +639,6 @@ class FittingData:  # pylint: disable=R0902,R0904
             y_column=y_column,
             yerr_column=yerr_column,
         )
-
-    @classmethod
-    def __trim_data(cls, rows):
-        if len(rows) == 0:
-            return rows
-        first_row = rows[0]
-        row_length = None
-        for i, val in enumerate(first_row):
-            if cls.__is_empty_value(val):
-                row_length = i
-                break
-        if row_length is None:
-            row_length = len(first_row)
-        new_rows = []
-        for i, row in enumerate(rows):
-            row = list(row)
-            if len(row) > row_length:
-                if not cls.__is_empty_value(row[row_length]):
-                    raise FittingDataInvalidFile(
-                        f"Cell should be empty at row {i} column {row_length + 1}."
-                    )
-                row = row[:row_length]
-            while len(row) != 0 and cls.__is_empty_value(row[-1]):
-                row = row[:-1]
-            if len(row) == 0:
-                break
-            if len(row) < row_length:
-                row.extend([None for _ in range(row_length - len(row))])
-            new_rows.append(row)
-        return new_rows
-
-    @classmethod
-    def __extract_headers(cls, rows: List[List[Optional[str]]]):
-        headers: List[Optional[str]] = rows[0]
-        if cls.__are_headers(headers):
-            content = rows[1:]
-        else:
-            headers = [str(i) for i in range(len(headers))]
-            content = rows
-        return headers, content
-
-    @classmethod
-    def __validate_headers(cls, headers):
-        duplicate_headers = [
-            item for item, count in collections.Counter(headers).items() if count > 1
-        ]
-        if len(duplicate_headers) != 0:
-            raise FittingDataInvalidFile(
-                f"The following headers appear more than once: "
-                f'{", ".join(duplicate_headers)}'
-            )
-
-    @classmethod
-    def __build_raw_data(cls, headers, content):
-        content = [cls.__build_row(i, row) for i, row in enumerate(content, start=1)]
-        columns = [np.array(column) for column in zip(*content)]
-        return collections.OrderedDict(zip(headers, columns))
-
-    @classmethod
-    def __build_row(cls, row_number, row):
-        return [
-            cls.__build_cell(row_number, column_number, val)
-            for column_number, val in enumerate(row, start=1)
-        ]
-
-    @classmethod
-    def __build_cell(cls, row_number, column_number, val):
-        if isinstance(val, str):
-            val = val.strip()
-        if cls.__is_empty_value(val):
-            raise FittingDataInvalidFile(
-                f"Empty cell at column {column_number} row {row_number}."
-            )
-        try:
-            return float(val)
-        except ValueError as error:
-            raise FittingDataInvalidFile(
-                f"Cell should be a number at column {column_number} row {row_number}, "
-                f'got "{val}".'
-            ) from error
-
-    @classmethod
-    def __is_empty_value(cls, val: Optional[Union[str, float]]):
-        if val is None:
-            return True
-        if isinstance(val, str) and val.strip() == "":
-            return True
-        return False
-
-    @classmethod
-    def __are_headers(cls, headers):
-        return all([cls.__is_header(header) for header in headers])
-
-    @classmethod
-    def __is_header(cls, string):
-        return isinstance(string, str) and not cls.__is_number(string)
-
-    @classmethod
-    def __is_number(cls, string):
-        try:
-            float(string)
-            return True
-        except ValueError:
-            return False
-
-    # Private methods
 
     def __validate_index(self, index, column):
         if index is None:
