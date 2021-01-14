@@ -41,7 +41,6 @@ from eddington.fitting_data import FittingData
 
 
 @eddington_cli.command("fit-random")
-@click.pass_context
 @fitting_function_argument
 @polynomial_option
 @a0_option
@@ -99,7 +98,6 @@ from eddington.fitting_data import FittingData
 @output_dir_option
 @is_json_option
 def fit_random_cli(
-    ctx: click.Context,
     fitting_function_name: Optional[str],
     polynomial_degree: Optional[int],
     a0: Optional[str],
@@ -129,7 +127,7 @@ def fit_random_cli(
     This is best used for testing fitting functions.
     """
     func = load_fitting_function(
-        ctx=ctx, func_name=fitting_function_name, polynomial_degree=polynomial_degree
+        func_name=fitting_function_name, polynomial_degree=polynomial_degree
     )
     data = FittingData.random(
         func,
