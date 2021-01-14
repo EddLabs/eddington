@@ -35,7 +35,6 @@ from eddington.cli.util import (
 
 
 @eddington_cli.command("fit")
-@click.pass_context
 @fitting_function_argument
 @polynomial_option
 @a0_option
@@ -57,8 +56,7 @@ from eddington.cli.util import (
 @is_y_log_scale_option
 @output_dir_option
 @is_json_option
-def eddington_fit(
-    ctx: click.Context,
+def fit_cli(
     fitting_function_name: Optional[str],
     polynomial_degree: Optional[int],
     a0: Optional[str],
@@ -83,16 +81,15 @@ def eddington_fit(
 ):
     """Fitting data file according to a fitting function."""
     data = load_data_file(
-        ctx,
         Path(data_file),
-        sheet,
+        sheet=sheet,
         x_column=x_column,
         xerr_column=xerr_column,
         y_column=y_column,
         yerr_column=yerr_column,
     )
     func = load_fitting_function(
-        ctx=ctx, func_name=fitting_function_name, polynomial_degree=polynomial_degree
+        func_name=fitting_function_name, polynomial_degree=polynomial_degree
     )
     fit_and_plot(
         data=data,

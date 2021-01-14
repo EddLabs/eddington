@@ -1,11 +1,27 @@
 """Main CLI method."""
+import sys
 
 import click
 
-from eddington import __version__
+from eddington import EddingtonException, __version__
 
 
-@click.group("eddington")
+class CatchEddingtonExceptions(click.Group):
+    """Implementation for a commands group that catches Eddington exceptions."""
+
+    def __call__(self, *args, **kwargs):
+        """Override of the call method that catches Eddington exceptions."""
+        try:
+            return self.main(*args, **kwargs)
+        except EddingtonException as exc:
+            click.echo(
+                f'{click.style(exc.__class__.__name__, fg="yellow")}: '
+                f'{click.style(exc, fg="red")}'
+            )
+            sys.exit(1)
+
+
+@click.group("eddington", cls=CatchEddingtonExceptions)
 @click.version_option(version=__version__)
 def eddington_cli():
     """Command line for Eddington."""

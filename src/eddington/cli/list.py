@@ -17,7 +17,7 @@ from eddington.cli.main_cli import eddington_cli
     default=None,
     help="Filter functions by a regular expression",
 )
-def eddington_list(regex: Optional[str]):
+def list_cli(regex: Optional[str]):
     """Prints all fitting functions in a pretty table."""
     table = PrettyTable(field_names=["Function", "Syntax"])
     for func in FittingFunctionsRegistry.all():

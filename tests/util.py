@@ -33,7 +33,9 @@ def assert_list_equal(list1: List[Any], list2: List[Any], rel):
 
 
 def assert_dict_equal(dict1: Dict[Any, Any], dict2: Dict[Any, Any], rel):
-    assert set(dict1.keys()) == set(dict2.keys()), "Keys are different than expected"
+    keys1 = set(dict1.keys())
+    keys2 = set(dict2.keys())
+    assert keys1 == keys2, f"Keys are different than expected. {keys1} != {keys2}"
     for key, value in dict1.items():
         value2 = dict2[key]
         assert_equal_item(value, value2, rel)

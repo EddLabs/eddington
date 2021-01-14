@@ -12,7 +12,6 @@ from eddington.cli.util import load_data_file
 
 
 @eddington_cli.command("statistics")
-@click.pass_context
 @data_file_option
 @sheet_option
 @output_dir_option
@@ -24,8 +23,7 @@ from eddington.cli.util import load_data_file
     default="xlsx",
     help="Output file name.",
 )
-def eddington_statistics(
-    ctx: click.Context,
+def statistics_cli(
     data_file: str,
     sheet: Optional[str],
     output_dir: Optional[Union[Path, str]],
@@ -33,11 +31,7 @@ def eddington_statistics(
     file_format: str,
 ):
     """Print statistics of given data file."""
-    data = load_data_file(
-        ctx,
-        Path(data_file),
-        sheet,
-    )
+    data = load_data_file(Path(data_file), sheet=sheet)
     if output_dir is None:
         click.echo(f'Data statistics of "{data_file}"')
         for column in data.all_columns:
