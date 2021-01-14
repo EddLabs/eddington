@@ -6,7 +6,7 @@ from typing import Optional
 import click
 import numpy as np
 
-from eddington import FittingDataInvalidFile
+from eddington import FittingDataInvalidFile, FittingFunction
 from eddington.exceptions import EddingtonCLIError
 from eddington.fitting import fit
 from eddington.fitting_data import FittingData
@@ -16,8 +16,17 @@ from eddington.fitting_result import FittingResult
 from eddington.plot import plot_data, plot_fitting, plot_residuals, show_or_export
 
 
-def load_data_file(data_file: Path, **kwargs):
-    """Load data file with any suffix."""
+def load_data_file(data_file: Path, **kwargs) -> FittingData:
+    """
+    Load data file with any suffix.
+
+    :param data_file: The type of the file to be loaded.
+    :type data_file: Path
+    :param kwargs: Keyword arguments for the actual reading method
+    :type kwargs: dict
+    :return: FittingData
+    :raises FittingDataInvalidFile: Given an unknown file suffix, raise exception.
+    """
     suffix = data_file.suffix
     if suffix == ".xlsx":
         return FittingData.read_from_excel(filepath=data_file, **kwargs)
@@ -30,8 +39,25 @@ def load_data_file(data_file: Path, **kwargs):
     raise FittingDataInvalidFile(f"Cannot read fitting data from a {suffix} file.")
 
 
-def load_fitting_function(func_name: Optional[str], polynomial_degree: Optional[int]):
-    """Load appropriate fitting function."""
+def load_fitting_function(
+    func_name: Optional[str], polynomial_degree: Optional[int]
+) -> FittingFunction:
+    """
+    Load fitting function.
+
+    If function name is given, get from registry.
+    If polynomial degree is given, get polynomial with given degree.
+    If none are given, returns linear.
+
+    :param func_name: Function name to get from registry
+    :type func_name: Optional[str]
+    :param polynomial_degree: Degree of the polynomial.
+    :type polynomial_degree: Optional[int]
+    :return: FittingFunction
+    :raises EddingtonCLIError: If both function name and polynomial degree are given
+        raise an exception.
+
+    """
     if func_name == "":
         if polynomial_degree is not None:
             return polynomial(polynomial_degree)
@@ -56,7 +82,11 @@ def fit_and_plot(  # pylint: disable=too-many-arguments,invalid-name
     should_plot_residuals,
     **plot_kwargs,
 ):
-    """Plot everything needed."""
+    """
+    Plot everything needed.
+
+    # noqa: DAR101
+    """
     output_dir = None if output_dir is None else Path(output_dir)
     result = fit(data, func, a0=a0)
     write_and_export_result(
@@ -106,8 +136,16 @@ def fit_and_plot(  # pylint: disable=too-many-arguments,invalid-name
             )
 
 
-def extract_array_from_string(a0: Optional[str]):  # pylint: disable=invalid-name
-    """Split a0 string to an array."""
+def extract_array_from_string(  # pylint: disable=invalid-name
+    a0: Optional[str],
+) -> Optional[np.ndarray]:
+    """
+    Split a0 string to an array.
+
+    :param a0: Initial guess values separated by commas.
+    :type a0: Optional[str]
+    :return: Optional[np.ndarray]
+    """
     if a0 is None:
         return None
     return np.array(list(map(float, re.split(",[ \t]*", a0))))
@@ -118,8 +156,19 @@ def write_and_export_result(
     func_name: str,
     output_dir: Optional[Path] = None,
     is_json: bool = False,
-):
-    """Write result to console and to file if specified so."""
+) -> None:
+    """
+    Write result to console and to file if specified so.
+
+    :param result: Fitting result to be written to console or saved
+    :type result: FittingResult
+    :param func_name: Name of the fitting function.
+    :type func_name: str
+    :param output_dir: Optional output directory to save result in.
+    :type output_dir: Optional[Path]
+    :param is_json: Save in json format or txt format
+    :type is_json: bool
+    """
     click.echo(result.pretty_string)
     if output_dir is None:
         return
