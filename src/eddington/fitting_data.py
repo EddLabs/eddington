@@ -392,7 +392,7 @@ class FittingData:  # pylint: disable=R0902,R0904
             filepath = Path(filepath)
 
         workbook = openpyxl.load_workbook(filepath, data_only=True)
-        if sheet not in workbook:
+        if sheet not in workbook.sheetnames:
             raise FittingDataError(
                 f'Sheet named "{sheet}" does not exist in "{filepath.name}"'
             )
@@ -472,20 +472,13 @@ class FittingData:  # pylint: disable=R0902,R0904
             filepath = Path(filepath)
         with open(filepath, mode="r") as file:
             data = json.load(file, object_pairs_hook=OrderedDict)
-        try:
-            # fmt: off
-            return FittingData(
-                OrderedDict(
-                    [(key, list(map(float, row))) for key, row in data.items()]
-                ),
-                x_column=x_column, xerr_column=xerr_column,
-                y_column=y_column, yerr_column=yerr_column,
-            )
-            # fmt: on
-        except (ValueError, TypeError) as error:
-            raise FittingDataInvalidFile(
-                f'"{filepath.name}" has invalid syntax.'
-            ) from error
+        # fmt: off
+        return FittingData(
+            RawDataBuilder.fix_types_in_raw_dict(data),
+            x_column=x_column, xerr_column=xerr_column,
+            y_column=y_column, yerr_column=yerr_column,
+        )
+        # fmt: on
 
     # Set methods
 
