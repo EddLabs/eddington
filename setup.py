@@ -11,8 +11,8 @@ install_requires = [
     'dataclasses >= 0.8; python_version == "3.6"',
     'scipy >= 1.6.0; python_version > "3.6"',
     'scipy >= 1.5.4, < 1.6; python_version == "3.6"',
-    "numpy == 1.19.3",
-    "openpyxl >= 3.0.5",
+    "numpy >= 1.19.5",
+    "openpyxl >= 3.0.6",
     "matplotlib >= 3.3.3",
 ]
 
