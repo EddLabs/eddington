@@ -13,23 +13,43 @@ class Figure:
     """
     Wraps matplotlib Figure class.
 
-    It releases the memory when the figure is not longer in use.
+    It releases the memory when the figure is no longer in use.
     """
 
-    def __init__(self, fig):
-        """Figure constructor."""
+    def __init__(self, fig: plt.Figure):
+        """
+        Figure constructor.
+
+        :param fig: Actual matplotlib figure
+        :type fig: plt.Figure
+        """
         self._actual_fig = fig
 
     def __enter__(self):
-        """Return self when entering as context."""
+        """
+        Return self when entering as context.
+
+        :return: self
+        :rtype: Figure
+        """
         return self
 
-    def __getattr__(self, item):
-        """Get attributes from wrapped figure."""
+    def __getattr__(self, item: str):
+        """
+        Get attributes from wrapped figure.
+
+        :param item: Item name to be returned
+        :type item: str
+        :return: Required item
+        """
         return getattr(self._actual_fig, item)
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        """Clear memory on exit."""
+        """
+        Clear memory on exit.
+
+        # noqa: DAR101
+        """
         plt.clf()
         plt.close("all")
 
@@ -51,9 +71,9 @@ def plot_residuals(  # pylint: disable=invalid-name,too-many-arguments
     Plot residuals plot.
 
     :param func: Fitting function.
-    :type func: :class:`FittingFunction`
-    :param data: Fitting data
-    :type data: :class:`FittingData`
+    :type func: FittingFunction
+    :param data: Fitting data to be plotted.
+    :type data: FittingData
     :param a: The parameters result
     :type a: ``numpy.ndarray`` or ``list``
     :param title_name: Optional. Title for the figure.
@@ -107,12 +127,12 @@ def plot_fitting(  # pylint: disable=C0103,R0913,R0914
     Plot fitting plot.
 
     :param func: Fitting function.
-    :type func: :class:`FittingFunction`
-    :param data: Fitting data
-    :type data: :class:`FittingData`
+    :type func: FittingFunction
+    :param data: Fitting data to be plotted.
+    :type data: FittingData
     :param a: The parameters result
     :type a: ``numpy.ndarray``, a list of ``numpy.ndarray`` items or a dictionary from
-     strings to ``numpy.ndarray``
+        strings to ``numpy.ndarray``
     :param title_name: Optional. Title for the figure.
     :type title_name: str
     :param xlabel: Optional. Label of the x axis
@@ -122,7 +142,7 @@ def plot_fitting(  # pylint: disable=C0103,R0913,R0914
     :param grid: Add grid lines or not
     :type grid: bool
     :param legend: Optional. Add legend or not. If None, add legend when more than
-     one parameters values has been presented.
+        one parameters values has been presented.
     :type legend: bool
     :param x_log_scale: Set the scale of the  x axis to be logarithmic.
     :type x_log_scale: bool
@@ -170,8 +190,8 @@ def plot_data(  # pylint: disable=too-many-arguments
     """
     Plot fitting data.
 
-    :param data: Fitting data
-    :type data: :class:`FittingData`
+    :param data: Fitting data to be plotted.
+    :type data: FittingData
     :param title_name: Optional. Title for the figure.
     :type title_name: str
     :param xlabel: Optional. Label of the x axis
@@ -385,7 +405,7 @@ def errorbar(  # pylint: disable=invalid-name
     :param ax: Figure axes.
     :type ax: matplotlib.pyplot.Axes
     :param data: Data to visualize
-    :type data: eddington.fitting_data.FittingData
+    :type data: FittingData
     :param xmin: Optional. Minimum value of X. Used for filtering data points
     :type xmin: Optional float
     :param xmax: Optional. Maximum value of X. Used for filtering data points

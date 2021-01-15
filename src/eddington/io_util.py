@@ -19,7 +19,7 @@ def save_as_excel(
     :param content: list of list, each represent a row in the excel file
     :type content: List[List[Any]] or numpy.ndarray
     :param output_directory: Path to the directory for the new excel file to be
-     saved.
+        saved.
     :type output_directory: ``Path`` or ``str``
     :param file_name: The name of the file without suffix.
     :type file_name: str

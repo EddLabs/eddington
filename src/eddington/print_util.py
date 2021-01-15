@@ -58,12 +58,28 @@ def to_digit_string(
 
 
 def order_of_magnitude(decimal: float) -> int:
-    """Get the order of magnitude of the given number."""
+    """
+    Get the order of magnitude of the given number.
+
+    If 0, nan or infinity is provided, returns 0
+
+    :param decimal: The float to check ordered of magnitude.
+    :type decimal: float
+    :return: Order of magnitude of the given float
+    :rtype: int
+    """
     if decimal == 0 or is_nan_or_infinity(decimal):
         return 0
     return int(np.floor(np.log10(np.abs(decimal))))
 
 
 def is_nan_or_infinity(decimal: float) -> bool:
-    """Whether a floating number is infinity or NaN (Not a Number)."""
+    """
+    Whether a floating number is infinity or NaN (Not a Number).
+
+    :param decimal: float to check
+    :type decimal: float
+    :return: Is nan or infinity
+    :rtype: bool
+    """
     return np.isnan(decimal) or np.isinf(decimal)

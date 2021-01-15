@@ -10,7 +10,15 @@ class CatchEddingtonExceptions(click.Group):
     """Implementation for a commands group that catches Eddington exceptions."""
 
     def __call__(self, *args, **kwargs):
-        """Override of the call method that catches Eddington exceptions."""
+        """
+        Override of the call method that catches Eddington exceptions.
+
+        :param args: Arguments for the subcommand
+        :type args: list
+        :param kwargs: Keyword argument for the subcommand.
+        :type kwargs: dict
+        :return: Returns the output of the subcommand
+        """
         try:
             return self.main(*args, **kwargs)
         except EddingtonException as exc:

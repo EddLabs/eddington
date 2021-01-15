@@ -1,7 +1,7 @@
 """Fitting function to evaluate with the fitting algorithm."""
 import functools
 from dataclasses import InitVar, dataclass, field
-from typing import Callable, Dict, Optional, Union
+from typing import Callable, Dict, List, Optional, Union
 
 import numpy as np
 
@@ -31,10 +31,10 @@ class FittingFunction:  # pylint: disable=invalid-name,too-many-instance-attribu
     :param syntax: The syntax of the fitting function
     :type syntax: str
     :param a_derivative: a function representing the derivative of fit_func according
-     to the "a" array
+        to the "a" array
     :type a_derivative: callable
     :param x_derivative: a function representing the derivative of fit_func according
-     to x
+        to x
     :type a_derivative: callable
     :param title_name: same as `name` but in title case
     :type title_name: str
@@ -53,7 +53,13 @@ class FittingFunction:  # pylint: disable=invalid-name,too-many-instance-attribu
     save: InitVar[bool] = True
 
     def __post_init__(self, save):
-        """Post init methods."""
+        """
+        Post init methods.
+
+        :param save: Should this function be saved in the
+            :class:`FittingFunctionsRegistry`
+        :type save: bool
+        """
         self.title_name = self.__get_title_name()
         self.fixed = dict()
         self.x_derivative = self.__wrap_x_derivative(self.x_derivative)
@@ -73,13 +79,26 @@ class FittingFunction:  # pylint: disable=invalid-name,too-many-instance-attribu
             )
 
     def __call__(self, *args):
-        """Call the fitting function as a regular callable."""
+        """
+        Call the fitting function as a regular callable.
+
+        :param args: Arguments for the fitting function
+        :return: function result
+        :rtype: float or np.ndarray
+        """
         a, x = self.__extract_a_and_x(args)
         self.__validate_parameters_number(a)
         return self.fit_func(a, x)
 
-    def assign(self, a):
-        """Assign the function parameters."""
+    def assign(self, a: Union[List[float], np.ndarray]) -> "FittingFunction":
+        """
+        Assign the function parameters.
+
+        :param a: Parameters to be assigned
+        :type a: list of floats or np.ndarray
+        :return: self
+        :rtype: FittingFunction
+        """
         a = self.__add_fixed_values(a)
         self.__validate_parameters_number(a)
         self.fixed = dict(enumerate(a))
@@ -94,6 +113,8 @@ class FittingFunction:  # pylint: disable=invalid-name,too-many-instance-attribu
         :param value: The value to fix
         :type value: float
         :return: self :class:`FittingFunction`
+        :raises FittingFunctionRuntimeError: Raised when trying to fix a non existing
+            parameter.
         """
         if index < 0 or index >= self.n:
             raise FittingFunctionRuntimeError(
@@ -114,17 +135,24 @@ class FittingFunction:  # pylint: disable=invalid-name,too-many-instance-attribu
         del self.fixed[index]
         return self
 
-    def clear_fixed(self):
+    def clear_fixed(self) -> "FittingFunction":
         """
         Clear all fixed parameters.
 
-        :return: self :class:`FittingFunction`
+        :return: self
+        :rtype: FittingFunction
         """
         self.fixed.clear()
+        return self
 
     @property
-    def active_parameters(self):
-        """Number of active parameters (aka, unfixed)."""
+    def active_parameters(self) -> int:
+        """
+        Property of number of active parameters.
+
+        :return: number of active parameters (aka, unfixed).
+        :rtype: int
+        """
         return self.n - len(self.fixed)
 
     def __wrap_x_derivative(self, method):
@@ -192,21 +220,22 @@ def fitting_function(  # pylint: disable=invalid-name,too-many-arguments
     Wrapper making a simple callable into a :class:`FittingFunction`.
 
     :param n: Number of parameters. The length of parameter ``a`` of the fitting
-     function.
+        function.
     :type n: int
     :param name: The name of the function.
     :type name: str
     :param syntax: The syntax of the fitting function.
     :type syntax: str
     :param a_derivative: a function representing the derivative of the fitting function
-     according to the "a" parameter array
+        according to the "a" parameter array
     :type a_derivative: callable
     :param x_derivative: a function representing the derivative of the fitting function
-     according to x
+        according to x
     :param save: Should this function be saved in the
-     :class:`FittingFunctionsRegistry`
+        :class:`FittingFunctionsRegistry`
     :type save: bool
-    :return: :class:`FittingFunction` instance.
+    :return: a fitting function
+    :rtype: FittingFunction
     """
 
     def wrapper(func):

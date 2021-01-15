@@ -53,13 +53,15 @@ class FittingData:  # pylint: disable=R0902,R0904
         :param x_column: Indicates which column should be used as the x parameter
         :type x_column: ``str`` or ``numpy.ndarray``
         :param xerr_column: Indicates which column should be used as the x error
-         parameter
+            parameter
         :type xerr_column: ``str`` or ``numpy.ndarray``
         :param y_column: Indicates which column should be used as the y parameter
         :type y_column: ``str`` or ``numpy.ndarray``
         :param yerr_column: Indicates which column should be used as the y error
-         parameter
+            parameter
         :type yerr_column: ``str`` or ``numpy.ndarray``
+        :raises FittingDataColumnsLengthError: Raised if not all columns have the same
+            length
         """
         self._data = OrderedDict(
             [(key, np.array(value)) for key, value in data.items()]
@@ -80,35 +82,64 @@ class FittingData:  # pylint: disable=R0902,R0904
     # Data properties are read-only
 
     @property
-    def length(self):
-        """Number of records."""
+    def length(self) -> int:
+        """
+        Number of records.
+
+        :return: Number of records
+        :rtype: int
+        """
         return self._length
 
     @property
-    def data(self):
-        """Data matrix."""
+    def data(self) -> OrderedDict:
+        """
+        Data matrix.
+
+        :return: The actual raw data
+        :rtype: OrderedDict
+        """
         return self._data
 
     @property
     def all_records(self) -> List[List[Any]]:
-        """Get all records in data as a list."""
+        """
+        Get all records in data as a list.
+
+        :return: List of all records
+        :rtype: List[List[Any]]
+        """
         return [list(record) for record in zip(*self.data.values())]
 
     @property
     def records(self):
-        """Get all selected records in data as a list."""
+        """
+        Get all selected records in data as a list.
+
+        :return: records list
+        """
         return list(
             zip(*[column[self.records_indices] for column in self.data.values()])
         )
 
     @property
     def all_columns(self) -> List[str]:
-        """Columns list."""
+        """
+        Property of columns list.
+
+        :return: list of all columns
+        :rtype: List[str]
+        """
         return self._all_columns
 
     @property
-    def used_columns(self):
-        """Dictionary of columns in use."""
+    def used_columns(self) -> Columns:
+        """
+        Dictionary of columns in use.
+
+        :return: columns used dictionary
+        :rtype: Columns
+        """
         return Columns(
             x=self.x_column,
             xerr=self.xerr_column,
@@ -128,23 +159,43 @@ class FittingData:  # pylint: disable=R0902,R0904
         return self.data[column_header][self.records_indices]
 
     @property
-    def x(self):  # pylint: disable=invalid-name
-        """X values."""
+    def x(self) -> np.ndarray:  # pylint: disable=invalid-name
+        """
+        Property of the x values.
+
+        :return: values of the x column
+        :rtype: np.ndarray
+        """
         return self.column_data(self.x_column)
 
     @property
-    def xerr(self):
-        """X error values."""
+    def xerr(self) -> np.ndarray:
+        """
+        Property of the x error values.
+
+        :return: values of the x error column
+        :rtype: np.ndarray
+        """
         return self.column_data(self.xerr_column)
 
     @property
-    def y(self):  # pylint: disable=invalid-name
-        """Y values."""
+    def y(self) -> np.ndarray:  # pylint: disable=invalid-name
+        """
+        Property of the y values.
+
+        :return: values of the y column
+        :rtype: np.ndarray
+        """
         return self.column_data(self.y_column)
 
     @property
-    def yerr(self):
-        """Y error values."""
+    def yerr(self) -> np.ndarray:
+        """
+        Property of the y error values.
+
+        :return: values of the y error column
+        :rtype: np.ndarray
+        """
         return self.column_data(self.yerr_column)
 
     # Records indices methods
@@ -188,12 +239,17 @@ class FittingData:  # pylint: disable=R0902,R0904
         return self.records_indices[index - 1]
 
     @property
-    def records_indices(self):
-        """List of booleans indicating which records are selected."""
+    def records_indices(self) -> List[bool]:
+        """
+        Property of selected indices.
+
+        :return: List of booleans indicating which records are selected.
+        :rtype: List[bool]
+        """
         return self._records_indices
 
     @records_indices.setter
-    def records_indices(self, records_indices):
+    def records_indices(self, records_indices: List[bool]):
         if len(records_indices) != self.length:
             raise FittingDataRecordsSelectionError(
                 f"Should select {self.length} records,"
@@ -208,7 +264,12 @@ class FittingData:  # pylint: disable=R0902,R0904
 
     @property
     def x_column(self):
-        """Name of the x column."""
+        """
+        Name of the x column.
+
+        :return: The name of the x error column
+        :rtype: str
+        """
         return self._x_column
 
     @x_column.setter
@@ -224,7 +285,12 @@ class FittingData:  # pylint: disable=R0902,R0904
 
     @property
     def xerr_column(self):
-        """Name of the x error column."""
+        """
+        Name of the x error column.
+
+        :return: The name of the x error column
+        :rtype: str
+        """
         return self._xerr_column
 
     @xerr_column.setter
@@ -240,7 +306,12 @@ class FittingData:  # pylint: disable=R0902,R0904
 
     @property
     def y_column(self):
-        """Name of the y column."""
+        """
+        Name of the y column.
+
+        :return: The name of the y column
+        :rtype: str
+        """
         return self._y_column
 
     @y_column.setter
@@ -256,7 +327,12 @@ class FittingData:  # pylint: disable=R0902,R0904
 
     @property
     def yerr_column(self):
-        """Name of the y error column."""
+        """
+        Name of the y error column.
+
+        :return: The name of the y error column
+        :rtype: str
+        """
         return self._yerr_column
 
     @yerr_column.setter
@@ -327,10 +403,10 @@ class FittingData:  # pylint: disable=R0902,R0904
         :param fit_func: :class:`FittingFunction` to evaluate with the fit data
         :type fit_func: ``FittingFunction``
         :param x: Optional. The input for the fitting algorithm.
-         If not given, generated randomly.
+            If not given, generated randomly.
         :type x: ``numpy.ndarray``
         :param a: Optional. the actual parameters that should be returned by the
-         fitting algorithm. If not given, generated randomly.
+            fitting algorithm. If not given, generated randomly.
         :type a: ``numpy.ndarray``
         :param xmin: Minimum value for x.
         :type xmin: float
@@ -341,9 +417,9 @@ class FittingData:  # pylint: disable=R0902,R0904
         :param max_coeff: Maximum value for `a` coefficient.
         :type max_coeff: float
         :param xsigma: Standard deviation for x.
-        :type xsigma: int
+        :type xsigma: float
         :param ysigma: Standard deviation for y.
-        :type ysigma: int
+        :type ysigma: float
         :param measurements: Number of measurements
         :type measurements: int
         :returns: random :class:`FittingData`
@@ -375,17 +451,19 @@ class FittingData:  # pylint: disable=R0902,R0904
         :param filepath: str or Path. Path to location of excel file
         :param sheet: str. The name of the sheet to extract the data from.
         :param x_column: Indicates which column should be used as the
-         x parameter
+            x parameter
         :type x_column: ``str`` or ``numpy.ndarray``
         :param xerr_column: Indicates which column should be used as the x error
-         parameter
+            parameter
         :type xerr_column: ``str`` or ``numpy.ndarray``
         :param y_column: Indicates which column should be used as the x parameter
         :type y_column: ``str`` or ``numpy.ndarray``
         :param yerr_column: Indicates which column should be used as the y error
-         parameter
+            parameter
         :type xerr_column: ``str`` or ``numpy.ndarray``
         :returns: :class:`FittingData` read from the excel file.
+        :raises FittingDataError: Raised when the given sheet do not exist in excel
+            file.
         """
         if isinstance(filepath, str):
             filepath = Path(filepath)
@@ -420,12 +498,12 @@ class FittingData:  # pylint: disable=R0902,R0904
         :param x_column: Indicates which column should be used as the x parameter
         :type x_column: ``str`` or ``numpy.ndarray``
         :param xerr_column: Indicates which column should be used as the x error
-         parameter
+            parameter
         :type xerr_column: ``str`` or ``numpy.ndarray``
         :param y_column: Indicates which column should be used as the x parameter
         :type y_column: ``str`` or ``numpy.ndarray``
         :param yerr_column: Indicates which column should be used as the y error
-         parameter
+            parameter
         :type xerr_column: ``str`` or ``numpy.ndarray``
         :returns: :class:`FittingData` read from the csv file.
         """
@@ -458,12 +536,12 @@ class FittingData:  # pylint: disable=R0902,R0904
         :param x_column: Indicates which column should be used as the x parameter
         :type x_column: ``str`` or ``numpy.ndarray``
         :param xerr_column: Indicates which column should be used as the x error
-         parameter
+            parameter
         :type xerr_column: ``str`` or ``numpy.ndarray``
         :param y_column: Indicates which column should be used as the x parameter
         :type y_column: ``str`` or ``numpy.ndarray``
         :param yerr_column: Indicates which column should be used as the y error
-         parameter
+            parameter
         :type xerr_column: ``str`` or ``numpy.ndarray``
         :returns: :class:`FittingData` read from the json file.
         """
@@ -489,6 +567,8 @@ class FittingData:  # pylint: disable=R0902,R0904
         :type old: str
         :param new: The new value to set for the header
         :type new: str
+        :raises FittingDataSetError: Raised when trying to set a header which is empty
+            or already been set.
         """
         if new == old:
             return
@@ -500,7 +580,7 @@ class FittingData:  # pylint: disable=R0902,R0904
         self._all_columns = list(self.data.keys())
         self.__update_statistics()
 
-    def set_cell(self, record_number, column_name, value):
+    def set_cell(self, record_number: int, column_name: str, value: float):
         """
         Set new value to a cell.
 
@@ -510,6 +590,8 @@ class FittingData:  # pylint: disable=R0902,R0904
         :type column_name: str
         :param value: The new value to set for the cell
         :type value: float
+        :raises FittingDataSetError: Raised when trying to set a cell with non number
+            value
         """
         if not isinstance(value, Number):
             raise FittingDataSetError(
@@ -540,10 +622,10 @@ class FittingData:  # pylint: disable=R0902,R0904
         Save :class:`FittingData` to xlsx file.
 
         :param output_directory: Path to the directory for the new excel file to be
-         saved.
+            saved.
         :type output_directory: ``Path`` or ``str``
         :param name: Optional. The name of the file, without the .xlsx suffix.
-         "fitting_data" by default.
+            "fitting_data" by default.
         :type name: str
         :param sheet: Optional. Name of the sheet that the data will be saved to.
         :type sheet: str
@@ -560,10 +642,10 @@ class FittingData:  # pylint: disable=R0902,R0904
         Save :class:`FittingData` to csv file.
 
         :param output_directory:
-         Path to the directory for the new excel file to be saved.
+            Path to the directory for the new excel file to be saved.
         :type output_directory: ``Path`` or ``str``
         :param name: Optional. The name of the file, without the .csv suffix.
-         "fitting_data" by default.
+            "fitting_data" by default.
         :type name: str
         """
         io_util.save_as_csv(
@@ -582,10 +664,10 @@ class FittingData:  # pylint: disable=R0902,R0904
         Save the fitting data statistics to xlsx file.
 
         :param output_directory: Path to the directory for the new excel file to be
-         saved.
+            saved.
         :type output_directory: ``Path`` or ``str``
         :param name: Optional. The name of the file, without the .xlsx suffix.
-         "fitting_data_statistics" by default.
+            "fitting_data_statistics" by default.
         :type name: str
         :param sheet: Optional. Name of the sheet that the data will be saved to.
         :type sheet: str
@@ -606,10 +688,10 @@ class FittingData:  # pylint: disable=R0902,R0904
         Save the fitting data statistics to csv file.
 
         :param output_directory:
-         Path to the directory for the new excel file to be saved.
+            Path to the directory for the new excel file to be saved.
         :type output_directory: ``Path`` or ``str``
         :param name: Optional. The name of the file, without the .csv suffix.
-         "fitting_data" by default.
+            "fitting_data" by default.
         :type name: str
         """
         if name is None:

@@ -23,16 +23,16 @@ def fit(  # pylint: disable=invalid-name
     `ODR <https://docs.scipy.org/doc/scipy/reference/odr.html>`_ algorithm.
 
     :param data: Fitting data to optimize
-    :type data: :class:`FittingData`
+    :type data: FittingData
     :param func: a function to fit the data according to.
-    :type func: :class:`FittingFunction`
+    :type func: FittingFunction
     :param a0: initial guess for the parameters
-    :type a0: ``np.ndarray``
+    :type a0: np.ndarray
     :param use_x_derivative: indicates whether to use x derivative or not.
-    :type use_x_derivative: ``bool``
+    :type use_x_derivative: bool
     :param use_a_derivative: indicates whether to use a derivative or not.
-    :type use_a_derivative: ``bool``
-    :returns: :class:`FittingResult`
+    :type use_a_derivative: bool
+    :returns: FittingResult
     """
     model = Model(
         **__get_odr_model_kwargs(

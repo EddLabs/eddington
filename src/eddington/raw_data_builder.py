@@ -9,11 +9,19 @@ class RawDataBuilder:
     """Builder of raw data from file rows."""
 
     @classmethod
-    def build_raw_data(cls, rows):
+    def build_raw_data(cls, rows: List[List[Optional[str]]]) -> collections.OrderedDict:
         """
         Convert list of rows into a raw OrderedDict.
 
         That can be used as data for the FittingData class.
+
+        :param rows: List of lists of strings. Values read from a data file (mostly
+            excel file or csv file)
+        :type rows: List[List[Optional[str]]]
+        :return: Data as an ordered dictionary.
+        :rtype: collections.OrderedDict
+        :raises FittingDataInvalidFile: Raised when all rows are empty or no rows were
+            given.
         """
         rows = cls.__trim_data(rows)
         if len(rows) == 0:
@@ -25,13 +33,23 @@ class RawDataBuilder:
         return cls.fix_types_in_raw_dict(raw_dict)
 
     @classmethod
-    def fix_types_in_raw_dict(cls, raw_dict: collections.OrderedDict):
-        """Convert the types of a given raw dictionary into numpy array with floats."""
+    def fix_types_in_raw_dict(
+        cls, raw_dict: collections.OrderedDict
+    ) -> collections.OrderedDict:
+        """
+        Convert the types of a given raw dictionary into numpy array with floats.
+
+        :param raw_dict: Raw data with values as a strings or floats.
+        :type raw_dict: collections.OrderedDict
+        :return: New raw data with values as floats
+        :rtype: collections.OrderedDict
+        """
+        new_dict = collections.OrderedDict()
         for column, key in enumerate(raw_dict.keys()):
-            raw_dict[key] = cls.__convert_column(
+            new_dict[key] = cls.__convert_column(
                 column_number=column, column=raw_dict[key]
             )
-        return raw_dict
+        return new_dict
 
     @classmethod
     def __trim_data(cls, rows):

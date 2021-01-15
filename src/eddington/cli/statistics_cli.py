@@ -37,6 +37,9 @@ def statistics_cli(
         for column in data.all_columns:
             click.echo(f"{column}:")
             column_statistics = data.statistics(column)
+            if column_statistics is None:
+                click.echo(f"statistics of column {column_statistics} is None")
+                continue
             click.echo(f"\tMean: {column_statistics.mean}")
             click.echo(f"\tMedian: {column_statistics.median}")
             click.echo(f"\tVariance: {column_statistics.variance}")
