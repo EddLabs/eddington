@@ -21,15 +21,24 @@ class FittingResult:  # pylint: disable=too-many-instance-attributes
     Dataclass that contains the relevant parameters returned by a fitting algorithm.
 
     :param a0: The initial guess for the fitting function parameters.
+    :type a0: list of floats or np.ndarray
     :param a: The result for the fitting parameters.
+    :type a: list of floats or np.ndarray
     :param aerr: Estimated errors of a.
+    :type aerr: list of floats or np.ndarray
     :param arerr: Estimated relative errors of a (equivalent to aerr/a).
+    :type arerr: list of floats or np.ndarray
     :param acov: Covariance matrix of a.
+    :type acov: list of lists of floats or np.ndarray
     :param degrees_of_freedom: How many degrees of freedom of the fittings.
+    :type degrees_of_freedom: int
     :param chi2: Optimization evaluation for the fit.
+    :type chi2: float
     :param chi2_reduced: Reduced chi2.
+    :type chi2_reduced: float
     :param p_probability: P-probability (p-value) of the fitting, evaluated from
-     chi2_reduced.
+        chi2_reduced.
+    :type p_probability: float
     """
 
     a0: Union[List[float], np.ndarray]  # pylint: disable=invalid-name
@@ -60,7 +69,7 @@ class FittingResult:  # pylint: disable=too-many-instance-attributes
         Write the result to a text file.
 
         :param file_path: Path to write the result in. if None, prints to
-         console.
+            console.
         :type file_path: ``str`` or ``Path``
         """
         with open(file_path, mode="w") as output_file:
@@ -71,7 +80,7 @@ class FittingResult:  # pylint: disable=too-many-instance-attributes
         Write the result to a json file.
 
         :param file_path: Path to write the result in. if None, prints to
-         console.
+            console.
         :type file_path: ``str`` or ``Path``
         """
         with open(file_path, mode="w") as output_file:
@@ -93,13 +102,23 @@ class FittingResult:  # pylint: disable=too-many-instance-attributes
 
     @property
     def pretty_string(self) -> str:
-        """Pretty representation string."""
+        """
+        Pretty representation string.
+
+        :return: self representing pretty string
+        :rtype: str
+        """
         if self.__pretty_string is None:
             self.__pretty_string = self.__build_pretty_string()
         return self.__pretty_string
 
     def __repr__(self) -> str:
-        """Representation string."""
+        """
+        Representation string.
+
+        :return: self representing pretty string
+        :rtype: str
+        """
         return self.pretty_string
 
     def __build_pretty_string(self) -> str:
