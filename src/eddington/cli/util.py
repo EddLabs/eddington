@@ -59,7 +59,7 @@ def load_fitting_function(
         raise an exception.
 
     """
-    if func_name == "":
+    if func_name is None or func_name.strip() == "":
         if polynomial_degree is not None:
             return polynomial(polynomial_degree)
         return linear
