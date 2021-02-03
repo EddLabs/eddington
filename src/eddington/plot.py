@@ -166,9 +166,7 @@ def plot_fitting(  # pylint: disable=C0103,R0913,R0914
     )
     xmin, xmax = get_plot_borders(x=data.x, xmin=xmin, xmax=xmax)
     errorbar(ax=ax, data=data, xmin=xmin, xmax=xmax)
-    if step is None:
-        step = (xmax - xmin) / 1000.0
-    x = np.arange(xmin, xmax, step=step)  # pylint: disable=invalid-name
+    x = get_x_plot_values(xmin=xmin, xmax=xmax, step=step)
     a_dict = __get_a_dict(a)
     for label, a_value in a_dict.items():
         add_plot(ax=ax, x=x, y=func(a_value, x), label=label)
@@ -447,6 +445,26 @@ def get_plot_borders(  # pylint: disable=invalid-name
     return xmin, xmax
 
 
+def get_x_plot_values(
+    xmin: float, xmax: float, step: Optional[float] = None
+) -> np.ndarray:
+    """
+    Get x values to use in plot methods.
+
+    :param xmin: Minimum x value
+    :type xmin: float
+    :param xmax: Maximum x value
+    :type xmax: float
+    :param step: Optional. gap between each x values
+    :type step: None or float
+    :return: array of x values
+    :rtype: numpy.ndarray
+    """
+    if step is None:
+        step = (xmax - xmin) / 1000.0
+    return np.arange(xmin, xmax, step=step)
+
+
 def show_or_export(fig: plt.Figure, output_path=None):
     """
     Show plot or export it to a file.
@@ -460,24 +478,33 @@ def show_or_export(fig: plt.Figure, output_path=None):
     fig.savefig(output_path)
 
 
+def build_repr_string(parameters: Union[List[float], np.ndarray]) -> str:
+    """
+    Format parameters array into representation string.
+
+    :param parameters: Array of parameters to be formatted
+    :type parameters: List of floats or numpy.ndarray
+    :return: Formatted string
+    :rtype: str
+    """
+    arguments_values = [
+        f"a[{i}]={to_relevant_precision_string(val)}"
+        for i, val in enumerate(parameters)
+    ]
+    return f"[{', '.join(arguments_values)}]"
+
+
 def __get_a_dict(a):  # pylint: disable=invalid-name
     if isinstance(a, dict):
         return a
     if isinstance(a, list):
-        return {__build_repr_string(a_value): a_value for a_value in a}
+        return {build_repr_string(a_value): a_value for a_value in a}
     if isinstance(a, np.ndarray):
-        return {__build_repr_string(a): a}
+        return {build_repr_string(a): a}
     raise PlottingError(
         f"{a} has unmatching type. Can except only numpy arrays, "
         "lists of numpy arrays and dictionaries."
     )
-
-
-def __build_repr_string(a):  # pylint: disable=invalid-name
-    arguments_values = [
-        f"a[{i}]={to_relevant_precision_string(val)}" for i, val in enumerate(a)
-    ]
-    return f"[{', '.join(arguments_values)}]"
 
 
 def __should_add_legend(legend, a_dict):  # pylint: disable=invalid-name
