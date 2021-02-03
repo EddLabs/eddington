@@ -31,7 +31,7 @@ from eddington.random_util import random_array, random_error, random_sigma
 from eddington.raw_data_builder import RawDataBuilder
 from eddington.statistics import Statistics
 
-Columns = namedtuple("ColumnsResult", ["x", "y", "xerr", "yerr"])
+Columns = namedtuple("Columns", ["x", "y", "xerr", "yerr"])
 
 
 class FittingData:  # pylint: disable=R0902,R0904
