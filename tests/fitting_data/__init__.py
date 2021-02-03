@@ -13,7 +13,7 @@ COLUMNS = OrderedDict(
         for column_name in COLUMNS_NAMES
     ]
 )
-CONTENT = np.stack(COLUMNS.values(), axis=1).tolist()
+CONTENT = np.stack(list(COLUMNS.values()), axis=1).tolist()
 ROWS = [list(COLUMNS.keys()), *CONTENT]
 VALUES = list(COLUMNS.values())
 STATISTICS = {
