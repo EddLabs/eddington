@@ -30,10 +30,10 @@ from eddington.fitting_functions_list import (
 from eddington.fitting_functions_registry import FittingFunctionsRegistry
 from eddington.fitting_result import FittingResult
 from eddington.plot import (
+    add_errorbar,
     add_grid,
     add_legend,
     add_plot,
-    errorbar,
     get_figure,
     horizontal_line,
     label_axes,
@@ -87,7 +87,7 @@ __all__ = [
     "plot_residuals",
     "show_or_export",
     "get_figure",
-    "errorbar",
+    "add_errorbar",
     "add_legend",
     "add_grid",
     "add_plot",

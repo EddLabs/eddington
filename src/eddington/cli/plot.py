@@ -28,10 +28,11 @@ from eddington.cli.util import (
     load_fitting_function,
 )
 from eddington.plot import (
+    add_errorbar,
     add_legend,
     add_plot,
     build_repr_string,
-    errorbar,
+    get_checkers_list,
     get_figure,
     get_plot_borders,
     get_x_plot_values,
@@ -114,7 +115,14 @@ def plot_cli(
         y_log_scale=y_log_scale,
     )
     xmin, xmax = get_plot_borders(x=data.x)
-    errorbar(ax=ax, data=data)
+    checkers_list = get_checkers_list(values=data.x, min_val=xmin, max_val=xmax)
+    add_errorbar(
+        ax=ax,
+        x=data.x[checkers_list],
+        xerr=data.xerr[checkers_list],
+        y=data.y[checkers_list],
+        yerr=data.yerr[checkers_list],
+    )
     x_values = get_x_plot_values(xmin, xmax)
     for a0 in parameters_sets:
         if a0 is None:
