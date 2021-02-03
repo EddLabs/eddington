@@ -74,6 +74,12 @@ from eddington.plot import (
     type=click.Path(dir_okay=False, file_okay=True),
     help="Output path to save plots in.",
 )
+@click.option(
+    "-r",
+    "--residuals",
+    is_flag=True,
+    help="Show residuals error bars instead of plots.",
+)
 def plot_cli(
     fitting_function_name: Optional[str],
     polynomial_degree: Optional[int],
@@ -92,6 +98,7 @@ def plot_cli(
     x_log_scale: bool,
     y_log_scale: bool,
     output_path: Union[Path, str],
+    residuals: bool,
 ):
     """Plot fitting functions according to data file and a parameters set."""
     data = load_data_file(
@@ -115,19 +122,34 @@ def plot_cli(
         y_log_scale=y_log_scale,
     )
     xmin, xmax = get_plot_borders(x=data.x)
-    checkers_list = get_checkers_list(values=data.x, min_val=xmin, max_val=xmax)
-    add_errorbar(
-        ax=ax,
-        x=data.x[checkers_list],
-        xerr=data.xerr[checkers_list],
-        y=data.y[checkers_list],
-        yerr=data.yerr[checkers_list],
-    )
+    if not residuals:
+        checkers_list = get_checkers_list(values=data.x, min_val=xmin, max_val=xmax)
+        add_errorbar(
+            ax=ax,
+            x=data.x[checkers_list],
+            xerr=data.xerr[checkers_list],
+            y=data.y[checkers_list],
+            yerr=data.yerr[checkers_list],
+        )
     x_values = get_x_plot_values(xmin, xmax)
     for a0 in parameters_sets:
         if a0 is None:
             continue
-        add_plot(ax=ax, x=x_values, y=func(a0, x_values), label=build_repr_string(a0))
+        label = build_repr_string(a0)
+        checkers_list = get_checkers_list(values=data.x, min_val=xmin, max_val=xmax)
+        if residuals:
+            residuals_data = data.residuals(fit_func=func, a=a0)
+            residuals_data.records_indices = checkers_list
+            add_errorbar(
+                ax=ax,
+                x=residuals_data.x,
+                y=residuals_data.y,
+                xerr=residuals_data.xerr,
+                yerr=residuals_data.yerr,
+                label=label,
+            )
+        else:
+            add_plot(ax=ax, x=x_values, y=func(a0, x_values), label=label)
     if len(parameters_sets) != 0 and legend:
         add_legend(ax=ax, is_legend=True)
 
