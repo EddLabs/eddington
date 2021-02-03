@@ -14,6 +14,21 @@ data_file_option = click.option(
 sheet_option = click.option(
     "-s", "--sheet", type=str, help="Sheet name for excel files."
 )
+x_column_option = click.option(
+    "--x-column", type=str, help="Column to read x values from."
+)
+
+xerr_column_option = click.option(
+    "--xerr-column", type=str, help="Column to read x error values from."
+)
+
+y_column_option = click.option(
+    "--y-column", type=str, help="Column to read y values from."
+)
+
+yerr_column_option = click.option(
+    "--yerr-column", type=str, help="Column to read y error values from."
+)
 fitting_function_argument = click.argument(
     "fitting_function_name", type=str, default=""
 )
