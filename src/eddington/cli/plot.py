@@ -117,6 +117,8 @@ def plot_cli(
     errorbar(ax=ax, data=data)
     x_values = get_x_plot_values(xmin, xmax)
     for a0 in parameters_sets:
+        if a0 is None:
+            continue
         add_plot(ax=ax, x=x_values, y=func(a0, x_values), label=build_repr_string(a0))
     if len(parameters_sets) != 0 and legend:
         add_legend(ax=ax, is_legend=True)
