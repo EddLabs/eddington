@@ -103,7 +103,15 @@ def plot_residuals(  # pylint: disable=invalid-name,too-many-arguments
         y_log_scale=y_log_scale,
     )
     xmin, xmax = get_plot_borders(x=data.x, xmin=xmin, xmax=xmax)
-    errorbar(ax=ax, data=data.residuals(func, a), xmin=xmin, xmax=xmax)
+    checkers_list = get_checkers_list(values=data.x, min_val=xmin, max_val=xmax)
+    residuals = data.residuals(fit_func=func, a=a)
+    add_errorbar(
+        ax=ax,
+        x=residuals.x[checkers_list],
+        xerr=residuals.xerr[checkers_list],
+        y=residuals.y[checkers_list],
+        yerr=residuals.yerr[checkers_list],
+    )
     horizontal_line(ax=ax, xmin=xmin, xmax=xmax)
     return fig
 
@@ -165,7 +173,14 @@ def plot_fitting(  # pylint: disable=C0103,R0913,R0914
         y_log_scale=y_log_scale,
     )
     xmin, xmax = get_plot_borders(x=data.x, xmin=xmin, xmax=xmax)
-    errorbar(ax=ax, data=data, xmin=xmin, xmax=xmax)
+    checkers_list = get_checkers_list(values=data.x, min_val=xmin, max_val=xmax)
+    add_errorbar(
+        ax=ax,
+        x=data.x[checkers_list],
+        xerr=data.xerr[checkers_list],
+        y=data.y[checkers_list],
+        yerr=data.yerr[checkers_list],
+    )
     x = get_x_plot_values(xmin=xmin, xmax=xmax, step=step)
     a_dict = __get_a_dict(a)
     for label, a_value in a_dict.items():
@@ -217,7 +232,14 @@ def plot_data(  # pylint: disable=too-many-arguments
         y_log_scale=y_log_scale,
     )
     xmin, xmax = get_plot_borders(x=data.x, xmin=xmin, xmax=xmax)
-    errorbar(ax=ax, data=data, xmin=xmin, xmax=xmax)
+    checkers_list = get_checkers_list(values=data.x, min_val=xmin, max_val=xmax)
+    add_errorbar(
+        ax=ax,
+        x=data.x[checkers_list],
+        xerr=data.xerr[checkers_list],
+        y=data.y[checkers_list],
+        yerr=data.yerr[checkers_list],
+    )
     limit_axes(ax=ax, xmin=xmin, xmax=xmax)
     return fig
 
@@ -373,6 +395,42 @@ def add_plot(
     ax.plot(x, y, label=label)
 
 
+def add_errorbar(  # pylint: disable=invalid-name,too-many-arguments
+    ax: plt.Axes,
+    x: Union[np.ndarray, List[float]],
+    xerr: Union[np.ndarray, List[float]],
+    y: Union[np.ndarray, List[float]],
+    yerr: Union[np.ndarray, List[float]],
+    label: Optional[str] = None,
+):
+    """
+    Plot error bar to figure.
+
+    :param ax: Figure axes.
+    :type ax: matplotlib.pyplot.Axes
+    :param x: X values
+    :type x: list of floats or ``numpy.ndarray``
+    :param xerr: X error values
+    :type xerr: list of floats or ``numpy.ndarray``
+    :param y: Y values
+    :type y: list of floats or ``numpy.ndarray``
+    :param yerr: Y error values
+    :type yerr: list of floats or ``numpy.ndarray``
+    :param label: Optional. Label for the error bar that would be added to the legend
+    :type label: str
+    """
+    ax.errorbar(
+        x=x,
+        y=y,
+        xerr=xerr,
+        yerr=yerr,
+        markersize=1,
+        marker="o",
+        linestyle="None",
+        label=label,
+    )
+
+
 def horizontal_line(  # pylint: disable=C0103
     ax: plt.Axes, xmin: float, xmax: float, y: float = 0
 ):
@@ -389,36 +447,6 @@ def horizontal_line(  # pylint: disable=C0103
     :type y: float
     """
     ax.hlines(y, xmin=xmin, xmax=xmax, linestyles="dashed")
-
-
-def errorbar(  # pylint: disable=invalid-name
-    ax: plt.Axes,
-    data: FittingData,
-    xmin: Optional[float] = None,
-    xmax: Optional[float] = None,
-):
-    """
-    Plot error bar to figure.
-
-    :param ax: Figure axes.
-    :type ax: matplotlib.pyplot.Axes
-    :param data: Data to visualize
-    :type data: FittingData
-    :param xmin: Optional. Minimum value of X. Used for filtering data points
-    :type xmin: Optional float
-    :param xmax: Optional. Maximum value of X. Used for filtering data points
-    :type xmax: Optional float
-    """
-    checkers_list = [__in_bounds(val, min_val=xmin, max_val=xmax) for val in data.x]
-    ax.errorbar(
-        x=data.x[checkers_list],
-        y=data.y[checkers_list],
-        xerr=data.xerr[checkers_list],
-        yerr=data.yerr[checkers_list],
-        markersize=1,
-        marker="o",
-        linestyle="None",
-    )
 
 
 def get_plot_borders(  # pylint: disable=invalid-name
@@ -492,6 +520,26 @@ def build_repr_string(parameters: Union[List[float], np.ndarray]) -> str:
         for i, val in enumerate(parameters)
     ]
     return f"[{', '.join(arguments_values)}]"
+
+
+def get_checkers_list(
+    values: Union[List[float], np.ndarray],
+    min_val: Optional[float] = None,
+    max_val: Optional[float] = None,
+) -> List[bool]:
+    """
+    Get a boolean map of valid indices in an array.
+
+    :param values: Values to be checked
+    :type values: List of floats or numpy.ndarray
+    :param min_val: Optional. Minimum allowed value
+    :type min_val: float
+    :param max_val: Optional. Maximum allowed value
+    :type max_val: float
+    :return: List of booleans indicating valid indices
+    :rtype: List[bool]
+    """
+    return [__in_bounds(val=val, min_val=min_val, max_val=max_val) for val in values]
 
 
 def __get_a_dict(a):  # pylint: disable=invalid-name
