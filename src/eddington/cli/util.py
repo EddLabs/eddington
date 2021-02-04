@@ -131,6 +131,7 @@ def fit_and_plot(  # pylint: disable=too-many-arguments,invalid-name,too-many-lo
             title_name=f"{title} - Residuals",
             xlabel=x_label,
             ylabel=y_label,
+            color=color,
             **plot_kwargs,
         ) as fig:
             show_or_export(

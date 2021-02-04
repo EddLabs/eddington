@@ -63,6 +63,7 @@ def plot_residuals(  # pylint: disable=invalid-name,too-many-arguments
     xlabel: Optional[str] = None,
     ylabel: Optional[str] = None,
     grid: bool = False,
+    color: Optional[str] = None,
     x_log_scale: bool = False,
     y_log_scale: bool = False,
     xmin: Optional[float] = None,
@@ -85,6 +86,8 @@ def plot_residuals(  # pylint: disable=invalid-name,too-many-arguments
     :type ylabel: str
     :param grid: Add grid lines or not
     :type grid: bool
+    :param color: Optional. Color to use for in the plot.
+    :type color: str
     :param x_log_scale: Set the scale of the  x axis to be logarithmic.
     :type x_log_scale: bool
     :param y_log_scale: Set the scale of the y axis to be logarithmic.
@@ -112,6 +115,7 @@ def plot_residuals(  # pylint: disable=invalid-name,too-many-arguments
         xerr=residuals.xerr[checkers_list],
         y=residuals.y[checkers_list],
         yerr=residuals.yerr[checkers_list],
+        color=color,
     )
     horizontal_line(ax=ax, xmin=xmin, xmax=xmax)
     return fig
@@ -417,6 +421,7 @@ def add_errorbar(  # pylint: disable=invalid-name,too-many-arguments
     y: Union[np.ndarray, List[float]],
     yerr: Union[np.ndarray, List[float]],
     label: Optional[str] = None,
+    color: Optional[str] = None,
 ):
     """
     Plot error bar to figure.
@@ -433,6 +438,8 @@ def add_errorbar(  # pylint: disable=invalid-name,too-many-arguments
     :type yerr: list of floats or ``numpy.ndarray``
     :param label: Optional. Label for the error bar that would be added to the legend
     :type label: str
+    :param color: Color of the plot
+    :type color: str
     """
     ax.errorbar(
         x=x,
@@ -443,6 +450,8 @@ def add_errorbar(  # pylint: disable=invalid-name,too-many-arguments
         marker="o",
         linestyle="None",
         label=label,
+        ecolor=color,
+        mec=color,
     )
 
 

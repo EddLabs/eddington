@@ -155,6 +155,7 @@ def plot_cli(
                 xerr=residuals_data.xerr,
                 yerr=residuals_data.yerr,
                 label=label,
+                color=color,
             )
         else:
             add_plot(ax=ax, x=x_values, y=func(a0, x_values), label=label, color=color)
