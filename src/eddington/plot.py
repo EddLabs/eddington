@@ -1,4 +1,5 @@
 """Plotting methods."""
+from collections import OrderedDict
 from typing import Dict, List, Optional, Tuple, Union
 
 import matplotlib.pyplot as plt
@@ -121,6 +122,7 @@ def plot_fitting(  # pylint: disable=C0103,R0913,R0914
     data: FittingData,
     a: Union[np.ndarray, List[np.ndarray], Dict[str, np.ndarray]],
     title_name,
+    color: Optional[Union[str, List[str], Dict[str, str]]] = None,
     xlabel: Optional[str] = None,
     ylabel: Optional[str] = None,
     grid: bool = False,
@@ -141,6 +143,9 @@ def plot_fitting(  # pylint: disable=C0103,R0913,R0914
     :param a: The parameters result
     :type a: ``numpy.ndarray``, a list of ``numpy.ndarray`` items or a dictionary from
         strings to ``numpy.ndarray``
+    :param color: Colors to use for each fit. Can be single value, a list of values
+        or a dictionary between a color to a value
+    :type color: str, List of str or a dictionary between str to str
     :param title_name: Optional. Title for the figure.
     :type title_name: str
     :param xlabel: Optional. Label of the x axis
@@ -183,8 +188,15 @@ def plot_fitting(  # pylint: disable=C0103,R0913,R0914
     )
     x = get_x_plot_values(xmin=xmin, xmax=xmax, step=step)
     a_dict = __get_a_dict(a)
+    colors_dict = __get_colors_dict(color=color, labels=list(a_dict.keys()))
     for label, a_value in a_dict.items():
-        add_plot(ax=ax, x=x, y=func(a_value, x), label=label)
+        add_plot(
+            ax=ax,
+            x=x,
+            y=func(a_value, x),
+            label=label,
+            color=colors_dict.get(label, None),
+        )
     add_legend(ax, __should_add_legend(legend, a_dict))
     return fig
 
@@ -379,6 +391,7 @@ def add_plot(
     x: Union[np.ndarray, List[float]],
     y: Union[np.ndarray, List[float]],
     label: Optional[str] = None,
+    color: Optional[str] = None,
 ):  # pylint: disable=C0103
     """
     Plot y as a function of x.
@@ -391,8 +404,10 @@ def add_plot(
     :type y: list of floats or ``numpy.ndarray``
     :param label: Optional. Label for the plot that would be added to the legend
     :type label: str
+    :param color: Color of the plot
+    :type color: str
     """
-    ax.plot(x, y, label=label)
+    ax.plot(x, y, label=label, color=color)
 
 
 def add_errorbar(  # pylint: disable=invalid-name,too-many-arguments
@@ -543,16 +558,28 @@ def get_checkers_list(
 
 
 def __get_a_dict(a):  # pylint: disable=invalid-name
-    if isinstance(a, dict):
+    if isinstance(a, (dict, OrderedDict)):
         return a
     if isinstance(a, list):
-        return {build_repr_string(a_value): a_value for a_value in a}
+        return OrderedDict([(build_repr_string(a_value), a_value) for a_value in a])
     if isinstance(a, np.ndarray):
-        return {build_repr_string(a): a}
+        return OrderedDict([(build_repr_string(a), a)])
     raise PlottingError(
         f"{a} has unmatching type. Can except only numpy arrays, "
         "lists of numpy arrays and dictionaries."
     )
+
+
+def __get_colors_dict(color, labels):
+    if color is None:
+        return {}
+    if isinstance(color, dict):
+        return color
+    if not isinstance(color, list):
+        color = [color]
+    if len(color) < len(labels):
+        color += [None for _ in range(len(labels) - len(color))]
+    return dict(zip(labels, color))
 
 
 def __should_add_legend(legend, a_dict):  # pylint: disable=invalid-name

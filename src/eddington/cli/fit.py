@@ -2,6 +2,8 @@
 from pathlib import Path
 from typing import Optional, Union
 
+import click
+
 from eddington.cli.common_flags import (
     a0_option,
     data_file_option,
@@ -50,10 +52,11 @@ from eddington.cli.util import (
 @x_label_option
 @y_label_option
 @is_grid_option
+@is_legend_option
+@click.option("-c", "--color", type=str, help="Color of the fitting plot")
 @should_plot_fitting_option
 @should_plot_residuls_option
 @should_plot_data_option
-@is_legend_option
 @is_x_log_scale_option
 @is_y_log_scale_option
 @output_dir_option
@@ -71,11 +74,12 @@ def fit_cli(
     title: Optional[str],
     x_label: Optional[str],
     y_label: Optional[str],
-    grid,
+    grid: bool,
+    legend: Optional[bool],
+    color: Optional[str],
     should_plot_fitting: bool,
     should_plot_residuals: bool,
     should_plot_data: bool,
-    legend: Optional[bool],
     x_log_scale: bool,
     y_log_scale: bool,
     output_dir: Union[Path, str],
@@ -109,4 +113,5 @@ def fit_cli(
         x_log_scale=x_log_scale,
         y_log_scale=y_log_scale,
         grid=grid,
+        color=color,
     )

@@ -1,6 +1,6 @@
 """Plot CLI method."""
 from pathlib import Path
-from typing import List, Optional, Union
+from typing import List, Optional, Tuple, Union
 
 import click
 
@@ -65,6 +65,9 @@ from eddington.plot import (
 @x_label_option
 @y_label_option
 @is_grid_option
+@click.option(
+    "-c", "--color", "colors", type=str, help="Color of the fitting plot", multiple=True
+)
 @is_legend_option
 @is_x_log_scale_option
 @is_y_log_scale_option
@@ -93,8 +96,9 @@ def plot_cli(
     title: Optional[str],
     x_label: Optional[str],
     y_label: Optional[str],
-    grid,
+    grid: bool,
     legend: Optional[bool],
+    colors: Union[List[Optional[str]], Tuple[Optional[str], ...]],
     x_log_scale: bool,
     y_log_scale: bool,
     output_path: Union[Path, str],
@@ -113,6 +117,10 @@ def plot_cli(
         func_name=fitting_function_name, polynomial_degree=polynomial_degree
     )
     parameters_sets = [extract_array_from_string(a0) for a0 in parameters]
+    if not isinstance(colors, list):
+        colors = list(colors)
+    if len(colors) < len(parameters_sets):
+        colors += [None for _ in range(len(parameters_sets) - len(colors))]
     ax, figure = get_figure(
         title_name=title,
         xlabel=x_label,
@@ -132,7 +140,7 @@ def plot_cli(
             yerr=data.yerr[checkers_list],
         )
     x_values = get_x_plot_values(xmin, xmax)
-    for a0 in parameters_sets:
+    for a0, color in zip(parameters_sets, colors):
         if a0 is None:
             continue
         label = build_repr_string(a0)
@@ -149,7 +157,7 @@ def plot_cli(
                 label=label,
             )
         else:
-            add_plot(ax=ax, x=x_values, y=func(a0, x_values), label=label)
+            add_plot(ax=ax, x=x_values, y=func(a0, x_values), label=label, color=color)
     if len(parameters_sets) != 0 and legend:
         add_legend(ax=ax, is_legend=True)
 

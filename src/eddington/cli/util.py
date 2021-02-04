@@ -68,7 +68,7 @@ def load_fitting_function(
     return FittingFunctionsRegistry.load(func_name)
 
 
-def fit_and_plot(  # pylint: disable=too-many-arguments,invalid-name
+def fit_and_plot(  # pylint: disable=too-many-arguments,invalid-name,too-many-locals
     data,
     func,
     a0,
@@ -81,6 +81,7 @@ def fit_and_plot(  # pylint: disable=too-many-arguments,invalid-name
     should_plot_data,
     should_plot_fitting,
     should_plot_residuals,
+    color=None,
     **plot_kwargs,
 ):
     """
@@ -116,6 +117,7 @@ def fit_and_plot(  # pylint: disable=too-many-arguments,invalid-name
             legend=legend,
             xlabel=x_label,
             ylabel=y_label,
+            color=color,
             **plot_kwargs,
         ) as fig:
             show_or_export(
