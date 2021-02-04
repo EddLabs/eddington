@@ -55,7 +55,7 @@ class Figure:
         plt.close("all")
 
 
-def plot_residuals(  # pylint: disable=invalid-name,too-many-arguments
+def plot_residuals(  # pylint: disable=invalid-name,too-many-arguments,too-many-locals
     func,
     data: FittingData,
     a: np.ndarray,
@@ -213,6 +213,7 @@ def plot_data(  # pylint: disable=too-many-arguments
     xmin: Optional[float] = None,
     xmax: Optional[float] = None,
     grid: bool = False,
+    color: Optional[str] = None,
     x_log_scale: bool = False,
     y_log_scale: bool = False,
 ):
@@ -233,6 +234,8 @@ def plot_data(  # pylint: disable=too-many-arguments
     :type xmax: float
     :param grid: Add grid lines or not
     :type grid: bool
+    :param color: Optional. Color to use for in the plot.
+    :type color: str
     :param x_log_scale: Set the scale of the  x axis to be logarithmic.
     :type x_log_scale: bool
     :param y_log_scale: Set the scale of the y axis to be logarithmic.
@@ -255,6 +258,7 @@ def plot_data(  # pylint: disable=too-many-arguments
         xerr=data.xerr[checkers_list],
         y=data.y[checkers_list],
         yerr=data.yerr[checkers_list],
+        color=color,
     )
     limit_axes(ax=ax, xmin=xmin, xmax=xmax)
     return fig
