@@ -99,6 +99,14 @@ is_y_log_scale_option = click.option(
     help="Change y axis scale to logarithmic.",
 )
 
+data_color_option = click.option(
+    "--dcolor",
+    "--data-color",
+    "data_color",
+    type=str,
+    help="Color of the data error bar."
+)
+
 
 # Output
 output_dir_option = click.option(

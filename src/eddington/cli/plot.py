@@ -19,7 +19,7 @@ from eddington.cli.common_flags import (
     xerr_column_option,
     y_column_option,
     y_label_option,
-    yerr_column_option,
+    yerr_column_option, data_color_option,
 )
 from eddington.cli.main_cli import eddington_cli
 from eddington.cli.util import (
@@ -68,6 +68,7 @@ from eddington.plot import (
 @click.option(
     "-c", "--color", "colors", type=str, help="Color of the fitting plot", multiple=True
 )
+@data_color_option
 @is_legend_option
 @is_x_log_scale_option
 @is_y_log_scale_option
@@ -99,6 +100,7 @@ def plot_cli(
     grid: bool,
     legend: Optional[bool],
     colors: Union[List[Optional[str]], Tuple[Optional[str], ...]],
+    data_color: Optional[str],
     x_log_scale: bool,
     y_log_scale: bool,
     output_path: Union[Path, str],
@@ -138,6 +140,7 @@ def plot_cli(
             xerr=data.xerr[checkers_list],
             y=data.y[checkers_list],
             yerr=data.yerr[checkers_list],
+            color=data_color,
         )
     x_values = get_x_plot_values(xmin, xmax)
     for a0, color in zip(parameters_sets, colors):
