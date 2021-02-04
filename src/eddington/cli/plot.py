@@ -1,6 +1,6 @@
 """Plot CLI method."""
 from pathlib import Path
-from typing import List, Optional, Union
+from typing import List, Optional, Tuple, Union
 
 import click
 
@@ -98,7 +98,7 @@ def plot_cli(
     y_label: Optional[str],
     grid: bool,
     legend: Optional[bool],
-    colors: List[str],
+    colors: Union[List[Optional[str]], Tuple[Optional[str], ...]],
     x_log_scale: bool,
     y_log_scale: bool,
     output_path: Union[Path, str],
@@ -117,10 +117,10 @@ def plot_cli(
         func_name=fitting_function_name, polynomial_degree=polynomial_degree
     )
     parameters_sets = [extract_array_from_string(a0) for a0 in parameters]
+    if not isinstance(colors, list):
+        colors = list(colors)
     if len(colors) < len(parameters_sets):
-        colors = list(colors) + [
-            None for _ in range(len(parameters_sets) - len(colors))
-        ]
+        colors += [None for _ in range(len(parameters_sets) - len(colors))]
     ax, figure = get_figure(
         title_name=title,
         xlabel=x_label,

@@ -558,7 +558,7 @@ def get_checkers_list(
 
 
 def __get_a_dict(a):  # pylint: disable=invalid-name
-    if isinstance(a, dict) or isinstance(a, OrderedDict):
+    if isinstance(a, (dict, OrderedDict)):
         return a
     if isinstance(a, list):
         return OrderedDict([(build_repr_string(a_value), a_value) for a_value in a])
