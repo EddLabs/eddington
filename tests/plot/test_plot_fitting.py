@@ -28,7 +28,7 @@ def case_no_args(mock_figure):
     x = np.arange(0.1, 10.9, step=0.0108)
 
     kwargs = dict(a=A1)
-    plot_calls = [([x, FUNC(A1, x)], dict(label=A1_REPR))]
+    plot_calls = [([x, FUNC(A1, x)], dict(label=A1_REPR, color=None))]
     return kwargs, plot_calls, mock_figure
 
 
@@ -37,7 +37,7 @@ def case_xmin(mock_figure):
     x = np.arange(-10, 10.9, step=0.0209)
 
     kwargs = dict(a=A1, xmin=-10)
-    plot_calls = [([x, FUNC(A1, x)], dict(label=A1_REPR))]
+    plot_calls = [([x, FUNC(A1, x)], dict(label=A1_REPR, color=None))]
     return kwargs, plot_calls, mock_figure
 
 
@@ -46,7 +46,7 @@ def case_xmax(mock_figure):
     x = np.arange(0.1, 20, step=0.0199)
 
     kwargs = dict(a=A1, xmax=20)
-    plot_calls = [([x, FUNC(A1, x)], dict(label=A1_REPR))]
+    plot_calls = [([x, FUNC(A1, x)], dict(label=A1_REPR, color=None))]
     return kwargs, plot_calls, mock_figure
 
 
@@ -55,7 +55,7 @@ def case_step(mock_figure):
     x = np.arange(0.1, 10.9, step=0.1)
 
     kwargs = dict(a=A1, step=0.1)
-    plot_calls = [([x, FUNC(A1, x)], dict(label=A1_REPR))]
+    plot_calls = [([x, FUNC(A1, x)], dict(label=A1_REPR, color=None))]
     return kwargs, plot_calls, mock_figure
 
 
@@ -65,8 +65,8 @@ def case_a_list_with_legend(mock_figure):
 
     kwargs = dict(a=[A1, A2])
     plot_calls = [
-        ([x, FUNC(A1, x)], dict(label=A1_REPR)),
-        ([x, FUNC(A2, x)], dict(label=A2_REPR)),
+        ([x, FUNC(A1, x)], dict(label=A1_REPR, color=None)),
+        ([x, FUNC(A2, x)], dict(label=A2_REPR, color=None)),
     ]
     return kwargs, plot_calls, mock_figure
 
@@ -77,8 +77,8 @@ def case_a_list_without_legend(mock_figure):
 
     kwargs = dict(a=[A1, A2], legend=False)
     plot_calls = [
-        ([x, FUNC(A1, x)], dict(label=A1_REPR)),
-        ([x, FUNC(A2, x)], dict(label=A2_REPR)),
+        ([x, FUNC(A1, x)], dict(label=A1_REPR, color=None)),
+        ([x, FUNC(A2, x)], dict(label=A2_REPR, color=None)),
     ]
     return kwargs, plot_calls, mock_figure
 
@@ -90,8 +90,8 @@ def case_a_dict_with_legend(mock_figure):
     two = "two"
     kwargs = dict(a={one: A1, two: A2})
     plot_calls = [
-        ([x, FUNC(A1, x)], dict(label=one)),
-        ([x, FUNC(A2, x)], dict(label=two)),
+        ([x, FUNC(A1, x)], dict(label=one, color=None)),
+        ([x, FUNC(A2, x)], dict(label=two, color=None)),
     ]
     return kwargs, plot_calls, mock_figure
 
@@ -103,8 +103,8 @@ def case_a_dict_without_legend(mock_figure):
     two = "two"
     kwargs = dict(a={one: A1, two: A2}, legend=False)
     plot_calls = [
-        ([x, FUNC(A1, x)], dict(label=one)),
-        ([x, FUNC(A2, x)], dict(label=two)),
+        ([x, FUNC(A1, x)], dict(label=one, color=None)),
+        ([x, FUNC(A2, x)], dict(label=two, color=None)),
     ]
     return kwargs, plot_calls, mock_figure
 
@@ -114,7 +114,57 @@ def case_a_redundent_precision(mock_figure):
     x = np.arange(0.1, 10.9, step=0.0108)
 
     kwargs = dict(a=A3)
-    plot_calls = [([x, FUNC(A3, x)], dict(label=A3_REPR))]
+    plot_calls = [([x, FUNC(A3, x)], dict(label=A3_REPR, color=None))]
+    return kwargs, plot_calls, mock_figure
+
+
+@case(tags=[DOES_NOT_HAVE_LEGEND])
+def case_string_color(mock_figure):
+    x = np.arange(0.1, 10.9, step=0.0108)
+    color = "yellow"
+
+    kwargs = dict(a=A1, color=color)
+    plot_calls = [([x, FUNC(A1, x)], dict(label=A1_REPR, color=color))]
+    return kwargs, plot_calls, mock_figure
+
+
+@case(tags=[DOES_NOT_HAVE_LEGEND])
+def case_a_list_with_colors_list(mock_figure):
+    x = np.arange(0.1, 10.9, step=0.0108)
+    color1, color2 = "green", "yellow"
+
+    kwargs = dict(a=[A1, A2], legend=False, color=[color1, color2])
+    plot_calls = [
+        ([x, FUNC(A1, x)], dict(label=A1_REPR, color=color1)),
+        ([x, FUNC(A2, x)], dict(label=A2_REPR, color=color2)),
+    ]
+    return kwargs, plot_calls, mock_figure
+
+
+@case(tags=[DOES_NOT_HAVE_LEGEND])
+def case_a_list_with_colors_list_shorter(mock_figure):
+    x = np.arange(0.1, 10.9, step=0.0108)
+    color1, color2 = "green", "yellow"
+
+    kwargs = dict(a=[A1, A2, A3], legend=False, color=[color1, color2])
+    plot_calls = [
+        ([x, FUNC(A1, x)], dict(label=A1_REPR, color=color1)),
+        ([x, FUNC(A2, x)], dict(label=A2_REPR, color=color2)),
+        ([x, FUNC(A3, x)], dict(label=A3_REPR, color=None)),
+    ]
+    return kwargs, plot_calls, mock_figure
+
+
+@case(tags=[DOES_NOT_HAVE_LEGEND])
+def case_a_dict_with_color_dict(mock_figure):
+    x = np.arange(0.1, 10.9, step=0.0108)
+    label1, label2 = "label1", "label2"
+    color1, color2 = "green", "yellow"
+    kwargs = dict(a={label1: A1, label2: A2}, color={label1: color1, label2: color2})
+    plot_calls = [
+        ([x, FUNC(A1, x)], dict(label=label1, color=color1)),
+        ([x, FUNC(A2, x)], dict(label=label2, color=color2)),
+    ]
     return kwargs, plot_calls, mock_figure
 
 
