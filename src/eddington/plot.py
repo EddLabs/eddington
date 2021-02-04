@@ -131,6 +131,7 @@ def plot_fitting(  # pylint: disable=C0103,R0913,R0914
     ylabel: Optional[str] = None,
     grid: bool = False,
     legend: Optional[bool] = None,
+    data_color: Optional[str] = None,
     x_log_scale: bool = False,
     y_log_scale: bool = False,
     step: Optional[float] = None,
@@ -161,6 +162,8 @@ def plot_fitting(  # pylint: disable=C0103,R0913,R0914
     :param legend: Optional. Add legend or not. If None, add legend when more than
         one parameters values has been presented.
     :type legend: bool
+    :param data_color: Optional. Color of the data error bar.
+    :type data_color: str
     :param x_log_scale: Set the scale of the  x axis to be logarithmic.
     :type x_log_scale: bool
     :param y_log_scale: Set the scale of the y axis to be logarithmic.
@@ -189,6 +192,7 @@ def plot_fitting(  # pylint: disable=C0103,R0913,R0914
         xerr=data.xerr[checkers_list],
         y=data.y[checkers_list],
         yerr=data.yerr[checkers_list],
+        color=data_color,
     )
     x = get_x_plot_values(xmin=xmin, xmax=xmax, step=step)
     a_dict = __get_a_dict(a)

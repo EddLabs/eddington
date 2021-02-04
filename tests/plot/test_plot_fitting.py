@@ -206,3 +206,36 @@ def test_plot_unknown_a_type(mock_figure):
         plot_fitting(
             data=FIT_DATA, func=FUNC, a=3.4, title_name=TITLE_NAME, legend=False
         )
+
+
+@parametrize_with_cases(
+    argnames=["kwargs", "plot_calls", "figure"], cases=THIS_MODULE
+)
+def test_plot_with_data_color(kwargs, plot_calls, figure):
+    color = "yellow"
+    plot_fitting(
+        data=FIT_DATA, func=FUNC, title_name=TITLE_NAME, data_color=color, **kwargs
+    )
+    ax = figure.add_subplot.return_value
+    assert_calls(
+        ax.errorbar,
+        [
+            (
+                [],
+                dict(
+                    x=FIT_DATA.x,
+                    y=FIT_DATA.y,
+                    xerr=FIT_DATA.xerr,
+                    yerr=FIT_DATA.yerr,
+                    markersize=1,
+                    marker="o",
+                    linestyle="None",
+                    label=None,
+                    ecolor=color,
+                    mec=color,
+                )
+
+            )
+        ],
+        rel=EPSILON,
+    )
