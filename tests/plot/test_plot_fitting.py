@@ -208,9 +208,7 @@ def test_plot_unknown_a_type(mock_figure):
         )
 
 
-@parametrize_with_cases(
-    argnames=["kwargs", "plot_calls", "figure"], cases=THIS_MODULE
-)
+@parametrize_with_cases(argnames=["kwargs", "plot_calls", "figure"], cases=THIS_MODULE)
 def test_plot_with_data_color(kwargs, plot_calls, figure):
     color = "yellow"
     plot_fitting(
@@ -233,8 +231,7 @@ def test_plot_with_data_color(kwargs, plot_calls, figure):
                     label=None,
                     ecolor=color,
                     mec=color,
-                )
-
+                ),
             )
         ],
         rel=EPSILON,

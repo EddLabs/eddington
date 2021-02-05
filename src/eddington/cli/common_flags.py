@@ -104,7 +104,7 @@ data_color_option = click.option(
     "--data-color",
     "data_color",
     type=str,
-    help="Color of the data error bar."
+    help="Color of the data error bar.",
 )
 
 

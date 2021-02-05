@@ -5,6 +5,7 @@ from typing import List, Optional, Tuple, Union
 import click
 
 from eddington.cli.common_flags import (
+    data_color_option,
     data_file_option,
     fitting_function_argument,
     is_grid_option,
@@ -19,7 +20,7 @@ from eddington.cli.common_flags import (
     xerr_column_option,
     y_column_option,
     y_label_option,
-    yerr_column_option, data_color_option,
+    yerr_column_option,
 )
 from eddington.cli.main_cli import eddington_cli
 from eddington.cli.util import (
