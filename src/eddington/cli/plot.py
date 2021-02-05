@@ -5,6 +5,7 @@ from typing import List, Optional, Tuple, Union
 import click
 
 from eddington.cli.common_flags import (
+    data_color_option,
     data_file_option,
     fitting_function_argument,
     is_grid_option,
@@ -68,6 +69,7 @@ from eddington.plot import (
 @click.option(
     "-c", "--color", "colors", type=str, help="Color of the fitting plot", multiple=True
 )
+@data_color_option
 @is_legend_option
 @is_x_log_scale_option
 @is_y_log_scale_option
@@ -99,6 +101,7 @@ def plot_cli(
     grid: bool,
     legend: Optional[bool],
     colors: Union[List[Optional[str]], Tuple[Optional[str], ...]],
+    data_color: Optional[str],
     x_log_scale: bool,
     y_log_scale: bool,
     output_path: Union[Path, str],
@@ -138,6 +141,7 @@ def plot_cli(
             xerr=data.xerr[checkers_list],
             y=data.y[checkers_list],
             yerr=data.yerr[checkers_list],
+            color=data_color,
         )
     x_values = get_x_plot_values(xmin, xmax)
     for a0, color in zip(parameters_sets, colors):
@@ -155,6 +159,7 @@ def plot_cli(
                 xerr=residuals_data.xerr,
                 yerr=residuals_data.yerr,
                 label=label,
+                color=color,
             )
         else:
             add_plot(ax=ax, x=x_values, y=func(a0, x_values), label=label, color=color)

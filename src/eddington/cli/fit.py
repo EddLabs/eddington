@@ -6,6 +6,7 @@ import click
 
 from eddington.cli.common_flags import (
     a0_option,
+    data_color_option,
     data_file_option,
     fitting_function_argument,
     is_grid_option,
@@ -54,6 +55,7 @@ from eddington.cli.util import (
 @is_grid_option
 @is_legend_option
 @click.option("-c", "--color", type=str, help="Color of the fitting plot")
+@data_color_option
 @should_plot_fitting_option
 @should_plot_residuls_option
 @should_plot_data_option
@@ -77,6 +79,7 @@ def fit_cli(
     grid: bool,
     legend: Optional[bool],
     color: Optional[str],
+    data_color: Optional[str],
     should_plot_fitting: bool,
     should_plot_residuals: bool,
     should_plot_data: bool,
@@ -114,4 +117,5 @@ def fit_cli(
         y_log_scale=y_log_scale,
         grid=grid,
         color=color,
+        data_color=data_color,
     )

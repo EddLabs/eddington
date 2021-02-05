@@ -55,7 +55,7 @@ class Figure:
         plt.close("all")
 
 
-def plot_residuals(  # pylint: disable=invalid-name,too-many-arguments
+def plot_residuals(  # pylint: disable=invalid-name,too-many-arguments,too-many-locals
     func,
     data: FittingData,
     a: np.ndarray,
@@ -63,6 +63,7 @@ def plot_residuals(  # pylint: disable=invalid-name,too-many-arguments
     xlabel: Optional[str] = None,
     ylabel: Optional[str] = None,
     grid: bool = False,
+    color: Optional[str] = None,
     x_log_scale: bool = False,
     y_log_scale: bool = False,
     xmin: Optional[float] = None,
@@ -85,6 +86,8 @@ def plot_residuals(  # pylint: disable=invalid-name,too-many-arguments
     :type ylabel: str
     :param grid: Add grid lines or not
     :type grid: bool
+    :param color: Optional. Color to use for in the plot.
+    :type color: str
     :param x_log_scale: Set the scale of the  x axis to be logarithmic.
     :type x_log_scale: bool
     :param y_log_scale: Set the scale of the y axis to be logarithmic.
@@ -112,6 +115,7 @@ def plot_residuals(  # pylint: disable=invalid-name,too-many-arguments
         xerr=residuals.xerr[checkers_list],
         y=residuals.y[checkers_list],
         yerr=residuals.yerr[checkers_list],
+        color=color,
     )
     horizontal_line(ax=ax, xmin=xmin, xmax=xmax)
     return fig
@@ -127,6 +131,7 @@ def plot_fitting(  # pylint: disable=C0103,R0913,R0914
     ylabel: Optional[str] = None,
     grid: bool = False,
     legend: Optional[bool] = None,
+    data_color: Optional[str] = None,
     x_log_scale: bool = False,
     y_log_scale: bool = False,
     step: Optional[float] = None,
@@ -157,6 +162,8 @@ def plot_fitting(  # pylint: disable=C0103,R0913,R0914
     :param legend: Optional. Add legend or not. If None, add legend when more than
         one parameters values has been presented.
     :type legend: bool
+    :param data_color: Optional. Color of the data error bar.
+    :type data_color: str
     :param x_log_scale: Set the scale of the  x axis to be logarithmic.
     :type x_log_scale: bool
     :param y_log_scale: Set the scale of the y axis to be logarithmic.
@@ -185,6 +192,7 @@ def plot_fitting(  # pylint: disable=C0103,R0913,R0914
         xerr=data.xerr[checkers_list],
         y=data.y[checkers_list],
         yerr=data.yerr[checkers_list],
+        color=data_color,
     )
     x = get_x_plot_values(xmin=xmin, xmax=xmax, step=step)
     a_dict = __get_a_dict(a)
@@ -209,6 +217,7 @@ def plot_data(  # pylint: disable=too-many-arguments
     xmin: Optional[float] = None,
     xmax: Optional[float] = None,
     grid: bool = False,
+    color: Optional[str] = None,
     x_log_scale: bool = False,
     y_log_scale: bool = False,
 ):
@@ -229,6 +238,8 @@ def plot_data(  # pylint: disable=too-many-arguments
     :type xmax: float
     :param grid: Add grid lines or not
     :type grid: bool
+    :param color: Optional. Color to use for in the plot.
+    :type color: str
     :param x_log_scale: Set the scale of the  x axis to be logarithmic.
     :type x_log_scale: bool
     :param y_log_scale: Set the scale of the y axis to be logarithmic.
@@ -251,6 +262,7 @@ def plot_data(  # pylint: disable=too-many-arguments
         xerr=data.xerr[checkers_list],
         y=data.y[checkers_list],
         yerr=data.yerr[checkers_list],
+        color=color,
     )
     limit_axes(ax=ax, xmin=xmin, xmax=xmax)
     return fig
@@ -417,6 +429,7 @@ def add_errorbar(  # pylint: disable=invalid-name,too-many-arguments
     y: Union[np.ndarray, List[float]],
     yerr: Union[np.ndarray, List[float]],
     label: Optional[str] = None,
+    color: Optional[str] = None,
 ):
     """
     Plot error bar to figure.
@@ -433,6 +446,8 @@ def add_errorbar(  # pylint: disable=invalid-name,too-many-arguments
     :type yerr: list of floats or ``numpy.ndarray``
     :param label: Optional. Label for the error bar that would be added to the legend
     :type label: str
+    :param color: Color of the plot
+    :type color: str
     """
     ax.errorbar(
         x=x,
@@ -443,6 +458,8 @@ def add_errorbar(  # pylint: disable=invalid-name,too-many-arguments
         marker="o",
         linestyle="None",
         label=label,
+        ecolor=color,
+        mec=color,
     )
 
 
