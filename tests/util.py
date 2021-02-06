@@ -51,6 +51,8 @@ def assert_equal_item(value1, value2, rel):
         assert value1 == pytest.approx(
             value2, rel=rel
         ), f"{value1} should be the same as {value2}"
+    elif isinstance(value1, dict):
+        assert_dict_equal(value1, value2, rel=rel)
     else:
         assert value1 == value2, f"{value1} should be the same as {value2}"
 

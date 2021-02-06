@@ -4,7 +4,7 @@ import pytest
 from pytest_cases import THIS_MODULE, parametrize_with_cases
 
 from eddington import FittingResult
-from tests.util import assert_dict_equal
+from tests.util import assert_calls
 
 
 def case_standard():
@@ -268,24 +268,34 @@ def test_export_to_text_file(expected, fitting_result):
 
 
 @parametrize_with_cases(argnames="expected, fitting_result", cases=THIS_MODULE)
-def test_export_to_json_file(expected, fitting_result, json_dump_mock):
+def test_export_to_json_file(expected, fitting_result, json_dumps_mock):
+    json_string = "This is a json string"
+    json_dumps_mock.return_value = json_string
     path = "/path/to/output.json"
     mock_open_obj = mock.mock_open()
     with mock.patch("eddington.fitting_result.open", mock_open_obj):
         fitting_result.save_json(path)
         mock_open_obj.assert_called_once_with(path, mode="w")
-        assert_dict_equal(
-            json_dump_mock.call_args_list[0][0][0],
-            dict(
-                a=expected["a"],
-                a0=expected["a0"],
-                aerr=expected["aerr"],
-                arerr=expected["arerr"],
-                acov=expected["acov"],
-                chi2=expected["chi2"],
-                chi2_reduced=expected["chi2_reduced"],
-                degrees_of_freedom=expected["degrees_of_freedom"],
-                p_probability=expected["p_probability"],
-            ),
+        assert_calls(
+            json_dumps_mock,
+            [
+                (
+                    [
+                        dict(
+                            a=expected["a"],
+                            a0=expected["a0"],
+                            aerr=expected["aerr"],
+                            arerr=expected["arerr"],
+                            acov=expected["acov"],
+                            chi2=expected["chi2"],
+                            chi2_reduced=expected["chi2_reduced"],
+                            degrees_of_freedom=expected["degrees_of_freedom"],
+                            p_probability=expected["p_probability"],
+                        ),
+                    ],
+                    dict(indent=1),
+                )
+            ],
             rel=expected["delta"],
         )
+        mock_open_obj.return_value.write.assert_called_once_with(json_string)
