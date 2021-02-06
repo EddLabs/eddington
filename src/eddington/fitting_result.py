@@ -84,21 +84,7 @@ class FittingResult:  # pylint: disable=too-many-instance-attributes
         :type file_path: ``str`` or ``Path``
         """
         with open(file_path, mode="w") as output_file:
-            json.dump(
-                dict(
-                    a0=self.a0.tolist(),  # type: ignore
-                    a=self.a.tolist(),  # type: ignore
-                    aerr=self.aerr.tolist(),  # type: ignore
-                    arerr=self.arerr.tolist(),  # type: ignore
-                    acov=self.acov.tolist(),  # type: ignore
-                    degrees_of_freedom=self.degrees_of_freedom,
-                    chi2=self.chi2,
-                    chi2_reduced=self.chi2_reduced,
-                    p_probability=self.p_probability,
-                ),
-                output_file,
-                indent=1,
-            )
+            output_file.write(self.json_string)
 
     @property
     def pretty_string(self) -> str:
@@ -111,6 +97,29 @@ class FittingResult:  # pylint: disable=too-many-instance-attributes
         if self.__pretty_string is None:
             self.__pretty_string = self.__build_pretty_string()
         return self.__pretty_string
+
+    @property
+    def json_string(self):
+        """
+        Json representation string.
+
+        :return: self representing json string
+        :rtype: str
+        """
+        return json.dumps(
+            dict(
+                a0=self.a0.tolist(),  # type: ignore
+                a=self.a.tolist(),  # type: ignore
+                aerr=self.aerr.tolist(),  # type: ignore
+                arerr=self.arerr.tolist(),  # type: ignore
+                acov=self.acov.tolist(),  # type: ignore
+                degrees_of_freedom=self.degrees_of_freedom,
+                chi2=self.chi2,
+                chi2_reduced=self.chi2_reduced,
+                p_probability=self.p_probability,
+            ),
+            indent=1,
+        )
 
     def __repr__(self) -> str:
         """

@@ -4,8 +4,8 @@ from eddington import FittingData, FittingFunctionsRegistry
 
 
 @fixture
-def json_dump_mock(mocker):
-    return mocker.patch("json.dump")
+def json_dumps_mock(mocker):
+    return mocker.patch("json.dumps")
 
 
 @fixture
