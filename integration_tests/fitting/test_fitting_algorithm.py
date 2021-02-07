@@ -24,18 +24,16 @@ def case_fitting(case_path):
         for index, value in fix:
             func.fix(index, value)
     data_dict = json_obj["data"]
-    data = FittingData(
-        OrderedDict(
-            [
-                ("x", data_dict["x"]),
-                ("xerr", data_dict["xerr"]),
-                ("y", data_dict["y"]),
-                ("yerr", data_dict["yerr"]),
-            ]
-        )
-    )
+    raw_data = OrderedDict()
+    kwargs = dict()
+    for column_name in ["x", "xerr", "y", "yerr"]:
+        column = data_dict.get(column_name, None)
+        if column is not None:
+            raw_data[column_name] = column
+            kwargs[f"{column_name}_column"] = column_name
     a0 = json_obj.get("a0", None)
-    result = fit(data=data, func=func, a0=a0)
+    fitting_data = FittingData(raw_data, search=False, **kwargs)
+    result = fit(data=fitting_data, func=func, a0=a0)
     decimal = json_obj.get("decimal", 2)
     inp = dict(actual_result=result, a0=a0, func=func, delta=np.power(10.0, -decimal))
     expected_result = json_obj["result"]
