@@ -1,5 +1,6 @@
 """Plotting methods."""
 from collections import OrderedDict
+from enum import Enum
 from typing import Dict, List, Optional, Tuple, Union
 
 import matplotlib.pyplot as plt
@@ -8,6 +9,26 @@ import numpy as np
 from eddington.exceptions import PlottingError
 from eddington.fitting_data import FittingData
 from eddington.print_util import to_relevant_precision_string
+
+
+class LineStyle(Enum):
+    """Enum class for line style options."""
+
+    SOLID = "solid"
+    DASHED = "dashed"
+    DASHDOT = "dashdot"
+    DOTTED = "dotted"
+    NONE = "none"
+
+    @classmethod
+    def all(cls) -> List[str]:
+        """
+        Get all line style values.
+
+        :return: Possible values of line styles
+        :rtype: List[str]
+        """
+        return [linestyle.value for linestyle in cls]
 
 
 class Figure:
@@ -127,6 +148,9 @@ def plot_fitting(  # pylint: disable=C0103,R0913,R0914
     a: Union[np.ndarray, List[np.ndarray], Dict[str, np.ndarray]],
     title_name,
     color: Optional[Union[str, List[str], Dict[str, str]]] = None,
+    linestyle: Union[
+        LineStyle, List[LineStyle], Dict[str, LineStyle]
+    ] = LineStyle.SOLID,
     xlabel: Optional[str] = None,
     ylabel: Optional[str] = None,
     grid: bool = False,
@@ -151,6 +175,9 @@ def plot_fitting(  # pylint: disable=C0103,R0913,R0914
     :param color: Colors to use for each fit. Can be single value, a list of values
         or a dictionary between a color to a value
     :type color: str, List of str or a dictionary between str to str
+    :param linestyle: Line styles to use for each fit. Can be single value, a list of
+        values or a dictionary between a line style to a value
+    :type color: str, List of str or a dictionary between str to LineStyle
     :param title_name: Optional. Title for the figure.
     :type title_name: str
     :param xlabel: Optional. Label of the x axis
@@ -196,7 +223,11 @@ def plot_fitting(  # pylint: disable=C0103,R0913,R0914
     )
     x = get_x_plot_values(xmin=xmin, xmax=xmax, step=step)
     a_dict = __get_a_dict(a)
-    colors_dict = __get_colors_dict(color=color, labels=list(a_dict.keys()))
+    labels = list(a_dict.keys())
+    colors_dict = __build_values_dict(value=color, labels=labels)
+    linestyle_dict = __build_values_dict(
+        value=linestyle, labels=labels, default_value=LineStyle.SOLID
+    )
     for label, a_value in a_dict.items():
         add_plot(
             ax=ax,
@@ -204,6 +235,7 @@ def plot_fitting(  # pylint: disable=C0103,R0913,R0914
             y=func(a_value, x),
             label=label,
             color=colors_dict.get(label, None),
+            linestyle=linestyle_dict.get(label, LineStyle.SOLID),
         )
     add_legend(ax, __should_add_legend(legend, a_dict))
     return fig
@@ -398,13 +430,14 @@ def set_scales(  # pylint: disable=invalid-name
         ax.set_yscale("log")
 
 
-def add_plot(
+def add_plot(  # pylint: disable=invalid-name,too-many-arguments
     ax: plt.Axes,
     x: Union[np.ndarray, List[float]],
     y: Union[np.ndarray, List[float]],
     label: Optional[str] = None,
     color: Optional[str] = None,
-):  # pylint: disable=C0103
+    linestyle: LineStyle = LineStyle.SOLID,
+):
     """
     Plot y as a function of x.
 
@@ -418,8 +451,10 @@ def add_plot(
     :type label: str
     :param color: Color of the plot
     :type color: str
+    :param linestyle: The style to use for the plot. Solid by default
+    :type linestyle: LineStyle
     """
-    ax.plot(x, y, label=label, color=color)
+    ax.plot(x, y, label=label, color=color, linestyle=linestyle.value)
 
 
 def add_errorbar(  # pylint: disable=invalid-name,too-many-arguments
@@ -587,16 +622,16 @@ def __get_a_dict(a):  # pylint: disable=invalid-name
     )
 
 
-def __get_colors_dict(color, labels):
-    if color is None:
+def __build_values_dict(value, labels, default_value=None):
+    if value is None:
         return {}
-    if isinstance(color, dict):
-        return color
-    if not isinstance(color, list):
-        color = [color]
-    if len(color) < len(labels):
-        color += [None for _ in range(len(labels) - len(color))]
-    return dict(zip(labels, color))
+    if isinstance(value, dict):
+        return value
+    if not isinstance(value, list):
+        value = [value]
+    if len(value) < len(labels):
+        value += [default_value for _ in range(len(labels) - len(value))]
+    return dict(zip(labels, value))
 
 
 def __should_add_legend(legend, a_dict):  # pylint: disable=invalid-name

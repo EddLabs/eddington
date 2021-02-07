@@ -13,7 +13,13 @@ from eddington.fitting_data import FittingData
 from eddington.fitting_functions_list import linear, polynomial
 from eddington.fitting_functions_registry import FittingFunctionsRegistry
 from eddington.fitting_result import FittingResult
-from eddington.plot import plot_data, plot_fitting, plot_residuals, show_or_export
+from eddington.plot import (
+    LineStyle,
+    plot_data,
+    plot_fitting,
+    plot_residuals,
+    show_or_export,
+)
 
 
 def load_data_file(data_file: Path, **kwargs) -> FittingData:
@@ -82,6 +88,7 @@ def fit_and_plot(  # pylint: disable=too-many-arguments,invalid-name,too-many-lo
     should_plot_fitting,
     should_plot_residuals,
     color=None,
+    linestyle=LineStyle.SOLID,
     data_color=None,
     **plot_kwargs,
 ):
@@ -120,6 +127,7 @@ def fit_and_plot(  # pylint: disable=too-many-arguments,invalid-name,too-many-lo
             xlabel=x_label,
             ylabel=y_label,
             color=color,
+            linestyle=linestyle,
             data_color=data_color,
             **plot_kwargs,
         ) as fig:

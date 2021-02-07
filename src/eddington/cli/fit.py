@@ -37,6 +37,7 @@ from eddington.cli.util import (
 )
 
 # pylint: disable=invalid-name,too-many-arguments,too-many-locals,duplicate-code
+from eddington.plot import LineStyle
 
 
 @eddington_cli.command("fit")
@@ -55,6 +56,13 @@ from eddington.cli.util import (
 @is_grid_option
 @is_legend_option
 @click.option("-c", "--color", type=str, help="Color of the fitting plot")
+@click.option(
+    "--linestyle",
+    type=click.Choice(LineStyle.all()),
+    help="Line style of the fitting plot",
+    callback=lambda ctx, param, value: LineStyle(value),
+    default=LineStyle.SOLID.value,
+)
 @data_color_option
 @should_plot_fitting_option
 @should_plot_residuls_option
@@ -79,6 +87,7 @@ def fit_cli(
     grid: bool,
     legend: Optional[bool],
     color: Optional[str],
+    linestyle: Optional[str],
     data_color: Optional[str],
     should_plot_fitting: bool,
     should_plot_residuals: bool,
@@ -117,5 +126,6 @@ def fit_cli(
         y_log_scale=y_log_scale,
         grid=grid,
         color=color,
+        linestyle=linestyle,
         data_color=data_color,
     )

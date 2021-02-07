@@ -29,6 +29,7 @@ from eddington.cli.util import (
     load_fitting_function,
 )
 from eddington.plot import (
+    LineStyle,
     add_errorbar,
     add_legend,
     add_plot,
@@ -69,6 +70,14 @@ from eddington.plot import (
 @click.option(
     "-c", "--color", "colors", type=str, help="Color of the fitting plot", multiple=True
 )
+@click.option(
+    "--linestyle",
+    "linestyles",
+    type=click.Choice(LineStyle.all()),
+    help="Line style of the fitting plot",
+    multiple=True,
+    callback=lambda ctx, param, values: [LineStyle(value) for value in values],
+)
 @data_color_option
 @is_legend_option
 @is_x_log_scale_option
@@ -101,6 +110,7 @@ def plot_cli(
     grid: bool,
     legend: Optional[bool],
     colors: Union[List[Optional[str]], Tuple[Optional[str], ...]],
+    linestyles: Union[List[LineStyle], Tuple[LineStyle, ...]],
     data_color: Optional[str],
     x_log_scale: bool,
     y_log_scale: bool,
@@ -120,10 +130,13 @@ def plot_cli(
         func_name=fitting_function_name, polynomial_degree=polynomial_degree
     )
     parameters_sets = [extract_array_from_string(a0) for a0 in parameters]
-    if not isinstance(colors, list):
-        colors = list(colors)
+    colors, linestyles = list(colors), list(linestyles)
     if len(colors) < len(parameters_sets):
         colors += [None for _ in range(len(parameters_sets) - len(colors))]
+    if len(linestyles) < len(parameters_sets):
+        linestyles += [
+            LineStyle.SOLID for _ in range(len(parameters_sets) - len(linestyles))
+        ]
     ax, figure = get_figure(
         title_name=title,
         xlabel=x_label,
@@ -144,7 +157,7 @@ def plot_cli(
             color=data_color,
         )
     x_values = get_x_plot_values(xmin, xmax)
-    for a0, color in zip(parameters_sets, colors):
+    for a0, color, linestyle in zip(parameters_sets, colors, linestyles):
         if a0 is None:
             continue
         label = build_repr_string(a0)
@@ -162,7 +175,14 @@ def plot_cli(
                 color=color,
             )
         else:
-            add_plot(ax=ax, x=x_values, y=func(a0, x_values), label=label, color=color)
+            add_plot(
+                ax=ax,
+                x=x_values,
+                y=func(a0, x_values),
+                label=label,
+                color=color,
+                linestyle=linestyle,
+            )
     if len(parameters_sets) != 0 and legend:
         add_legend(ax=ax, is_legend=True)
 
