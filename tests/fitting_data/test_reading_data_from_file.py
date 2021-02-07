@@ -3,7 +3,7 @@ from pathlib import Path
 from unittest import mock
 
 import pytest
-from pytest_cases import fixture, parametrize_with_cases, THIS_MODULE
+from pytest_cases import THIS_MODULE, fixture, parametrize_with_cases
 
 from eddington import FittingData, FittingDataError
 from eddington.fitting_data import Columns
@@ -72,7 +72,8 @@ def case_x_and_y_column_without_search():
 
 # Assertions
 
-def assert_fitting_data(fitting_data: FittingData, columns: COLUMNS):
+
+def assert_fitting_data(fitting_data: FittingData, columns: Columns):
     assert_dict_equal(fitting_data.data, COLUMNS, rel=EPSILON)
     assert fitting_data.x_column == columns.x
     assert fitting_data.xerr_column == columns.xerr

@@ -44,7 +44,7 @@ class FittingData:  # pylint: disable=R0902,R0904
         xerr_column: Optional[Union[str, int]] = None,
         y_column: Optional[Union[str, int]] = None,
         yerr_column: Optional[Union[str, int]] = None,
-        search: bool = True
+        search: bool = True,
     ):
         """
         Constructor.
@@ -437,7 +437,7 @@ class FittingData:  # pylint: disable=R0902,R0904
         xerr_column: Optional[Union[str, int]] = None,
         y_column: Optional[Union[str, int]] = None,
         yerr_column: Optional[Union[str, int]] = None,
-        search: bool = True
+        search: bool = True,
     ):
         """
         Read :class:`FittingData` from excel file.
@@ -476,7 +476,7 @@ class FittingData:  # pylint: disable=R0902,R0904
             xerr_column=xerr_column,
             y_column=y_column,
             yerr_column=yerr_column,
-            search=search
+            search=search,
         )
 
     @classmethod
@@ -487,7 +487,7 @@ class FittingData:  # pylint: disable=R0902,R0904
         xerr_column: Optional[Union[str, int]] = None,
         y_column: Optional[Union[str, int]] = None,
         yerr_column: Optional[Union[str, int]] = None,
-        search: bool = True
+        search: bool = True,
     ):
         """
         Read :class:`FittingData` from csv file.
@@ -529,7 +529,7 @@ class FittingData:  # pylint: disable=R0902,R0904
         xerr_column: Optional[Union[str, int]] = None,
         y_column: Optional[Union[str, int]] = None,
         yerr_column: Optional[Union[str, int]] = None,
-        search: bool = True
+        search: bool = True,
     ):
         """
         Read :class:`FittingData` from json file.
@@ -717,7 +717,7 @@ class FittingData:  # pylint: disable=R0902,R0904
         xerr_column: Optional[Union[str, int]] = None,
         y_column: Optional[Union[str, int]] = None,
         yerr_column: Optional[Union[str, int]] = None,
-        search: bool = True
+        search: bool = True,
     ):
         data = RawDataBuilder.build_raw_data(rows)
         return FittingData(

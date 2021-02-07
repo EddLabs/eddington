@@ -14,7 +14,7 @@ def cases_paths():
 
 
 @parametrize(idgen="case {case_path.stem}", case_path=cases_paths())
-def case_fitting(case_path):
+def case_fitting(case_path):  # pylint:disable=too-many-locals
     with open(str(case_path), mode="r") as json_file:
         json_obj = json.load(json_file)
     func_name = json_obj["fit_function"]
