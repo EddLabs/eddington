@@ -85,6 +85,18 @@ def case_jumbled_columns():
     return fitting_data, expected_columns
 
 
+def case_x_and_y_no_search():
+    fitting_data = FittingData(COLUMNS, x_column="c", y_column="f", search=False)
+    expected_columns = Columns(x="c", xerr=None, y="f", yerr=None)
+    return fitting_data, expected_columns
+
+
+def case_xerr_and_yerr_no_search():
+    fitting_data = FittingData(COLUMNS, xerr_column="c", yerr_column="f", search=False)
+    expected_columns = Columns(x=None, xerr="c", y=None, yerr="f")
+    return fitting_data, expected_columns
+
+
 @parametrize_with_cases(argnames="fitting_data, expected_columns", cases=THIS_MODULE)
 def test_x_column(fitting_data, expected_columns):
     assert (
@@ -94,9 +106,12 @@ def test_x_column(fitting_data, expected_columns):
 
 @parametrize_with_cases(argnames="fitting_data, expected_columns", cases=THIS_MODULE)
 def test_x_data(fitting_data, expected_columns):
-    assert COLUMNS[expected_columns.x] == pytest.approx(
-        fitting_data.x
-    ), "X is different than expected"
+    if expected_columns.x is None:
+        assert fitting_data.x is None
+    else:
+        assert COLUMNS[expected_columns.x] == pytest.approx(
+            fitting_data.x
+        ), "X is different than expected"
 
 
 @parametrize_with_cases(argnames="fitting_data, expected_columns", cases=THIS_MODULE)
@@ -108,9 +123,12 @@ def test_xerr_column(fitting_data, expected_columns):
 
 @parametrize_with_cases(argnames="fitting_data, expected_columns", cases=THIS_MODULE)
 def test_xerr_data(fitting_data, expected_columns):
-    assert COLUMNS[expected_columns.xerr] == pytest.approx(
-        fitting_data.xerr
-    ), "X error is different than expected"
+    if expected_columns.xerr is None:
+        assert fitting_data.xerr is None
+    else:
+        assert COLUMNS[expected_columns.xerr] == pytest.approx(
+            fitting_data.xerr
+        ), "X error is different than expected"
 
 
 @parametrize_with_cases(argnames="fitting_data, expected_columns", cases=THIS_MODULE)
@@ -122,9 +140,12 @@ def test_y_column(fitting_data, expected_columns):
 
 @parametrize_with_cases(argnames="fitting_data, expected_columns", cases=THIS_MODULE)
 def test_y_data(fitting_data, expected_columns):
-    assert COLUMNS[expected_columns.y] == pytest.approx(
-        fitting_data.y
-    ), "Y is different than expected"
+    if expected_columns.y is None:
+        assert fitting_data.y is None
+    else:
+        assert COLUMNS[expected_columns.y] == pytest.approx(
+            fitting_data.y
+        ), "Y is different than expected"
 
 
 @parametrize_with_cases(argnames="fitting_data, expected_columns", cases=THIS_MODULE)
@@ -136,9 +157,12 @@ def test_yerr_column(fitting_data, expected_columns):
 
 @parametrize_with_cases(argnames="fitting_data, expected_columns", cases=THIS_MODULE)
 def test_yerr_data(fitting_data, expected_columns):
-    assert COLUMNS[expected_columns.yerr] == pytest.approx(
-        fitting_data.yerr
-    ), "Y error is different than expected"
+    if expected_columns.yerr is None:
+        assert fitting_data.yerr is None
+    else:
+        assert COLUMNS[expected_columns.yerr] == pytest.approx(
+            fitting_data.yerr
+        ), "Y error is different than expected"
 
 
 @parametrize_with_cases(argnames="fitting_data, expected_columns", cases=THIS_MODULE)

@@ -44,6 +44,7 @@ class FittingData:  # pylint: disable=R0902,R0904
         xerr_column: Optional[Union[str, int]] = None,
         y_column: Optional[Union[str, int]] = None,
         yerr_column: Optional[Union[str, int]] = None,
+        search: bool = True,
     ):
         """
         Constructor.
@@ -60,6 +61,9 @@ class FittingData:  # pylint: disable=R0902,R0904
         :param yerr_column: Indicates which column should be used as the y error
             parameter
         :type yerr_column: ``str`` or ``numpy.ndarray``
+        :param search: Search for a column if it wasn't explicitly provided in the
+            constructor.
+        :type search: bool
         :raises FittingDataColumnsLengthError: Raised if not all columns have the same
             length
         """
@@ -74,6 +78,7 @@ class FittingData:  # pylint: disable=R0902,R0904
         self._statistics_map: Dict[str, Optional[Statistics]] = OrderedDict()
         self.select_all_records()
         self.__update_statistics()
+        self.search = search
         self.x_column = x_column
         self.xerr_column = xerr_column
         self.y_column = y_column
@@ -156,6 +161,8 @@ class FittingData:  # pylint: disable=R0902,R0904
         :returns: The data of the given column
         :rtype: numpy.array
         """
+        if column_header is None:
+            return None
         return self.data[column_header][self.records_indices]
 
     @property
@@ -274,14 +281,9 @@ class FittingData:  # pylint: disable=R0902,R0904
 
     @x_column.setter
     def x_column(self, x_column):
-        if x_column is None:
-            self._x_column_index = 0
-        elif x_column in self.all_columns:
-            self._x_column_index = self.all_columns.index(x_column)
-        else:
-            self._x_column_index = self.__covert_to_index(x_column)
+        self._x_column_index = self.__get_index(column=x_column, previous_index=-1)
         self.__validate_index(self._x_column_index, x_column)
-        self._x_column = self.all_columns[self._x_column_index]
+        self._x_column = self.__get_column_name(self._x_column_index)
 
     @property
     def xerr_column(self):
@@ -295,14 +297,11 @@ class FittingData:  # pylint: disable=R0902,R0904
 
     @xerr_column.setter
     def xerr_column(self, xerr_column):
-        if xerr_column is None:
-            self._xerr_column_index = self._x_column_index + 1
-        elif xerr_column in self.all_columns:
-            self._xerr_column_index = self.all_columns.index(xerr_column)
-        else:
-            self._xerr_column_index = self.__covert_to_index(xerr_column)
+        self._xerr_column_index = self.__get_index(
+            column=xerr_column, previous_index=self._x_column_index
+        )
         self.__validate_index(self._xerr_column_index, xerr_column)
-        self._xerr_column = self.all_columns[self._xerr_column_index]
+        self._xerr_column = self.__get_column_name(self._xerr_column_index)
 
     @property
     def y_column(self):
@@ -316,14 +315,11 @@ class FittingData:  # pylint: disable=R0902,R0904
 
     @y_column.setter
     def y_column(self, y_column):
-        if y_column is None:
-            self._y_column_index = self._xerr_column_index + 1
-        elif y_column in self.all_columns:
-            self._y_column_index = self.all_columns.index(y_column)
-        else:
-            self._y_column_index = self.__covert_to_index(y_column)
+        self._y_column_index = self.__get_index(
+            column=y_column, previous_index=self._xerr_column_index
+        )
         self.__validate_index(self._y_column_index, y_column)
-        self._y_column = self.all_columns[self._y_column_index]
+        self._y_column = self.__get_column_name(self._y_column_index)
 
     @property
     def yerr_column(self):
@@ -337,14 +333,11 @@ class FittingData:  # pylint: disable=R0902,R0904
 
     @yerr_column.setter
     def yerr_column(self, yerr_column):
-        if yerr_column is None:
-            self._yerr_column_index = self._y_column_index + 1
-        elif yerr_column in self.all_columns:
-            self._yerr_column_index = self.all_columns.index(yerr_column)
-        else:
-            self._yerr_column_index = self.__covert_to_index(yerr_column)
+        self._yerr_column_index = self.__get_index(
+            column=yerr_column, previous_index=self._y_column_index
+        )
         self.__validate_index(self._yerr_column_index, yerr_column)
-        self._yerr_column = self.all_columns[self._yerr_column_index]
+        self._yerr_column = self.__get_column_name(self._yerr_column_index)
 
     def statistics(self, column_name: str) -> Optional[Statistics]:
         """
@@ -444,6 +437,7 @@ class FittingData:  # pylint: disable=R0902,R0904
         xerr_column: Optional[Union[str, int]] = None,
         y_column: Optional[Union[str, int]] = None,
         yerr_column: Optional[Union[str, int]] = None,
+        search: bool = True,
     ):
         """
         Read :class:`FittingData` from excel file.
@@ -460,7 +454,9 @@ class FittingData:  # pylint: disable=R0902,R0904
         :type y_column: ``str`` or ``numpy.ndarray``
         :param yerr_column: Indicates which column should be used as the y error
             parameter
-        :type xerr_column: ``str`` or ``numpy.ndarray``
+        :type yerr_column: ``str`` or ``numpy.ndarray``
+        :param search: Search for a column if it wasn't explicitly provided.
+        :type search: bool
         :returns: :class:`FittingData` read from the excel file.
         :raises FittingDataError: Raised when the given sheet do not exist in excel
             file.
@@ -480,6 +476,7 @@ class FittingData:  # pylint: disable=R0902,R0904
             xerr_column=xerr_column,
             y_column=y_column,
             yerr_column=yerr_column,
+            search=search,
         )
 
     @classmethod
@@ -490,6 +487,7 @@ class FittingData:  # pylint: disable=R0902,R0904
         xerr_column: Optional[Union[str, int]] = None,
         y_column: Optional[Union[str, int]] = None,
         yerr_column: Optional[Union[str, int]] = None,
+        search: bool = True,
     ):
         """
         Read :class:`FittingData` from csv file.
@@ -504,7 +502,9 @@ class FittingData:  # pylint: disable=R0902,R0904
         :type y_column: ``str`` or ``numpy.ndarray``
         :param yerr_column: Indicates which column should be used as the y error
             parameter
-        :type xerr_column: ``str`` or ``numpy.ndarray``
+        :type yerr_column: ``str`` or ``numpy.ndarray``
+        :param search: Search for a column if it wasn't explicitly provided.
+        :type search: bool
         :returns: :class:`FittingData` read from the csv file.
         """
         if isinstance(filepath, str):
@@ -518,6 +518,7 @@ class FittingData:  # pylint: disable=R0902,R0904
             xerr_column=xerr_column,
             y_column=y_column,
             yerr_column=yerr_column,
+            search=search,
         )
 
     @classmethod
@@ -528,6 +529,7 @@ class FittingData:  # pylint: disable=R0902,R0904
         xerr_column: Optional[Union[str, int]] = None,
         y_column: Optional[Union[str, int]] = None,
         yerr_column: Optional[Union[str, int]] = None,
+        search: bool = True,
     ):
         """
         Read :class:`FittingData` from json file.
@@ -542,7 +544,9 @@ class FittingData:  # pylint: disable=R0902,R0904
         :type y_column: ``str`` or ``numpy.ndarray``
         :param yerr_column: Indicates which column should be used as the y error
             parameter
-        :type xerr_column: ``str`` or ``numpy.ndarray``
+        :type yerr_column: ``str`` or ``numpy.ndarray``
+        :param search: Search for a column if it wasn't explicitly provided.
+        :type search: bool
         :returns: :class:`FittingData` read from the json file.
         """
         if isinstance(filepath, str):
@@ -554,6 +558,7 @@ class FittingData:  # pylint: disable=R0902,R0904
             RawDataBuilder.fix_types_in_raw_dict(data),
             x_column=x_column, xerr_column=xerr_column,
             y_column=y_column, yerr_column=yerr_column,
+            search=search,
         )
         # fmt: on
 
@@ -712,6 +717,7 @@ class FittingData:  # pylint: disable=R0902,R0904
         xerr_column: Optional[Union[str, int]] = None,
         y_column: Optional[Union[str, int]] = None,
         yerr_column: Optional[Union[str, int]] = None,
+        search: bool = True,
     ):
         data = RawDataBuilder.build_raw_data(rows)
         return FittingData(
@@ -720,11 +726,14 @@ class FittingData:  # pylint: disable=R0902,R0904
             xerr_column=xerr_column,
             y_column=y_column,
             yerr_column=yerr_column,
+            search=search,
         )
 
     def __validate_index(self, index, column):
         if index is None:
-            raise FittingDataColumnExistenceError(column)
+            if self.search:
+                raise FittingDataColumnExistenceError(column)
+            return
         max_index = len(self._all_columns)
         if index < 0 or index >= max_index:
             raise FittingDataColumnIndexError(index + 1, max_index)
@@ -752,6 +761,20 @@ class FittingData:  # pylint: disable=R0902,R0904
                 ]
             )
         return records
+
+    def __get_index(self, column, previous_index):
+        if column in self.all_columns:
+            return self.all_columns.index(column)
+        if column is not None:
+            return self.__covert_to_index(column)
+        if self.search:
+            return previous_index + 1
+        return None
+
+    def __get_column_name(self, index):
+        if index is None:
+            return None
+        return self.all_columns[index]
 
     @classmethod
     def __covert_to_index(cls, column):
