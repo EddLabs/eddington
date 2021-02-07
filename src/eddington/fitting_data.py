@@ -44,6 +44,7 @@ class FittingData:  # pylint: disable=R0902,R0904
         xerr_column: Optional[Union[str, int]] = None,
         y_column: Optional[Union[str, int]] = None,
         yerr_column: Optional[Union[str, int]] = None,
+        search: bool = True
     ):
         """
         Constructor.
@@ -60,6 +61,9 @@ class FittingData:  # pylint: disable=R0902,R0904
         :param yerr_column: Indicates which column should be used as the y error
             parameter
         :type yerr_column: ``str`` or ``numpy.ndarray``
+        :param search: Search for a column if it wasn't explicitly provided in the
+            constructor.
+        :type search: bool
         :raises FittingDataColumnsLengthError: Raised if not all columns have the same
             length
         """
@@ -74,6 +78,7 @@ class FittingData:  # pylint: disable=R0902,R0904
         self._statistics_map: Dict[str, Optional[Statistics]] = OrderedDict()
         self.select_all_records()
         self.__update_statistics()
+        self.search = search
         self.x_column = x_column
         self.xerr_column = xerr_column
         self.y_column = y_column
@@ -156,6 +161,8 @@ class FittingData:  # pylint: disable=R0902,R0904
         :returns: The data of the given column
         :rtype: numpy.array
         """
+        if column_header is None:
+            return None
         return self.data[column_header][self.records_indices]
 
     @property
@@ -276,7 +283,7 @@ class FittingData:  # pylint: disable=R0902,R0904
     def x_column(self, x_column):
         self._x_column_index = self.__get_index(column=x_column, previous_index=-1)
         self.__validate_index(self._x_column_index, x_column)
-        self._x_column = self.all_columns[self._x_column_index]
+        self._x_column = self.__get_column_name(self._x_column_index)
 
     @property
     def xerr_column(self):
@@ -294,7 +301,7 @@ class FittingData:  # pylint: disable=R0902,R0904
             column=xerr_column, previous_index=self._x_column_index
         )
         self.__validate_index(self._xerr_column_index, xerr_column)
-        self._xerr_column = self.all_columns[self._xerr_column_index]
+        self._xerr_column = self.__get_column_name(self._xerr_column_index)
 
     @property
     def y_column(self):
@@ -312,7 +319,7 @@ class FittingData:  # pylint: disable=R0902,R0904
             column=y_column, previous_index=self._xerr_column_index
         )
         self.__validate_index(self._y_column_index, y_column)
-        self._y_column = self.all_columns[self._y_column_index]
+        self._y_column = self.__get_column_name(self._y_column_index)
 
     @property
     def yerr_column(self):
@@ -330,7 +337,7 @@ class FittingData:  # pylint: disable=R0902,R0904
             column=yerr_column, previous_index=self._y_column_index
         )
         self.__validate_index(self._yerr_column_index, yerr_column)
-        self._yerr_column = self.all_columns[self._yerr_column_index]
+        self._yerr_column = self.__get_column_name(self._yerr_column_index)
 
     def statistics(self, column_name: str) -> Optional[Statistics]:
         """
@@ -710,7 +717,9 @@ class FittingData:  # pylint: disable=R0902,R0904
 
     def __validate_index(self, index, column):
         if index is None:
-            raise FittingDataColumnExistenceError(column)
+            if self.search:
+                raise FittingDataColumnExistenceError(column)
+            return
         max_index = len(self._all_columns)
         if index < 0 or index >= max_index:
             raise FittingDataColumnIndexError(index + 1, max_index)
@@ -740,11 +749,18 @@ class FittingData:  # pylint: disable=R0902,R0904
         return records
 
     def __get_index(self, column, previous_index):
-        if column is None:
-            return previous_index + 1
         if column in self.all_columns:
             return self.all_columns.index(column)
-        return self.__covert_to_index(column)
+        if column is not None:
+            return self.__covert_to_index(column)
+        if self.search:
+            return previous_index + 1
+        return None
+
+    def __get_column_name(self, index):
+        if index is None:
+            return None
+        return self.all_columns[index]
 
     @classmethod
     def __covert_to_index(cls, column):
