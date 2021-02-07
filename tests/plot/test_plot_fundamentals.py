@@ -3,6 +3,7 @@ from unittest.mock import Mock
 from pytest_cases import parametrize_with_cases
 
 from eddington import show_or_export
+from eddington.plot import LineStyle
 from tests.plot import cases
 from tests.util import assert_calls
 
@@ -199,3 +200,7 @@ def test_show_or_export_with_output():
     fig = Mock()
     show_or_export(fig, output)
     fig.savefig.assert_called_once_with(output)
+
+
+def test_plot_linestyles():
+    assert set(LineStyle.all()) == {"solid", "none", "dashed", "dashdot", "dotted"}
