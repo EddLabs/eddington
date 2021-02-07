@@ -437,6 +437,7 @@ class FittingData:  # pylint: disable=R0902,R0904
         xerr_column: Optional[Union[str, int]] = None,
         y_column: Optional[Union[str, int]] = None,
         yerr_column: Optional[Union[str, int]] = None,
+        search: bool = True
     ):
         """
         Read :class:`FittingData` from excel file.
@@ -453,7 +454,9 @@ class FittingData:  # pylint: disable=R0902,R0904
         :type y_column: ``str`` or ``numpy.ndarray``
         :param yerr_column: Indicates which column should be used as the y error
             parameter
-        :type xerr_column: ``str`` or ``numpy.ndarray``
+        :type yerr_column: ``str`` or ``numpy.ndarray``
+        :param search: Search for a column if it wasn't explicitly provided.
+        :type search: bool
         :returns: :class:`FittingData` read from the excel file.
         :raises FittingDataError: Raised when the given sheet do not exist in excel
             file.
@@ -473,6 +476,7 @@ class FittingData:  # pylint: disable=R0902,R0904
             xerr_column=xerr_column,
             y_column=y_column,
             yerr_column=yerr_column,
+            search=search
         )
 
     @classmethod
@@ -483,6 +487,7 @@ class FittingData:  # pylint: disable=R0902,R0904
         xerr_column: Optional[Union[str, int]] = None,
         y_column: Optional[Union[str, int]] = None,
         yerr_column: Optional[Union[str, int]] = None,
+        search: bool = True
     ):
         """
         Read :class:`FittingData` from csv file.
@@ -497,7 +502,9 @@ class FittingData:  # pylint: disable=R0902,R0904
         :type y_column: ``str`` or ``numpy.ndarray``
         :param yerr_column: Indicates which column should be used as the y error
             parameter
-        :type xerr_column: ``str`` or ``numpy.ndarray``
+        :type yerr_column: ``str`` or ``numpy.ndarray``
+        :param search: Search for a column if it wasn't explicitly provided.
+        :type search: bool
         :returns: :class:`FittingData` read from the csv file.
         """
         if isinstance(filepath, str):
@@ -511,6 +518,7 @@ class FittingData:  # pylint: disable=R0902,R0904
             xerr_column=xerr_column,
             y_column=y_column,
             yerr_column=yerr_column,
+            search=search,
         )
 
     @classmethod
@@ -521,6 +529,7 @@ class FittingData:  # pylint: disable=R0902,R0904
         xerr_column: Optional[Union[str, int]] = None,
         y_column: Optional[Union[str, int]] = None,
         yerr_column: Optional[Union[str, int]] = None,
+        search: bool = True
     ):
         """
         Read :class:`FittingData` from json file.
@@ -535,7 +544,9 @@ class FittingData:  # pylint: disable=R0902,R0904
         :type y_column: ``str`` or ``numpy.ndarray``
         :param yerr_column: Indicates which column should be used as the y error
             parameter
-        :type xerr_column: ``str`` or ``numpy.ndarray``
+        :type yerr_column: ``str`` or ``numpy.ndarray``
+        :param search: Search for a column if it wasn't explicitly provided.
+        :type search: bool
         :returns: :class:`FittingData` read from the json file.
         """
         if isinstance(filepath, str):
@@ -547,6 +558,7 @@ class FittingData:  # pylint: disable=R0902,R0904
             RawDataBuilder.fix_types_in_raw_dict(data),
             x_column=x_column, xerr_column=xerr_column,
             y_column=y_column, yerr_column=yerr_column,
+            search=search,
         )
         # fmt: on
 
@@ -705,6 +717,7 @@ class FittingData:  # pylint: disable=R0902,R0904
         xerr_column: Optional[Union[str, int]] = None,
         y_column: Optional[Union[str, int]] = None,
         yerr_column: Optional[Union[str, int]] = None,
+        search: bool = True
     ):
         data = RawDataBuilder.build_raw_data(rows)
         return FittingData(
@@ -713,6 +726,7 @@ class FittingData:  # pylint: disable=R0902,R0904
             xerr_column=xerr_column,
             y_column=y_column,
             yerr_column=yerr_column,
+            search=search,
         )
 
     def __validate_index(self, index, column):
