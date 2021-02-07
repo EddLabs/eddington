@@ -274,12 +274,7 @@ class FittingData:  # pylint: disable=R0902,R0904
 
     @x_column.setter
     def x_column(self, x_column):
-        if x_column is None:
-            self._x_column_index = 0
-        elif x_column in self.all_columns:
-            self._x_column_index = self.all_columns.index(x_column)
-        else:
-            self._x_column_index = self.__covert_to_index(x_column)
+        self._x_column_index = self.__get_index(column=x_column, previous_index=-1)
         self.__validate_index(self._x_column_index, x_column)
         self._x_column = self.all_columns[self._x_column_index]
 
@@ -295,12 +290,9 @@ class FittingData:  # pylint: disable=R0902,R0904
 
     @xerr_column.setter
     def xerr_column(self, xerr_column):
-        if xerr_column is None:
-            self._xerr_column_index = self._x_column_index + 1
-        elif xerr_column in self.all_columns:
-            self._xerr_column_index = self.all_columns.index(xerr_column)
-        else:
-            self._xerr_column_index = self.__covert_to_index(xerr_column)
+        self._xerr_column_index = self.__get_index(
+            column=xerr_column, previous_index=self._x_column_index
+        )
         self.__validate_index(self._xerr_column_index, xerr_column)
         self._xerr_column = self.all_columns[self._xerr_column_index]
 
@@ -316,12 +308,9 @@ class FittingData:  # pylint: disable=R0902,R0904
 
     @y_column.setter
     def y_column(self, y_column):
-        if y_column is None:
-            self._y_column_index = self._xerr_column_index + 1
-        elif y_column in self.all_columns:
-            self._y_column_index = self.all_columns.index(y_column)
-        else:
-            self._y_column_index = self.__covert_to_index(y_column)
+        self._y_column_index = self.__get_index(
+            column=y_column, previous_index=self._xerr_column_index
+        )
         self.__validate_index(self._y_column_index, y_column)
         self._y_column = self.all_columns[self._y_column_index]
 
@@ -337,12 +326,9 @@ class FittingData:  # pylint: disable=R0902,R0904
 
     @yerr_column.setter
     def yerr_column(self, yerr_column):
-        if yerr_column is None:
-            self._yerr_column_index = self._y_column_index + 1
-        elif yerr_column in self.all_columns:
-            self._yerr_column_index = self.all_columns.index(yerr_column)
-        else:
-            self._yerr_column_index = self.__covert_to_index(yerr_column)
+        self._yerr_column_index = self.__get_index(
+            column=yerr_column, previous_index=self._y_column_index
+        )
         self.__validate_index(self._yerr_column_index, yerr_column)
         self._yerr_column = self.all_columns[self._yerr_column_index]
 
@@ -752,6 +738,13 @@ class FittingData:  # pylint: disable=R0902,R0904
                 ]
             )
         return records
+
+    def __get_index(self, column, previous_index):
+        if column is None:
+            return previous_index + 1
+        if column in self.all_columns:
+            return self.all_columns.index(column)
+        return self.__covert_to_index(column)
 
     @classmethod
     def __covert_to_index(cls, column):
