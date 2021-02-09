@@ -1,10 +1,11 @@
 """Fitting data class insert the fitting algorithm."""
 import csv
 import json
-from collections import OrderedDict, namedtuple
+from collections import OrderedDict
+from dataclasses import asdict, dataclass, field
 from numbers import Number
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, ItemsView, Iterator, List, Optional, Union
 
 import numpy as np
 import openpyxl
@@ -31,7 +32,33 @@ from eddington.random_util import random_array, random_error, random_sigma
 from eddington.raw_data_builder import RawDataBuilder
 from eddington.statistics import Statistics
 
-Columns = namedtuple("Columns", ["x", "y", "xerr", "yerr"])
+
+@dataclass
+class Columns:
+    """Dataclass for chosen column names."""
+
+    x: Optional[str] = field(default=None)  # pylint: disable=invalid-name
+    xerr: Optional[str] = field(default=None)
+    y: Optional[str] = field(default=None)  # pylint: disable=invalid-name
+    yerr: Optional[str] = field(default=None)
+
+    def __iter__(self) -> Iterator[Optional[str]]:
+        """
+        Iterate over the given columns.
+
+        :return: Columns iterator
+        :rtype: Iterator[Optional[str]]
+        """
+        return iter([self.x, self.xerr, self.y, self.yerr])
+
+    def items(self) -> ItemsView[str, Optional[str]]:
+        """
+        Get columns as items.
+
+        :return: column type to column name tuples list
+        :rtype: ItemsView[str, Optional[str]]
+        """
+        return asdict(self).items()
 
 
 class FittingData:  # pylint: disable=R0902,R0904
@@ -684,9 +711,12 @@ class FittingData:  # pylint: disable=R0902,R0904
         if new == "":
             raise FittingDataSetError("Cannot set new header to be empty")
         if new in self.all_columns:
-            raise FittingDataSetError(f'The column name:"{new}" is already used.')
+            raise FittingDataSetError(f'The column name "{new}" is already used.')
         self._data[new] = self._data.pop(old)
         self._all_columns = list(self.data.keys())
+        for column_type, column_name in self.used_columns.items():
+            if column_name == old:
+                setattr(self, f"{column_type}_column", new)
         self.__update_statistics()
 
     def set_cell(self, record_number: int, column_name: str, value: float):
@@ -704,8 +734,8 @@ class FittingData:  # pylint: disable=R0902,R0904
         """
         if not isinstance(value, Number):
             raise FittingDataSetError(
-                f'The cell at record number:"{record_number}", '
-                f'column:"{column_name}" has invalid syntax: {value}.'
+                f'The cell at record number "{record_number}", '
+                f'column "{column_name}", has invalid syntax: {value}.'
             )
         try:
             self._data[column_name][record_number - 1] = value
