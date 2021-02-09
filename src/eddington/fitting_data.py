@@ -2,7 +2,7 @@
 import csv
 import json
 from collections import OrderedDict
-from dataclasses import dataclass, asdict
+from dataclasses import asdict, dataclass
 from numbers import Number
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
@@ -35,15 +35,18 @@ from eddington.statistics import Statistics
 
 @dataclass
 class Columns:
-    x: str
+    """Dataclass for chosen column names."""
+    x: str  # pylint: disable=invalid-name
     xerr: str
-    y: str
+    y: str  # pylint: disable=invalid-name
     yerr: str
 
     def __iter__(self):
+        """Iterate over the given columns."""
         return iter([self.x, self.xerr, self.y, self.yerr])
 
     def items(self):
+        """Get columns as items."""
         return asdict(self).items()
 
 
