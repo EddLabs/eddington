@@ -118,3 +118,15 @@ def test_header_cannot_already_exist(header_name):
         FittingDataSetError, match=f'^The column name:"{new_header}" is already used.$'
     ):
         fitting_data.set_header(header_name, new_header)
+
+
+@parametrize("column_type", ["x_column", "xerr_column", "y_column", "yerr_column"])
+@parametrize("header_name", COLUMNS_NAMES)
+def test_rename_selected_column(column_type, header_name):
+    fitting_data = FittingData(
+        COLUMNS, **{column_type: header_name, "search": False}
+    )
+    new_header = "new header"
+    assert getattr(fitting_data, column_type) == header_name
+    fitting_data.set_header(header_name, new_header)
+    assert getattr(fitting_data, column_type) == new_header

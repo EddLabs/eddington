@@ -1,7 +1,8 @@
 """Fitting data class insert the fitting algorithm."""
 import csv
 import json
-from collections import OrderedDict, namedtuple
+from collections import OrderedDict
+from dataclasses import dataclass, asdict
 from numbers import Number
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
@@ -31,7 +32,19 @@ from eddington.random_util import random_array, random_error, random_sigma
 from eddington.raw_data_builder import RawDataBuilder
 from eddington.statistics import Statistics
 
-Columns = namedtuple("Columns", ["x", "y", "xerr", "yerr"])
+
+@dataclass
+class Columns:
+    x: str
+    xerr: str
+    y: str
+    yerr: str
+
+    def __iter__(self):
+        return iter([self.x, self.xerr, self.y, self.yerr])
+
+    def items(self):
+        return asdict(self).items()
 
 
 class FittingData:  # pylint: disable=R0902,R0904
@@ -687,6 +700,9 @@ class FittingData:  # pylint: disable=R0902,R0904
             raise FittingDataSetError(f'The column name:"{new}" is already used.')
         self._data[new] = self._data.pop(old)
         self._all_columns = list(self.data.keys())
+        for column_type, column_name in self.used_columns.items():
+            if column_name == old:
+                setattr(self, f"{column_type}_column", new)
         self.__update_statistics()
 
     def set_cell(self, record_number: int, column_name: str, value: float):
