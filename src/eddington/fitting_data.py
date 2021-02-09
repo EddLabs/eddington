@@ -236,7 +236,10 @@ class FittingData:  # pylint: disable=R0902,R0904
         self.records_indices = [False] * self.length
 
     def select_by_x_domain(
-        self, xmin: Optional[float] = None, xmax: Optional[float] = None
+        self,
+        xmin: Optional[float] = None,
+        xmax: Optional[float] = None,
+        update_selected: bool = False,
     ) -> None:
         """
         Select records by limiting x values.
@@ -247,15 +250,27 @@ class FittingData:  # pylint: disable=R0902,R0904
         :param xmax: Optional. Maximum value for x. If none, will not consider upper
             bound for x values
         :type xmax: float
+        :param update_selected: If true, combine with records which have already been
+            selected. If false, select from all records
+        :type update_selected: bool
         """
         if xmin is None and xmax is None:
             self.select_all_records()
-        self.records_indices = self.__get_indices_in_bounds(
+        selected_indices = self.__get_indices_in_bounds(
             min_value=xmin, max_value=xmax, column_name=self.x_column
         )
+        if update_selected:
+            self.records_indices = self.__combine_records_indices(
+                self.records_indices, selected_indices
+            )
+        else:
+            self.records_indices = selected_indices
 
     def select_by_y_domain(
-        self, ymin: Optional[float] = None, ymax: Optional[float] = None
+        self,
+        ymin: Optional[float] = None,
+        ymax: Optional[float] = None,
+        update_selected: bool = False,
     ) -> None:
         """
         Select records by limiting y values.
@@ -266,12 +281,21 @@ class FittingData:  # pylint: disable=R0902,R0904
         :param ymax: Optional. Maximum value for y. If none, will not consider upper
             bound for y values
         :type ymax: float
+        :param update_selected: If true, combine with records which have already been
+            selected. If false, select from all records
+        :type update_selected: bool
         """
         if ymin is None and ymax is None:
             self.select_all_records()
-        self.records_indices = self.__get_indices_in_bounds(
+        selected_indices = self.__get_indices_in_bounds(
             min_value=ymin, max_value=ymax, column_name=self.y_column
         )
+        if update_selected:
+            self.records_indices = self.__combine_records_indices(
+                self.records_indices, selected_indices
+            )
+        else:
+            self.records_indices = selected_indices
 
     def select_by_domains(
         self,
@@ -279,6 +303,7 @@ class FittingData:  # pylint: disable=R0902,R0904
         xmax: Optional[float] = None,
         ymin: Optional[float] = None,
         ymax: Optional[float] = None,
+        update_selected: bool = False,
     ) -> None:
         """
         Select records by limiting y values.
@@ -295,6 +320,9 @@ class FittingData:  # pylint: disable=R0902,R0904
         :param ymax: Optional. Maximum value for y. If none, will not consider upper
             bound for y values
         :type ymax: float
+        :param update_selected: If true, combine with records which have already been
+            selected. If false, select from all records
+        :type update_selected: bool
         """
         x_selected_indices = self.__get_indices_in_bounds(
             min_value=xmin, max_value=xmax, column_name=self.x_column
@@ -302,10 +330,14 @@ class FittingData:  # pylint: disable=R0902,R0904
         y_selected_indices = self.__get_indices_in_bounds(
             min_value=ymin, max_value=ymax, column_name=self.y_column
         )
-        self.records_indices = [
-            x_selected and y_selected
-            for x_selected, y_selected in zip(x_selected_indices, y_selected_indices)
-        ]
+        if update_selected:
+            self.records_indices = self.__combine_records_indices(
+                self.records_indices, x_selected_indices, y_selected_indices
+            )
+        else:
+            self.records_indices = self.__combine_records_indices(
+                x_selected_indices, y_selected_indices
+            )
 
     def is_selected(self, index):
         """
@@ -834,7 +866,12 @@ class FittingData:  # pylint: disable=R0902,R0904
             for value in self.data[column_name]
         ]
 
-    def __in_bounds(self, min_value, max_value, value):
+    @classmethod
+    def __combine_records_indices(cls, *indices_lists):
+        return [all(selected_tuple) for selected_tuple in zip(*indices_lists)]
+
+    @classmethod
+    def __in_bounds(cls, min_value, max_value, value):
         if min_value is not None and value < min_value:
             return False
         if max_value is not None and value > max_value:
