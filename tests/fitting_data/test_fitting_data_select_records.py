@@ -1,3 +1,5 @@
+import random
+
 import numpy as np
 import pytest
 from pytest_cases import THIS_MODULE, parametrize_with_cases
@@ -84,6 +86,153 @@ def case_select_all_records():
     fitting_data.select_record(5)
     fitting_data.select_all_records()
     return fitting_data, list(range(1, NUMBER_OF_RECORDS + 1))
+
+
+def case_x_domain_lower_bound():
+    xmin = 0.5
+    fitting_data = FittingData(COLUMNS)
+    selected_indices = [i for i, x in enumerate(fitting_data.x, start=1) if x >= xmin]
+    fitting_data.select_by_x_domain(xmin=xmin)
+    return fitting_data, selected_indices
+
+
+def case_x_domain_upper_bound():
+    xmax = 0.5
+    fitting_data = FittingData(COLUMNS)
+    selected_indices = [i for i, x in enumerate(fitting_data.x, start=1) if x <= xmax]
+    fitting_data.select_by_x_domain(xmax=xmax)
+    return fitting_data, selected_indices
+
+
+def case_x_domain_both_bounds():
+    xmin, xmax = 0.33, 0.66
+    fitting_data = FittingData(COLUMNS)
+    selected_indices = [
+        i for i, x in enumerate(fitting_data.x, start=1) if xmin <= x <= xmax
+    ]
+    fitting_data.select_by_x_domain(xmin=xmin, xmax=xmax)
+    return fitting_data, selected_indices
+
+
+def case_x_domain_select_all():
+    fitting_data = FittingData(COLUMNS)
+    fitting_data.select_by_x_domain()
+    return fitting_data, list(range(1, NUMBER_OF_RECORDS + 1))
+
+
+def case_x_domain_update_selected_false():
+    xmax = 0.5
+    fitting_data = FittingData(COLUMNS)
+    selected_indices = [i for i, x in enumerate(fitting_data.x, start=1) if x <= xmax]
+    index = random.choice(selected_indices)
+    fitting_data.unselect_record(index)
+    fitting_data.select_by_x_domain(xmax=xmax)
+    return fitting_data, selected_indices
+
+
+def case_x_domain_update_selected_true():
+    xmax = 0.5
+    fitting_data = FittingData(COLUMNS)
+    selected_indices = [i for i, x in enumerate(fitting_data.x, start=1) if x <= xmax]
+    index = random.choice(selected_indices)
+    selected_indices.remove(index)
+    fitting_data.unselect_record(index)
+    fitting_data.select_by_x_domain(xmax=xmax, update_selected=True)
+    return fitting_data, selected_indices
+
+
+def case_y_domain_lower_bound():
+    ymin = 0.5
+    fitting_data = FittingData(COLUMNS)
+    selected_indices = [i for i, y in enumerate(fitting_data.y, start=1) if y >= ymin]
+    fitting_data.select_by_y_domain(ymin=ymin)
+    return fitting_data, selected_indices
+
+
+def case_y_domain_upper_bound():
+    ymax = 0.5
+    fitting_data = FittingData(COLUMNS)
+    selected_indices = [i for i, y in enumerate(fitting_data.y, start=1) if y <= ymax]
+    fitting_data.select_by_y_domain(ymax=ymax)
+    return fitting_data, selected_indices
+
+
+def case_y_domain_both_bounds():
+    ymin, ymax = 0.33, 0.66
+    fitting_data = FittingData(COLUMNS)
+    selected_indices = [
+        i for i, y in enumerate(fitting_data.y, start=1) if ymin <= y <= ymax
+    ]
+    fitting_data.select_by_y_domain(ymin=ymin, ymax=ymax)
+    return fitting_data, selected_indices
+
+
+def case_y_domain_select_all():
+    fitting_data = FittingData(COLUMNS)
+    fitting_data.select_by_y_domain()
+    return fitting_data, list(range(1, NUMBER_OF_RECORDS + 1))
+
+
+def case_y_domain_update_selected_false():
+    ymax = 0.5
+    fitting_data = FittingData(COLUMNS)
+    selected_indices = [i for i, y in enumerate(fitting_data.y, start=1) if y <= ymax]
+    index = random.choice(selected_indices)
+    fitting_data.unselect_record(index)
+    fitting_data.select_by_y_domain(ymax=ymax)
+    return fitting_data, selected_indices
+
+
+def case_y_domain_update_selected_true():
+    ymax = 0.5
+    fitting_data = FittingData(COLUMNS)
+    selected_indices = [i for i, y in enumerate(fitting_data.y, start=1) if y <= ymax]
+    index = random.choice(selected_indices)
+    selected_indices.remove(index)
+    fitting_data.unselect_record(index)
+    fitting_data.select_by_y_domain(ymax=ymax, update_selected=True)
+    return fitting_data, selected_indices
+
+
+def case_xy_domain_half_bounded():
+    xmin, ymax = 0.33, 0.66
+    fitting_data = FittingData(COLUMNS)
+    selected_indices = [
+        i
+        for i, (x, y) in enumerate(zip(fitting_data.x, fitting_data.y), start=1)
+        if xmin <= x and y <= ymax
+    ]
+    fitting_data.select_by_domains(xmin=xmin, ymax=ymax)
+    return fitting_data, selected_indices
+
+
+def case_xy_domain_update_selected_false():
+    xmin, ymax = 0.33, 0.66
+    fitting_data = FittingData(COLUMNS)
+    selected_indices = [
+        i
+        for i, (x, y) in enumerate(zip(fitting_data.x, fitting_data.y), start=1)
+        if xmin <= x and y <= ymax
+    ]
+    index = random.choice(selected_indices)
+    fitting_data.unselect_record(index)
+    fitting_data.select_by_domains(xmin=xmin, ymax=ymax)
+    return fitting_data, selected_indices
+
+
+def case_xy_domain_update_selected_true():
+    xmin, ymax = 0.33, 0.66
+    fitting_data = FittingData(COLUMNS)
+    selected_indices = [
+        i
+        for i, (x, y) in enumerate(zip(fitting_data.x, fitting_data.y), start=1)
+        if xmin <= x and y <= ymax
+    ]
+    index = random.choice(selected_indices)
+    selected_indices.remove(index)
+    fitting_data.unselect_record(index)
+    fitting_data.select_by_domains(xmin=xmin, ymax=ymax, update_selected=True)
+    return fitting_data, selected_indices
 
 
 def case_set_selected_records():
