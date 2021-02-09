@@ -1,7 +1,7 @@
 .. _fitting_function:
 
-Fit Function
-=============
+Fitting Function
+================
 
 FittingFunction Class
 ----------------------

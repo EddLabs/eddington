@@ -1,7 +1,7 @@
 .. _fitting_functions_registry:
 
-Fit Functions Registry
-=======================
+Fitting Functions Registry
+==========================
 
 .. autoclass:: eddington.fitting_functions_registry.FittingFunctionsRegistry
    :members:
