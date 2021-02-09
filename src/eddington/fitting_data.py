@@ -297,7 +297,7 @@ class FittingData:  # pylint: disable=R0902,R0904
         else:
             self.records_indices = selected_indices
 
-    def select_by_domains(
+    def select_by_domains(  # pylint: disable=too-many-arguments
         self,
         xmin: Optional[float] = None,
         xmax: Optional[float] = None,
