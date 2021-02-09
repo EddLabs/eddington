@@ -697,7 +697,7 @@ class FittingData:  # pylint: disable=R0902,R0904
         if new == "":
             raise FittingDataSetError("Cannot set new header to be empty")
         if new in self.all_columns:
-            raise FittingDataSetError(f'The column name:"{new}" is already used.')
+            raise FittingDataSetError(f'The column name "{new}" is already used.')
         self._data[new] = self._data.pop(old)
         self._all_columns = list(self.data.keys())
         for column_type, column_name in self.used_columns.items():
@@ -720,8 +720,8 @@ class FittingData:  # pylint: disable=R0902,R0904
         """
         if not isinstance(value, Number):
             raise FittingDataSetError(
-                f'The cell at record number:"{record_number}", '
-                f'column:"{column_name}" has invalid syntax: {value}.'
+                f'The cell at record number "{record_number}", '
+                f'column "{column_name}", has invalid syntax: {value}.'
             )
         try:
             self._data[column_name][record_number - 1] = value
