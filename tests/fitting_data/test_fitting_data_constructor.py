@@ -180,6 +180,16 @@ def test_used_columns(fitting_data, expected_columns):
 
 
 @parametrize_with_cases(argnames="fitting_data, expected_columns", cases=THIS_MODULE)
+def test_iterate_used_columns(fitting_data, expected_columns):
+    used_columns_list = list(fitting_data.used_columns)
+    assert len(used_columns_list) == 4
+    assert used_columns_list[0] == expected_columns.x
+    assert used_columns_list[1] == expected_columns.xerr
+    assert used_columns_list[2] == expected_columns.y
+    assert used_columns_list[3] == expected_columns.yerr
+
+
+@parametrize_with_cases(argnames="fitting_data, expected_columns", cases=THIS_MODULE)
 def test_data(fitting_data, expected_columns):
     assert COLUMNS_NAMES == list(
         fitting_data.data.keys()
