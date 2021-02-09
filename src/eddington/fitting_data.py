@@ -5,7 +5,7 @@ from collections import OrderedDict
 from dataclasses import asdict, dataclass, field
 from numbers import Number
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, Iterator, List, Optional, Tuple, Union
 
 import numpy as np
 import openpyxl
@@ -42,12 +42,22 @@ class Columns:
     y: Optional[str] = field(default=None)  # pylint: disable=invalid-name
     yerr: Optional[str] = field(default=None)
 
-    def __iter__(self):
-        """Iterate over the given columns."""
+    def __iter__(self) -> Iterator[Optional[str]]:
+        """
+        Iterate over the given columns.
+
+        :return: Columns iterator
+        :rtype: Iterator[Optional[str]]
+        """
         return iter([self.x, self.xerr, self.y, self.yerr])
 
-    def items(self):
-        """Get columns as items."""
+    def items(self) -> List[Tuple[str, Optional[str]]]:
+        """
+        Get columns as items.
+
+        :return: column type to column name tuples list
+        :rtype: List[Tuple[str, Optionl[str]]]
+        """
         return asdict(self).items()
 
 
