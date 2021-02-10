@@ -414,6 +414,20 @@ class FittingData:  # pylint: disable=R0902,R0904
         self.__update_statistics()
 
     @property
+    def x_index(self) -> int:
+        """
+        Index of the x column
+
+        :return: Index of the x column
+        :rtype: int
+        """
+        return self._x_index
+
+    @x_index.setter
+    def x_index(self, x_index: int):
+        self._x_index = x_index
+
+    @property
     def x_column(self):
         """
         Name of the x column.
@@ -425,12 +439,26 @@ class FittingData:  # pylint: disable=R0902,R0904
 
     @x_column.setter
     def x_column(self, x_column):
-        self._x_column_index = self.__get_index(column=x_column, previous_index=-1)
-        if self._x_column_index is None:
+        self.x_index = self.__get_index(column=x_column, previous_index=-1)
+        if self.x_index is None:
             self._x_column = None
         else:
-            self.__validate_column_index(self._x_column_index)
-            self._x_column = self.__get_column_name(self._x_column_index)
+            self.__validate_column_index(self.x_index)
+            self._x_column = self.__get_column_name(self.x_index)
+
+    @property
+    def xerr_index(self) -> int:
+        """
+        Index of the x error column
+
+        :return: Index of the x error column
+        :rtype: int
+        """
+        return self._xerr_index
+
+    @xerr_index.setter
+    def xerr_index(self, xerr_index: int):
+        self._xerr_index = xerr_index
 
     @property
     def xerr_column(self):
@@ -444,14 +472,28 @@ class FittingData:  # pylint: disable=R0902,R0904
 
     @xerr_column.setter
     def xerr_column(self, xerr_column):
-        self._xerr_column_index = self.__get_index(
-            column=xerr_column, previous_index=self._x_column_index
+        self.xerr_index = self.__get_index(
+            column=xerr_column, previous_index=self.x_index
         )
-        if self._xerr_column_index is None:
+        if self.xerr_index is None:
             self._xerr_column = None
         else:
-            self.__validate_column_index(self._xerr_column_index)
-            self._xerr_column = self.__get_column_name(self._xerr_column_index)
+            self.__validate_column_index(self.xerr_index)
+            self._xerr_column = self.__get_column_name(self.xerr_index)
+
+    @property
+    def y_index(self) -> int:
+        """
+        Index of the y column
+
+        :return: Index of the t column
+        :rtype: int
+        """
+        return self._y_index
+
+    @y_index.setter
+    def y_index(self, y_index: int):
+        self._y_index = y_index
 
     @property
     def y_column(self):
@@ -465,14 +507,26 @@ class FittingData:  # pylint: disable=R0902,R0904
 
     @y_column.setter
     def y_column(self, y_column):
-        self._y_column_index = self.__get_index(
-            column=y_column, previous_index=self._xerr_column_index
-        )
-        if self._y_column_index is None:
+        self.y_index = self.__get_index(column=y_column, previous_index=self.xerr_index)
+        if self.y_index is None:
             self._y_column = None
         else:
-            self.__validate_column_index(self._y_column_index)
-            self._y_column = self.__get_column_name(self._y_column_index)
+            self.__validate_column_index(self.y_index)
+            self._y_column = self.__get_column_name(self.y_index)
+
+    @property
+    def yerr_index(self) -> int:
+        """
+        Index of the x error column
+
+        :return: Index of the x error column
+        :rtype: int
+        """
+        return self._yerr_index
+
+    @yerr_index.setter
+    def yerr_index(self, yerr_index: int):
+        self._yerr_index = yerr_index
 
     @property
     def yerr_column(self):
@@ -486,14 +540,14 @@ class FittingData:  # pylint: disable=R0902,R0904
 
     @yerr_column.setter
     def yerr_column(self, yerr_column):
-        self._yerr_column_index = self.__get_index(
-            column=yerr_column, previous_index=self._y_column_index
+        self.yerr_index = self.__get_index(
+            column=yerr_column, previous_index=self.y_index
         )
-        if self._yerr_column_index is None:
+        if self.yerr_index is None:
             self._yerr_column = None
         else:
-            self.__validate_column_index(self._yerr_column_index)
-            self._yerr_column = self.__get_column_name(self._yerr_column_index)
+            self.__validate_column_index(self.yerr_index)
+            self._yerr_column = self.__get_column_name(self.yerr_index)
 
     def statistics(self, column_name: str) -> Optional[Statistics]:
         """
