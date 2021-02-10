@@ -119,6 +119,7 @@ def plot_residuals(  # pylint: disable=invalid-name,too-many-arguments,too-many-
     :type xmax: float
     :returns: ``matplotlib.pyplot.Figure``
     """
+    __validate_all_columns_exist(data)
     ax, fig = get_figure(
         title_name=title_name,
         xlabel=xlabel,
@@ -127,8 +128,10 @@ def plot_residuals(  # pylint: disable=invalid-name,too-many-arguments,too-many-
         x_log_scale=x_log_scale,
         y_log_scale=y_log_scale,
     )
-    xmin, xmax = get_plot_borders(x=data.x, xmin=xmin, xmax=xmax)
-    checkers_list = get_checkers_list(values=data.x, min_val=xmin, max_val=xmax)
+    xmin, xmax = get_plot_borders(x=data.x, xmin=xmin, xmax=xmax)  # type: ignore
+    checkers_list = get_checkers_list(
+        values=data.x, min_val=xmin, max_val=xmax  # type: ignore
+    )
     residuals = data.residuals(fit_func=func, a=a)
     add_errorbar(
         ax=ax,
@@ -203,6 +206,7 @@ def plot_fitting(  # pylint: disable=C0103,R0913,R0914
     :type xmax: float
     :returns: ``matplotlib.pyplot.Figure``
     """
+    __validate_all_columns_exist(data)
     ax, fig = get_figure(
         title_name=title_name,
         xlabel=xlabel,
@@ -211,14 +215,16 @@ def plot_fitting(  # pylint: disable=C0103,R0913,R0914
         x_log_scale=x_log_scale,
         y_log_scale=y_log_scale,
     )
-    xmin, xmax = get_plot_borders(x=data.x, xmin=xmin, xmax=xmax)
-    checkers_list = get_checkers_list(values=data.x, min_val=xmin, max_val=xmax)
+    xmin, xmax = get_plot_borders(x=data.x, xmin=xmin, xmax=xmax)  # type: ignore
+    checkers_list = get_checkers_list(
+        values=data.x, min_val=xmin, max_val=xmax  # type: ignore
+    )
     add_errorbar(
         ax=ax,
-        x=data.x[checkers_list],
-        xerr=data.xerr[checkers_list],
-        y=data.y[checkers_list],
-        yerr=data.yerr[checkers_list],
+        x=data.x[checkers_list],  # type: ignore
+        xerr=data.xerr[checkers_list],  # type: ignore
+        y=data.y[checkers_list],  # type: ignore
+        yerr=data.yerr[checkers_list],  # type: ignore
         color=data_color,
     )
     x = get_x_plot_values(xmin=xmin, xmax=xmax, step=step)
@@ -278,6 +284,7 @@ def plot_data(  # pylint: disable=too-many-arguments
     :type y_log_scale: bool
     :returns: ``matplotlib.pyplot.Figure``
     """
+    __validate_all_columns_exist(data)
     ax, fig = get_figure(  # pylint: disable=invalid-name
         title_name=title_name,
         xlabel=xlabel,
@@ -286,14 +293,16 @@ def plot_data(  # pylint: disable=too-many-arguments
         x_log_scale=x_log_scale,
         y_log_scale=y_log_scale,
     )
-    xmin, xmax = get_plot_borders(x=data.x, xmin=xmin, xmax=xmax)
-    checkers_list = get_checkers_list(values=data.x, min_val=xmin, max_val=xmax)
+    xmin, xmax = get_plot_borders(x=data.x, xmin=xmin, xmax=xmax)  # type: ignore
+    checkers_list = get_checkers_list(
+        values=data.x, min_val=xmin, max_val=xmax  # type: ignore
+    )
     add_errorbar(
         ax=ax,
-        x=data.x[checkers_list],
-        xerr=data.xerr[checkers_list],
-        y=data.y[checkers_list],
-        yerr=data.yerr[checkers_list],
+        x=data.x[checkers_list],  # type: ignore
+        xerr=data.xerr[checkers_list],  # type: ignore
+        y=data.y[checkers_list],  # type: ignore
+        yerr=data.yerr[checkers_list],  # type: ignore
         color=color,
     )
     limit_axes(ax=ax, xmin=xmin, xmax=xmax)
@@ -648,3 +657,11 @@ def __in_bounds(val, min_val=None, max_val=None):  # pylint: disable=invalid-nam
     if max_val is not None and val > max_val:
         return False
     return True
+
+
+def __validate_all_columns_exist(data):
+    if not any(data.records_indices):
+        raise PlottingError("Cannot plot without any chosen record.")
+    for column_type, column_name in data.used_columns.items():
+        if column_name is None:
+            raise PlottingError(f"Cannot plot without {column_type} values.")

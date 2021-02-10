@@ -203,21 +203,23 @@ class FittingData:  # pylint: disable=R0902,R0904
             yerr=self.yerr_column,
         )
 
-    def column_data(self, column_header: str):
+    def column_data(self, column_name: Optional[str]) -> Optional[np.ndarray]:
         """
         Get the data of a column.
 
-        :param column_header: The header name of the desired column.
-        :type column_header: str
+        :param column_name: The header name of the desired column. If None, return
+            None.
+        :type column_name: str
         :returns: The data of the given column
-        :rtype: numpy.array
+        :rtype: np.ndarray
         """
-        if column_header is None:
+        if column_name is None:
             return None
-        return self.data[column_header][self.records_indices]
+        self.__validate_column_name(column_name=column_name)
+        return self.data[column_name][self.records_indices]
 
     @property
-    def x(self) -> np.ndarray:  # pylint: disable=invalid-name
+    def x(self) -> Optional[np.ndarray]:  # pylint: disable=invalid-name
         """
         Property of the x values.
 
@@ -227,7 +229,7 @@ class FittingData:  # pylint: disable=R0902,R0904
         return self.column_data(self.x_column)
 
     @property
-    def xerr(self) -> np.ndarray:
+    def xerr(self) -> Optional[np.ndarray]:
         """
         Property of the x error values.
 
@@ -237,7 +239,7 @@ class FittingData:  # pylint: disable=R0902,R0904
         return self.column_data(self.xerr_column)
 
     @property
-    def y(self) -> np.ndarray:  # pylint: disable=invalid-name
+    def y(self) -> Optional[np.ndarray]:  # pylint: disable=invalid-name
         """
         Property of the y values.
 
@@ -247,7 +249,7 @@ class FittingData:  # pylint: disable=R0902,R0904
         return self.column_data(self.y_column)
 
     @property
-    def yerr(self) -> np.ndarray:
+    def yerr(self) -> Optional[np.ndarray]:
         """
         Property of the y error values.
 

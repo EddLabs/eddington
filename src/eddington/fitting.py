@@ -4,6 +4,7 @@ from typing import Any, Dict, Optional
 import numpy as np
 from scipy.odr import ODR, Model, RealData
 
+from eddington.exceptions import FittingError
 from eddington.fitting_data import FittingData
 from eddington.fitting_function_class import FittingFunction
 from eddington.fitting_result import FittingResult
@@ -34,6 +35,10 @@ def fit(  # pylint: disable=invalid-name
     :type use_a_derivative: bool
     :returns: FittingResult
     """
+    if data.x is None:
+        raise FittingError("Cannot fit data without x values")
+    if data.y is None:
+        raise FittingError("Cannot fit data without y values")
     model = Model(
         **__get_odr_model_kwargs(
             func,

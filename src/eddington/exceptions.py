@@ -68,6 +68,13 @@ class FittingDataSetError(FittingDataError):  # noqa: D101
     pass
 
 
+# Fitting Errors
+
+
+class FittingError(EddingtonException):  # noqa: D101
+    pass
+
+
 # Plot Errors
 
 
