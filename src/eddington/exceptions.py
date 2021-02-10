@@ -52,6 +52,14 @@ class FittingDataColumnExistenceError(FittingDataError):  # noqa: D101
         super().__init__(f'Could not find column "{column}" in data')
 
 
+class FittingDataRecordIndexError(FittingDataError):  # noqa: D101
+    def __init__(self, index: int, number_of_records: int) -> None:  # noqa: D107
+        super().__init__(
+            f"Could not find record with index {index} in data. "
+            f"Index should be between 1 and {number_of_records}."
+        )
+
+
 class FittingDataRecordsSelectionError(FittingDataError):  # noqa: D101
     pass
 

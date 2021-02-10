@@ -2,10 +2,13 @@ import random
 
 import numpy as np
 import pytest
-from pytest_cases import THIS_MODULE, parametrize_with_cases
+from pytest_cases import THIS_MODULE, parametrize, parametrize_with_cases
 
 from eddington import FittingData
-from eddington.exceptions import FittingDataRecordsSelectionError
+from eddington.exceptions import (
+    FittingDataRecordIndexError,
+    FittingDataRecordsSelectionError,
+)
 from tests.fitting_data import COLUMNS, CONTENT, NUMBER_OF_RECORDS, VALUES
 from tests.util import assert_list_equal
 
@@ -275,7 +278,7 @@ def test_yerr(fitting_data, selected_indices):
 
 @parametrize_with_cases(argnames="fitting_data, selected_indices", cases=THIS_MODULE)
 def test_is_selected(fitting_data, selected_indices):
-    for i in range(1, fitting_data.length + 1):
+    for i in range(1, fitting_data.number_of_records + 1):
         if i in selected_indices:
             assert fitting_data.is_selected(i), f"Record {i} was not selected"
         else:
@@ -317,3 +320,31 @@ def test_set_selection_with_non_boolean_values():
         match="^When setting record indices, all values should be booleans.$",
     ):
         set_records_indices()
+
+
+@parametrize("index", [0, -1, NUMBER_OF_RECORDS + 1])
+def test_select_record_with_invalid_index(index):
+    fitting_data = FittingData(COLUMNS)
+
+    with pytest.raises(
+        FittingDataRecordIndexError,
+        match=(
+            f"^Could not find record with index {index} in data. "
+            f"Index should be between 1 and {NUMBER_OF_RECORDS}.$"
+        ),
+    ):
+        fitting_data.select_record(index)
+
+
+@parametrize("index", [0, -1, NUMBER_OF_RECORDS + 1])
+def test_unselect_record_with_invalid_index(index):
+    fitting_data = FittingData(COLUMNS)
+
+    with pytest.raises(
+        FittingDataRecordIndexError,
+        match=(
+            f"^Could not find record with index {index} in data. "
+            f"Index should be between 1 and {NUMBER_OF_RECORDS}.$"
+        ),
+    ):
+        fitting_data.unselect_record(index)
