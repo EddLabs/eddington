@@ -145,15 +145,17 @@ def plot_cli(
         x_log_scale=x_log_scale,
         y_log_scale=y_log_scale,
     )
-    xmin, xmax = get_plot_borders(x=data.x)
+    xmin, xmax = get_plot_borders(x=data.x)  # type: ignore
     if not residuals:
-        checkers_list = get_checkers_list(values=data.x, min_val=xmin, max_val=xmax)
+        checkers_list = get_checkers_list(
+            values=data.x, min_val=xmin, max_val=xmax  # type: ignore
+        )
         add_errorbar(
             ax=ax,
-            x=data.x[checkers_list],
-            xerr=data.xerr[checkers_list],
-            y=data.y[checkers_list],
-            yerr=data.yerr[checkers_list],
+            x=data.x[checkers_list],  # type: ignore
+            xerr=data.xerr[checkers_list],  # type: ignore
+            y=data.y[checkers_list],  # type: ignore
+            yerr=data.yerr[checkers_list],  # type: ignore
             color=data_color,
         )
     x_values = get_x_plot_values(xmin, xmax)
@@ -161,7 +163,9 @@ def plot_cli(
         if a0 is None:
             continue
         label = build_repr_string(a0)
-        checkers_list = get_checkers_list(values=data.x, min_val=xmin, max_val=xmax)
+        checkers_list = get_checkers_list(
+            values=data.x, min_val=xmin, max_val=xmax  # type: ignore
+        )
         if residuals:
             residuals_data = data.residuals(fit_func=func, a=a0)
             residuals_data.records_indices = checkers_list

@@ -1,8 +1,10 @@
 from unittest.mock import Mock
 
+import pytest
 from pytest_cases import parametrize_with_cases
 
 from eddington import show_or_export
+from eddington.exceptions import PlottingError
 from eddington.plot import LineStyle
 from tests.plot import cases
 from tests.util import assert_calls
@@ -86,16 +88,17 @@ def test_error_bar_without_boundaries(base_dict, plot_method, mock_figure):
     assert (
         fig._actual_fig == mock_figure  # pylint: disable=protected-access
     ), "Figure is different than expected"
+    data = base_dict["data"]
     assert_calls(
         mock_figure.add_subplot.return_value.errorbar,
         calls=[
             (
                 [],
                 dict(
-                    x=cases.FIT_DATA.x,
-                    y=cases.FIT_DATA.y,
-                    xerr=cases.FIT_DATA.xerr,
-                    yerr=cases.FIT_DATA.yerr,
+                    x=data.x,
+                    y=data.y,
+                    xerr=data.xerr,
+                    yerr=data.yerr,
                     markersize=1,
                     marker="o",
                     linestyle="None",
@@ -119,17 +122,18 @@ def test_error_bar_with_xmin(base_dict, plot_method, mock_figure):
     assert (
         fig._actual_fig == mock_figure  # pylint: disable=protected-access
     ), "Figure is different than expected"
-    data_filter = [val >= xmin for val in cases.FIT_DATA.x]
+    data = base_dict["data"]
+    data_filter = [val >= xmin for val in data.x]
     assert_calls(
         mock_figure.add_subplot.return_value.errorbar,
         calls=[
             (
                 [],
                 dict(
-                    x=cases.FIT_DATA.x[data_filter],
-                    y=cases.FIT_DATA.y[data_filter],
-                    xerr=cases.FIT_DATA.xerr[data_filter],
-                    yerr=cases.FIT_DATA.yerr[data_filter],
+                    x=data.x[data_filter],
+                    y=data.y[data_filter],
+                    xerr=data.xerr[data_filter],
+                    yerr=data.yerr[data_filter],
                     markersize=1,
                     marker="o",
                     linestyle="None",
@@ -153,17 +157,18 @@ def test_error_bar_with_xmax(base_dict, plot_method, mock_figure):
     assert (
         fig._actual_fig == mock_figure  # pylint: disable=protected-access
     ), "Figure is different than expected"
-    data_filter = [val <= xmax for val in cases.FIT_DATA.x]
+    data = base_dict["data"]
+    data_filter = [val <= xmax for val in data.x]
     assert_calls(
         mock_figure.add_subplot.return_value.errorbar,
         calls=[
             (
                 [],
                 dict(
-                    x=cases.FIT_DATA.x[data_filter],
-                    y=cases.FIT_DATA.y[data_filter],
-                    xerr=cases.FIT_DATA.xerr[data_filter],
-                    yerr=cases.FIT_DATA.yerr[data_filter],
+                    x=data.x[data_filter],
+                    y=data.y[data_filter],
+                    xerr=data.xerr[data_filter],
+                    yerr=data.yerr[data_filter],
                     markersize=1,
                     marker="o",
                     linestyle="None",
@@ -187,6 +192,36 @@ def test_plot_as_context(
     mock_figure.savefig.assert_called_once_with(output)
     mock_plt_clf.assert_called_once_with()
     mock_plt_close.assert_called_once_with("all")
+
+
+@parametrize_with_cases(argnames="base_dict, plot_method", cases=cases)
+def test_plot_with_no_x_raises_exception(
+    base_dict, plot_method, mock_figure, mock_plt_clf, mock_plt_close
+):
+    base_dict["data"].x_column = None
+
+    with pytest.raises(PlottingError, match="^Cannot plot without x values.$"):
+        plot_method(**base_dict)
+
+
+@parametrize_with_cases(argnames="base_dict, plot_method", cases=cases)
+def test_plot_with_no_y_raises_exception(
+    base_dict, plot_method, mock_figure, mock_plt_clf, mock_plt_close
+):
+    base_dict["data"].y_column = None
+
+    with pytest.raises(PlottingError, match="^Cannot plot without y values.$"):
+        plot_method(**base_dict)
+
+
+@parametrize_with_cases(argnames="base_dict, plot_method", cases=cases)
+def test_plot_with_no_data_raises_exception(
+    base_dict, plot_method, mock_figure, mock_plt_clf, mock_plt_close
+):
+    base_dict["data"].unselect_all_records()
+
+    with pytest.raises(PlottingError, match="^Cannot plot without any chosen record.$"):
+        plot_method(**base_dict)
 
 
 def test_show_or_export_without_output(mock_plt_show):

@@ -4,6 +4,7 @@ import numpy as np
 import pytest
 
 from eddington import FittingData, fit, fitting_function
+from eddington.exceptions import FittingError
 
 a0 = np.array([8, 5])
 a = np.array([3, 4])
@@ -158,3 +159,19 @@ def test_odr(function_cases):
     assert odr.call_args[1]["data"] == real_data.return_value
     assert odr.call_args[1]["model"] == model.return_value
     assert odr.call_args[1]["beta0"] == pytest.approx(fit_a0)
+
+
+def test_fitting_fail_for_no_x():
+    fitting_data = FittingData.random(dummy_func)
+    fitting_data.x_column = None
+
+    with pytest.raises(FittingError, match="^Cannot fit data without x values$"):
+        fit(data=fitting_data, func=dummy_func)
+
+
+def test_fitting_fail_for_no_y():
+    fitting_data = FittingData.random(dummy_func)
+    fitting_data.y_column = None
+
+    with pytest.raises(FittingError, match="^Cannot fit data without y values$"):
+        fit(data=fitting_data, func=dummy_func)

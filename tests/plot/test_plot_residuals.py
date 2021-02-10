@@ -18,17 +18,18 @@ def test_plot_residuals_without_boundaries(base_dict, plot_method, mock_figure):
     assert_calls(
         ax.hlines, [([0], dict(xmin=0.1, xmax=10.9, linestyles="dashed"))], rel=EPSILON
     )
-    y_residuals = cases.FIT_DATA.y - cases.FUNC(cases.A, cases.FIT_DATA.x)
+    data = base_dict["data"]
+    y_residuals = data.y - cases.FUNC(cases.A, data.x)
     assert_calls(
         ax.errorbar,
         [
             (
                 [],
                 dict(
-                    x=cases.FIT_DATA.x,
+                    x=data.x,
                     y=y_residuals,
-                    xerr=cases.FIT_DATA.xerr,
-                    yerr=cases.FIT_DATA.yerr,
+                    xerr=data.xerr,
+                    yerr=data.yerr,
                     markersize=1,
                     marker="o",
                     linestyle="None",
@@ -55,18 +56,19 @@ def test_plot_residuals_with_xmin(base_dict, plot_method, mock_figure):
     assert_calls(
         ax.hlines, [([0], dict(xmin=xmin, xmax=10.9, linestyles="dashed"))], rel=EPSILON
     )
-    y_residuals = cases.FIT_DATA.y - cases.FUNC(cases.A, cases.FIT_DATA.x)
-    data_filter = [val >= xmin for val in cases.FIT_DATA.x]
+    data = base_dict["data"]
+    y_residuals = data.y - cases.FUNC(cases.A, data.x)
+    data_filter = [val >= xmin for val in data.x]
     assert_calls(
         mock_figure.add_subplot.return_value.errorbar,
         [
             (
                 [],
                 dict(
-                    x=cases.FIT_DATA.x[data_filter],
+                    x=data.x[data_filter],
                     y=y_residuals[data_filter],
-                    xerr=cases.FIT_DATA.xerr[data_filter],
-                    yerr=cases.FIT_DATA.yerr[data_filter],
+                    xerr=data.xerr[data_filter],
+                    yerr=data.yerr[data_filter],
                     markersize=1,
                     marker="o",
                     linestyle="None",
@@ -93,18 +95,19 @@ def test_plot_residuals_with_xmax(base_dict, plot_method, mock_figure):
     assert_calls(
         ax.hlines, [([0], dict(xmin=0.1, xmax=xmax, linestyles="dashed"))], rel=EPSILON
     )
-    y_residuals = cases.FIT_DATA.y - cases.FUNC(cases.A, cases.FIT_DATA.x)
-    data_filter = [val <= xmax for val in cases.FIT_DATA.x]
+    data = base_dict["data"]
+    y_residuals = data.y - cases.FUNC(cases.A, data.x)
+    data_filter = [val <= xmax for val in data.x]
     assert_calls(
         mock_figure.add_subplot.return_value.errorbar,
         [
             (
                 [],
                 dict(
-                    x=cases.FIT_DATA.x[data_filter],
+                    x=data.x[data_filter],
                     y=y_residuals[data_filter],
-                    xerr=cases.FIT_DATA.xerr[data_filter],
-                    yerr=cases.FIT_DATA.yerr[data_filter],
+                    xerr=data.xerr[data_filter],
+                    yerr=data.yerr[data_filter],
                     markersize=1,
                     marker="o",
                     linestyle="None",
@@ -131,17 +134,18 @@ def test_plot_residuals_with_color(base_dict, plot_method, mock_figure):
     assert_calls(
         ax.hlines, [([0], dict(xmin=0.1, xmax=10.9, linestyles="dashed"))], rel=EPSILON
     )
-    y_residuals = cases.FIT_DATA.y - cases.FUNC(cases.A, cases.FIT_DATA.x)
+    data = base_dict["data"]
+    y_residuals = data.y - cases.FUNC(cases.A, data.x)
     assert_calls(
         mock_figure.add_subplot.return_value.errorbar,
         [
             (
                 [],
                 dict(
-                    x=cases.FIT_DATA.x,
+                    x=data.x,
                     y=y_residuals,
-                    xerr=cases.FIT_DATA.xerr,
-                    yerr=cases.FIT_DATA.yerr,
+                    xerr=data.xerr,
+                    yerr=data.yerr,
                     markersize=1,
                     marker="o",
                     linestyle="None",

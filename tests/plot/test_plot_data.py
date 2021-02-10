@@ -48,16 +48,17 @@ def test_plot_data_with_color(base_dict, plot_method, mock_figure):
         fig._actual_fig == mock_figure  # pylint: disable=protected-access
     ), "Figure is different than expected"
     ax = mock_figure.add_subplot.return_value
+    data = base_dict["data"]
     assert_calls(
         ax.errorbar,
         [
             (
                 [],
                 dict(
-                    x=cases.FIT_DATA.x,
-                    y=cases.FIT_DATA.y,
-                    xerr=cases.FIT_DATA.xerr,
-                    yerr=cases.FIT_DATA.yerr,
+                    x=data.x,
+                    y=data.y,
+                    xerr=data.xerr,
+                    yerr=data.yerr,
                     markersize=1,
                     marker="o",
                     linestyle="None",
