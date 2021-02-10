@@ -1,4 +1,5 @@
 """Fitting data class insert the fitting algorithm."""
+# pylint: disable=too-many-lines
 import csv
 import json
 from collections import OrderedDict
@@ -428,7 +429,7 @@ class FittingData:  # pylint: disable=R0902,R0904
     @property
     def x_index(self) -> int:
         """
-        Index of the x column
+        Index of the x column.
 
         :return: Index of the x column
         :rtype: int
@@ -464,7 +465,7 @@ class FittingData:  # pylint: disable=R0902,R0904
     @property
     def xerr_index(self) -> int:
         """
-        Index of the x error column
+        Index of the x error column.
 
         :return: Index of the x error column
         :rtype: int
@@ -500,9 +501,9 @@ class FittingData:  # pylint: disable=R0902,R0904
     @property
     def y_index(self) -> int:
         """
-        Index of the y column
+        Index of the y column.
 
-        :return: Index of the t column
+        :return: Index of the y column
         :rtype: int
         """
         return self._y_index
@@ -536,9 +537,9 @@ class FittingData:  # pylint: disable=R0902,R0904
     @property
     def yerr_index(self) -> int:
         """
-        Index of the x error column
+        Index of the y error column.
 
-        :return: Index of the x error column
+        :return: Index of the y error column
         :rtype: int
         """
         return self._yerr_index
