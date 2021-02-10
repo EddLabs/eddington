@@ -48,13 +48,17 @@ def assert_equal_item(value1, value2, rel):
         else:
             assert_list_equal(value1, value2, rel)
     elif isinstance(value1, float):
-        assert value1 == pytest.approx(
-            value2, rel=rel
-        ), f"{value1} should be the same as {value2}"
+        assert_float_equal(value1, value2, rel)
     elif isinstance(value1, dict):
         assert_dict_equal(value1, value2, rel=rel)
     else:
         assert value1 == value2, f"{value1} should be the same as {value2}"
+
+
+def assert_float_equal(value1, value2, rel):
+    assert value1 == pytest.approx(
+        value2, rel=rel
+    ), f"{value1} should be the same as {value2}"
 
 
 def assert_numpy_array_equal(array1, array2, rel):
