@@ -124,6 +124,16 @@ class FittingData:  # pylint: disable=R0902,R0904
         return self._length
 
     @property
+    def number_of_columns(self) -> int:
+        """
+        Number of columns.
+
+        :return: Number of columns
+        :rtype: int
+        """
+        return len(self.all_columns)
+
+    @property
     def data(self) -> OrderedDict:
         """
         Data matrix.
@@ -413,8 +423,11 @@ class FittingData:  # pylint: disable=R0902,R0904
     @x_column.setter
     def x_column(self, x_column):
         self._x_column_index = self.__get_index(column=x_column, previous_index=-1)
-        self.__validate_index(self._x_column_index, x_column)
-        self._x_column = self.__get_column_name(self._x_column_index)
+        if self._x_column_index is None:
+            self._x_column = None
+        else:
+            self.__validate_column_index(self._x_column_index)
+            self._x_column = self.__get_column_name(self._x_column_index)
 
     @property
     def xerr_column(self):
@@ -431,8 +444,11 @@ class FittingData:  # pylint: disable=R0902,R0904
         self._xerr_column_index = self.__get_index(
             column=xerr_column, previous_index=self._x_column_index
         )
-        self.__validate_index(self._xerr_column_index, xerr_column)
-        self._xerr_column = self.__get_column_name(self._xerr_column_index)
+        if self._xerr_column_index is None:
+            self._xerr_column = None
+        else:
+            self.__validate_column_index(self._xerr_column_index)
+            self._xerr_column = self.__get_column_name(self._xerr_column_index)
 
     @property
     def y_column(self):
@@ -449,8 +465,11 @@ class FittingData:  # pylint: disable=R0902,R0904
         self._y_column_index = self.__get_index(
             column=y_column, previous_index=self._xerr_column_index
         )
-        self.__validate_index(self._y_column_index, y_column)
-        self._y_column = self.__get_column_name(self._y_column_index)
+        if self._y_column_index is None:
+            self._y_column = None
+        else:
+            self.__validate_column_index(self._y_column_index)
+            self._y_column = self.__get_column_name(self._y_column_index)
 
     @property
     def yerr_column(self):
@@ -467,8 +486,11 @@ class FittingData:  # pylint: disable=R0902,R0904
         self._yerr_column_index = self.__get_index(
             column=yerr_column, previous_index=self._y_column_index
         )
-        self.__validate_index(self._yerr_column_index, yerr_column)
-        self._yerr_column = self.__get_column_name(self._yerr_column_index)
+        if self._yerr_column_index is None:
+            self._yerr_column = None
+        else:
+            self.__validate_column_index(self._yerr_column_index)
+            self._yerr_column = self.__get_column_name(self._yerr_column_index)
 
     def statistics(self, column_name: str) -> Optional[Statistics]:
         """
@@ -843,15 +865,6 @@ class FittingData:  # pylint: disable=R0902,R0904
 
     # Private methods
 
-    def __validate_index(self, index, column):
-        if index is None:
-            if self.search:
-                raise FittingDataColumnExistenceError(column)
-            return
-        max_index = len(self._all_columns)
-        if index < 0 or index >= max_index:
-            raise FittingDataColumnIndexError(index + 1, max_index)
-
     def __update_statistics(self):
         self._statistics_map.clear()
         for column in self.all_columns:
@@ -876,18 +889,17 @@ class FittingData:  # pylint: disable=R0902,R0904
             )
         return records
 
-    def __get_index(self, column, previous_index):
-        if column in self.all_columns:
-            return self.all_columns.index(column)
-        if column is not None:
-            return self.__covert_to_index(column)
-        if self.search:
-            return previous_index + 1
-        return None
+    def __get_index(
+        self, column: Union[str, int, None], previous_index: int
+    ) -> Optional[int]:
+        if column is None:
+            return previous_index + 1 if self.search else None
+        if isinstance(column, int):
+            return column - 1
+        self.__validate_column_name(column)
+        return self.all_columns.index(column)
 
     def __get_column_name(self, index):
-        if index is None:
-            return None
         return self.all_columns[index]
 
     def __get_indices_in_bounds(self, min_value, max_value, column_name):
@@ -895,6 +907,14 @@ class FittingData:  # pylint: disable=R0902,R0904
             self.__in_bounds(min_value=min_value, max_value=max_value, value=value)
             for value in self.data[column_name]
         ]
+
+    def __validate_column_name(self, column_name):
+        if column_name not in self.all_columns:
+            raise FittingDataColumnExistenceError(column_name)
+
+    def __validate_column_index(self, index):
+        if index < 0 or index >= self.number_of_columns:
+            raise FittingDataColumnIndexError(index + 1, self.number_of_columns)
 
     @classmethod
     def __combine_records_indices(cls, *indices_lists):
@@ -907,13 +927,6 @@ class FittingData:  # pylint: disable=R0902,R0904
         if max_value is not None and value > max_value:
             return False
         return True
-
-    @classmethod
-    def __covert_to_index(cls, column):
-        try:
-            return int(column) - 1
-        except ValueError:
-            return None
 
     @classmethod
     def __build_from_rows(  # pylint: disable=too-many-arguments
