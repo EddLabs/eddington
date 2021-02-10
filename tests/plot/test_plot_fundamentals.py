@@ -86,16 +86,17 @@ def test_error_bar_without_boundaries(base_dict, plot_method, mock_figure):
     assert (
         fig._actual_fig == mock_figure  # pylint: disable=protected-access
     ), "Figure is different than expected"
+    data = base_dict["data"]
     assert_calls(
         mock_figure.add_subplot.return_value.errorbar,
         calls=[
             (
                 [],
                 dict(
-                    x=cases.FIT_DATA.x,
-                    y=cases.FIT_DATA.y,
-                    xerr=cases.FIT_DATA.xerr,
-                    yerr=cases.FIT_DATA.yerr,
+                    x=data.x,
+                    y=data.y,
+                    xerr=data.xerr,
+                    yerr=data.yerr,
                     markersize=1,
                     marker="o",
                     linestyle="None",
@@ -119,17 +120,18 @@ def test_error_bar_with_xmin(base_dict, plot_method, mock_figure):
     assert (
         fig._actual_fig == mock_figure  # pylint: disable=protected-access
     ), "Figure is different than expected"
-    data_filter = [val >= xmin for val in cases.FIT_DATA.x]
+    data = base_dict["data"]
+    data_filter = [val >= xmin for val in data.x]
     assert_calls(
         mock_figure.add_subplot.return_value.errorbar,
         calls=[
             (
                 [],
                 dict(
-                    x=cases.FIT_DATA.x[data_filter],
-                    y=cases.FIT_DATA.y[data_filter],
-                    xerr=cases.FIT_DATA.xerr[data_filter],
-                    yerr=cases.FIT_DATA.yerr[data_filter],
+                    x=data.x[data_filter],
+                    y=data.y[data_filter],
+                    xerr=data.xerr[data_filter],
+                    yerr=data.yerr[data_filter],
                     markersize=1,
                     marker="o",
                     linestyle="None",
@@ -153,17 +155,18 @@ def test_error_bar_with_xmax(base_dict, plot_method, mock_figure):
     assert (
         fig._actual_fig == mock_figure  # pylint: disable=protected-access
     ), "Figure is different than expected"
-    data_filter = [val <= xmax for val in cases.FIT_DATA.x]
+    data = base_dict["data"]
+    data_filter = [val <= xmax for val in data.x]
     assert_calls(
         mock_figure.add_subplot.return_value.errorbar,
         calls=[
             (
                 [],
                 dict(
-                    x=cases.FIT_DATA.x[data_filter],
-                    y=cases.FIT_DATA.y[data_filter],
-                    xerr=cases.FIT_DATA.xerr[data_filter],
-                    yerr=cases.FIT_DATA.yerr[data_filter],
+                    x=data.x[data_filter],
+                    y=data.y[data_filter],
+                    xerr=data.xerr[data_filter],
+                    yerr=data.yerr[data_filter],
                     markersize=1,
                     marker="o",
                     linestyle="None",
