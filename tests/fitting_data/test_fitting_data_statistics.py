@@ -38,7 +38,7 @@ def test_initial_statistics():
 
 def test_unselect_record_statistics():
     fitting_data = FittingData(COLUMNS)
-    record_index = random.randint(0, NUMBER_OF_RECORDS)
+    record_index = random.randint(1, NUMBER_OF_RECORDS)
     fitting_data.unselect_record(record_index)
     for header in COLUMNS_NAMES:
         header_statistics = fitting_data.statistics(header)
