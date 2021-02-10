@@ -588,7 +588,9 @@ class FittingData:  # pylint: disable=R0902,R0904
 
     # More functionalities
 
-    def residuals(self, fit_func, a: np.ndarray):  # pylint: disable=invalid-name
+    def residuals(  # pylint: disable=invalid-name
+        self, fit_func, a: np.ndarray
+    ) -> "FittingData":
         """
         Creates residuals :class:`FittingData` objects.
 
@@ -597,18 +599,29 @@ class FittingData:  # pylint: disable=R0902,R0904
         :param a: the parameters of the given fitting function
         :type a: ``numpy.ndarray``
         :returns: residuals :class:`FittingData`
+        :raises FittingDataError: Raised when missing x or y column
         """
-        y_residuals = self.y - fit_func(a, self.x)
-        return FittingData(
-            data=OrderedDict(
-                [
-                    (self.x_column, self.x),
-                    (self.xerr_column, self.xerr),
-                    (self.y_column, y_residuals),
-                    (self.yerr_column, self.yerr),
-                ]
+        if self.x_column is None:
+            raise FittingDataError(
+                "Could not calculate residuals data without x values."
             )
-        )
+        if self.y_column is None:
+            raise FittingDataError(
+                "Could not calculate residuals data without y values."
+            )
+        y_residuals = self.y - fit_func(a, self.x)
+        raw_data: Dict[str, np.ndarray] = {
+            self.x_column: self.x,  # type: ignore
+            self.y_column: y_residuals,
+        }
+        kwargs = dict(x_column=self.x_column, y_column=self.y_column, search=False)
+        if self.xerr_column is not None:
+            raw_data[self.xerr_column] = self.xerr  # type: ignore
+            kwargs["xerr_column"] = self.xerr_column
+        if self.yerr_column is not None:
+            raw_data[self.yerr_column] = self.yerr  # type: ignore
+            kwargs["yerr_column"] = self.yerr_column
+        return FittingData(data=raw_data, **kwargs)
 
     # Read and generate methods
 

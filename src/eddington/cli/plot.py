@@ -171,10 +171,10 @@ def plot_cli(
             residuals_data.records_indices = checkers_list
             add_errorbar(
                 ax=ax,
-                x=residuals_data.x,
-                y=residuals_data.y,
-                xerr=residuals_data.xerr,
-                yerr=residuals_data.yerr,
+                x=residuals_data.x,  # type: ignore
+                y=residuals_data.y,  # type: ignore
+                xerr=residuals_data.xerr,  # type: ignore
+                yerr=residuals_data.yerr,  # type: ignore
                 label=label,
                 color=color,
             )
