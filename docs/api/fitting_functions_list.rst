@@ -1,7 +1,7 @@
 .. _fitting_functions_list:
 
-Out-of-the-Box Fit Functions
-============================
+Out-of-the-Box Fitting Functions
+================================
 
 .. automethod:: eddington.fitting_functions_list.linear
 

@@ -33,6 +33,12 @@ open-source libraries such as *numpy*, *scipy*, and *matplotlib*.
 *Eddington* can be integrated with python code as a library, can be used as a CLI and
 has an easy to use GUI.
 
+.. note::
+
+    *Eddington* is in early stages of development. Therefore, its API might change in
+    order to introduce new features and make *Eddington* the best data fitting platform
+    there is. We appreciate your patience.
+
 Installation
 ------------
 

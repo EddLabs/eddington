@@ -1,7 +1,7 @@
 .. _fitting_data:
 
-Fit Data
-========
+Fitting Data
+============
 
 .. autoclass:: eddington.fitting_data.FittingData
    :members:
