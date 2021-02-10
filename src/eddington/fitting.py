@@ -34,6 +34,7 @@ def fit(  # pylint: disable=invalid-name
     :param use_a_derivative: indicates whether to use a derivative or not.
     :type use_a_derivative: bool
     :returns: FittingResult
+    :raises FittingError: Raised when missing information for the fitting algorithm.
     """
     if data.x is None:
         raise FittingError("Cannot fit data without x values")
