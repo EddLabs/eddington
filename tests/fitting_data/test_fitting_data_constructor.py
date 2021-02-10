@@ -23,21 +23,9 @@ def case_default():
     return fitting_data, expected_columns
 
 
-def case_int_x_column():
-    fitting_data = FittingData(COLUMNS, x_column=3)
-    expected_columns = Columns(x="c", xerr="d", y="e", yerr="f")
-    return fitting_data, expected_columns
-
-
 def case_string_x_column():
     fitting_data = FittingData(COLUMNS, x_column="c")
     expected_columns = Columns(x="c", xerr="d", y="e", yerr="f")
-    return fitting_data, expected_columns
-
-
-def case_int_y_column():
-    fitting_data = FittingData(COLUMNS, y_column=5)
-    expected_columns = Columns(x="a", xerr="b", y="e", yerr="f")
     return fitting_data, expected_columns
 
 
@@ -47,21 +35,9 @@ def case_string_y_column():
     return fitting_data, expected_columns
 
 
-def case_int_xerr_column():
-    fitting_data = FittingData(COLUMNS, xerr_column=4)
-    expected_columns = Columns(x="a", xerr="d", y="e", yerr="f")
-    return fitting_data, expected_columns
-
-
 def case_string_xerr_column():
     fitting_data = FittingData(COLUMNS, xerr_column="d")
     expected_columns = Columns(x="a", xerr="d", y="e", yerr="f")
-    return fitting_data, expected_columns
-
-
-def case_int_yerr_column():
-    fitting_data = FittingData(COLUMNS, yerr_column=6)
-    expected_columns = Columns(x="a", xerr="b", y="c", yerr="f")
     return fitting_data, expected_columns
 
 
@@ -72,14 +48,14 @@ def case_string_yerr_column():
 
 
 def case_x_and_y_column():
-    fitting_data = FittingData(COLUMNS, x_column=3, y_column="h")
+    fitting_data = FittingData(COLUMNS, x_column="c", y_column="h")
     expected_columns = Columns(x="c", xerr="d", y="h", yerr="i")
     return fitting_data, expected_columns
 
 
 def case_jumbled_columns():
     fitting_data = FittingData(
-        COLUMNS, x_column=3, xerr_column=1, y_column="b", yerr_column=9
+        COLUMNS, x_column="c", xerr_column="a", y_column="b", yerr_column="i"
     )
     expected_columns = Columns(x="c", xerr="a", y="b", yerr="i")
     return fitting_data, expected_columns
@@ -212,24 +188,6 @@ def test_x_not_existing(column):
         FittingDataColumnExistenceError, match='^Could not find column "r" in data$'
     ):
         FittingData(COLUMNS, **{column: "r"})
-
-
-@pytest.mark.parametrize("column", COLUMNS_OPTIONS)
-def test_x_zero_index(column):
-    with pytest.raises(
-        FittingDataColumnIndexError,
-        match="^No column number 0 in data. index should be between 1 and 10$",
-    ):
-        FittingData(COLUMNS, **{column: 0})
-
-
-@pytest.mark.parametrize("column", COLUMNS_OPTIONS)
-def test_x_larger_than_size(column):
-    with pytest.raises(
-        FittingDataColumnIndexError,
-        match="^No column number 11 in data. index should be between 1 and 10$",
-    ):
-        FittingData(COLUMNS, **{column: 11})
 
 
 def test_exception_risen_because_of_columns_length():
