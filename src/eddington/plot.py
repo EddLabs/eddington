@@ -135,10 +135,10 @@ def plot_residuals(  # pylint: disable=invalid-name,too-many-arguments,too-many-
     residuals = data.residuals(fit_func=func, a=a)
     add_errorbar(
         ax=ax,
-        x=residuals.x[checkers_list],
-        xerr=residuals.xerr[checkers_list],
-        y=residuals.y[checkers_list],
-        yerr=residuals.yerr[checkers_list],
+        x=residuals.x[checkers_list],  # type: ignore
+        xerr=residuals.xerr[checkers_list],  # type: ignore
+        y=residuals.y[checkers_list],  # type: ignore
+        yerr=residuals.yerr[checkers_list],  # type: ignore
         color=color,
     )
     horizontal_line(ax=ax, xmin=xmin, xmax=xmax)
