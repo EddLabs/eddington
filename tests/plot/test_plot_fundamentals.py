@@ -1,8 +1,10 @@
 from unittest.mock import Mock
 
+import pytest
 from pytest_cases import parametrize_with_cases
 
 from eddington import show_or_export
+from eddington.exceptions import PlottingError
 from eddington.plot import LineStyle
 from tests.plot import cases
 from tests.util import assert_calls
@@ -190,6 +192,36 @@ def test_plot_as_context(
     mock_figure.savefig.assert_called_once_with(output)
     mock_plt_clf.assert_called_once_with()
     mock_plt_close.assert_called_once_with("all")
+
+
+@parametrize_with_cases(argnames="base_dict, plot_method", cases=cases)
+def test_plot_with_no_x_raises_exception(
+    base_dict, plot_method, mock_figure, mock_plt_clf, mock_plt_close
+):
+    base_dict["data"].x_column = None
+
+    with pytest.raises(PlottingError, match="^Cannot plot without x values.$"):
+        plot_method(**base_dict)
+
+
+@parametrize_with_cases(argnames="base_dict, plot_method", cases=cases)
+def test_plot_with_no_y_raises_exception(
+    base_dict, plot_method, mock_figure, mock_plt_clf, mock_plt_close
+):
+    base_dict["data"].y_column = None
+
+    with pytest.raises(PlottingError, match="^Cannot plot without y values.$"):
+        plot_method(**base_dict)
+
+
+@parametrize_with_cases(argnames="base_dict, plot_method", cases=cases)
+def test_plot_with_no_data_raises_exception(
+    base_dict, plot_method, mock_figure, mock_plt_clf, mock_plt_close
+):
+    base_dict["data"].unselect_all_records()
+
+    with pytest.raises(PlottingError, match="^Cannot plot without any chosen record.$"):
+        plot_method(**base_dict)
 
 
 def test_show_or_export_without_output(mock_plt_show):
