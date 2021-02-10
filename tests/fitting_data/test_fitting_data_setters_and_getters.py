@@ -1,4 +1,5 @@
 import itertools
+import random
 from copy import deepcopy
 
 import numpy as np
@@ -12,6 +13,9 @@ from eddington.exceptions import (
     FittingDataSetError,
 )
 from tests.fitting_data import COLUMNS, COLUMNS_NAMES, NUMBER_OF_RECORDS
+from tests.util import assert_float_equal, assert_numpy_array_equal
+
+EPSILON = 1e-5
 
 
 @parametrize(
@@ -149,3 +153,55 @@ def test_set_header_with_non_existing_name():
         match='^Could not find column "I do not exist" in data$',
     ):
         fitting_data.set_header(old_column="I do not exist", new_column="new value")
+
+
+@parametrize("header_name", COLUMNS_NAMES)
+def test_get_column_data(header_name):
+    fitting_data = FittingData(COLUMNS)
+    assert_numpy_array_equal(
+        fitting_data.column_data(header_name), COLUMNS[header_name], rel=EPSILON
+    )
+
+
+def test_column_data_get_non_existing_column():
+    fitting_data = FittingData(COLUMNS)
+
+    with pytest.raises(
+        FittingDataColumnExistenceError,
+        match='^Could not find column "I do not exist" in data$',
+    ):
+        fitting_data.column_data("I do not exist")
+
+
+@parametrize("header_name", COLUMNS_NAMES)
+def test_get_cell_data(header_name):
+    fitting_data = FittingData(COLUMNS)
+    index = random.randint(1, NUMBER_OF_RECORDS)
+    assert_float_equal(
+        fitting_data.cell_data(column_name=header_name, index=index),
+        COLUMNS[header_name][index - 1],
+        rel=EPSILON,
+    )
+
+
+def test_cell_data_get_non_existing_column():
+    fitting_data = FittingData(COLUMNS)
+
+    with pytest.raises(
+        FittingDataColumnExistenceError,
+        match='^Could not find column "I do not exist" in data$',
+    ):
+        fitting_data.cell_data("I do not exist", index=1)
+
+
+def test_cell_data_get_non_existing_record_index():
+    fitting_data = FittingData(COLUMNS)
+
+    with pytest.raises(
+        FittingDataRecordIndexError,
+        match=(
+            "^Could not find record with index -4 in data. "
+            "Index should be between 1 and 12.$"
+        ),
+    ):
+        fitting_data.cell_data(column_name="b", index=-4)

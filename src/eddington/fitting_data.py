@@ -203,21 +203,6 @@ class FittingData:  # pylint: disable=R0902,R0904
             yerr=self.yerr_column,
         )
 
-    def column_data(self, column_name: Optional[str]) -> Optional[np.ndarray]:
-        """
-        Get the data of a column.
-
-        :param column_name: The header name of the desired column. If None, return
-            None.
-        :type column_name: str
-        :returns: The data of the given column
-        :rtype: np.ndarray
-        """
-        if column_name is None:
-            return None
-        self.__validate_column_name(column_name=column_name)
-        return self.data[column_name][self.records_indices]
-
     @property
     def x(self) -> Optional[np.ndarray]:  # pylint: disable=invalid-name
         """
@@ -796,6 +781,36 @@ class FittingData:  # pylint: disable=R0902,R0904
         # fmt: on
 
     # Set methods
+
+    def column_data(self, column_name: Optional[str]) -> Optional[np.ndarray]:
+        """
+        Get the data of a column.
+
+        :param column_name: The header name of the desired column. if None, return
+            None
+        :type column_name: str
+        :returns: The data of the given column
+        :rtype: numpy.ndarray or None
+        """
+        if column_name is None:
+            return None
+        self.__validate_column_name(column_name)
+        return self.data[column_name][self.records_indices]
+
+    def cell_data(self, column_name: str, index: int) -> Optional[np.ndarray]:
+        """
+        Get the data of a column.
+
+        :param column_name: The header name of the desired cell.
+        :type column_name: str
+        :param index: The index of the desired cell.
+        :type index: int
+        :returns: The value of the cell
+        :rtype: float
+        """
+        self.__validate_column_name(column_name)
+        self.__validate_record_index(index)
+        return self.data[column_name][index - 1]
 
     def set_header(self, old_column, new_column):
         """
