@@ -125,6 +125,24 @@ class FittingData:  # pylint: disable=R0902,R0904
         else:
             self.yerr_column = yerr_column
 
+    def copy(self):
+        """
+        Make a copy of self.
+
+        :return: a copy of this fitting data.
+        :rtype: Fitting Data
+        """
+        new_data = FittingData(
+            data=self.data,
+            x_column=self.x_column,
+            xerr_column=self.xerr_column,
+            y_column=self.y_column,
+            yerr_column=self.yerr_column,
+            search=False,
+        )
+        new_data.records_indices = self.records_indices
+        return new_data
+
     # Data properties are read-only
 
     @property
