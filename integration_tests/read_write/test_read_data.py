@@ -86,7 +86,7 @@ def test_simple_read(read_method):
 
 @parametrize_with_cases(argnames="read_method", cases=VALID_CASES)
 def test_read_with_y_column(read_method):
-    fit_data: FittingData = read_method(y_column=5)
+    fit_data: FittingData = read_method(y_column="c")
     assert fit_data.x == pytest.approx(
         [10, 20, 30, 40, 50, 60, 70]
     ), "x is different than expected"
