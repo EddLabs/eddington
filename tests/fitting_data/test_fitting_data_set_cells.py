@@ -6,7 +6,11 @@ import pytest
 from pytest_cases import parametrize
 
 from eddington import FittingData
-from eddington.exceptions import FittingDataSetError
+from eddington.exceptions import (
+    FittingDataColumnExistenceError,
+    FittingDataRecordIndexError,
+    FittingDataSetError,
+)
 from tests.fitting_data import COLUMNS, COLUMNS_NAMES, NUMBER_OF_RECORDS
 
 
@@ -18,8 +22,8 @@ def test_set_cell_allowed(record_number, column_name):
     fitting_data = FittingData(deepcopy(COLUMNS))
     value = np.random.uniform(0, 10)
     fitting_data.set_cell(
-        record_number=record_number,
         column_name=column_name,
+        index=record_number,
         value=value,
     )
 
@@ -38,9 +42,10 @@ def test_set_cell_not_allowed_because_of_non_existing_column():
     value = np.random.uniform(0, 10)
 
     with pytest.raises(
-        FittingDataSetError, match='^Column name "I do not exist" does not exists$'
+        FittingDataColumnExistenceError,
+        match='^Could not find column "I do not exist" in data$',
     ):
-        fitting_data.set_cell(0, "I do not exist", value)
+        fitting_data.set_cell(column_name="I do not exist", index=1, value=value)
 
 
 def test_set_cell_not_allowed_because_of_non_existing_row():
@@ -48,8 +53,14 @@ def test_set_cell_not_allowed_because_of_non_existing_row():
     value = np.random.uniform(0, 10)
     column = np.random.choice(COLUMNS_NAMES)
 
-    with pytest.raises(FittingDataSetError, match="^Record number 13 does not exists$"):
-        fitting_data.set_cell(NUMBER_OF_RECORDS + 1, column, value)
+    with pytest.raises(
+        FittingDataRecordIndexError,
+        match="^Could not find record with index 13 in data. "
+        "Index should be between 1 and 12.$",
+    ):
+        fitting_data.set_cell(
+            column_name=column, index=NUMBER_OF_RECORDS + 1, value=value
+        )
 
 
 def test_set_cell_not_allowed_because_of_non_float_value():
@@ -65,7 +76,7 @@ def test_set_cell_not_allowed_because_of_non_float_value():
             f" has invalid syntax: I'm not a float.$"
         ),
     ):
-        fitting_data.set_cell(record, column, value)
+        fitting_data.set_cell(column_name=column, index=record, value=value)
 
 
 @parametrize("i", range(len(COLUMNS_NAMES)))
@@ -128,3 +139,13 @@ def test_rename_selected_column(column_type, header_name):
     assert getattr(fitting_data, column_type) == header_name
     fitting_data.set_header(header_name, new_header)
     assert getattr(fitting_data, column_type) == new_header
+
+
+def test_set_header_with_non_existing_name():
+    fitting_data = FittingData(COLUMNS)
+
+    with pytest.raises(
+        FittingDataColumnExistenceError,
+        match='^Could not find column "I do not exist" in data$',
+    ):
+        fitting_data.set_header(old_column="I do not exist", new_column="new value")
