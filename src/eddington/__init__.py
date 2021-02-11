@@ -29,7 +29,7 @@ from eddington.fitting_functions_list import (
 )
 from eddington.fitting_functions_registry import FittingFunctionsRegistry
 from eddington.fitting_result import FittingResult
-from eddington.plot import (
+from eddington.plot.plot_legacy import (
     add_errorbar,
     add_grid,
     add_legend,

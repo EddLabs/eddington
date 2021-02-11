@@ -1,6 +1,6 @@
 from pytest_cases import parametrize_with_cases
 
-from tests.plot import cases
+from tests.plot_legacy import cases
 from tests.util import assert_calls
 
 EPSILON = 1e-5

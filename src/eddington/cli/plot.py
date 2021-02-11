@@ -28,7 +28,7 @@ from eddington.cli.util import (
     load_data_file,
     load_fitting_function,
 )
-from eddington.plot import (
+from eddington.plot.plot_legacy import (
     LineStyle,
     add_errorbar,
     add_legend,

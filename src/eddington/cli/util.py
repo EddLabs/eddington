@@ -13,7 +13,7 @@ from eddington.fitting_data import FittingData
 from eddington.fitting_functions_list import linear, polynomial
 from eddington.fitting_functions_registry import FittingFunctionsRegistry
 from eddington.fitting_result import FittingResult
-from eddington.plot import (
+from eddington.plot.plot_legacy import (
     LineStyle,
     plot_data,
     plot_fitting,

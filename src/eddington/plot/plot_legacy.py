@@ -1,4 +1,8 @@
-"""Plotting methods."""
+"""
+Legacy plotting methods.
+
+Those methods will be removed in version 0.1.0
+"""
 from collections import OrderedDict
 from enum import Enum
 from typing import Dict, List, Optional, Tuple, Union
