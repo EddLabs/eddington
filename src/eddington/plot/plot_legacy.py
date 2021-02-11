@@ -13,7 +13,7 @@ from eddington.exceptions import PlottingError
 from eddington.fitting_data import FittingData
 from eddington.plot.figure import Figure
 from eddington.plot.line_style import LineStyle
-from eddington.print_util import to_relevant_precision_string
+from eddington.plot.plot_util import build_repr_string
 
 
 def plot_residuals(  # pylint: disable=invalid-name,too-many-arguments,too-many-locals
@@ -506,35 +506,6 @@ def get_x_plot_values(
     if step is None:
         step = (xmax - xmin) / 1000.0
     return np.arange(xmin, xmax, step=step)
-
-
-def show_or_export(fig: plt.Figure, output_path=None):
-    """
-    Show plot or export it to a file.
-
-    :param fig: a plot figure
-    :param output_path: Path or None. if None, show plot. otherwise, save to path.
-    """
-    if output_path is None:
-        plt.show()
-        return
-    fig.savefig(output_path)
-
-
-def build_repr_string(parameters: Union[List[float], np.ndarray]) -> str:
-    """
-    Format parameters array into representation string.
-
-    :param parameters: Array of parameters to be formatted
-    :type parameters: List of floats or numpy.ndarray
-    :return: Formatted string
-    :rtype: str
-    """
-    arguments_values = [
-        f"a[{i}]={to_relevant_precision_string(val)}"
-        for i, val in enumerate(parameters)
-    ]
-    return f"[{', '.join(arguments_values)}]"
 
 
 def get_checkers_list(

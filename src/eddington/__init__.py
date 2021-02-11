@@ -40,9 +40,9 @@ from eddington.plot.plot_legacy import (
     plot_data,
     plot_fitting,
     plot_residuals,
-    show_or_export,
     title,
 )
+from eddington.plot.plot_util import show_or_export
 from eddington.print_util import to_relevant_precision_string
 from eddington.random_util import random_data
 

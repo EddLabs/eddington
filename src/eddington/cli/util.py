@@ -14,12 +14,8 @@ from eddington.fitting_functions_list import linear, polynomial
 from eddington.fitting_functions_registry import FittingFunctionsRegistry
 from eddington.fitting_result import FittingResult
 from eddington.plot.line_style import LineStyle
-from eddington.plot.plot_legacy import (
-    plot_data,
-    plot_fitting,
-    plot_residuals,
-    show_or_export,
-)
+from eddington.plot.plot_legacy import plot_data, plot_fitting, plot_residuals
+from eddington.plot.plot_util import show_or_export
 
 
 def load_data_file(data_file: Path, **kwargs) -> FittingData:
