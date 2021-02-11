@@ -11,53 +11,9 @@ import numpy as np
 
 from eddington.exceptions import PlottingError
 from eddington.fitting_data import FittingData
+from eddington.plot.figure import Figure
 from eddington.plot.line_style import LineStyle
 from eddington.print_util import to_relevant_precision_string
-
-
-class Figure:
-    """
-    Wraps matplotlib Figure class.
-
-    It releases the memory when the figure is no longer in use.
-    """
-
-    def __init__(self, fig: plt.Figure):
-        """
-        Figure constructor.
-
-        :param fig: Actual matplotlib figure
-        :type fig: plt.Figure
-        """
-        self._actual_fig = fig
-
-    def __enter__(self):
-        """
-        Return self when entering as context.
-
-        :return: self
-        :rtype: Figure
-        """
-        return self
-
-    def __getattr__(self, item: str):
-        """
-        Get attributes from wrapped figure.
-
-        :param item: Item name to be returned
-        :type item: str
-        :return: Required item
-        """
-        return getattr(self._actual_fig, item)
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        """
-        Clear memory on exit.
-
-        # noqa: DAR101
-        """
-        plt.clf()
-        plt.close("all")
 
 
 def plot_residuals(  # pylint: disable=invalid-name,too-many-arguments,too-many-locals
@@ -318,14 +274,13 @@ def get_figure(  # pylint: disable=too-many-arguments
     :type y_log_scale: bool
     :return: Figure instance
     """
-    fig = plt.figure()
-    ax = fig.add_subplot()  # pylint: disable=invalid-name
-    title(ax=ax, title_name=title_name)
-    label_axes(ax=ax, xlabel=xlabel, ylabel=ylabel)
-    add_grid(ax=ax, is_grid=grid)
-    set_scales(ax=ax, is_x_log_scale=x_log_scale, is_y_log_scale=y_log_scale)
+    fig = Figure()
+    title(ax=fig.ax, title_name=title_name)
+    label_axes(ax=fig.ax, xlabel=xlabel, ylabel=ylabel)
+    add_grid(ax=fig.ax, is_grid=grid)
+    set_scales(ax=fig.ax, is_x_log_scale=x_log_scale, is_y_log_scale=y_log_scale)
 
-    return ax, Figure(fig)
+    return fig.ax, fig
 
 
 def title(ax: plt.Axes, title_name: Optional[str]):  # pylint: disable=invalid-name
