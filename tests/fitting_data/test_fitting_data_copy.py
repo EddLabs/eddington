@@ -63,3 +63,65 @@ def test_set_cell_doesnt_affect_copy(header_name):
 
     assert fitting_data.cell_data(column_name=header_name, index=index) == value
     assert copied_data.cell_data(column_name=header_name, index=index) == old_value
+
+
+def test_copy_selected_columns():
+    fitting_data = FittingData(
+        COLUMNS,
+        x_column="c",
+        xerr_column="a",
+        y_column="e",
+        yerr_column="g",
+        search=False,
+    )
+    copied_data = fitting_data.copy(only_selected_columns=True)
+
+    assert copied_data.used_columns == fitting_data.used_columns
+    assert set(copied_data.all_columns) == set(copied_data.used_columns)
+    assert copied_data.records_indices == fitting_data.records_indices
+    for column in copied_data.used_columns:
+        assert_equal_item(
+            copied_data.data[column], fitting_data.data[column], rel=EPSILON
+        )
+
+
+def test_copy_selected_columns_without_xerr():
+    fitting_data = FittingData(
+        COLUMNS,
+        x_column="c",
+        xerr_column=None,
+        y_column="e",
+        yerr_column="g",
+        search=False,
+    )
+    copied_data = fitting_data.copy(only_selected_columns=True)
+
+    assert copied_data.used_columns == fitting_data.used_columns
+    assert set(copied_data.all_columns) == {
+        column for column in copied_data.used_columns if column is not None
+    }
+    assert copied_data.records_indices == fitting_data.records_indices
+    for column_type, column in copied_data.used_columns.items():
+        if column is None:
+            assert getattr(fitting_data, column_type) is None
+        else:
+            assert_equal_item(
+                copied_data.data[column], fitting_data.data[column], rel=EPSILON
+            )
+
+
+def test_copy_selected_records():
+    fitting_data = FittingData(
+        COLUMNS, x_column="c", xerr_column="a", y_column="e", yerr_column="g"
+    )
+    selected = [random.randint(0, 1) == 1 for _ in range(NUMBER_OF_RECORDS)]
+    fitting_data.records_indices = selected
+    copied_data = fitting_data.copy(only_selected_records=True)
+
+    assert copied_data.used_columns == fitting_data.used_columns
+    assert copied_data.all_columns == fitting_data.all_columns
+    assert all(copied_data.records_indices)
+    for column in copied_data.all_columns:
+        assert_equal_item(
+            copied_data.data[column], fitting_data.column_data(column), rel=EPSILON
+        )

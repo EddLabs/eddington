@@ -125,23 +125,43 @@ class FittingData:  # pylint: disable=R0902,R0904
         else:
             self.yerr_column = yerr_column
 
-    def copy(self):
+    def copy(
+        self,
+        only_selected_columns: bool = False,
+        only_selected_records: bool = False,
+    ):
         """
         Make a copy of self.
 
+        :param only_selected_columns: If true, copy only columns which are used as x,
+            x error, y and y error columns. Otherwise, copy all columns
+        :type only_selected_columns: bool
+        :param only_selected_records: If true, copy only selected records. Otherwise,
+            copy all records.
+        :type only_selected_records: bool
         :return: a copy of this fitting data.
         :rtype: Fitting Data
         """
-        new_data = FittingData(
-            data=self.data,
+        if only_selected_columns:
+            columns = [column for column in self.used_columns if column is not None]
+        else:
+            columns = self.all_columns
+        raw_data = OrderedDict()
+        for column in columns:
+            raw_data[column] = (
+                self.column_data(column) if only_selected_records else self.data[column]
+            )
+        new_fitting_data = FittingData(
+            data=raw_data,
             x_column=self.x_column,
             xerr_column=self.xerr_column,
             y_column=self.y_column,
             yerr_column=self.yerr_column,
             search=False,
         )
-        new_data.records_indices = self.records_indices
-        return new_data
+        if not only_selected_records:
+            new_fitting_data.records_indices = self.records_indices
+        return new_fitting_data
 
     # Data properties are read-only
 
