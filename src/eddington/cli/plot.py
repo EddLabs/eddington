@@ -28,8 +28,8 @@ from eddington.cli.util import (
     load_data_file,
     load_fitting_function,
 )
+from eddington.plot.line_style import LineStyle
 from eddington.plot.plot_legacy import (
-    LineStyle,
     add_errorbar,
     add_legend,
     add_plot,

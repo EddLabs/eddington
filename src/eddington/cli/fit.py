@@ -32,7 +32,7 @@ from eddington.cli.util import (
 )
 
 # pylint: disable=invalid-name,too-many-arguments,too-many-locals,duplicate-code
-from eddington.plot.plot_legacy import LineStyle
+from eddington.plot.line_style import LineStyle
 
 
 @eddington_cli.command("fit")

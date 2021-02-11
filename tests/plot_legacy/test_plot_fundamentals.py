@@ -5,7 +5,7 @@ from pytest_cases import parametrize_with_cases
 
 from eddington import show_or_export
 from eddington.exceptions import PlottingError
-from eddington.plot.plot_legacy import LineStyle
+from eddington.plot.line_style import LineStyle
 from tests.plot_legacy import cases
 from tests.util import assert_calls
 

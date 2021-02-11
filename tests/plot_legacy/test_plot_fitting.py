@@ -4,7 +4,7 @@ from pytest_cases import THIS_MODULE, case, parametrize_with_cases
 
 from eddington import linear, plot_fitting
 from eddington.exceptions import PlottingError
-from eddington.plot.plot_legacy import LineStyle
+from eddington.plot.line_style import LineStyle
 from eddington.random_util import random_data
 from tests.util import assert_calls
 

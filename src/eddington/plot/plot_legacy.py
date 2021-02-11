@@ -4,7 +4,6 @@ Legacy plotting methods.
 Those methods will be removed in version 0.1.0
 """
 from collections import OrderedDict
-from enum import Enum
 from typing import Dict, List, Optional, Tuple, Union
 
 import matplotlib.pyplot as plt
@@ -12,27 +11,8 @@ import numpy as np
 
 from eddington.exceptions import PlottingError
 from eddington.fitting_data import FittingData
+from eddington.plot.line_style import LineStyle
 from eddington.print_util import to_relevant_precision_string
-
-
-class LineStyle(Enum):
-    """Enum class for line style options."""
-
-    SOLID = "solid"
-    DASHED = "dashed"
-    DASHDOT = "dashdot"
-    DOTTED = "dotted"
-    NONE = "none"
-
-    @classmethod
-    def all(cls) -> List[str]:
-        """
-        Get all line style values.
-
-        :return: Possible values of line styles
-        :rtype: List[str]
-        """
-        return [linestyle.value for linestyle in cls]
 
 
 class Figure:
