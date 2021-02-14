@@ -6,6 +6,18 @@ class EddingtonException(Exception):  # noqa: D101
     pass
 
 
+# Interval Errors
+
+
+class IntervalError(EddingtonException):  # noqa: D101
+    pass
+
+
+class IntervalIntersectionError(IntervalError):  # noqa: D101
+    def __init__(self, *intervals):  # noqa: D107
+        super().__init__(f"The intervals {intervals} do not intersect")
+
+
 # Fitting Function Errors
 
 

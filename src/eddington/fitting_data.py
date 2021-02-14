@@ -30,6 +30,7 @@ from eddington.exceptions import (
     FittingDataRecordsSelectionError,
     FittingDataSetError,
 )
+from eddington.interval import Interval
 from eddington.random_util import random_array, random_error, random_sigma
 from eddington.raw_data_builder import RawDataBuilder
 from eddington.statistics import Statistics
@@ -148,8 +149,8 @@ class FittingData:  # pylint: disable=R0902,R0904
             columns = self.all_columns
         raw_data = OrderedDict()
         for column in columns:
-            raw_data[column] = (
-                self.column_data(column) if only_selected_records else self.data[column]
+            raw_data[column] = self.column_data(
+                column, only_selected=only_selected_records
             )
         new_fitting_data = FittingData(
             data=raw_data,
@@ -281,6 +282,26 @@ class FittingData:  # pylint: disable=R0902,R0904
         """
         return self.column_data(self.yerr_column)
 
+    @property
+    def x_domain(self) -> Interval:
+        """
+        Minimal interval containing the values of the x column.
+
+        :return: x values domain.
+        :rtype: Interval
+        """
+        return self.column_domain(column_name=self.x_column)
+
+    @property
+    def y_domain(self) -> Interval:
+        """
+        Minimal interval containing the values of the y column.
+
+        :return: y values domain.
+        :rtype: Interval
+        """
+        return self.column_domain(column_name=self.y_column)
+
     # Records indices methods
 
     def select_record(self, index: int):
@@ -332,10 +353,8 @@ class FittingData:  # pylint: disable=R0902,R0904
             selected. If false, select from all records
         :type update_selected: bool
         """
-        if xmin is None and xmax is None:
-            self.select_all_records()
-        selected_indices = self.__get_indices_in_bounds(
-            min_value=xmin, max_value=xmax, column_name=self.x_column
+        selected_indices = self.__get_indices_in_interval(
+            interval=Interval(min_val=xmin, max_val=xmax), column_name=self.x_column
         )
         if update_selected:
             self.records_indices = self.__combine_records_indices(
@@ -363,10 +382,8 @@ class FittingData:  # pylint: disable=R0902,R0904
             selected. If false, select from all records
         :type update_selected: bool
         """
-        if ymin is None and ymax is None:
-            self.select_all_records()
-        selected_indices = self.__get_indices_in_bounds(
-            min_value=ymin, max_value=ymax, column_name=self.y_column
+        selected_indices = self.__get_indices_in_interval(
+            interval=Interval(min_val=ymin, max_val=ymax), column_name=self.y_column
         )
         if update_selected:
             self.records_indices = self.__combine_records_indices(
@@ -402,11 +419,11 @@ class FittingData:  # pylint: disable=R0902,R0904
             selected. If false, select from all records
         :type update_selected: bool
         """
-        x_selected_indices = self.__get_indices_in_bounds(
-            min_value=xmin, max_value=xmax, column_name=self.x_column
+        x_selected_indices = self.__get_indices_in_interval(
+            interval=Interval(min_val=xmin, max_val=xmax), column_name=self.x_column
         )
-        y_selected_indices = self.__get_indices_in_bounds(
-            min_value=ymin, max_value=ymax, column_name=self.y_column
+        y_selected_indices = self.__get_indices_in_interval(
+            interval=Interval(min_val=ymin, max_val=ymax), column_name=self.y_column
         )
         if update_selected:
             self.records_indices = self.__combine_records_indices(
@@ -831,22 +848,30 @@ class FittingData:  # pylint: disable=R0902,R0904
         )
         # fmt: on
 
-    # Set methods
+    # Getter methods
 
-    def column_data(self, column_name: Optional[str]) -> Optional[np.ndarray]:
+    def column_data(
+        self, column_name: Optional[str], only_selected: bool = True
+    ) -> Optional[np.ndarray]:
         """
         Get the data of a column.
 
         :param column_name: The header name of the desired column. if None, return
             None
         :type column_name: str
+        :param only_selected: If true, return only values selected records. otherwise,
+            Return values of all records.
+        :type only_selected: bool
         :returns: The data of the given column
         :rtype: numpy.ndarray or None
         """
         if column_name is None:
             return None
         self.__validate_column_name(column_name)
-        return self.data[column_name][self.records_indices]
+        values = self.data[column_name]
+        if only_selected:
+            return values[self.records_indices]
+        return values
 
     def cell_data(self, column_name: str, index: int) -> Optional[np.ndarray]:
         """
@@ -862,6 +887,25 @@ class FittingData:  # pylint: disable=R0902,R0904
         self.__validate_column_name(column_name)
         self.__validate_record_index(index)
         return self.data[column_name][index - 1]
+
+    def column_domain(
+        self, column_name: Optional[str], only_selected: bool = True
+    ) -> Interval:
+        """
+        Get the smallest interval containing the values in a column.
+
+        :param column_name: The desired column name.
+        :type column_name: str
+        :param only_selected: If true, return only values selected records. otherwise,
+            Return values of all records.
+        :type only_selected: bool
+        :returns: Minimal interval containing column values
+        :rtype: Interval
+        """
+        values = self.column_data(column_name=column_name, only_selected=only_selected)
+        return Interval(min_val=np.min(values), max_val=np.max(values))
+
+    # Setter methods
 
     def set_header(self, old_column, new_column):
         """
@@ -1045,11 +1089,8 @@ class FittingData:  # pylint: disable=R0902,R0904
             return None
         return self.all_columns[index - 1]
 
-    def __get_indices_in_bounds(self, min_value, max_value, column_name):
-        return [
-            self.__in_bounds(min_value=min_value, max_value=max_value, value=value)
-            for value in self.data[column_name]
-        ]
+    def __get_indices_in_interval(self, interval: Interval, column_name: str):
+        return [value in interval for value in self.data[column_name]]
 
     def __validate_column_name(self, column_name):
         if column_name is None:
@@ -1070,14 +1111,6 @@ class FittingData:  # pylint: disable=R0902,R0904
     @classmethod
     def __combine_records_indices(cls, *indices_lists):
         return [all(selected_tuple) for selected_tuple in zip(*indices_lists)]
-
-    @classmethod
-    def __in_bounds(cls, min_value, max_value, value):
-        if min_value is not None and value < min_value:
-            return False
-        if max_value is not None and value > max_value:
-            return False
-        return True
 
     @classmethod
     def __build_from_rows(  # pylint: disable=too-many-arguments

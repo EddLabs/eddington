@@ -1,15 +1,15 @@
 import random
 from numbers import Number
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 from unittest.mock import Mock
 
 import numpy as np
 import pytest
 
 from eddington import fitting_function
+from eddington.statistics import Statistics
 
 # Assertions
-from eddington.statistics import Statistics
 
 
 def assert_calls(mock_object: Mock, calls: List[Tuple[List[Any], Dict[str, Any]]], rel):
@@ -96,6 +96,20 @@ def assert_statistics(
 
 
 # Additional methods
+
+
+def random_selected_records(
+    records_num: int,
+    min_selected: Optional[int] = None,
+    max_selected: Optional[int] = None,
+):
+    if min_selected is None:
+        min_selected = 0
+    if max_selected is None:
+        max_selected = records_num
+    selected_num = random.randint(min_selected, max_selected)
+    selected_indices = random.sample(range(records_num), selected_num)
+    return [i in selected_indices for i in range(records_num)]
 
 
 def dummy_function(name, syntax, save=True):
