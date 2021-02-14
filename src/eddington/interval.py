@@ -214,6 +214,7 @@ class Interval:
         :type other: float
         :return: New interval instance, with new size.
         :rtype: Interval
+        :raises IntervalError: raised if interval is not finite.
         """
         if not self.is_finite():
             raise IntervalError("Can multiply only finite interval by value.")
@@ -275,8 +276,13 @@ class Interval:
         self.__set_from_interval(self / other)
         return self
 
-    def __repr__(self):
-        """Representation string."""
+    def __repr__(self) -> str:
+        """
+        Pretty representation string.
+
+        :return: Representation string
+        :rtype: str
+        """
         return f"Interval({self.min_val}, {self.max_val})"
 
     @property
@@ -338,7 +344,12 @@ class Interval:
 
     @classmethod
     def all(cls) -> "Interval":
-        """Interval of all values."""
+        """
+        Interval of all values.
+
+        :return: Interval with no bounds.
+        :rtype: Interval
+        """
         return Interval()
 
     @classmethod
