@@ -1,15 +1,13 @@
 import random
 from numbers import Number
-from typing import Any, Dict, List, Tuple, Optional
+from typing import Any, Dict, List, Optional, Tuple
 from unittest.mock import Mock
 
 import numpy as np
 import pytest
 
 from eddington import fitting_function
-
 from eddington.statistics import Statistics
-
 
 # Assertions
 
@@ -103,7 +101,7 @@ def assert_statistics(
 def random_selected_records(
     records_num: int,
     min_selected: Optional[int] = None,
-    max_selected: Optional[int] = None
+    max_selected: Optional[int] = None,
 ):
     if min_selected is None:
         min_selected = 0

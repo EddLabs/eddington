@@ -14,8 +14,11 @@ from eddington.exceptions import (
 )
 from eddington.interval import Interval
 from tests.fitting_data import COLUMNS, COLUMNS_NAMES, NUMBER_OF_RECORDS
-from tests.util import assert_float_equal, assert_numpy_array_equal, \
-    random_selected_records
+from tests.util import (
+    assert_float_equal,
+    assert_numpy_array_equal,
+    random_selected_records,
+)
 
 EPSILON = 1e-5
 
