@@ -12,6 +12,7 @@ from eddington.exceptions import (
     FittingDataRecordIndexError,
     FittingDataSetError,
 )
+from eddington.interval import Interval
 from tests.fitting_data import COLUMNS, COLUMNS_NAMES, NUMBER_OF_RECORDS
 from tests.util import assert_float_equal, assert_numpy_array_equal
 
@@ -156,10 +157,27 @@ def test_set_header_with_non_existing_name():
 
 
 @parametrize("header_name", COLUMNS_NAMES)
-def test_get_column_data(header_name):
+def test_get_column_data_only_selected(header_name):
     fitting_data = FittingData(COLUMNS)
+    records_indices = [random.randint(0, 1) == 1 for _ in range(NUMBER_OF_RECORDS)]
+    fitting_data.records_indices = records_indices
     assert_numpy_array_equal(
-        fitting_data.column_data(header_name), COLUMNS[header_name], rel=EPSILON
+        fitting_data.column_data(header_name),
+        COLUMNS[header_name][records_indices],
+        rel=EPSILON,
+    )
+
+
+@parametrize("header_name", COLUMNS_NAMES)
+def test_get_column_data_all_records(header_name):
+    fitting_data = FittingData(COLUMNS)
+    fitting_data.records_indices = [
+        random.randint(0, 1) == 1 for _ in range(NUMBER_OF_RECORDS)
+    ]
+    assert_numpy_array_equal(
+        fitting_data.column_data(header_name, only_selected=False),
+        COLUMNS[header_name],
+        rel=EPSILON,
     )
 
 
@@ -205,3 +223,44 @@ def test_cell_data_get_non_existing_record_index():
         ),
     ):
         fitting_data.cell_data(column_name="b", index=-4)
+
+
+@parametrize("header_name", COLUMNS_NAMES)
+def test_get_column_domain_only_selected(header_name):
+    fitting_data = FittingData(COLUMNS)
+    values = fitting_data.column_data(header_name)
+    domain = fitting_data.column_domain(header_name)
+    assert isinstance(domain, Interval)
+    assert_float_equal(domain.min_val, np.min(values), rel=EPSILON)
+    assert_float_equal(domain.max_val, np.max(values), rel=EPSILON)
+
+
+@parametrize("header_name", COLUMNS_NAMES)
+def test_get_column_domain_all_records(header_name):
+    fitting_data = FittingData(COLUMNS)
+    fitting_data.records_indices = [
+        random.randint(0, 1) == 1 for _ in range(NUMBER_OF_RECORDS)
+    ]
+    values = fitting_data.column_data(header_name, only_selected=False)
+    domain = fitting_data.column_domain(header_name, only_selected=False)
+    assert isinstance(domain, Interval)
+    assert_float_equal(domain.min_val, np.min(values), rel=EPSILON)
+    assert_float_equal(domain.max_val, np.max(values), rel=EPSILON)
+
+
+@parametrize("header_name", COLUMNS_NAMES)
+def test_get_x_domain(header_name):
+    fitting_data = FittingData(COLUMNS, x_column=header_name, search=False)
+    fitting_data.records_indices = [
+        random.randint(0, 1) == 1 for _ in range(NUMBER_OF_RECORDS)
+    ]
+    assert fitting_data.x_domain == fitting_data.column_domain(column_name=header_name)
+
+
+@parametrize("header_name", COLUMNS_NAMES)
+def test_get_y_domain(header_name):
+    fitting_data = FittingData(COLUMNS, y_column=header_name, search=False)
+    fitting_data.records_indices = [
+        random.randint(0, 1) == 1 for _ in range(NUMBER_OF_RECORDS)
+    ]
+    assert fitting_data.y_domain == fitting_data.column_domain(column_name=header_name)

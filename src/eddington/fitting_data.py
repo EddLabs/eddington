@@ -149,8 +149,8 @@ class FittingData:  # pylint: disable=R0902,R0904
             columns = self.all_columns
         raw_data = OrderedDict()
         for column in columns:
-            raw_data[column] = (
-                self.column_data(column) if only_selected_records else self.data[column]
+            raw_data[column] = self.column_data(
+                column, only_selected=only_selected_records
             )
         new_fitting_data = FittingData(
             data=raw_data,
@@ -281,6 +281,26 @@ class FittingData:  # pylint: disable=R0902,R0904
         :rtype: np.ndarray
         """
         return self.column_data(self.yerr_column)
+
+    @property
+    def x_domain(self) -> Interval:
+        """
+        Minimal interval containing the values of the x column.
+
+        :return: x values domain.
+        :rtype: Interval
+        """
+        return self.column_domain(column_name=self.x_column)
+
+    @property
+    def y_domain(self) -> Interval:
+        """
+        Minimal interval containing the values of the y column.
+
+        :return: y values domain.
+        :rtype: Interval
+        """
+        return self.column_domain(column_name=self.y_column)
 
     # Records indices methods
 
@@ -828,22 +848,30 @@ class FittingData:  # pylint: disable=R0902,R0904
         )
         # fmt: on
 
-    # Set methods
+    # Getter methods
 
-    def column_data(self, column_name: Optional[str]) -> Optional[np.ndarray]:
+    def column_data(
+        self, column_name: Optional[str], only_selected: bool = True
+    ) -> Optional[np.ndarray]:
         """
         Get the data of a column.
 
         :param column_name: The header name of the desired column. if None, return
             None
         :type column_name: str
+        :param only_selected: If true, return only values selected records. otherwise,
+            Return values of all records.
+        :type only_selected: bool
         :returns: The data of the given column
         :rtype: numpy.ndarray or None
         """
         if column_name is None:
             return None
         self.__validate_column_name(column_name)
-        return self.data[column_name][self.records_indices]
+        values = self.data[column_name]
+        if only_selected:
+            return values[self.records_indices]
+        return values
 
     def cell_data(self, column_name: str, index: int) -> Optional[np.ndarray]:
         """
@@ -859,6 +887,25 @@ class FittingData:  # pylint: disable=R0902,R0904
         self.__validate_column_name(column_name)
         self.__validate_record_index(index)
         return self.data[column_name][index - 1]
+
+    def column_domain(
+        self, column_name: Optional[str], only_selected: bool = True
+    ) -> Interval:
+        """
+        Get the smallest interval containing the values in a column.
+
+        :param column_name: The desired column name.
+        :type column_name: str
+        :param only_selected: If true, return only values selected records. otherwise,
+            Return values of all records.
+        :type only_selected: bool
+        :returns: Minimal interval containing column values
+        :rtype: Interval
+        """
+        values = self.column_data(column_name=column_name, only_selected=only_selected)
+        return Interval(min_val=np.min(values), max_val=np.max(values))
+
+    # Setter methods
 
     def set_header(self, old_column, new_column):
         """
