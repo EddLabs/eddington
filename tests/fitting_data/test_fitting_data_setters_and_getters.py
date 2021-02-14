@@ -14,7 +14,8 @@ from eddington.exceptions import (
 )
 from eddington.interval import Interval
 from tests.fitting_data import COLUMNS, COLUMNS_NAMES, NUMBER_OF_RECORDS
-from tests.util import assert_float_equal, assert_numpy_array_equal
+from tests.util import assert_float_equal, assert_numpy_array_equal, \
+    random_selected_records
 
 EPSILON = 1e-5
 
@@ -238,9 +239,9 @@ def test_get_column_domain_only_selected(header_name):
 @parametrize("header_name", COLUMNS_NAMES)
 def test_get_column_domain_all_records(header_name):
     fitting_data = FittingData(COLUMNS)
-    fitting_data.records_indices = [
-        random.randint(0, 1) == 1 for _ in range(NUMBER_OF_RECORDS)
-    ]
+    fitting_data.records_indices = random_selected_records(
+        records_num=NUMBER_OF_RECORDS, min_selected=1
+    )
     values = fitting_data.column_data(header_name, only_selected=False)
     domain = fitting_data.column_domain(header_name, only_selected=False)
     assert isinstance(domain, Interval)
@@ -251,16 +252,16 @@ def test_get_column_domain_all_records(header_name):
 @parametrize("header_name", COLUMNS_NAMES)
 def test_get_x_domain(header_name):
     fitting_data = FittingData(COLUMNS, x_column=header_name, search=False)
-    fitting_data.records_indices = [
-        random.randint(0, 1) == 1 for _ in range(NUMBER_OF_RECORDS)
-    ]
+    fitting_data.records_indices = random_selected_records(
+        records_num=NUMBER_OF_RECORDS, min_selected=1
+    )
     assert fitting_data.x_domain == fitting_data.column_domain(column_name=header_name)
 
 
 @parametrize("header_name", COLUMNS_NAMES)
 def test_get_y_domain(header_name):
     fitting_data = FittingData(COLUMNS, y_column=header_name, search=False)
-    fitting_data.records_indices = [
-        random.randint(0, 1) == 1 for _ in range(NUMBER_OF_RECORDS)
-    ]
+    fitting_data.records_indices = random_selected_records(
+        records_num=NUMBER_OF_RECORDS, min_selected=1
+    )
     assert fitting_data.y_domain == fitting_data.column_domain(column_name=header_name)
