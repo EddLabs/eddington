@@ -171,6 +171,10 @@ def test_intervals_equality_relations(interval1, interval2):
     assert interval1 == interval2
 
 
+def test_interval_not_equal_to_tuple():
+    assert Interval(1, 2) != (1, 2)
+
+
 @parametrize(
     argnames=["interval", "val", "result"],
     argvalues=[
