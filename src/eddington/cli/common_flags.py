@@ -55,7 +55,7 @@ is_grid_option = click.option(
 
 is_legend_option = click.option(
     "--legend/--no-legend",
-    default=None,
+    default=False,
     help="Should add legend to fitting plot.",
 )
 

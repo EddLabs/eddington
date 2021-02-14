@@ -4,6 +4,7 @@ from typing import List, Optional, Tuple, Union
 
 import click
 
+from eddington import show_or_export
 from eddington.cli.common_flags import (
     data_color_option,
     data_file_option,
@@ -28,20 +29,12 @@ from eddington.cli.util import (
     load_data_file,
     load_fitting_function,
 )
+from eddington.consts import PLOT_DOMAIN_MULTIPLIER
+from eddington.plot.figure_builder import FigureBuilder
 from eddington.plot.line_style import LineStyle
-from eddington.plot.plot_legacy import (
-    add_errorbar,
-    add_legend,
-    add_plot,
-    build_repr_string,
-    get_checkers_list,
-    get_figure,
-    get_plot_borders,
-    get_x_plot_values,
-    show_or_export,
-)
 
 # pylint: disable=invalid-name,too-many-arguments,too-many-locals,duplicate-code
+from eddington.plot.plot_util import build_repr_string
 
 
 @eddington_cli.command("plot")
@@ -108,7 +101,7 @@ def plot_cli(
     x_label: Optional[str],
     y_label: Optional[str],
     grid: bool,
-    legend: Optional[bool],
+    legend: bool,
     colors: Union[List[Optional[str]], Tuple[Optional[str], ...]],
     linestyles: Union[List[LineStyle], Tuple[LineStyle, ...]],
     data_color: Optional[str],
@@ -137,57 +130,48 @@ def plot_cli(
         linestyles += [
             LineStyle.SOLID for _ in range(len(parameters_sets) - len(linestyles))
         ]
-    ax, figure = get_figure(
-        title_name=title,
+    figure_builder = FigureBuilder(
+        title=title,
         xlabel=x_label,
         ylabel=y_label,
+        legend=legend,
         grid=grid,
-        x_log_scale=x_log_scale,
-        y_log_scale=y_log_scale,
     )
-    xmin, xmax = get_plot_borders(x=data.x)  # type: ignore
+    if x_log_scale:
+        figure_builder.add_x_log_scale()
+    if y_log_scale:
+        figure_builder.add_y_log_scale()
     if not residuals:
-        checkers_list = get_checkers_list(
-            values=data.x, min_val=xmin, max_val=xmax  # type: ignore
-        )
-        add_errorbar(
-            ax=ax,
-            x=data.x[checkers_list],  # type: ignore
-            xerr=data.xerr[checkers_list],  # type: ignore
-            y=data.y[checkers_list],  # type: ignore
-            yerr=data.yerr[checkers_list],  # type: ignore
+        figure_builder.add_error_bar(
+            x=data.x,  # type: ignore
+            xerr=data.xerr,  # type: ignore
+            y=data.y,  # type: ignore
+            yerr=data.yerr,  # type: ignore
             color=data_color,
         )
-    x_values = get_x_plot_values(xmin, xmax)
+    x_domain = data.x_domain * PLOT_DOMAIN_MULTIPLIER
     for a0, color, linestyle in zip(parameters_sets, colors, linestyles):
         if a0 is None:
             continue
         label = build_repr_string(a0)
-        checkers_list = get_checkers_list(
-            values=data.x, min_val=xmin, max_val=xmax  # type: ignore
-        )
         if residuals:
             residuals_data = data.residuals(fit_func=func, a=a0)
-            residuals_data.records_indices = checkers_list
-            add_errorbar(
-                ax=ax,
+            figure_builder.add_error_bar(
                 x=residuals_data.x,  # type: ignore
-                y=residuals_data.y,  # type: ignore
                 xerr=residuals_data.xerr,  # type: ignore
+                y=residuals_data.y,  # type: ignore
                 yerr=residuals_data.yerr,  # type: ignore
                 label=label,
                 color=color,
             )
         else:
-            add_plot(
-                ax=ax,
-                x=x_values,
-                y=func(a0, x_values),
+            figure_builder.add_plot(
+                interval=x_domain,
+                func=func,
+                a=a0,
                 label=label,
                 color=color,
                 linestyle=linestyle,
             )
-    if len(parameters_sets) != 0 and legend:
-        add_legend(ax=ax, is_legend=True)
 
-    show_or_export(fig=figure, output_path=output_path)
+    show_or_export(fig=figure_builder.build(), output_path=output_path)
