@@ -30,6 +30,7 @@ from eddington.exceptions import (
     FittingDataRecordsSelectionError,
     FittingDataSetError,
 )
+from eddington.interval import Interval
 from eddington.random_util import random_array, random_error, random_sigma
 from eddington.raw_data_builder import RawDataBuilder
 from eddington.statistics import Statistics
@@ -332,10 +333,8 @@ class FittingData:  # pylint: disable=R0902,R0904
             selected. If false, select from all records
         :type update_selected: bool
         """
-        if xmin is None and xmax is None:
-            self.select_all_records()
-        selected_indices = self.__get_indices_in_bounds(
-            min_value=xmin, max_value=xmax, column_name=self.x_column
+        selected_indices = self.__get_indices_in_interval(
+            interval=Interval(min_val=xmin, max_val=xmax), column_name=self.x_column
         )
         if update_selected:
             self.records_indices = self.__combine_records_indices(
@@ -363,10 +362,8 @@ class FittingData:  # pylint: disable=R0902,R0904
             selected. If false, select from all records
         :type update_selected: bool
         """
-        if ymin is None and ymax is None:
-            self.select_all_records()
-        selected_indices = self.__get_indices_in_bounds(
-            min_value=ymin, max_value=ymax, column_name=self.y_column
+        selected_indices = self.__get_indices_in_interval(
+            interval=Interval(min_val=ymin, max_val=ymax), column_name=self.y_column
         )
         if update_selected:
             self.records_indices = self.__combine_records_indices(
@@ -402,11 +399,11 @@ class FittingData:  # pylint: disable=R0902,R0904
             selected. If false, select from all records
         :type update_selected: bool
         """
-        x_selected_indices = self.__get_indices_in_bounds(
-            min_value=xmin, max_value=xmax, column_name=self.x_column
+        x_selected_indices = self.__get_indices_in_interval(
+            interval=Interval(min_val=xmin, max_val=xmax), column_name=self.x_column
         )
-        y_selected_indices = self.__get_indices_in_bounds(
-            min_value=ymin, max_value=ymax, column_name=self.y_column
+        y_selected_indices = self.__get_indices_in_interval(
+            interval=Interval(min_val=ymin, max_val=ymax), column_name=self.y_column
         )
         if update_selected:
             self.records_indices = self.__combine_records_indices(
@@ -1045,11 +1042,8 @@ class FittingData:  # pylint: disable=R0902,R0904
             return None
         return self.all_columns[index - 1]
 
-    def __get_indices_in_bounds(self, min_value, max_value, column_name):
-        return [
-            self.__in_bounds(min_value=min_value, max_value=max_value, value=value)
-            for value in self.data[column_name]
-        ]
+    def __get_indices_in_interval(self, interval: Interval, column_name: str):
+        return [value in interval for value in self.data[column_name]]
 
     def __validate_column_name(self, column_name):
         if column_name is None:
@@ -1070,14 +1064,6 @@ class FittingData:  # pylint: disable=R0902,R0904
     @classmethod
     def __combine_records_indices(cls, *indices_lists):
         return [all(selected_tuple) for selected_tuple in zip(*indices_lists)]
-
-    @classmethod
-    def __in_bounds(cls, min_value, max_value, value):
-        if min_value is not None and value < min_value:
-            return False
-        if max_value is not None and value > max_value:
-            return False
-        return True
 
     @classmethod
     def __build_from_rows(  # pylint: disable=too-many-arguments
