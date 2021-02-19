@@ -5,26 +5,12 @@ from typing import Optional, Union
 import click
 
 from eddington.cli.common_flags import (
-    a0_option,
     fitting_function_argument,
-    is_grid_option,
-    is_json_option,
-    is_legend_option,
-    is_x_log_scale_option,
-    is_y_log_scale_option,
-    output_dir_option,
     polynomial_option,
-    should_plot_data_option,
-    should_plot_fitting_option,
-    should_plot_residuls_option,
-    title_option,
-    x_label_option,
-    y_label_option,
 )
 from eddington.cli.main_cli import eddington_cli
 from eddington.cli.util import (
     extract_array_from_string,
-    fit_and_plot,
     load_fitting_function,
 )
 from eddington.consts import (
@@ -36,14 +22,12 @@ from eddington.consts import (
     DEFAULT_YSIGMA,
 )
 
-# pylint: disable=invalid-name,too-many-arguments,too-many-locals,duplicate-code
 from eddington.random_util import random_data
 
 
-@eddington_cli.command("fit-random")
+@eddington_cli.command("generate-data")
 @fitting_function_argument
 @polynomial_option
-@a0_option
 @click.option(
     "--a",
     type=str,
@@ -85,22 +69,16 @@ from eddington.random_util import random_data
     default=DEFAULT_MAX_COEFF,
     help="Maximum value for the parameters",
 )
-@title_option
-@x_label_option
-@y_label_option
-@is_grid_option
-@should_plot_fitting_option
-@should_plot_residuls_option
-@should_plot_data_option
-@is_legend_option
-@is_x_log_scale_option
-@is_y_log_scale_option
-@output_dir_option
-@is_json_option
-def fit_random_cli(
+@click.option(
+    "-o",
+    "--output-path",
+    required=True,
+    type=click.Path(dir_okay=False),
+    help="Path to save data in",
+)
+def generate_data_cli(
     fitting_function_name: Optional[str],
     polynomial_degree: Optional[int],
-    a0: Optional[str],
     a: Optional[str],
     random_x_min: float,
     random_x_max: float,
@@ -108,18 +86,7 @@ def fit_random_cli(
     max_coeff: float,
     x_sigma: float,
     y_sigma: float,
-    title: Optional[str],
-    x_label: Optional[str],
-    y_label: Optional[str],
-    grid,
-    should_plot_fitting: bool,
-    should_plot_residuals: bool,
-    should_plot_data: bool,
-    legend: Optional[bool],
-    x_log_scale: bool,
-    y_log_scale: bool,
-    output_dir: Union[Path, str],
-    json: bool,
+    output_path: Union[str, Path]
 ):
     """
     Fitting random data using the Eddington fitting algorithm.
@@ -139,20 +106,6 @@ def fit_random_cli(
         ysigma=y_sigma,
         a=extract_array_from_string(a),
     )
-    fit_and_plot(
-        data=data,
-        func=func,
-        a0=extract_array_from_string(a0),
-        legend=legend,
-        output_dir=output_dir,
-        is_json=json,
-        title=title,
-        x_label=x_label,
-        y_label=y_label,
-        x_log_scale=x_log_scale,
-        y_log_scale=y_log_scale,
-        grid=grid,
-        should_plot_data=should_plot_data,
-        should_plot_fitting=should_plot_fitting,
-        should_plot_residuals=should_plot_residuals,
-    )
+    output_path = Path(output_path)
+    if output_path.suffix == ".csv":
+        data.save_csv()
