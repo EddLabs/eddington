@@ -12,15 +12,6 @@ import numpy as np
 import openpyxl
 
 from eddington import io_util
-from eddington.consts import (
-    DEFAULT_MAX_COEFF,
-    DEFAULT_MEASUREMENTS,
-    DEFAULT_MIN_COEFF,
-    DEFAULT_XMAX,
-    DEFAULT_XMIN,
-    DEFAULT_XSIGMA,
-    DEFAULT_YSIGMA,
-)
 from eddington.exceptions import (
     FittingDataColumnExistenceError,
     FittingDataColumnIndexError,
@@ -31,7 +22,6 @@ from eddington.exceptions import (
     FittingDataSetError,
 )
 from eddington.interval import Interval
-from eddington.random_util import random_array, random_error, random_sigma
 from eddington.raw_data_builder import RawDataBuilder
 from eddington.statistics import Statistics
 
@@ -660,59 +650,7 @@ class FittingData:  # pylint: disable=R0902,R0904
             kwargs["yerr_column"] = self.yerr_column
         return FittingData(data=raw_data, **kwargs)
 
-    # Read and generate methods
-
-    @classmethod
-    def random(  # pylint: disable=invalid-name,too-many-arguments
-        cls,
-        fit_func,  # type: ignore
-        x: Optional[np.ndarray] = None,
-        a: Optional[np.ndarray] = None,
-        xmin: float = DEFAULT_XMIN,
-        xmax: float = DEFAULT_XMAX,
-        min_coeff: float = DEFAULT_MIN_COEFF,
-        max_coeff: float = DEFAULT_MAX_COEFF,
-        xsigma: float = DEFAULT_XSIGMA,
-        ysigma: float = DEFAULT_YSIGMA,
-        measurements: int = DEFAULT_MEASUREMENTS,
-    ):
-        """
-        Generate a random fit data.
-
-        :param fit_func: :class:`FittingFunction` to evaluate with the fit data
-        :type fit_func: ``FittingFunction``
-        :param x: Optional. The input for the fitting algorithm.
-            If not given, generated randomly.
-        :type x: ``numpy.ndarray``
-        :param a: Optional. the actual parameters that should be returned by the
-            fitting algorithm. If not given, generated randomly.
-        :type a: ``numpy.ndarray``
-        :param xmin: Minimum value for x.
-        :type xmin: float
-        :param xmax: Maximum value for x.
-        :type xmax: float
-        :param min_coeff: Minimum value for `a` coefficient.
-        :type min_coeff: float
-        :param max_coeff: Maximum value for `a` coefficient.
-        :type max_coeff: float
-        :param xsigma: Standard deviation for x.
-        :type xsigma: float
-        :param ysigma: Standard deviation for y.
-        :type ysigma: float
-        :param measurements: Number of measurements
-        :type measurements: int
-        :returns: random :class:`FittingData`
-        """
-        if a is None:
-            a = random_array(min_val=min_coeff, max_val=max_coeff, size=fit_func.n)
-        if x is None:
-            x = random_array(min_val=xmin, max_val=xmax, size=measurements)
-        xerr = random_sigma(average_sigma=xsigma, size=measurements)
-        yerr = random_sigma(average_sigma=ysigma, size=measurements)
-        y = fit_func(a, x + random_error(scales=xerr)) + random_error(scales=yerr)
-        return FittingData(
-            data=OrderedDict([("x", x), ("xerr", xerr), ("y", y), ("yerr", yerr)])
-        )
+    # Read Methods
 
     @classmethod
     def read_from_excel(  # pylint: disable=too-many-arguments

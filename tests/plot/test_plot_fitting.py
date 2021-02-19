@@ -2,9 +2,10 @@ import numpy as np
 import pytest
 from pytest_cases import THIS_MODULE, case, parametrize_with_cases
 
-from eddington import FittingData, linear, plot_fitting
+from eddington import linear, plot_fitting
 from eddington.exceptions import PlottingError
 from eddington.plot import LineStyle
+from eddington.random_util import random_data
 from tests.util import assert_calls
 
 HAS_LEGEND = "has_legend"
@@ -20,7 +21,7 @@ A1_REPR, A2_REPR, A3_REPR = (
     "[a[0]=3.000, a[1]=2.000]",
     "[a[0]=3.924, a[1]=1.234e-5]",
 )
-FIT_DATA = FittingData.random(FUNC, x=X, a=np.array([1, 2]), measurements=X.shape[0])
+FIT_DATA = random_data(FUNC, x=X, a=np.array([1, 2]), measurements=X.shape[0])
 TITLE_NAME = "Title"
 
 
