@@ -97,7 +97,7 @@ from eddington.random_util import random_data
 @is_y_log_scale_option
 @output_dir_option
 @is_json_option
-def generate_data_cli(
+def fit_random_cli(
     fitting_function_name: Optional[str],
     polynomial_degree: Optional[int],
     a0: Optional[str],
