@@ -16,7 +16,7 @@ from eddington.consts import (
 )
 
 
-def random_data(  # pylint: disable=invalid-name,too-many-arguments
+def random_data(  # pylint: disable=invalid-name,too-many-arguments,too-many-locals
     fit_func,  # type: ignore
     x: Optional[np.ndarray] = None,
     a: Optional[np.ndarray] = None,
@@ -27,7 +27,11 @@ def random_data(  # pylint: disable=invalid-name,too-many-arguments
     xsigma: float = DEFAULT_XSIGMA,
     ysigma: float = DEFAULT_YSIGMA,
     measurements: Optional[int] = None,
-):
+    x_column: str = "x",
+    y_column: str = "y",
+    xerr_column: Optional[str] = "xerr",
+    yerr_column: Optional[str] = "yerr",
+) -> FittingData:
     """
     Generate a random fit data.
 
@@ -54,7 +58,18 @@ def random_data(  # pylint: disable=invalid-name,too-many-arguments
     :param measurements: Optional. Number of measurements. If :paramref:`x` is
         given, take as length of x
     :type measurements: int
-    :returns: random :class:`FittingData`
+    :param x_column: Column name for the x values
+    :type x_column: str
+    :param y_column: Column name for the y values
+    :type y_column: str
+    :param xerr_column: Column name for the x error values. If None, do not generate
+        x errors
+    :type xerr_column: str or None
+    :param yerr_column: Column name for the y error values. If None, do not generate
+        y errors
+    :type yerr_column: str or None
+    :returns: a random fitting data, according to parameters
+    :rtype: FittingData
     """
     if a is None:
         a = random_array(min_val=min_coeff, max_val=max_coeff, size=fit_func.n)
@@ -64,11 +79,29 @@ def random_data(  # pylint: disable=invalid-name,too-many-arguments
         x = random_array(min_val=xmin, max_val=xmax, size=measurements)
     else:
         measurements = x.shape[0]
-    xerr = random_sigma(average_sigma=xsigma, size=measurements)
-    yerr = random_sigma(average_sigma=ysigma, size=measurements)
-    y = fit_func(a, x + random_error(scales=xerr)) + random_error(scales=yerr)
+    raw_data = OrderedDict()
+    raw_data[x_column] = x
+    if xerr_column is not None:
+        xerr = random_sigma(average_sigma=xsigma, size=measurements)
+        actual_xerr = random_error(scales=xerr)
+        raw_data[xerr_column] = xerr
+    else:
+        actual_xerr = np.zeros(shape=x.shape)
+    if yerr_column is not None:
+        yerr = random_sigma(average_sigma=ysigma, size=measurements)
+        actual_yerr = random_error(scales=yerr)
+        raw_data[yerr_column] = yerr
+    else:
+        actual_yerr = np.zeros(shape=x.shape)
+    raw_data[y_column] = fit_func(a, x + actual_xerr) + actual_yerr
+
     return FittingData(
-        data=OrderedDict([("x", x), ("xerr", xerr), ("y", y), ("yerr", yerr)])
+        data=raw_data,
+        x_column=x_column,
+        xerr_column=xerr_column,
+        y_column=y_column,
+        yerr_column=yerr_column,
+        search=False,
     )
 
 

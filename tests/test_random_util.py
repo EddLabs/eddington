@@ -1,3 +1,5 @@
+from typing import Optional
+
 import numpy as np
 import pytest
 from pytest_cases import fixture, parametrize
@@ -56,11 +58,26 @@ def set_side_effects(uniform_mock, exponential_mock, normal_mock, values):
     normal_mock.side_effect = [values["xerr_actual"], values["yerr_actual"]]
 
 
-def assert_data_values(data, values):
-    assert_numpy_array_equal(data.x, values["x"], rel=EPSILON)
-    assert_numpy_array_equal(data.xerr, values["xerr"], rel=EPSILON)
-    assert_numpy_array_equal(data.y, values["y"], rel=EPSILON)
-    assert_numpy_array_equal(data.yerr, values["yerr"], rel=EPSILON)
+def assert_data_values(
+    data,
+    x,
+    xerr,
+    y,
+    yerr,
+    x_column: str = "x",
+    y_column: str = "y",
+    xerr_column: Optional[str] = "xerr",
+    yerr_column: Optional[str] = "yerr",
+):
+    assert_numpy_array_equal(data.x, x, rel=EPSILON)
+    assert_numpy_array_equal(data.xerr, xerr, rel=EPSILON)
+    assert_numpy_array_equal(data.y, y, rel=EPSILON)
+    assert_numpy_array_equal(data.yerr, yerr, rel=EPSILON)
+
+    assert data.x_column == x_column
+    assert data.xerr_column == xerr_column
+    assert data.y_column == y_column
+    assert data.yerr_column == yerr_column
 
 
 def assert_uniform_calls(
@@ -97,9 +114,7 @@ def assert_exponential_calls(
 
 def assert_normal_calls(mock_obj, xerr, yerr):
     assert_calls(
-        mock_obj,
-        [([], dict(scale=xerr)), ([], dict(scale=yerr))],
-        rel=EPSILON,
+        mock_obj, [([], dict(scale=xerr)), ([], dict(scale=yerr))], rel=EPSILON
     )
 
 
@@ -145,7 +160,13 @@ def test_random_data_defaults(uniform, exponential, normal):
 
     data = random_data(fit_func=dummy_func1)
 
-    assert_data_values(data=data, values=values)
+    assert_data_values(
+        data=data,
+        x=values["x"],
+        xerr=values["xerr"],
+        y=values["y"],
+        yerr=values["yerr"],
+    )
     assert_uniform_calls(uniform, n=dummy_func1.n)
     assert_exponential_calls(exponential)
     assert_normal_calls(normal, xerr=values["xerr"], yerr=values["yerr"])
@@ -163,7 +184,13 @@ def test_random_data_change_number_of_measurements(uniform, exponential, normal)
 
     data = random_data(fit_func=dummy_func1, measurements=measurements)
 
-    assert_data_values(data=data, values=values)
+    assert_data_values(
+        data=data,
+        x=values["x"],
+        xerr=values["xerr"],
+        y=values["y"],
+        yerr=values["yerr"],
+    )
     assert_uniform_calls(uniform, n=dummy_func1.n, measurements=measurements)
     assert_exponential_calls(exponential, measurements=measurements)
     assert_normal_calls(normal, xerr=values["xerr"], yerr=values["yerr"])
@@ -191,7 +218,13 @@ def test_random_data_with_uniform_kwargs(uniform, exponential, normal, kwargs):
 
     data = random_data(fit_func=dummy_func1, **kwargs)
 
-    assert_data_values(data=data, values=values)
+    assert_data_values(
+        data=data,
+        x=values["x"],
+        xerr=values["xerr"],
+        y=values["y"],
+        yerr=values["yerr"],
+    )
     assert_uniform_calls(uniform, n=dummy_func1.n, **kwargs)
     assert_exponential_calls(exponential)
     assert_normal_calls(normal, xerr=values["xerr"], yerr=values["yerr"])
@@ -212,9 +245,54 @@ def test_random_data_with_sigmas(uniform, exponential, normal, kwargs):
 
     data = random_data(fit_func=dummy_func1, **kwargs)
 
-    assert_data_values(data=data, values=values)
+    assert_data_values(
+        data=data,
+        x=values["x"],
+        xerr=values["xerr"],
+        y=values["y"],
+        yerr=values["yerr"],
+    )
     assert_uniform_calls(uniform, n=dummy_func1.n)
     assert_exponential_calls(exponential, **kwargs)
+    assert_normal_calls(normal, xerr=values["xerr"], yerr=values["yerr"])
+
+
+@parametrize(
+    argnames="kwargs",
+    argvalues=[
+        dict(x_column="I am x"),
+        dict(xerr_column="I am x error"),
+        dict(y_column="I am y"),
+        dict(yerr_column="I am y error"),
+        dict(
+            x_column="I am x",
+            xerr_column="I am x error",
+            y_column="I am y",
+            yerr_column="I am y error",
+        ),
+    ],
+)
+def test_random_data_with_column_names(uniform, exponential, normal, kwargs):
+    values = generate_values_dict(n=dummy_func1.n)
+    set_side_effects(
+        uniform_mock=uniform,
+        exponential_mock=exponential,
+        normal_mock=normal,
+        values=values,
+    )
+
+    data = random_data(fit_func=dummy_func1, **kwargs)
+
+    assert_data_values(
+        data=data,
+        x=values["x"],
+        xerr=values["xerr"],
+        y=values["y"],
+        yerr=values["yerr"],
+        **kwargs
+    )
+    assert_uniform_calls(uniform, n=dummy_func1.n)
+    assert_exponential_calls(exponential)
     assert_normal_calls(normal, xerr=values["xerr"], yerr=values["yerr"])
 
 
@@ -228,7 +306,13 @@ def test_random_data_with_predefined_x(uniform, exponential, normal):
 
     data = random_data(fit_func=dummy_func1, x=values["x"])
 
-    assert_data_values(data=data, values=values)
+    assert_data_values(
+        data=data,
+        x=values["x"],
+        xerr=values["xerr"],
+        y=values["y"],
+        yerr=values["yerr"],
+    )
     assert_calls(
         uniform,
         [
@@ -249,7 +333,13 @@ def test_random_data_with_predefined_a(uniform, exponential, normal):
 
     data = random_data(fit_func=dummy_func1, a=values["a"])
 
-    assert_data_values(data=data, values=values)
+    assert_data_values(
+        data=data,
+        x=values["x"],
+        xerr=values["xerr"],
+        y=values["y"],
+        yerr=values["yerr"],
+    )
     assert_calls(
         uniform,
         [
@@ -259,3 +349,63 @@ def test_random_data_with_predefined_a(uniform, exponential, normal):
     )
     assert_exponential_calls(exponential)
     assert_normal_calls(normal, xerr=values["xerr"], yerr=values["yerr"])
+
+
+def test_random_data_without_xerr(uniform, exponential, normal):
+    a = np.arange(1, dummy_func1.n + 1)
+    x = np.arange(1, DEFAULT_MEASUREMENTS + 1)
+    yerr = np.arange(1, DEFAULT_MEASUREMENTS + 1) * 0.01
+    yerr_actual = np.arange(1, DEFAULT_MEASUREMENTS + 1) * 0.005
+    y = dummy_func1(a, x) + yerr_actual
+    uniform.side_effect = [a, x]
+    exponential.side_effect = [yerr]
+    normal.side_effect = [yerr_actual]
+
+    data = random_data(fit_func=dummy_func1, xerr_column=None)
+
+    assert_data_values(
+        data=data,
+        x=x,
+        xerr=None,
+        y=y,
+        yerr=yerr,
+        xerr_column=None,
+    )
+
+    assert_uniform_calls(uniform, n=dummy_func1.n)
+    assert_calls(
+        exponential,
+        [([DEFAULT_YSIGMA], dict(size=DEFAULT_MEASUREMENTS))],
+        rel=EPSILON,
+    )
+    assert_calls(normal, [([], dict(scale=yerr))], rel=EPSILON)
+
+
+def test_random_data_without_yerr(uniform, exponential, normal):
+    a = np.arange(1, dummy_func1.n + 1)
+    x = np.arange(1, DEFAULT_MEASUREMENTS + 1)
+    xerr = np.arange(1, DEFAULT_MEASUREMENTS + 1) * 0.1
+    xerr_actual = np.arange(1, DEFAULT_MEASUREMENTS + 1) * 0.05
+    y = dummy_func1(a, x + xerr_actual)
+    uniform.side_effect = [a, x]
+    exponential.side_effect = [xerr]
+    normal.side_effect = [xerr_actual]
+
+    data = random_data(fit_func=dummy_func1, yerr_column=None)
+
+    assert_data_values(
+        data=data,
+        x=x,
+        xerr=xerr,
+        y=y,
+        yerr=None,
+        yerr_column=None,
+    )
+
+    assert_uniform_calls(uniform, n=dummy_func1.n)
+    assert_calls(
+        exponential,
+        [([DEFAULT_XSIGMA], dict(size=DEFAULT_MEASUREMENTS))],
+        rel=EPSILON,
+    )
+    assert_calls(normal, [([], dict(scale=xerr))], rel=EPSILON)
