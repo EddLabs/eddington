@@ -3,8 +3,9 @@ from argparse import Namespace
 import numpy as np
 import pytest
 
-from eddington import FittingData, fit, fitting_function
+from eddington import fit, fitting_function
 from eddington.exceptions import FittingError
+from eddington.random_util import random_data
 
 a0 = np.array([8, 5])
 a = np.array([3, 4])
@@ -99,7 +100,7 @@ def function_cases(odr_mock, request):
         request.param.get("model_extra_kwargs", {}),
         request.param.get("a0", a0),
     )
-    data = FittingData.random(fit_func=func)
+    data = random_data(fit_func=func)
     result = fit(data=data, func=func, a0=fit_a0, **kwargs)
     return dict(
         func=func,
@@ -162,7 +163,7 @@ def test_odr(function_cases):
 
 
 def test_fitting_fail_for_no_x():
-    fitting_data = FittingData.random(dummy_func)
+    fitting_data = random_data(dummy_func)
     fitting_data.x_column = None
 
     with pytest.raises(FittingError, match="^Cannot fit data without x values$"):
@@ -170,7 +171,7 @@ def test_fitting_fail_for_no_x():
 
 
 def test_fitting_fail_for_no_y():
-    fitting_data = FittingData.random(dummy_func)
+    fitting_data = random_data(dummy_func)
     fitting_data.y_column = None
 
     with pytest.raises(FittingError, match="^Cannot fit data without y values$"):

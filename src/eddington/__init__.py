@@ -44,6 +44,7 @@ from eddington.plot import (
     title,
 )
 from eddington.print_util import to_relevant_precision_string
+from eddington.random_util import random_data
 
 __version__ = "0.0.23"
 
@@ -96,4 +97,6 @@ __all__ = [
     "title",
     # Print
     "to_relevant_precision_string",
+    # Miscellaneous
+    "random_data",
 ]

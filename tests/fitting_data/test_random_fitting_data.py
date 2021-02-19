@@ -3,7 +3,6 @@ import pytest
 from mock import call
 from pytest_cases import fixture, parametrize
 
-from eddington import FittingData
 from eddington.consts import (
     DEFAULT_MAX_COEFF,
     DEFAULT_MEASUREMENTS,
@@ -13,6 +12,7 @@ from eddington.consts import (
     DEFAULT_XSIGMA,
     DEFAULT_YSIGMA,
 )
+from eddington.random_util import random_data
 from tests.fitting_function.dummy_functions import dummy_func1
 
 a = [2, 1]
@@ -26,14 +26,14 @@ delta = 10e-5
 
 @fixture
 def random_sigma_mock(mocker):
-    random_sigma = mocker.patch("eddington.fitting_data.random_sigma")
+    random_sigma = mocker.patch("eddington.random_util.random_sigma")
     random_sigma.side_effect = [xerr, yerr]
     return random_sigma
 
 
 @fixture
 def random_error_mock(mocker):
-    random_error = mocker.patch("eddington.fitting_data.random_error")
+    random_error = mocker.patch("eddington.random_util.random_error")
     random_error.side_effect = [real_xerr, real_yerr]
     return random_error
 
@@ -63,7 +63,7 @@ def fitting_arguments(args):
 def random_fitting_data(
     mocker, fitting_arguments, random_sigma_mock, random_error_mock
 ):
-    random_array_mock = mocker.patch("eddington.fitting_data.random_array")
+    random_array_mock = mocker.patch("eddington.random_util.random_array")
     random_array_side_effect = []
     if "a" not in fitting_arguments:
         random_array_side_effect.append(a)
@@ -71,7 +71,7 @@ def random_fitting_data(
         random_array_side_effect.append(x)
     random_array_mock.side_effect = random_array_side_effect
     return (
-        FittingData.random(dummy_func1, **fitting_arguments),
+        random_data(dummy_func1, **fitting_arguments),
         dict(
             params=fitting_arguments,
             random_array=random_array_mock,

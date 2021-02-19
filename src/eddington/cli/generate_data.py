@@ -35,9 +35,9 @@ from eddington.consts import (
     DEFAULT_XSIGMA,
     DEFAULT_YSIGMA,
 )
-from eddington.fitting_data import FittingData
 
 # pylint: disable=invalid-name,too-many-arguments,too-many-locals,duplicate-code
+from eddington.random_util import random_data
 
 
 @eddington_cli.command("fit-random")
@@ -129,7 +129,7 @@ def generate_data_cli(
     func = load_fitting_function(
         func_name=fitting_function_name, polynomial_degree=polynomial_degree
     )
-    data = FittingData.random(
+    data = random_data(
         func,
         xmin=random_x_min,
         xmax=random_x_max,

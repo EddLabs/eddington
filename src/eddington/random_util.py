@@ -1,5 +1,75 @@
 """Functions for data randomization."""
+from collections import OrderedDict
+from typing import Optional
+
 import numpy as np
+
+from eddington import FittingData
+from eddington.consts import (
+    DEFAULT_MAX_COEFF,
+    DEFAULT_MEASUREMENTS,
+    DEFAULT_MIN_COEFF,
+    DEFAULT_XMAX,
+    DEFAULT_XMIN,
+    DEFAULT_XSIGMA,
+    DEFAULT_YSIGMA,
+)
+
+
+def random_data(  # pylint: disable=invalid-name,too-many-arguments
+    fit_func,  # type: ignore
+    x: Optional[np.ndarray] = None,
+    a: Optional[np.ndarray] = None,
+    xmin: float = DEFAULT_XMIN,
+    xmax: float = DEFAULT_XMAX,
+    min_coeff: float = DEFAULT_MIN_COEFF,
+    max_coeff: float = DEFAULT_MAX_COEFF,
+    xsigma: float = DEFAULT_XSIGMA,
+    ysigma: float = DEFAULT_YSIGMA,
+    measurements: Optional[int] = None,
+):
+    """
+    Generate a random fit data.
+
+    :param fit_func: :class:`FittingFunction` to evaluate with the fit data
+    :type fit_func: ``FittingFunction``
+    :param x: Optional. The input for the fitting algorithm.
+        If not given, generated randomly.
+    :type x: ``numpy.ndarray``
+    :param a: Optional. the actual parameters that should be returned by the
+        fitting algorithm. If not given, generated randomly.
+    :type a: ``numpy.ndarray``
+    :param xmin: Minimum value for x.
+    :type xmin: float
+    :param xmax: Maximum value for x.
+    :type xmax: float
+    :param min_coeff: Minimum value for `a` coefficient.
+    :type min_coeff: float
+    :param max_coeff: Maximum value for `a` coefficient.
+    :type max_coeff: float
+    :param xsigma: Standard deviation for x.
+    :type xsigma: float
+    :param ysigma: Standard deviation for y.
+    :type ysigma: float
+    :param measurements: Optional. Number of measurements. If :paramref:`x` is
+        given, take as length of x
+    :type measurements: int
+    :returns: random :class:`FittingData`
+    """
+    if a is None:
+        a = random_array(min_val=min_coeff, max_val=max_coeff, size=fit_func.n)
+    if x is None:
+        if measurements is None:
+            measurements = DEFAULT_MEASUREMENTS
+        x = random_array(min_val=xmin, max_val=xmax, size=measurements)
+    else:
+        measurements = x.shape[0]
+    xerr = random_sigma(average_sigma=xsigma, size=measurements)
+    yerr = random_sigma(average_sigma=ysigma, size=measurements)
+    y = fit_func(a, x + random_error(scales=xerr)) + random_error(scales=yerr)
+    return FittingData(
+        data=OrderedDict([("x", x), ("xerr", xerr), ("y", y), ("yerr", yerr)])
+    )
 
 
 def random_array(min_val: float, max_val: float, size: int) -> np.ndarray:

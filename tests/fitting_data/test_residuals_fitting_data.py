@@ -1,13 +1,13 @@
 import numpy as np
 import pytest
 
-from eddington import FittingData, FittingDataError, linear
+from eddington import FittingDataError, linear, random_data
 
 A = np.array([1, 2])
 
 
 def test_residuals_data_columns_names():
-    data = FittingData.random(linear, a=A)
+    data = random_data(linear, a=A)
     residuals_data = data.residuals(fit_func=linear, a=A)
     assert (
         data.x_column == residuals_data.x_column
@@ -24,7 +24,7 @@ def test_residuals_data_columns_names():
 
 
 def test_residuals_data_columns_values():
-    data = FittingData.random(linear, a=A)
+    data = random_data(linear, a=A)
     residuals_data = data.residuals(fit_func=linear, a=A)
     y_residuals = data.y - linear(A, data.x)
 
@@ -43,7 +43,7 @@ def test_residuals_data_columns_values():
 
 
 def test_residuals_data_without_xerr_column():
-    data = FittingData.random(linear, a=A)
+    data = random_data(linear, a=A)
     data.xerr_column = None
     residuals_data = data.residuals(fit_func=linear, a=A)
     y_residuals = data.y - linear(A, data.x)
@@ -61,7 +61,7 @@ def test_residuals_data_without_xerr_column():
 
 
 def test_residuals_data_without_yerr_column():
-    data = FittingData.random(linear, a=A)
+    data = random_data(linear, a=A)
     data.yerr_column = None
     residuals_data = data.residuals(fit_func=linear, a=A)
     y_residuals = data.y - linear(A, data.x)
@@ -79,7 +79,7 @@ def test_residuals_data_without_yerr_column():
 
 
 def test_residuals_data_without_x_column():
-    data = FittingData.random(linear, a=A)
+    data = random_data(linear, a=A)
     data.x_column = None
 
     with pytest.raises(
@@ -90,7 +90,7 @@ def test_residuals_data_without_x_column():
 
 
 def test_residuals_data_without_y_column():
-    data = FittingData.random(linear, a=A)
+    data = random_data(linear, a=A)
     data.y_column = None
 
     with pytest.raises(
