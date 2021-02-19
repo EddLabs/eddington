@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 
 from eddington import FittingFunctionRuntimeError
-from tests.fitting_function.dummy_functions import dummy_func1, dummy_func2
+from tests.dummy_functions import dummy_func1, dummy_func2
 
 delta = 10e-5
 
