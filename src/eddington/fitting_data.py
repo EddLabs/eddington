@@ -674,7 +674,7 @@ class FittingData:  # pylint: disable=R0902,R0904
         max_coeff: float = DEFAULT_MAX_COEFF,
         xsigma: float = DEFAULT_XSIGMA,
         ysigma: float = DEFAULT_YSIGMA,
-        measurements: int = DEFAULT_MEASUREMENTS,
+        measurements: Optional[int] = None,
     ):
         """
         Generate a random fit data.
@@ -699,14 +699,19 @@ class FittingData:  # pylint: disable=R0902,R0904
         :type xsigma: float
         :param ysigma: Standard deviation for y.
         :type ysigma: float
-        :param measurements: Number of measurements
+        :param measurements: Optional. Number of measurements. If :paramref:`x` is
+            given, take as length of x
         :type measurements: int
         :returns: random :class:`FittingData`
         """
         if a is None:
             a = random_array(min_val=min_coeff, max_val=max_coeff, size=fit_func.n)
         if x is None:
+            if measurements is None:
+                measurements = DEFAULT_MEASUREMENTS
             x = random_array(min_val=xmin, max_val=xmax, size=measurements)
+        else:
+            measurements = x.shape[0]
         xerr = random_sigma(average_sigma=xsigma, size=measurements)
         yerr = random_sigma(average_sigma=ysigma, size=measurements)
         y = fit_func(a, x + random_error(scales=xerr)) + random_error(scales=yerr)
