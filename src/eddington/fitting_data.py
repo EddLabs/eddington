@@ -430,9 +430,28 @@ class FittingData:  # pylint: disable=R0902,R0904
 
         :param index: index of the desired record **starting from 1**.
         :type index: int
-        :returns: ``bool``
+        :returns: True if record is selected, otherwise False.
+        :rtype: bool
         """
         return self.records_indices[index - 1]
+
+    def all_selected(self) -> bool:
+        """
+        Checks whether all records are selected.
+
+        :returns: True if all records are selected, False otherwise.
+        :rtype: bool
+        """
+        return all(self.records_indices)
+
+    def non_selected(self) -> bool:
+        """
+        Checks whether no record has been selected.
+
+        :returns: True if no record has been selected, False otherwise.
+        :rtype: bool
+        """
+        return not any(self.records_indices)
 
     @property
     def records_indices(self) -> List[bool]:

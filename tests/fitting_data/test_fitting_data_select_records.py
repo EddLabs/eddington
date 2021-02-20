@@ -2,7 +2,7 @@ import random
 
 import numpy as np
 import pytest
-from pytest_cases import THIS_MODULE, parametrize, parametrize_with_cases
+from pytest_cases import THIS_MODULE, case, parametrize, parametrize_with_cases
 
 from eddington import FittingData
 from eddington.exceptions import (
@@ -13,12 +13,22 @@ from tests.fitting_data import COLUMNS, CONTENT, NUMBER_OF_RECORDS, VALUES
 from tests.util import assert_list_equal
 
 EPSILON = 1e-3
+ALL_SELECTED = "all_selected"
+PARTIALLY_SELECTED = "partially_selected"
+NON_SELECTED = "non_selected"
 
 
 def extract_values(column, indices):
     return [column[i - 1] for i in indices]
 
 
+@case(tags=[ALL_SELECTED])
+def case_default_selected():
+    fitting_data = FittingData(COLUMNS)
+    return fitting_data, list(range(1, NUMBER_OF_RECORDS + 1))
+
+
+@case(tags=[PARTIALLY_SELECTED])
 def case_unselect_one_record():
     fitting_data = FittingData(COLUMNS)
     fitting_data.unselect_record(2)
@@ -28,6 +38,7 @@ def case_unselect_one_record():
     )
 
 
+@case(tags=[PARTIALLY_SELECTED])
 def case_unselect_two_records():
     fitting_data = FittingData(COLUMNS)
     fitting_data.unselect_record(2)
@@ -35,6 +46,7 @@ def case_unselect_two_records():
     return fitting_data, [1, 3, 4] + list(range(6, NUMBER_OF_RECORDS + 1))
 
 
+@case(tags=[PARTIALLY_SELECTED])
 def case_unselect_multiple():
     fitting_data = FittingData(COLUMNS)
     fitting_data.unselect_record(2)
@@ -44,12 +56,14 @@ def case_unselect_multiple():
     return fitting_data, [1, 4, 6, 7, 8, 9] + list(range(11, NUMBER_OF_RECORDS + 1))
 
 
+@case(tags=[NON_SELECTED])
 def case_unselect_all():
     fitting_data = FittingData(COLUMNS)
     fitting_data.unselect_all_records()
     return fitting_data, []
 
 
+@case(tags=[PARTIALLY_SELECTED])
 def case_select_one_records():
     fitting_data = FittingData(COLUMNS)
     fitting_data.unselect_all_records()
@@ -57,6 +71,7 @@ def case_select_one_records():
     return fitting_data, [2]
 
 
+@case(tags=[PARTIALLY_SELECTED])
 def case_select_two_records():
     fitting_data = FittingData(COLUMNS)
     fitting_data.unselect_all_records()
@@ -65,6 +80,7 @@ def case_select_two_records():
     return fitting_data, [2, 5]
 
 
+@case(tags=[PARTIALLY_SELECTED])
 def case_select_multiple_records():
     fitting_data = FittingData(COLUMNS)
     fitting_data.unselect_all_records()
@@ -75,6 +91,7 @@ def case_select_multiple_records():
     return fitting_data, [2, 3, 5, 10]
 
 
+@case(tags=[ALL_SELECTED])
 def case_reselect_record():
     fitting_data = FittingData(COLUMNS)
     fitting_data.unselect_record(2)
@@ -82,6 +99,7 @@ def case_reselect_record():
     return fitting_data, list(range(1, NUMBER_OF_RECORDS + 1))
 
 
+@case(tags=[ALL_SELECTED])
 def case_select_all_records():
     fitting_data = FittingData(COLUMNS)
     fitting_data.unselect_all_records()
@@ -91,6 +109,7 @@ def case_select_all_records():
     return fitting_data, list(range(1, NUMBER_OF_RECORDS + 1))
 
 
+@case(tags=[PARTIALLY_SELECTED])
 def case_x_domain_lower_bound():
     xmin = 0.5
     fitting_data = FittingData(COLUMNS)
@@ -99,6 +118,7 @@ def case_x_domain_lower_bound():
     return fitting_data, selected_indices
 
 
+@case(tags=[PARTIALLY_SELECTED])
 def case_x_domain_upper_bound():
     xmax = 0.5
     fitting_data = FittingData(COLUMNS)
@@ -107,6 +127,7 @@ def case_x_domain_upper_bound():
     return fitting_data, selected_indices
 
 
+@case(tags=[PARTIALLY_SELECTED])
 def case_x_domain_both_bounds():
     xmin, xmax = 0.33, 0.66
     fitting_data = FittingData(COLUMNS)
@@ -117,12 +138,14 @@ def case_x_domain_both_bounds():
     return fitting_data, selected_indices
 
 
+@case(tags=[ALL_SELECTED])
 def case_x_domain_select_all():
     fitting_data = FittingData(COLUMNS)
     fitting_data.select_by_x_domain()
     return fitting_data, list(range(1, NUMBER_OF_RECORDS + 1))
 
 
+@case(tags=[PARTIALLY_SELECTED])
 def case_x_domain_update_selected_false():
     xmax = 0.5
     fitting_data = FittingData(COLUMNS)
@@ -133,6 +156,7 @@ def case_x_domain_update_selected_false():
     return fitting_data, selected_indices
 
 
+@case(tags=[PARTIALLY_SELECTED])
 def case_x_domain_update_selected_true():
     xmax = 0.5
     fitting_data = FittingData(COLUMNS)
@@ -144,6 +168,7 @@ def case_x_domain_update_selected_true():
     return fitting_data, selected_indices
 
 
+@case(tags=[PARTIALLY_SELECTED])
 def case_y_domain_lower_bound():
     ymin = 0.5
     fitting_data = FittingData(COLUMNS)
@@ -152,6 +177,7 @@ def case_y_domain_lower_bound():
     return fitting_data, selected_indices
 
 
+@case(tags=[PARTIALLY_SELECTED])
 def case_y_domain_upper_bound():
     ymax = 0.5
     fitting_data = FittingData(COLUMNS)
@@ -160,6 +186,7 @@ def case_y_domain_upper_bound():
     return fitting_data, selected_indices
 
 
+@case(tags=[PARTIALLY_SELECTED])
 def case_y_domain_both_bounds():
     ymin, ymax = 0.33, 0.66
     fitting_data = FittingData(COLUMNS)
@@ -170,12 +197,14 @@ def case_y_domain_both_bounds():
     return fitting_data, selected_indices
 
 
+@case(tags=[ALL_SELECTED])
 def case_y_domain_select_all():
     fitting_data = FittingData(COLUMNS)
     fitting_data.select_by_y_domain()
     return fitting_data, list(range(1, NUMBER_OF_RECORDS + 1))
 
 
+@case(tags=[PARTIALLY_SELECTED])
 def case_y_domain_update_selected_false():
     ymax = 0.5
     fitting_data = FittingData(COLUMNS)
@@ -186,6 +215,7 @@ def case_y_domain_update_selected_false():
     return fitting_data, selected_indices
 
 
+@case(tags=[PARTIALLY_SELECTED])
 def case_y_domain_update_selected_true():
     ymax = 0.5
     fitting_data = FittingData(COLUMNS)
@@ -197,6 +227,7 @@ def case_y_domain_update_selected_true():
     return fitting_data, selected_indices
 
 
+@case(tags=[PARTIALLY_SELECTED])
 def case_xy_domain_half_bounded():
     xmin, ymax = 0.33, 0.66
     fitting_data = FittingData(COLUMNS)
@@ -209,6 +240,7 @@ def case_xy_domain_half_bounded():
     return fitting_data, selected_indices
 
 
+@case(tags=[PARTIALLY_SELECTED])
 def case_xy_domain_update_selected_false():
     xmin, ymax = 0.33, 0.66
     fitting_data = FittingData(COLUMNS)
@@ -223,6 +255,7 @@ def case_xy_domain_update_selected_false():
     return fitting_data, selected_indices
 
 
+@case(tags=[PARTIALLY_SELECTED])
 def case_xy_domain_update_selected_true():
     xmin, ymax = 0.33, 0.66
     fitting_data = FittingData(COLUMNS)
@@ -238,6 +271,7 @@ def case_xy_domain_update_selected_true():
     return fitting_data, selected_indices
 
 
+@case(tags=[PARTIALLY_SELECTED])
 def case_set_selected_records():
     fitting_data = FittingData(COLUMNS)
     fitting_data.records_indices = [False, True, False, False, True] + [False] * (
@@ -292,6 +326,32 @@ def test_records(fitting_data, selected_indices):
     ]
     for actual_record, expected_record in zip(selected_records, fitting_data.records):
         assert_list_equal(actual_record, expected_record, rel=EPSILON)
+
+
+@parametrize_with_cases(
+    argnames="fitting_data, selected_indices", cases=THIS_MODULE, has_tag=ALL_SELECTED
+)
+def test_all_selected(fitting_data, selected_indices):
+    assert fitting_data.all_selected()
+    assert not fitting_data.non_selected()
+
+
+@parametrize_with_cases(
+    argnames="fitting_data, selected_indices",
+    cases=THIS_MODULE,
+    has_tag=PARTIALLY_SELECTED,
+)
+def test_partially_selected(fitting_data, selected_indices):
+    assert not fitting_data.all_selected()
+    assert not fitting_data.non_selected()
+
+
+@parametrize_with_cases(
+    argnames="fitting_data, selected_indices", cases=THIS_MODULE, has_tag=NON_SELECTED
+)
+def test_non_selected(fitting_data, selected_indices):
+    assert not fitting_data.all_selected()
+    assert fitting_data.non_selected()
 
 
 def test_set_selection_with_different_size():
