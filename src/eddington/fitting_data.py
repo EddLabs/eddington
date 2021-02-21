@@ -490,7 +490,7 @@ class FittingData:  # pylint: disable=R0902,R0904
                 f"Should select {self.number_of_records} records,"
                 f" only {len(records_indices)} selected."
             )
-        if not all([isinstance(element, bool) for element in records_indices]):
+        if not all(isinstance(element, bool) for element in records_indices):
             raise FittingDataRecordsSelectionError(
                 "When setting record indices, all values should be booleans."
             )
