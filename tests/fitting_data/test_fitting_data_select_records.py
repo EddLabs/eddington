@@ -111,8 +111,8 @@ def case_select_all_records():
 
 @case(tags=[PARTIALLY_SELECTED])
 def case_x_domain_lower_bound():
-    xmin = 0.5
     fitting_data = FittingData(COLUMNS)
+    xmin = fitting_data.x_domain.mid_point
     selected_indices = [i for i, x in enumerate(fitting_data.x, start=1) if x >= xmin]
     fitting_data.select_by_x_domain(xmin=xmin)
     return fitting_data, selected_indices
@@ -120,8 +120,8 @@ def case_x_domain_lower_bound():
 
 @case(tags=[PARTIALLY_SELECTED])
 def case_x_domain_upper_bound():
-    xmax = 0.5
     fitting_data = FittingData(COLUMNS)
+    xmax = fitting_data.x_domain.mid_point
     selected_indices = [i for i, x in enumerate(fitting_data.x, start=1) if x <= xmax]
     fitting_data.select_by_x_domain(xmax=xmax)
     return fitting_data, selected_indices
@@ -129,8 +129,8 @@ def case_x_domain_upper_bound():
 
 @case(tags=[PARTIALLY_SELECTED])
 def case_x_domain_both_bounds():
-    xmin, xmax = 0.33, 0.66
     fitting_data = FittingData(COLUMNS)
+    xmin, xmax = fitting_data.x_domain / 3
     selected_indices = [
         i for i, x in enumerate(fitting_data.x, start=1) if xmin <= x <= xmax
     ]
@@ -147,8 +147,8 @@ def case_x_domain_select_all():
 
 @case(tags=[PARTIALLY_SELECTED])
 def case_x_domain_update_selected_false():
-    xmax = 0.5
     fitting_data = FittingData(COLUMNS)
+    xmax = fitting_data.x_domain.mid_point
     selected_indices = [i for i, x in enumerate(fitting_data.x, start=1) if x <= xmax]
     index = random.choice(selected_indices)
     fitting_data.unselect_record(index)
@@ -158,8 +158,8 @@ def case_x_domain_update_selected_false():
 
 @case(tags=[PARTIALLY_SELECTED])
 def case_x_domain_update_selected_true():
-    xmax = 0.5
     fitting_data = FittingData(COLUMNS)
+    xmax = fitting_data.x_domain.mid_point
     selected_indices = [i for i, x in enumerate(fitting_data.x, start=1) if x <= xmax]
     index = random.choice(selected_indices)
     selected_indices.remove(index)
@@ -170,8 +170,8 @@ def case_x_domain_update_selected_true():
 
 @case(tags=[PARTIALLY_SELECTED])
 def case_y_domain_lower_bound():
-    ymin = 0.5
     fitting_data = FittingData(COLUMNS)
+    ymin = fitting_data.y_domain.mid_point
     selected_indices = [i for i, y in enumerate(fitting_data.y, start=1) if y >= ymin]
     fitting_data.select_by_y_domain(ymin=ymin)
     return fitting_data, selected_indices
@@ -179,8 +179,8 @@ def case_y_domain_lower_bound():
 
 @case(tags=[PARTIALLY_SELECTED])
 def case_y_domain_upper_bound():
-    ymax = 0.5
     fitting_data = FittingData(COLUMNS)
+    ymax = fitting_data.y_domain.mid_point
     selected_indices = [i for i, y in enumerate(fitting_data.y, start=1) if y <= ymax]
     fitting_data.select_by_y_domain(ymax=ymax)
     return fitting_data, selected_indices
@@ -188,8 +188,8 @@ def case_y_domain_upper_bound():
 
 @case(tags=[PARTIALLY_SELECTED])
 def case_y_domain_both_bounds():
-    ymin, ymax = 0.33, 0.66
     fitting_data = FittingData(COLUMNS)
+    ymin, ymax = fitting_data.y_domain / 3
     selected_indices = [
         i for i, y in enumerate(fitting_data.y, start=1) if ymin <= y <= ymax
     ]
@@ -206,8 +206,8 @@ def case_y_domain_select_all():
 
 @case(tags=[PARTIALLY_SELECTED])
 def case_y_domain_update_selected_false():
-    ymax = 0.5
     fitting_data = FittingData(COLUMNS)
+    ymax = fitting_data.y_domain.mid_point
     selected_indices = [i for i, y in enumerate(fitting_data.y, start=1) if y <= ymax]
     index = random.choice(selected_indices)
     fitting_data.unselect_record(index)
@@ -217,8 +217,8 @@ def case_y_domain_update_selected_false():
 
 @case(tags=[PARTIALLY_SELECTED])
 def case_y_domain_update_selected_true():
-    ymax = 0.5
     fitting_data = FittingData(COLUMNS)
+    ymax = fitting_data.y_domain.mid_point
     selected_indices = [i for i, y in enumerate(fitting_data.y, start=1) if y <= ymax]
     index = random.choice(selected_indices)
     selected_indices.remove(index)
@@ -229,8 +229,9 @@ def case_y_domain_update_selected_true():
 
 @case(tags=[PARTIALLY_SELECTED])
 def case_xy_domain_half_bounded():
-    xmin, ymax = 0.33, 0.66
     fitting_data = FittingData(COLUMNS)
+    xmin = (fitting_data.x_domain / 3).min_val
+    ymax = (fitting_data.y_domain / 3).max_val
     selected_indices = [
         i
         for i, (x, y) in enumerate(zip(fitting_data.x, fitting_data.y), start=1)
@@ -242,8 +243,9 @@ def case_xy_domain_half_bounded():
 
 @case(tags=[PARTIALLY_SELECTED])
 def case_xy_domain_update_selected_false():
-    xmin, ymax = 0.33, 0.66
     fitting_data = FittingData(COLUMNS)
+    xmin = (fitting_data.x_domain / 3).min_val
+    ymax = (fitting_data.y_domain / 3).max_val
     selected_indices = [
         i
         for i, (x, y) in enumerate(zip(fitting_data.x, fitting_data.y), start=1)
@@ -257,8 +259,9 @@ def case_xy_domain_update_selected_false():
 
 @case(tags=[PARTIALLY_SELECTED])
 def case_xy_domain_update_selected_true():
-    xmin, ymax = 0.33, 0.66
     fitting_data = FittingData(COLUMNS)
+    xmin = (fitting_data.x_domain / 3).min_val
+    ymax = (fitting_data.y_domain / 3).max_val
     selected_indices = [
         i
         for i, (x, y) in enumerate(zip(fitting_data.x, fitting_data.y), start=1)
