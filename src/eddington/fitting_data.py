@@ -198,6 +198,12 @@ class FittingData:  # pylint: disable=R0902,R0904
 
     @property
     def statistics_map(self) -> Dict[str, Statistics]:
+        """
+        Return updated statistics map.
+
+        :return: Statistics map of the data
+        :rtype: Statistics
+        """
         return self._statistics_map
 
     @property
@@ -873,6 +879,8 @@ class FittingData:  # pylint: disable=R0902,R0904
         :type column_name: str
         :returns: Statistics of the given column
         :rtype: Statistics
+        :raises FittingDataColumnExistenceError: Raised when unknown column name is
+            given.
         """
         if column_name not in self.all_columns:
             raise FittingDataColumnExistenceError(column_name)
