@@ -1,7 +1,7 @@
 """Module for handling statistical values."""
 from dataclasses import dataclass, fields
 from pathlib import Path
-from typing import List, Union, Optional, Dict
+from typing import Dict, List, Optional, Union
 
 import numpy as np
 
@@ -119,10 +119,7 @@ class Statistics:
             records.append(
                 [
                     parameter.replace("_", " ").title(),
-                    *[
-                        getattr(statistics_map[column], parameter)
-                        for column in columns
-                    ],
+                    *[getattr(statistics_map[column], parameter) for column in columns],
                 ]
             )
         return records

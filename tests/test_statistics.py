@@ -10,16 +10,13 @@ EPSILON = 1e-3
 def random_statistics_map():
     keys = ["a", "b", "c"]
     return {
-        key: Statistics.from_array(np.random.uniform(0, 100, size=3))
-        for key in keys
+        key: Statistics.from_array(np.random.uniform(0, 100, size=3)) for key in keys
     }
 
 
 def assert_save_call(save_csv_call, statistics_map, **kwargs):
     assert save_csv_call.args == tuple()
-    assert set(save_csv_call.kwargs.keys()) == {
-        "content", *list(kwargs.keys())
-    }
+    assert set(save_csv_call.kwargs.keys()) == {"content", *list(kwargs.keys())}
     for key, value in kwargs.items():
         assert save_csv_call.kwargs[key] == value
     assert_content(save_csv_call.kwargs["content"], statistics_map)
@@ -31,17 +28,20 @@ def assert_content(content, statistics_map):
     assert content[1] == ["Mean", *[stat.mean for stat in statistics_map.values()]]
     assert content[2] == ["Median", *[stat.median for stat in statistics_map.values()]]
     assert content[3] == [
-        "Variance", *[stat.variance for stat in statistics_map.values()]
+        "Variance",
+        *[stat.variance for stat in statistics_map.values()],
     ]
     assert content[4] == [
         "Standard Deviation",
         *[stat.standard_deviation for stat in statistics_map.values()],
     ]
     assert content[5] == [
-        "Maximum Value", *[stat.maximum_value for stat in statistics_map.values()]
+        "Maximum Value",
+        *[stat.maximum_value for stat in statistics_map.values()],
     ]
     assert content[6] == [
-        "Minimum Value", *[stat.minimum_value for stat in statistics_map.values()]
+        "Minimum Value",
+        *[stat.minimum_value for stat in statistics_map.values()],
     ]
 
 

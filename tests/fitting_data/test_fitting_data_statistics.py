@@ -2,9 +2,9 @@ import random
 
 import pytest
 
+from eddington.exceptions import FittingDataColumnExistenceError
 from eddington.fitting_data import FittingData
 from eddington.statistics import Statistics
-from eddington.exceptions import FittingDataColumnExistenceError
 from tests.fitting_data import COLUMNS, COLUMNS_NAMES, NUMBER_OF_RECORDS, STATISTICS
 from tests.util import assert_statistics
 
