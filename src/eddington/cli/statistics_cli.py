@@ -9,6 +9,7 @@ from eddington.cli.main_cli import eddington_cli
 from eddington.cli.util import load_data_file
 
 # pylint: disable=too-many-arguments
+from eddington.statistics import Statistics
 
 
 @eddington_cli.command("statistics")
@@ -51,6 +52,14 @@ def statistics_cli(
     if not output_dir.exists():
         output_dir.mkdir()
     if file_format == "csv":
-        data.save_statistics_csv(output_directory=output_dir, name=file_name)
+        Statistics.save_as_csv(
+            statistics_map=data.statistics_map,
+            output_directory=output_dir,
+            name=file_name,
+        )
     if file_format == "xlsx":
-        data.save_statistics_excel(output_directory=output_dir, name=file_name)
+        Statistics.save_as_excel(
+            statistics_map=data.statistics_map,
+            output_directory=output_dir,
+            name=file_name,
+        )

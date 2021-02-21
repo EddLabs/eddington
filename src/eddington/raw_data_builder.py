@@ -135,7 +135,7 @@ class RawDataBuilder:
 
     @classmethod
     def __are_headers(cls, headers):
-        return all([cls.__is_header(header) for header in headers])
+        return all(cls.__is_header(header) for header in headers)
 
     @classmethod
     def __is_header(cls, string):

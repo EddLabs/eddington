@@ -57,6 +57,15 @@ class Columns:
 class FittingData:  # pylint: disable=R0902,R0904
     """Fitting data class."""
 
+    _x_index: Optional[int]
+    _xerr_index: Optional[int]
+    _yerr_index: Optional[int]
+    _y_index: Optional[int]
+    _x_column: Optional[str]
+    _xerr_column: Optional[str]
+    _yerr_column: Optional[str]
+    _y_column: Optional[str]
+
     def __init__(  # pylint: disable=too-many-arguments
         self,
         data: Union[OrderedDict, Dict[str, np.ndarray]],
@@ -90,28 +99,29 @@ class FittingData:  # pylint: disable=R0902,R0904
         self._data = OrderedDict(
             [(key, np.array(value)) for key, value in data.items()]
         )
-        self.__initialize_columns()
+        self._x_column = self._xerr_column = self._y_column = self._yerr_column = None
+        self._x_index = self._xerr_index = self._y_index = self._yerr_index = None
+        self._statistics_map: Dict[str, Statistics] = OrderedDict()
         self._all_columns = list(self.data.keys())
         lengths = {value.size for value in self.data.values()}
         if len(lengths) != 1:
             raise FittingDataColumnsLengthError()
         self._number_of_records = next(iter(lengths))
-        self._statistics_map: Dict[str, Optional[Statistics]] = OrderedDict()
         self.select_all_records()
         self.__update_statistics()
         if x_column is None and search:
             self.x_index = 1
         else:
             self.x_column = x_column
-        if xerr_column is None and search:
+        if xerr_column is None and search and self.x_index is not None:
             self.xerr_index = self.x_index + 1
         else:
             self.xerr_column = xerr_column
-        if y_column is None and search:
+        if y_column is None and search and self.xerr_index is not None:
             self.y_index = self.xerr_index + 1
         else:
             self.y_column = y_column
-        if yerr_column is None and search:
+        if yerr_column is None and search and self.y_index is not None:
             self.yerr_index = self.y_index + 1
         else:
             self.yerr_column = yerr_column
@@ -185,6 +195,16 @@ class FittingData:  # pylint: disable=R0902,R0904
         :rtype: OrderedDict
         """
         return self._data
+
+    @property
+    def statistics_map(self) -> Dict[str, Statistics]:
+        """
+        Return updated statistics map.
+
+        :return: Statistics map of the data
+        :rtype: Statistics
+        """
+        return self._statistics_map
 
     @property
     def all_records(self) -> List[List[Any]]:
@@ -470,7 +490,7 @@ class FittingData:  # pylint: disable=R0902,R0904
                 f"Should select {self.number_of_records} records,"
                 f" only {len(records_indices)} selected."
             )
-        if not all([isinstance(element, bool) for element in records_indices]):
+        if not all(isinstance(element, bool) for element in records_indices):
             raise FittingDataRecordsSelectionError(
                 "When setting record indices, all values should be booleans."
             )
@@ -478,7 +498,7 @@ class FittingData:  # pylint: disable=R0902,R0904
         self.__update_statistics()
 
     @property
-    def x_index(self) -> int:
+    def x_index(self) -> Optional[int]:
         """
         Index of the x column.
 
@@ -514,7 +534,7 @@ class FittingData:  # pylint: disable=R0902,R0904
             self.x_index = index
 
     @property
-    def xerr_index(self) -> int:
+    def xerr_index(self) -> Optional[int]:
         """
         Index of the x error column.
 
@@ -550,7 +570,7 @@ class FittingData:  # pylint: disable=R0902,R0904
             self.xerr_index = index
 
     @property
-    def y_index(self) -> int:
+    def y_index(self) -> Optional[int]:
         """
         Index of the y column.
 
@@ -586,7 +606,7 @@ class FittingData:  # pylint: disable=R0902,R0904
             self.y_index = index
 
     @property
-    def yerr_index(self) -> int:
+    def yerr_index(self) -> Optional[int]:
         """
         Index of the y error column.
 
@@ -620,17 +640,6 @@ class FittingData:  # pylint: disable=R0902,R0904
         index = self.__get_column_index(yerr_column)
         if index != self.yerr_index:
             self.yerr_index = index
-
-    def statistics(self, column_name: str) -> Optional[Statistics]:
-        """
-        Get statistics of the values in a column.
-
-        :param column_name: The column name to get statistics of
-        :type column_name: str
-        :returns: Statistics of the given column
-        :rtype: Statistics
-        """
-        return self._statistics_map[column_name]
 
     # More functionalities
 
@@ -862,6 +871,21 @@ class FittingData:  # pylint: disable=R0902,R0904
         values = self.column_data(column_name=column_name, only_selected=only_selected)
         return Interval(min_val=np.min(values), max_val=np.max(values))
 
+    def statistics(self, column_name: str) -> Optional[Statistics]:
+        """
+        Get statistics of the values in a column.
+
+        :param column_name: The column name to get statistics of
+        :type column_name: str
+        :returns: Statistics of the given column
+        :rtype: Statistics
+        :raises FittingDataColumnExistenceError: Raised when unknown column name is
+            given.
+        """
+        if column_name not in self.all_columns:
+            raise FittingDataColumnExistenceError(column_name)
+        return self._statistics_map.get(column_name, None)
+
     # Setter methods
 
     def set_header(self, old_column, new_column):
@@ -958,83 +982,16 @@ class FittingData:  # pylint: disable=R0902,R0904
             file_name=name,
         )
 
-    def save_statistics_excel(
-        self,
-        output_directory: Union[str, Path],
-        name: Optional[str] = None,
-        sheet: Optional[str] = None,
-    ):
-        """
-        Save the fitting data statistics to xlsx file.
-
-        :param output_directory: Path to the directory for the new excel file to be
-            saved.
-        :type output_directory: ``Path`` or ``str``
-        :param name: Optional. The name of the file, without the .xlsx suffix.
-            "fitting_data_statistics" by default.
-        :type name: str
-        :param sheet: Optional. Name of the sheet that the data will be saved to.
-        :type sheet: str
-        """
-        if name is None:
-            name = "fitting_data_statistics"
-        io_util.save_as_excel(
-            content=self.__statistics_as_records(),
-            output_directory=output_directory,
-            file_name=name,
-            sheet=sheet,
-        )
-
-    def save_statistics_csv(
-        self, output_directory: Union[str, Path], name: Optional[str] = None
-    ):
-        """
-        Save the fitting data statistics to csv file.
-
-        :param output_directory:
-            Path to the directory for the new excel file to be saved.
-        :type output_directory: ``Path`` or ``str``
-        :param name: Optional. The name of the file, without the .csv suffix.
-            "fitting_data" by default.
-        :type name: str
-        """
-        if name is None:
-            name = "fitting_data_statistics"
-        io_util.save_as_csv(
-            content=self.__statistics_as_records(),
-            output_directory=output_directory,
-            file_name=name,
-        )
-
     # Private methods
-
-    def __initialize_columns(self):
-        self._x_column = self._xerr_column = self._y_column = self._yerr_column = None
-        self._x_index = self._xerr_index = self._y_index = self._yerr_index = None
 
     def __update_statistics(self):
         self._statistics_map.clear()
+        if self.non_selected():
+            return
         for column in self.all_columns:
-            try:
-                self._statistics_map[column] = Statistics.from_array(
-                    self.column_data(column)
-                )
-            except ValueError:
-                self._statistics_map[column] = None
-
-    def __statistics_as_records(self):
-        records = [["Parameters", *self.all_columns]]
-        for parameter in Statistics.parameters():
-            records.append(
-                [
-                    parameter.replace("_", " ").title(),
-                    *[
-                        getattr(statistics, parameter)
-                        for statistics in self._statistics_map.values()
-                    ],
-                ]
+            self._statistics_map[column] = Statistics.from_array(
+                self.column_data(column)
             )
-        return records
 
     def __get_column_index(self, column_name):
         if column_name is None:
