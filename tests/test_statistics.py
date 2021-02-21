@@ -15,11 +15,12 @@ def random_statistics_map():
 
 
 def assert_save_call(save_csv_call, statistics_map, **kwargs):
-    assert save_csv_call.args == tuple()
-    assert set(save_csv_call.kwargs.keys()) == {"content", *list(kwargs.keys())}
+    call_args, call_kwargs = save_csv_call[0], save_csv_call[1]
+    assert call_args == tuple()
+    assert set(call_kwargs.keys()) == {"content", *list(kwargs.keys())}
     for key, value in kwargs.items():
-        assert save_csv_call.kwargs[key] == value
-    assert_content(save_csv_call.kwargs["content"], statistics_map)
+        assert call_kwargs[key] == value
+    assert_content(call_kwargs["content"], statistics_map)
 
 
 def assert_content(content, statistics_map):
