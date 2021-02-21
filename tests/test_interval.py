@@ -46,6 +46,22 @@ def test_all_interval_constructor():
 
 
 @parametrize(
+    argnames=["min_val", "max_val"],
+    argvalues=[
+        (0, 10),
+        (0, None),
+        (None, 10),
+        (None, None),
+    ],
+)
+def test_interval_unpacking(min_val, max_val):
+    interval = Interval(min_val=min_val, max_val=max_val)
+    interval_min, interval_max = interval
+    assert interval_min == min_val
+    assert interval_max == max_val
+
+
+@parametrize(
     argnames=["interval", "min_val", "result"],
     argvalues=[
         (Interval.all(), 3, Interval(3, None)),

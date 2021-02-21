@@ -24,6 +24,22 @@ class Interval:
         """
         self.__set_min_and_max(min_val=min_val, max_val=max_val)
 
+    def __getitem__(self, index: int) -> Optional[float]:
+        """
+        Get interval border in tuple-like API.
+
+        :param index: index of the item
+        :type index: int
+        :return: min_value if index is 0, max_value if index is 1
+        :rtype: Optional[int]
+        :raises IndexError: Raised when index is not 0 or 1
+        """
+        if index == 0:
+            return self.min_val
+        if index == 1:
+            return self.max_val
+        raise IndexError(f"Index {index} is invalid for Interval")
+
     @property
     def min_val(self) -> Optional[float]:
         """
