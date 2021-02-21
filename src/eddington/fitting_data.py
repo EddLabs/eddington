@@ -57,6 +57,15 @@ class Columns:
 class FittingData:  # pylint: disable=R0902,R0904
     """Fitting data class."""
 
+    _x_index: Optional[int]
+    _xerr_index: Optional[int]
+    _yerr_index: Optional[int]
+    _y_index: Optional[int]
+    _x_column: Optional[str]
+    _xerr_column: Optional[str]
+    _yerr_column: Optional[str]
+    _y_column: Optional[str]
+
     def __init__(  # pylint: disable=too-many-arguments
         self,
         data: Union[OrderedDict, Dict[str, np.ndarray]],
@@ -104,15 +113,15 @@ class FittingData:  # pylint: disable=R0902,R0904
             self.x_index = 1
         else:
             self.x_column = x_column
-        if xerr_column is None and search:
+        if xerr_column is None and search and self.x_index is not None:
             self.xerr_index = self.x_index + 1
         else:
             self.xerr_column = xerr_column
-        if y_column is None and search:
+        if y_column is None and search and self.xerr_index is not None:
             self.y_index = self.xerr_index + 1
         else:
             self.y_column = y_column
-        if yerr_column is None and search:
+        if yerr_column is None and search and self.y_index is not None:
             self.yerr_index = self.y_index + 1
         else:
             self.yerr_column = yerr_column
@@ -483,7 +492,7 @@ class FittingData:  # pylint: disable=R0902,R0904
         self.__update_statistics()
 
     @property
-    def x_index(self) -> int:
+    def x_index(self) -> Optional[int]:
         """
         Index of the x column.
 
@@ -519,7 +528,7 @@ class FittingData:  # pylint: disable=R0902,R0904
             self.x_index = index
 
     @property
-    def xerr_index(self) -> int:
+    def xerr_index(self) -> Optional[int]:
         """
         Index of the x error column.
 
@@ -555,7 +564,7 @@ class FittingData:  # pylint: disable=R0902,R0904
             self.xerr_index = index
 
     @property
-    def y_index(self) -> int:
+    def y_index(self) -> Optional[int]:
         """
         Index of the y column.
 
@@ -591,7 +600,7 @@ class FittingData:  # pylint: disable=R0902,R0904
             self.y_index = index
 
     @property
-    def yerr_index(self) -> int:
+    def yerr_index(self) -> Optional[int]:
         """
         Index of the y error column.
 
