@@ -13,7 +13,7 @@ from eddington.exceptions import (
     FittingDataSetError,
 )
 from eddington.interval import Interval
-from tests.fitting_data import COLUMNS, COLUMNS_NAMES, NUMBER_OF_RECORDS
+from tests.fitting_data import COLUMNS, COLUMNS_NAMES, NUMBER_OF_RECORDS, ROWS
 from tests.util import (
     assert_float_equal,
     assert_numpy_array_equal,
@@ -202,6 +202,16 @@ def test_get_cell_data(header_name):
     assert_float_equal(
         fitting_data.cell_data(column_name=header_name, index=index),
         COLUMNS[header_name][index - 1],
+        rel=EPSILON,
+    )
+
+
+@parametrize("record_index", argvalues=list(range(1, NUMBER_OF_RECORDS + 1)))
+def test_get_record_data(record_index):
+    fitting_data = FittingData(COLUMNS)
+    assert_float_equal(
+        fitting_data.record_data(index=record_index),
+        ROWS[record_index],
         rel=EPSILON,
     )
 

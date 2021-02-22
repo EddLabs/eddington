@@ -839,7 +839,7 @@ class FittingData:  # pylint: disable=R0902,R0904
             return values[self.records_indices]
         return values
 
-    def cell_data(self, column_name: str, index: int) -> Optional[np.ndarray]:
+    def cell_data(self, column_name: str, index: int) -> float:
         """
         Get the data of a column.
 
@@ -853,6 +853,20 @@ class FittingData:  # pylint: disable=R0902,R0904
         self.__validate_column_name(column_name)
         self.__validate_record_index(index)
         return self.data[column_name][index - 1]
+
+    def record_data(self, index: int) -> np.ndarray:
+        """
+        Get the data of a column.
+
+        :param index: The index of the desired record.
+        :type index: int
+        :returns: The record
+        :rtype: numpy.ndarray
+        """
+        self.__validate_record_index(index)
+        return np.array(
+            [self.data[column_name][index - 1] for column_name in self.all_columns]
+        )
 
     def column_domain(
         self, column_name: Optional[str], only_selected: bool = True
