@@ -109,12 +109,22 @@ data_color_option = click.option(
 
 
 # Output
-output_dir_option = click.option(
-    "-o",
-    "--output-dir",
-    type=click.Path(dir_okay=True, file_okay=False),
-    help="Output directory to save plots in.",
-)
+def output_dir_option(required: bool):
+    """
+    Add click option of output directory.
+
+    :param required: is this option required
+    :type required: bool
+    :return: click option
+    """
+    return click.option(
+        "-o",
+        "--output-dir",
+        type=click.Path(dir_okay=True, file_okay=False),
+        required=required,
+        help="Output directory to save in.",
+    )
+
 
 is_json_option = click.option(
     "--json",

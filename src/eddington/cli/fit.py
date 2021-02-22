@@ -69,7 +69,7 @@ from eddington.plot import LineStyle
 @should_plot_data_option
 @is_x_log_scale_option
 @is_y_log_scale_option
-@output_dir_option
+@output_dir_option(required=False)
 @is_json_option
 def fit_cli(
     fitting_function_name: Optional[str],
