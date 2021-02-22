@@ -5,21 +5,16 @@ from typing import Optional, Union
 import click
 
 from eddington.cli.common_flags import (
-    a0_option,
     data_color_option,
     data_file_option,
     fitting_function_argument,
     is_grid_option,
-    is_json_option,
     is_legend_option,
     is_x_log_scale_option,
     is_y_log_scale_option,
     output_dir_option,
     polynomial_option,
     sheet_option,
-    should_plot_data_option,
-    should_plot_fitting_option,
-    should_plot_residuls_option,
     title_option,
     x_column_option,
     x_label_option,
@@ -43,7 +38,14 @@ from eddington.plot import LineStyle
 @eddington_cli.command("fit")
 @fitting_function_argument
 @polynomial_option
-@a0_option
+@click.option(
+    "--a0",
+    type=str,
+    help=(
+        "Initial guess for the fitting algorithm. "
+        "Should be given as floating point numbers separated by commas"
+    ),
+)
 @data_file_option
 @sheet_option
 @x_column_option
@@ -64,13 +66,33 @@ from eddington.plot import LineStyle
     default=LineStyle.SOLID.value,
 )
 @data_color_option
-@should_plot_fitting_option
-@should_plot_residuls_option
-@should_plot_data_option
+@click.option(
+    "--plot-fitting/--no-plot-fitting",
+    "should_plot_fitting",
+    default=True,
+    help="Should plot fitting.",
+)
+@click.option(
+    "--plot-residuals/--no-plot-residuals",
+    "should_plot_residuals",
+    default=True,
+    help="Should plot residuals.",
+)
+@click.option(
+    "--plot-data/--no-plot-data",
+    "should_plot_data",
+    default=False,
+    help="Should plot data.",
+)
 @is_x_log_scale_option
 @is_y_log_scale_option
-@output_dir_option
-@is_json_option
+@output_dir_option(required=False)
+@click.option(
+    "--json",
+    is_flag=True,
+    default=False,
+    help="Save result as json instead of text.",
+)
 def fit_cli(
     fitting_function_name: Optional[str],
     polynomial_degree: Optional[int],

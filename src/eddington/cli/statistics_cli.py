@@ -15,7 +15,7 @@ from eddington.statistics import Statistics
 @eddington_cli.command("statistics")
 @data_file_option
 @sheet_option
-@output_dir_option
+@output_dir_option(required=False)
 @click.option("-n", "--file-name", type=str, help="Output file name.")
 @click.option(
     "-f",
