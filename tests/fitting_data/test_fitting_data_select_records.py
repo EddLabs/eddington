@@ -12,7 +12,6 @@ from eddington.exceptions import (
 )
 from tests.util import assert_list_equal
 
-
 NUMBER_OF_RECORDS = 10
 
 EPSILON = 1e-3
@@ -54,7 +53,8 @@ def case_unselect_one_record():
     fitting_data = FittingData(raw_data)
     fitting_data.unselect_record(2)
     return (
-        fitting_data, raw_data,
+        fitting_data,
+        raw_data,
         [1] + list(range(3, NUMBER_OF_RECORDS + 1)),
     )
 
@@ -76,7 +76,11 @@ def case_unselect_multiple():
     fitting_data.unselect_record(5)
     fitting_data.unselect_record(3)
     fitting_data.unselect_record(10)
-    return fitting_data, raw_data, [1, 4, 6, 7, 8, 9] + list(range(11, NUMBER_OF_RECORDS + 1))
+    return (
+        fitting_data,
+        raw_data,
+        [1, 4, 6, 7, 8, 9] + list(range(11, NUMBER_OF_RECORDS + 1)),
+    )
 
 
 @case(tags=[NON_SELECTED])
@@ -335,7 +339,9 @@ def case_set_selected_records():
     return fitting_data, raw_data, [2, 5]
 
 
-@parametrize_with_cases(argnames="fitting_data, raw_data, selected_indices", cases=THIS_MODULE)
+@parametrize_with_cases(
+    argnames="fitting_data, raw_data, selected_indices", cases=THIS_MODULE
+)
 def test_x(fitting_data, raw_data, selected_indices):
     expected_x = extract_values(raw_data["x"], selected_indices)
     assert fitting_data.x.shape == np.shape(
@@ -344,28 +350,36 @@ def test_x(fitting_data, raw_data, selected_indices):
     assert fitting_data.x == pytest.approx(expected_x), "X is different than expected"
 
 
-@parametrize_with_cases(argnames="fitting_data, raw_data, selected_indices", cases=THIS_MODULE)
+@parametrize_with_cases(
+    argnames="fitting_data, raw_data, selected_indices", cases=THIS_MODULE
+)
 def test_xerr(fitting_data, raw_data, selected_indices):
     assert fitting_data.xerr == pytest.approx(
         extract_values(raw_data["xerr"], selected_indices)
     ), "X error is different than expected"
 
 
-@parametrize_with_cases(argnames="fitting_data, raw_data, selected_indices", cases=THIS_MODULE)
+@parametrize_with_cases(
+    argnames="fitting_data, raw_data, selected_indices", cases=THIS_MODULE
+)
 def test_y(fitting_data, raw_data, selected_indices):
     assert fitting_data.y == pytest.approx(
         extract_values(raw_data["y"], selected_indices)
     ), "Y is different than expected"
 
 
-@parametrize_with_cases(argnames="fitting_data, raw_data, selected_indices", cases=THIS_MODULE)
+@parametrize_with_cases(
+    argnames="fitting_data, raw_data, selected_indices", cases=THIS_MODULE
+)
 def test_yerr(fitting_data, raw_data, selected_indices):
     assert fitting_data.yerr == pytest.approx(
         extract_values(raw_data["yerr"], selected_indices)
     ), "Y error is different than expected"
 
 
-@parametrize_with_cases(argnames="fitting_data, raw_data, selected_indices", cases=THIS_MODULE)
+@parametrize_with_cases(
+    argnames="fitting_data, raw_data, selected_indices", cases=THIS_MODULE
+)
 def test_is_selected(fitting_data, raw_data, selected_indices):
     for i in range(1, fitting_data.number_of_records + 1):
         if i in selected_indices:
@@ -374,17 +388,19 @@ def test_is_selected(fitting_data, raw_data, selected_indices):
             assert not fitting_data.is_selected(i), f"Record {i} was selected"
 
 
-@parametrize_with_cases(argnames="fitting_data, raw_data, selected_indices", cases=THIS_MODULE)
+@parametrize_with_cases(
+    argnames="fitting_data, raw_data, selected_indices", cases=THIS_MODULE
+)
 def test_records(fitting_data, raw_data, selected_indices):
-    selected_records = [
-        fitting_data.record_data(i) for i in selected_indices
-    ]
+    selected_records = [fitting_data.record_data(i) for i in selected_indices]
     for actual_record, expected_record in zip(selected_records, fitting_data.records):
         assert_list_equal(actual_record, expected_record, rel=EPSILON)
 
 
 @parametrize_with_cases(
-    argnames="fitting_data, raw_data, selected_indices", cases=THIS_MODULE, has_tag=ALL_SELECTED
+    argnames="fitting_data, raw_data, selected_indices",
+    cases=THIS_MODULE,
+    has_tag=ALL_SELECTED,
 )
 def test_all_selected(fitting_data, raw_data, selected_indices):
     assert fitting_data.all_selected()
@@ -402,7 +418,9 @@ def test_partially_selected(fitting_data, raw_data, selected_indices):
 
 
 @parametrize_with_cases(
-    argnames="fitting_data, raw_data, selected_indices", cases=THIS_MODULE, has_tag=NON_SELECTED
+    argnames="fitting_data, raw_data, selected_indices",
+    cases=THIS_MODULE,
+    has_tag=NON_SELECTED,
 )
 def test_non_selected(fitting_data, raw_data, selected_indices):
     assert not fitting_data.all_selected()
