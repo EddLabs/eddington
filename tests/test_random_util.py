@@ -74,6 +74,9 @@ def assert_data_values(
     assert_numpy_array_equal(data.y, y, rel=EPSILON)
     assert_numpy_array_equal(data.yerr, yerr, rel=EPSILON)
 
+    columns = [x_column, xerr_column, y_column, yerr_column]
+    columns = [column for column in columns if column is not None]
+    assert data.all_columns == columns
     assert data.x_column == x_column
     assert data.xerr_column == xerr_column
     assert data.y_column == y_column

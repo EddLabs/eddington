@@ -80,20 +80,19 @@ def random_data(  # pylint: disable=invalid-name,too-many-arguments,too-many-loc
     else:
         measurements = x.shape[0]
     raw_data = OrderedDict()
+    actual_xerr, xerr = __generate_errors(
+        column_name=xerr_column, sigma=xsigma, measurements=measurements
+    )
+    actual_yerr, yerr = __generate_errors(
+        column_name=yerr_column, sigma=ysigma, measurements=measurements
+    )
+    y = fit_func(a, x + actual_xerr) + actual_yerr
     raw_data[x_column] = x
     if xerr_column is not None:
-        xerr = random_sigma(average_sigma=xsigma, size=measurements)
-        actual_xerr = random_error(scales=xerr)
         raw_data[xerr_column] = xerr
-    else:
-        actual_xerr = np.zeros(shape=x.shape)
+    raw_data[y_column] = y
     if yerr_column is not None:
-        yerr = random_sigma(average_sigma=ysigma, size=measurements)
-        actual_yerr = random_error(scales=yerr)
         raw_data[yerr_column] = yerr
-    else:
-        actual_yerr = np.zeros(shape=x.shape)
-    raw_data[y_column] = fit_func(a, x + actual_xerr) + actual_yerr
 
     return FittingData(
         data=raw_data,
@@ -136,3 +135,12 @@ def random_error(scales: np.ndarray) -> np.ndarray:
     :return: errors array.
     """
     return np.random.normal(scale=scales)
+
+
+def __generate_errors(column_name, sigma, measurements):
+    if column_name is not None:
+        average_error = random_sigma(average_sigma=sigma, size=measurements)
+        actual_xerr = random_error(scales=average_error)
+        return actual_xerr, average_error
+    actual_xerr = np.zeros(shape=measurements)
+    return actual_xerr, 0
