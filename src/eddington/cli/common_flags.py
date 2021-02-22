@@ -39,14 +39,6 @@ polynomial_option = click.option(
     type=int,
     help="Fitting data to polynomial of nth degree.",
 )
-a0_option = click.option(
-    "--a0",
-    type=str,
-    help=(
-        "Initial guess for the fitting algorithm. "
-        "Should be given as floating point numbers separated by commas"
-    ),
-)
 
 
 # Plot
@@ -59,26 +51,6 @@ y_label_option = click.option("--y-label", type=str, help="Label for the y axis.
 
 is_grid_option = click.option(
     "--grid/--no-grid", default=False, help="Add grid lines to plots."
-)
-should_plot_fitting_option = click.option(
-    "--plot-fitting/--no-plot-fitting",
-    "should_plot_fitting",
-    default=True,
-    help="Should plot fitting.",
-)
-
-should_plot_residuls_option = click.option(
-    "--plot-residuals/--no-plot-residuals",
-    "should_plot_residuals",
-    default=True,
-    help="Should plot residuals.",
-)
-
-should_plot_data_option = click.option(
-    "--plot-data/--no-plot-data",
-    "should_plot_data",
-    default=False,
-    help="Should plot data.",
 )
 
 is_legend_option = click.option(
@@ -124,11 +96,3 @@ def output_dir_option(required: bool):
         required=required,
         help="Output directory to save in.",
     )
-
-
-is_json_option = click.option(
-    "--json",
-    is_flag=True,
-    default=False,
-    help="Save result as json instead of text.",
-)
