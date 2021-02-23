@@ -35,21 +35,18 @@ class FittingFunction:  # pylint: disable=invalid-name,too-many-instance-attribu
     :type a_derivative: callable
     :param x_derivative: a function representing the derivative of fit_func according
         to x
-    :type a_derivative: callable
-    :param title_name: same as `name` but in title case
-    :type title_name: str
+    :type x_derivative: callable
     :param save: Should this function be saved in the :class:`FittingFunctionsRegistry`
     :type save: bool
     """
 
     fit_func: Callable = field(repr=False)
     n: int = field(repr=False)
-    name: Optional[str] = field()
+    name: str = field()
     syntax: Optional[str] = field(default=None)
     a_derivative: Optional[Callable] = field(default=None, repr=False)
     x_derivative: Optional[Callable] = field(default=None, repr=False)
-    title_name: str = field(init=False, repr=False)
-    fixed: Dict[int, float] = field(init=False, repr=False)
+    fixed: Dict[int, float] = field(init=False, repr=False, default_factory=dict)
     save: InitVar[bool] = True
 
     def __post_init__(self, save):
@@ -60,14 +57,19 @@ class FittingFunction:  # pylint: disable=invalid-name,too-many-instance-attribu
             :class:`FittingFunctionsRegistry`
         :type save: bool
         """
-        self.title_name = self.__get_title_name()
-        self.fixed = dict()
         self.x_derivative = self.__wrap_x_derivative(self.x_derivative)
         self.a_derivative = self.__wrap_a_derivative(self.a_derivative)
         if save:
             FittingFunctionsRegistry.add(self)
 
-    def __get_title_name(self):
+    @property
+    def title_name(self):
+        """
+        Function name in title format.
+
+        :return: title name
+        :rtype: str
+        """
         return self.name.title().replace("_", " ")
 
     def __validate_parameters_number(self, a):
