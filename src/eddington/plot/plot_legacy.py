@@ -4,7 +4,9 @@ Legacy plotting methods.
 Those methods will be removed in version 0.1.0
 """
 from collections import OrderedDict
+from functools import wraps
 from typing import Dict, List, Optional, Tuple, Union
+from warnings import warn
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -16,6 +18,27 @@ from eddington.plot.line_style import LineStyle
 from eddington.plot.plot_util import build_repr_string
 
 
+def deprecated(func):
+    """
+    Add deprecation warning to function.
+
+    :param func: Function to be deprecated
+    :return: Wrapped function
+    """
+
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        warn(
+            f"{func.__name__} is deprecated in will be removed by version 0.1.0",
+            category=DeprecationWarning,
+            stacklevel=2,
+        )
+        return func(*args, **kwargs)
+
+    return wrapper
+
+
+@deprecated
 def plot_residuals(  # pylint: disable=invalid-name,too-many-arguments,too-many-locals
     func,
     data: FittingData,
@@ -85,6 +108,7 @@ def plot_residuals(  # pylint: disable=invalid-name,too-many-arguments,too-many-
     return fig
 
 
+@deprecated
 def plot_fitting(  # pylint: disable=C0103,R0913,R0914
     func,
     data: FittingData,
@@ -187,6 +211,7 @@ def plot_fitting(  # pylint: disable=C0103,R0913,R0914
     return fig
 
 
+@deprecated
 def plot_data(  # pylint: disable=too-many-arguments
     data: FittingData,
     title_name,
@@ -249,6 +274,7 @@ def plot_data(  # pylint: disable=too-many-arguments
     return fig
 
 
+@deprecated
 def get_figure(  # pylint: disable=too-many-arguments
     title_name,
     xlabel: Optional[str] = None,
@@ -283,6 +309,7 @@ def get_figure(  # pylint: disable=too-many-arguments
     return fig.ax, fig
 
 
+@deprecated
 def title(ax: plt.Axes, title_name: Optional[str]):  # pylint: disable=invalid-name
     """
     Add/remove title to figure.
@@ -296,6 +323,7 @@ def title(ax: plt.Axes, title_name: Optional[str]):  # pylint: disable=invalid-n
         ax.set_title(title_name)
 
 
+@deprecated
 def label_axes(  # pylint: disable=invalid-name
     ax: plt.Axes, xlabel: Optional[str], ylabel: Optional[str]
 ):
@@ -315,6 +343,7 @@ def label_axes(  # pylint: disable=invalid-name
         ax.set_ylabel(ylabel)
 
 
+@deprecated
 def limit_axes(  # pylint: disable=invalid-name
     ax: plt.Axes, xmin: Optional[float] = None, xmax: Optional[float] = None
 ):
@@ -334,6 +363,7 @@ def limit_axes(  # pylint: disable=invalid-name
         ax.set_xlim(right=xmax)
 
 
+@deprecated
 def add_grid(ax: plt.Axes, is_grid: bool):  # pylint: disable=invalid-name
     """
     Add/remove grid to figure.
@@ -346,6 +376,7 @@ def add_grid(ax: plt.Axes, is_grid: bool):  # pylint: disable=invalid-name
     ax.grid(is_grid)
 
 
+@deprecated
 def add_legend(ax: plt.Axes, is_legend: bool):  # pylint: disable=invalid-name
     """
     Add/remove legend to figure.
@@ -359,6 +390,7 @@ def add_legend(ax: plt.Axes, is_legend: bool):  # pylint: disable=invalid-name
         ax.legend()
 
 
+@deprecated
 def set_scales(  # pylint: disable=invalid-name
     ax: plt.Axes, is_x_log_scale: bool, is_y_log_scale: bool
 ):
@@ -378,6 +410,7 @@ def set_scales(  # pylint: disable=invalid-name
         ax.set_yscale("log")
 
 
+@deprecated
 def add_plot(  # pylint: disable=invalid-name,too-many-arguments
     ax: plt.Axes,
     x: Union[np.ndarray, List[float]],
@@ -405,6 +438,7 @@ def add_plot(  # pylint: disable=invalid-name,too-many-arguments
     ax.plot(x, y, label=label, color=color, linestyle=linestyle.value)
 
 
+@deprecated
 def add_errorbar(  # pylint: disable=invalid-name,too-many-arguments
     ax: plt.Axes,
     x: Union[np.ndarray, List[float]],
@@ -446,6 +480,7 @@ def add_errorbar(  # pylint: disable=invalid-name,too-many-arguments
     )
 
 
+@deprecated
 def horizontal_line(  # pylint: disable=C0103
     ax: plt.Axes, xmin: float, xmax: float, y: float = 0
 ):
@@ -464,6 +499,7 @@ def horizontal_line(  # pylint: disable=C0103
     ax.hlines(y, xmin=xmin, xmax=xmax, linestyles="dashed")
 
 
+@deprecated
 def get_plot_borders(  # pylint: disable=invalid-name
     x: np.ndarray, xmin: Optional[float] = None, xmax: Optional[float] = None
 ) -> Tuple[float, float]:
@@ -488,6 +524,7 @@ def get_plot_borders(  # pylint: disable=invalid-name
     return xmin, xmax
 
 
+@deprecated
 def get_x_plot_values(
     xmin: float, xmax: float, step: Optional[float] = None
 ) -> np.ndarray:
@@ -508,6 +545,7 @@ def get_x_plot_values(
     return np.arange(xmin, xmax, step=step)
 
 
+@deprecated
 def get_checkers_list(
     values: Union[List[float], np.ndarray],
     min_val: Optional[float] = None,
