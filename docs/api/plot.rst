@@ -1,11 +1,9 @@
 .. _plot:
 
-Plot Methods
-=============
+Figure Builder
+===============
 
-.. automethod:: eddington.plot.plot_data
-
-.. automethod:: eddington.plot.plot_fitting
-
-.. automethod:: eddington.plot.plot_residuals
-
+.. autoclass:: eddington.plot.figure_builder.FigureBuilder
+   :members:
+   :undoc-members:
+   :inherited-members:
