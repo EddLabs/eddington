@@ -5,8 +5,8 @@ from pytest_cases import parametrize_with_cases
 
 from eddington import show_or_export
 from eddington.exceptions import PlottingError
-from eddington.plot import LineStyle
-from tests.plot import cases
+from eddington.plot.line_style import LineStyle
+from tests.plot_legacy import cases
 from tests.util import assert_calls
 
 
@@ -14,7 +14,7 @@ from tests.util import assert_calls
 def test_simple_plot(base_dict, plot_method, mock_figure):
     fig = plot_method(**base_dict)
     assert (
-        fig._actual_fig == mock_figure  # pylint: disable=protected-access
+        fig._raw_figure == mock_figure  # pylint: disable=protected-access
     ), "Figure is different than expected"
     ax = mock_figure.add_subplot.return_value
     ax.set_title.assert_called_once_with(cases.TITLE_NAME)
@@ -30,7 +30,7 @@ def test_plot_with_xlabel(base_dict, plot_method, mock_figure):
     xlabel = "X Label"
     fig = plot_method(**base_dict, xlabel=xlabel)
     assert (
-        fig._actual_fig == mock_figure  # pylint: disable=protected-access
+        fig._raw_figure == mock_figure  # pylint: disable=protected-access
     ), "Figure is different than expected"
     ax = mock_figure.add_subplot.return_value
     ax.set_xlabel.assert_called_once_with(xlabel)
@@ -41,7 +41,7 @@ def test_plot_with_ylabel(base_dict, plot_method, mock_figure):
     ylabel = "Y Label"
     fig = plot_method(**base_dict, ylabel=ylabel)
     assert (
-        fig._actual_fig == mock_figure  # pylint: disable=protected-access
+        fig._raw_figure == mock_figure  # pylint: disable=protected-access
     ), "Figure is different than expected"
     ax = mock_figure.add_subplot.return_value
     ax.set_ylabel.assert_called_once_with(ylabel)
@@ -51,7 +51,7 @@ def test_plot_with_ylabel(base_dict, plot_method, mock_figure):
 def test_plot_with_grid(base_dict, plot_method, mock_figure):
     fig = plot_method(**base_dict, grid=True)
     assert (
-        fig._actual_fig == mock_figure  # pylint: disable=protected-access
+        fig._raw_figure == mock_figure  # pylint: disable=protected-access
     ), "Figure is different than expected"
     ax = mock_figure.add_subplot.return_value
     ax.grid.assert_called_once_with(True)
@@ -61,7 +61,7 @@ def test_plot_with_grid(base_dict, plot_method, mock_figure):
 def test_plot_with_x_log_scale(base_dict, plot_method, mock_figure):
     fig = plot_method(**base_dict, x_log_scale=True)
     assert (
-        fig._actual_fig == mock_figure  # pylint: disable=protected-access
+        fig._raw_figure == mock_figure  # pylint: disable=protected-access
     ), "Figure is different than expected"
     ax = mock_figure.add_subplot.return_value
     ax.set_xscale.assert_called_once_with("log")
@@ -72,7 +72,7 @@ def test_plot_with_x_log_scale(base_dict, plot_method, mock_figure):
 def test_plot_with_y_log_scale(base_dict, plot_method, mock_figure):
     fig = plot_method(**base_dict, y_log_scale=True)
     assert (
-        fig._actual_fig == mock_figure  # pylint: disable=protected-access
+        fig._raw_figure == mock_figure  # pylint: disable=protected-access
     ), "Figure is different than expected"
     ax = mock_figure.add_subplot.return_value
     ax.set_xscale.assert_not_called()
@@ -86,7 +86,7 @@ def test_plot_with_y_log_scale(base_dict, plot_method, mock_figure):
 def test_error_bar_without_boundaries(base_dict, plot_method, mock_figure):
     fig = plot_method(**base_dict)
     assert (
-        fig._actual_fig == mock_figure  # pylint: disable=protected-access
+        fig._raw_figure == mock_figure  # pylint: disable=protected-access
     ), "Figure is different than expected"
     data = base_dict["data"]
     assert_calls(
@@ -120,7 +120,7 @@ def test_error_bar_with_xmin(base_dict, plot_method, mock_figure):
     xmin = 4
     fig = plot_method(**base_dict, xmin=xmin)
     assert (
-        fig._actual_fig == mock_figure  # pylint: disable=protected-access
+        fig._raw_figure == mock_figure  # pylint: disable=protected-access
     ), "Figure is different than expected"
     data = base_dict["data"]
     data_filter = [val >= xmin for val in data.x]
@@ -155,7 +155,7 @@ def test_error_bar_with_xmax(base_dict, plot_method, mock_figure):
     xmax = 4
     fig = plot_method(**base_dict, xmax=xmax)
     assert (
-        fig._actual_fig == mock_figure  # pylint: disable=protected-access
+        fig._raw_figure == mock_figure  # pylint: disable=protected-access
     ), "Figure is different than expected"
     data = base_dict["data"]
     data_filter = [val <= xmax for val in data.x]

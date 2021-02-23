@@ -26,13 +26,17 @@ from eddington.cli.common_flags import (
 from eddington.cli.main_cli import eddington_cli
 from eddington.cli.util import (
     extract_array_from_string,
-    fit_and_plot,
     load_data_file,
     load_fitting_function,
 )
+from eddington.consts import PLOT_DOMAIN_MULTIPLIER
+from eddington.fitting import fit
+from eddington.fitting_result import FittingResult
+from eddington.plot.figure_builder import FigureBuilder
+from eddington.plot.line_style import LineStyle
+from eddington.plot.plot_util import build_repr_string, show_or_export
 
 # pylint: disable=invalid-name,too-many-arguments,too-many-locals,duplicate-code
-from eddington.plot import LineStyle
 
 
 @eddington_cli.command("fit")
@@ -97,7 +101,7 @@ def fit_cli(
     fitting_function_name: Optional[str],
     polynomial_degree: Optional[int],
     a0: Optional[str],
-    data_file: str,
+    data_file: Union[str, Path],
     sheet: Optional[str],
     x_column: Optional[str],
     xerr_column: Optional[str],
@@ -107,9 +111,9 @@ def fit_cli(
     x_label: Optional[str],
     y_label: Optional[str],
     grid: bool,
-    legend: Optional[bool],
+    legend: bool,
     color: Optional[str],
-    linestyle: Optional[str],
+    linestyle: LineStyle,
     data_color: Optional[str],
     should_plot_fitting: bool,
     should_plot_residuals: bool,
@@ -120,8 +124,9 @@ def fit_cli(
     json: bool,
 ):
     """Fitting data file according to a fitting function."""
+    data_file = Path(data_file)
     data = load_data_file(
-        Path(data_file),
+        data_file,
         sheet=sheet,
         x_column=x_column,
         xerr_column=xerr_column,
@@ -131,23 +136,135 @@ def fit_cli(
     func = load_fitting_function(
         func_name=fitting_function_name, polynomial_degree=polynomial_degree
     )
-    fit_and_plot(
-        data=data,
-        func=func,
-        a0=extract_array_from_string(a0),
-        legend=legend,
-        output_dir=output_dir,
-        is_json=json,
-        title=title,
-        x_label=x_label,
-        y_label=y_label,
-        should_plot_data=should_plot_data,
-        should_plot_fitting=should_plot_fitting,
-        should_plot_residuals=should_plot_residuals,
-        x_log_scale=x_log_scale,
-        y_log_scale=y_log_scale,
-        grid=grid,
-        color=color,
-        linestyle=linestyle,
-        data_color=data_color,
+    if output_dir is not None:
+        output_dir = Path(output_dir)
+        output_dir.mkdir(parents=True, exist_ok=True)
+    result = fit(data, func, a0=extract_array_from_string(a0))
+    write_and_export_result(
+        result, func_name=func.name, output_dir=output_dir, is_json=json
     )
+    title = func.name.title() if title is None else title
+    x_label = data.x_column if x_label is None else x_label
+    y_label = data.y_column if y_label is None else y_label
+    if should_plot_data:
+        data_figure_builder = FigureBuilder(
+            title=f"{title} - Data",
+            xlabel=x_label,
+            ylabel=y_label,
+            grid=grid,
+            legend=legend,
+        )
+        if x_log_scale:
+            data_figure_builder.add_x_log_scale()
+        if y_log_scale:
+            data_figure_builder.add_y_log_scale()
+        data_figure_builder.add_error_bar(
+            x=data.x,  # type: ignore
+            xerr=data.xerr,  # type: ignore
+            y=data.y,  # type: ignore
+            yerr=data.yerr,  # type: ignore
+            label=data_file.stem,
+            color=data_color,
+        )
+        with data_figure_builder.build() as data_fig:
+            show_or_export(
+                data_fig,
+                output_path=__optional_path(output_dir, f"{func.name}_data.png"),
+            )
+    x_domain = data.x_domain * PLOT_DOMAIN_MULTIPLIER
+    a_repr_string = build_repr_string(result.a)
+    if should_plot_fitting:
+        fitting_figure_builder = FigureBuilder(
+            title=title,
+            xlabel=x_label,
+            ylabel=y_label,
+            grid=grid,
+            legend=legend,
+        )
+        if x_log_scale:
+            fitting_figure_builder.add_x_log_scale()
+        if y_log_scale:
+            fitting_figure_builder.add_y_log_scale()
+        fitting_figure_builder.add_error_bar(
+            x=data.x,  # type: ignore
+            xerr=data.xerr,  # type: ignore
+            y=data.y,  # type: ignore
+            yerr=data.yerr,  # type: ignore
+            label=data_file.stem,
+            color=data_color,
+        )
+        fitting_figure_builder.add_plot(
+            interval=x_domain,
+            a=result.a,
+            func=func,
+            label=a_repr_string,
+            color=color,
+            linestyle=linestyle,
+        )
+        with fitting_figure_builder.build() as fit_fig:
+            show_or_export(
+                fit_fig,
+                output_path=__optional_path(output_dir, f"{func.name}.png"),
+            )
+    if should_plot_residuals:
+        residuals_figure_builder = FigureBuilder(
+            title=title,
+            xlabel=x_label,
+            ylabel=y_label,
+            grid=grid,
+            legend=legend,
+        )
+        if x_log_scale:
+            residuals_figure_builder.add_x_log_scale()
+        if y_log_scale:
+            residuals_figure_builder.add_y_log_scale()
+        residuals_data = data.residuals(fit_func=func, a=result.a)
+        residuals_figure_builder.add_error_bar(
+            x=residuals_data.x,  # type: ignore
+            xerr=residuals_data.xerr,  # type: ignore
+            y=residuals_data.y,  # type: ignore
+            yerr=residuals_data.yerr,  # type: ignore
+            label=a_repr_string,
+            color=color,
+        )
+        residuals_figure_builder.add_horizontal_line(
+            interval=x_domain, y_value=0.0, linestyle=LineStyle.DASHED, color="k"
+        )
+        with residuals_figure_builder.build() as residuals_fig:
+            show_or_export(
+                residuals_fig,
+                output_path=__optional_path(output_dir, f"{func.name}_residuals.png"),
+            )
+
+
+def write_and_export_result(
+    result: FittingResult,
+    func_name: str,
+    output_dir: Optional[Path] = None,
+    is_json: bool = False,
+) -> None:
+    """
+    Write result to console and to file if specified so.
+
+    :param result: Fitting result to be written to console or saved
+    :type result: FittingResult
+    :param func_name: Name of the fitting function.
+    :type func_name: str
+    :param output_dir: Optional output directory to save result in.
+    :type output_dir: Optional[Path]
+    :param is_json: Save in json format or txt format
+    :type is_json: bool
+    """
+    click.echo(result.pretty_string)
+    if output_dir is None:
+        return
+    if is_json:
+        result.save_json(output_dir / f"{func_name}_result.json")
+    else:
+        result.save_txt(output_dir / f"{func_name}_result.txt")
+
+
+def __optional_path(directory: Optional[Path], file_name: str):
+    if directory is None:
+        return None
+    return directory / file_name

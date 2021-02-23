@@ -644,7 +644,7 @@ class FittingData:  # pylint: disable=R0902,R0904
     # More functionalities
 
     def residuals(  # pylint: disable=invalid-name
-        self, fit_func, a: np.ndarray
+        self, fit_func, a: Union[List[float], np.ndarray]
     ) -> "FittingData":
         """
         Creates residuals :class:`FittingData` objects.

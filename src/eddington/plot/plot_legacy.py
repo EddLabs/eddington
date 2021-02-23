@@ -1,81 +1,44 @@
-"""Plotting methods."""
+"""
+Legacy plotting methods.
+
+Those methods will be removed in version 0.1.0
+"""
 from collections import OrderedDict
-from enum import Enum
+from functools import wraps
 from typing import Dict, List, Optional, Tuple, Union
+from warnings import warn
 
 import matplotlib.pyplot as plt
 import numpy as np
 
 from eddington.exceptions import PlottingError
 from eddington.fitting_data import FittingData
-from eddington.print_util import to_relevant_precision_string
+from eddington.plot.figure import Figure
+from eddington.plot.line_style import LineStyle
+from eddington.plot.plot_util import build_repr_string
 
 
-class LineStyle(Enum):
-    """Enum class for line style options."""
-
-    SOLID = "solid"
-    DASHED = "dashed"
-    DASHDOT = "dashdot"
-    DOTTED = "dotted"
-    NONE = "none"
-
-    @classmethod
-    def all(cls) -> List[str]:
-        """
-        Get all line style values.
-
-        :return: Possible values of line styles
-        :rtype: List[str]
-        """
-        return [linestyle.value for linestyle in cls]
-
-
-class Figure:
+def deprecated(func):
     """
-    Wraps matplotlib Figure class.
+    Add deprecation warning to function.
 
-    It releases the memory when the figure is no longer in use.
+    :param func: Function to be deprecated
+    :return: Wrapped function
     """
 
-    def __init__(self, fig: plt.Figure):
-        """
-        Figure constructor.
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        warn(
+            f"{func.__name__} is deprecated in will be removed by version 0.1.0",
+            category=DeprecationWarning,
+            stacklevel=2,
+        )
+        return func(*args, **kwargs)
 
-        :param fig: Actual matplotlib figure
-        :type fig: plt.Figure
-        """
-        self._actual_fig = fig
-
-    def __enter__(self):
-        """
-        Return self when entering as context.
-
-        :return: self
-        :rtype: Figure
-        """
-        return self
-
-    def __getattr__(self, item: str):
-        """
-        Get attributes from wrapped figure.
-
-        :param item: Item name to be returned
-        :type item: str
-        :return: Required item
-        """
-        return getattr(self._actual_fig, item)
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        """
-        Clear memory on exit.
-
-        # noqa: DAR101
-        """
-        plt.clf()
-        plt.close("all")
+    return wrapper
 
 
+@deprecated
 def plot_residuals(  # pylint: disable=invalid-name,too-many-arguments,too-many-locals
     func,
     data: FittingData,
@@ -145,6 +108,7 @@ def plot_residuals(  # pylint: disable=invalid-name,too-many-arguments,too-many-
     return fig
 
 
+@deprecated
 def plot_fitting(  # pylint: disable=C0103,R0913,R0914
     func,
     data: FittingData,
@@ -247,6 +211,7 @@ def plot_fitting(  # pylint: disable=C0103,R0913,R0914
     return fig
 
 
+@deprecated
 def plot_data(  # pylint: disable=too-many-arguments
     data: FittingData,
     title_name,
@@ -309,6 +274,7 @@ def plot_data(  # pylint: disable=too-many-arguments
     return fig
 
 
+@deprecated
 def get_figure(  # pylint: disable=too-many-arguments
     title_name,
     xlabel: Optional[str] = None,
@@ -334,16 +300,16 @@ def get_figure(  # pylint: disable=too-many-arguments
     :type y_log_scale: bool
     :return: Figure instance
     """
-    fig = plt.figure()
-    ax = fig.add_subplot()  # pylint: disable=invalid-name
-    title(ax=ax, title_name=title_name)
-    label_axes(ax=ax, xlabel=xlabel, ylabel=ylabel)
-    add_grid(ax=ax, is_grid=grid)
-    set_scales(ax=ax, is_x_log_scale=x_log_scale, is_y_log_scale=y_log_scale)
+    fig = Figure()
+    title(ax=fig.ax, title_name=title_name)
+    label_axes(ax=fig.ax, xlabel=xlabel, ylabel=ylabel)
+    add_grid(ax=fig.ax, is_grid=grid)
+    set_scales(ax=fig.ax, is_x_log_scale=x_log_scale, is_y_log_scale=y_log_scale)
 
-    return ax, Figure(fig)
+    return fig.ax, fig
 
 
+@deprecated
 def title(ax: plt.Axes, title_name: Optional[str]):  # pylint: disable=invalid-name
     """
     Add/remove title to figure.
@@ -357,6 +323,7 @@ def title(ax: plt.Axes, title_name: Optional[str]):  # pylint: disable=invalid-n
         ax.set_title(title_name)
 
 
+@deprecated
 def label_axes(  # pylint: disable=invalid-name
     ax: plt.Axes, xlabel: Optional[str], ylabel: Optional[str]
 ):
@@ -376,6 +343,7 @@ def label_axes(  # pylint: disable=invalid-name
         ax.set_ylabel(ylabel)
 
 
+@deprecated
 def limit_axes(  # pylint: disable=invalid-name
     ax: plt.Axes, xmin: Optional[float] = None, xmax: Optional[float] = None
 ):
@@ -395,6 +363,7 @@ def limit_axes(  # pylint: disable=invalid-name
         ax.set_xlim(right=xmax)
 
 
+@deprecated
 def add_grid(ax: plt.Axes, is_grid: bool):  # pylint: disable=invalid-name
     """
     Add/remove grid to figure.
@@ -407,6 +376,7 @@ def add_grid(ax: plt.Axes, is_grid: bool):  # pylint: disable=invalid-name
     ax.grid(is_grid)
 
 
+@deprecated
 def add_legend(ax: plt.Axes, is_legend: bool):  # pylint: disable=invalid-name
     """
     Add/remove legend to figure.
@@ -420,6 +390,7 @@ def add_legend(ax: plt.Axes, is_legend: bool):  # pylint: disable=invalid-name
         ax.legend()
 
 
+@deprecated
 def set_scales(  # pylint: disable=invalid-name
     ax: plt.Axes, is_x_log_scale: bool, is_y_log_scale: bool
 ):
@@ -439,6 +410,7 @@ def set_scales(  # pylint: disable=invalid-name
         ax.set_yscale("log")
 
 
+@deprecated
 def add_plot(  # pylint: disable=invalid-name,too-many-arguments
     ax: plt.Axes,
     x: Union[np.ndarray, List[float]],
@@ -466,6 +438,7 @@ def add_plot(  # pylint: disable=invalid-name,too-many-arguments
     ax.plot(x, y, label=label, color=color, linestyle=linestyle.value)
 
 
+@deprecated
 def add_errorbar(  # pylint: disable=invalid-name,too-many-arguments
     ax: plt.Axes,
     x: Union[np.ndarray, List[float]],
@@ -507,6 +480,7 @@ def add_errorbar(  # pylint: disable=invalid-name,too-many-arguments
     )
 
 
+@deprecated
 def horizontal_line(  # pylint: disable=C0103
     ax: plt.Axes, xmin: float, xmax: float, y: float = 0
 ):
@@ -525,6 +499,7 @@ def horizontal_line(  # pylint: disable=C0103
     ax.hlines(y, xmin=xmin, xmax=xmax, linestyles="dashed")
 
 
+@deprecated
 def get_plot_borders(  # pylint: disable=invalid-name
     x: np.ndarray, xmin: Optional[float] = None, xmax: Optional[float] = None
 ) -> Tuple[float, float]:
@@ -549,6 +524,7 @@ def get_plot_borders(  # pylint: disable=invalid-name
     return xmin, xmax
 
 
+@deprecated
 def get_x_plot_values(
     xmin: float, xmax: float, step: Optional[float] = None
 ) -> np.ndarray:
@@ -569,35 +545,7 @@ def get_x_plot_values(
     return np.arange(xmin, xmax, step=step)
 
 
-def show_or_export(fig: plt.Figure, output_path=None):
-    """
-    Show plot or export it to a file.
-
-    :param fig: a plot figure
-    :param output_path: Path or None. if None, show plot. otherwise, save to path.
-    """
-    if output_path is None:
-        plt.show()
-        return
-    fig.savefig(output_path)
-
-
-def build_repr_string(parameters: Union[List[float], np.ndarray]) -> str:
-    """
-    Format parameters array into representation string.
-
-    :param parameters: Array of parameters to be formatted
-    :type parameters: List of floats or numpy.ndarray
-    :return: Formatted string
-    :rtype: str
-    """
-    arguments_values = [
-        f"a[{i}]={to_relevant_precision_string(val)}"
-        for i, val in enumerate(parameters)
-    ]
-    return f"[{', '.join(arguments_values)}]"
-
-
+@deprecated
 def get_checkers_list(
     values: Union[List[float], np.ndarray],
     min_val: Optional[float] = None,

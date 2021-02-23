@@ -1,6 +1,6 @@
 from pytest_cases import parametrize_with_cases
 
-from tests.plot import cases
+from tests.plot_legacy import cases
 from tests.util import assert_calls
 
 EPSILON = 1e-5
@@ -12,7 +12,7 @@ EPSILON = 1e-5
 def test_plot_residuals_without_boundaries(base_dict, plot_method, mock_figure):
     fig = plot_method(**base_dict)
     assert (
-        fig._actual_fig == mock_figure  # pylint: disable=protected-access
+        fig._raw_figure == mock_figure  # pylint: disable=protected-access
     ), "Figure is different than expected"
     ax = mock_figure.add_subplot.return_value
     assert_calls(
@@ -50,7 +50,7 @@ def test_plot_residuals_with_xmin(base_dict, plot_method, mock_figure):
     xmin = 4
     fig = plot_method(**base_dict, xmin=xmin)
     assert (
-        fig._actual_fig == mock_figure  # pylint: disable=protected-access
+        fig._raw_figure == mock_figure  # pylint: disable=protected-access
     ), "Figure is different than expected"
     ax = mock_figure.add_subplot.return_value
     assert_calls(
@@ -89,7 +89,7 @@ def test_plot_residuals_with_xmax(base_dict, plot_method, mock_figure):
     xmax = 7
     fig = plot_method(**base_dict, xmax=xmax)
     assert (
-        fig._actual_fig == mock_figure  # pylint: disable=protected-access
+        fig._raw_figure == mock_figure  # pylint: disable=protected-access
     ), "Figure is different than expected"
     ax = mock_figure.add_subplot.return_value
     assert_calls(
@@ -128,7 +128,7 @@ def test_plot_residuals_with_color(base_dict, plot_method, mock_figure):
     color = "blue"
     fig = plot_method(**base_dict, color=color)
     assert (
-        fig._actual_fig == mock_figure  # pylint: disable=protected-access
+        fig._raw_figure == mock_figure  # pylint: disable=protected-access
     ), "Figure is different than expected"
     ax = mock_figure.add_subplot.return_value
     assert_calls(

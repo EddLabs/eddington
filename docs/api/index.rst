@@ -13,4 +13,4 @@ API
    Fitting Result <fitting_result>
    Fit To Data <fit>
    Out-of-the-Box Fitting Functions <fitting_functions_list>
-   Plot Methods <plot>
+   Plot <plot>
