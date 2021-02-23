@@ -43,7 +43,7 @@ from eddington.plot.plot_legacy import (
     plot_residuals,
     title,
 )
-from eddington.plot.plot_util import show_or_export, build_repr_string
+from eddington.plot.plot_util import build_repr_string, show_or_export
 from eddington.print_util import to_relevant_precision_string
 from eddington.random_util import random_data
 
