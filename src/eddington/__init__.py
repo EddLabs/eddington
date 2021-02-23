@@ -29,6 +29,7 @@ from eddington.fitting_functions_list import (
 )
 from eddington.fitting_functions_registry import FittingFunctionsRegistry
 from eddington.fitting_result import FittingResult
+from eddington.plot.figure_builder import FigureBuilder
 from eddington.plot.plot_legacy import (
     add_errorbar,
     add_grid,
@@ -42,7 +43,7 @@ from eddington.plot.plot_legacy import (
     plot_residuals,
     title,
 )
-from eddington.plot.plot_util import show_or_export
+from eddington.plot.plot_util import show_or_export, build_repr_string
 from eddington.print_util import to_relevant_precision_string
 from eddington.random_util import random_data
 
@@ -83,10 +84,13 @@ __all__ = [
     "FittingData",
     "FittingResult",
     # Plot
+    "FigureBuilder",
+    "show_or_export",
+    "build_repr_string",
+    # Plot legacy
     "plot_data",
     "plot_fitting",
     "plot_residuals",
-    "show_or_export",
     "get_figure",
     "add_errorbar",
     "add_legend",
