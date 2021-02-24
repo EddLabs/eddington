@@ -29,6 +29,13 @@ y_column_option = click.option(
 yerr_column_option = click.option(
     "--yerr-column", type=str, help="Column to read y error values from."
 )
+search_option = click.option(
+    "--search/--no-search",
+    is_flag=True,
+    default=True,
+    help="Search missing columns if weren't specified.",
+)
+
 fitting_function_argument = click.argument(
     "fitting_function_name", type=str, default=""
 )

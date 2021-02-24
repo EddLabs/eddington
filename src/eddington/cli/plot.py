@@ -14,6 +14,7 @@ from eddington.cli.common_flags import (
     is_x_log_scale_option,
     is_y_log_scale_option,
     polynomial_option,
+    search_option,
     sheet_option,
     title_option,
     x_column_option,
@@ -56,6 +57,7 @@ from eddington.plot.plot_util import build_repr_string
 @xerr_column_option
 @y_column_option
 @yerr_column_option
+@search_option
 @title_option
 @x_label_option
 @y_label_option
@@ -97,6 +99,7 @@ def plot_cli(
     xerr_column: Optional[str],
     y_column: Optional[str],
     yerr_column: Optional[str],
+    search: bool,
     title: Optional[str],
     x_label: Optional[str],
     y_label: Optional[str],
@@ -118,6 +121,7 @@ def plot_cli(
         xerr_column=xerr_column,
         y_column=y_column,
         yerr_column=yerr_column,
+        search=search,
     )
     func = load_fitting_function(
         func_name=fitting_function_name, polynomial_degree=polynomial_degree
@@ -131,24 +135,14 @@ def plot_cli(
             LineStyle.SOLID for _ in range(len(parameters_sets) - len(linestyles))
         ]
     figure_builder = FigureBuilder(
-        title=title,
-        xlabel=x_label,
-        ylabel=y_label,
-        legend=legend,
-        grid=grid,
+        title=title, xlabel=x_label, ylabel=y_label, legend=legend, grid=grid
     )
     if x_log_scale:
         figure_builder.add_x_log_scale()
     if y_log_scale:
         figure_builder.add_y_log_scale()
     if not residuals:
-        figure_builder.add_error_bar(
-            x=data.x,  # type: ignore
-            xerr=data.xerr,  # type: ignore
-            y=data.y,  # type: ignore
-            yerr=data.yerr,  # type: ignore
-            color=data_color,
-        )
+        figure_builder.add_data(data=data, color=data_color)
     x_domain = data.x_domain * PLOT_DOMAIN_MULTIPLIER
     for a0, color, linestyle in zip(parameters_sets, colors, linestyles):
         if a0 is None:
@@ -156,14 +150,7 @@ def plot_cli(
         label = build_repr_string(a0)
         if residuals:
             residuals_data = data.residuals(fit_func=func, a=a0)
-            figure_builder.add_error_bar(
-                x=residuals_data.x,  # type: ignore
-                xerr=residuals_data.xerr,  # type: ignore
-                y=residuals_data.y,  # type: ignore
-                yerr=residuals_data.yerr,  # type: ignore
-                label=label,
-                color=color,
-            )
+            figure_builder.add_data(data=residuals_data, label=label, color=color)
         else:
             figure_builder.add_plot(
                 interval=x_domain,

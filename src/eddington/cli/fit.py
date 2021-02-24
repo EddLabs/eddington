@@ -14,6 +14,7 @@ from eddington.cli.common_flags import (
     is_y_log_scale_option,
     output_dir_option,
     polynomial_option,
+    search_option,
     sheet_option,
     title_option,
     x_column_option,
@@ -56,6 +57,7 @@ from eddington.plot.plot_util import build_repr_string, show_or_export
 @xerr_column_option
 @y_column_option
 @yerr_column_option
+@search_option
 @title_option
 @x_label_option
 @y_label_option
@@ -107,6 +109,7 @@ def fit_cli(
     xerr_column: Optional[str],
     y_column: Optional[str],
     yerr_column: Optional[str],
+    search: bool,
     title: Optional[str],
     x_label: Optional[str],
     y_label: Optional[str],
@@ -132,6 +135,7 @@ def fit_cli(
         xerr_column=xerr_column,
         y_column=y_column,
         yerr_column=yerr_column,
+        search=search,
     )
     func = load_fitting_function(
         func_name=fitting_function_name, polynomial_degree=polynomial_degree
@@ -158,14 +162,7 @@ def fit_cli(
             data_figure_builder.add_x_log_scale()
         if y_log_scale:
             data_figure_builder.add_y_log_scale()
-        data_figure_builder.add_error_bar(
-            x=data.x,  # type: ignore
-            xerr=data.xerr,  # type: ignore
-            y=data.y,  # type: ignore
-            yerr=data.yerr,  # type: ignore
-            label=data_file.stem,
-            color=data_color,
-        )
+        data_figure_builder.add_data(data=data, label=data_file.stem, color=data_color)
         with data_figure_builder.build() as data_fig:
             show_or_export(
                 data_fig,
@@ -185,13 +182,8 @@ def fit_cli(
             fitting_figure_builder.add_x_log_scale()
         if y_log_scale:
             fitting_figure_builder.add_y_log_scale()
-        fitting_figure_builder.add_error_bar(
-            x=data.x,  # type: ignore
-            xerr=data.xerr,  # type: ignore
-            y=data.y,  # type: ignore
-            yerr=data.yerr,  # type: ignore
-            label=data_file.stem,
-            color=data_color,
+        fitting_figure_builder.add_data(
+            data=data, label=data_file.stem, color=data_color
         )
         fitting_figure_builder.add_plot(
             interval=x_domain,
@@ -219,13 +211,8 @@ def fit_cli(
         if y_log_scale:
             residuals_figure_builder.add_y_log_scale()
         residuals_data = data.residuals(fit_func=func, a=result.a)
-        residuals_figure_builder.add_error_bar(
-            x=residuals_data.x,  # type: ignore
-            xerr=residuals_data.xerr,  # type: ignore
-            y=residuals_data.y,  # type: ignore
-            yerr=residuals_data.yerr,  # type: ignore
-            label=a_repr_string,
-            color=color,
+        residuals_figure_builder.add_data(
+            data=residuals_data, label=a_repr_string, color=color
         )
         residuals_figure_builder.add_horizontal_line(
             interval=x_domain, y_value=0.0, linestyle=LineStyle.DASHED, color="k"
