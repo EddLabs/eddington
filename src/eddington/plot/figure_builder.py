@@ -4,7 +4,7 @@ from typing import Dict, List, Optional, Union
 
 import numpy as np
 
-from eddington import FittingFunction
+from eddington import FittingData, FittingFunction
 from eddington.consts import DEFAULT_TICKS
 from eddington.exceptions import PlottingError
 from eddington.interval import Interval
@@ -293,9 +293,9 @@ class FigureErrorBarInstruction(FigureInstruction):
     def __init__(  # pylint: disable=too-many-arguments
         self,
         x: Union[np.ndarray, List[float]],
-        xerr: Union[np.ndarray, List[float]],
+        xerr: Union[np.ndarray, List[float], None],
         y: Union[np.ndarray, List[float]],
-        yerr: Union[np.ndarray, List[float]],
+        yerr: Union[np.ndarray, List[float], None],
         label: Optional[str] = None,
         color: Optional[str] = None,
     ):
@@ -341,6 +341,52 @@ class FigureErrorBarInstruction(FigureInstruction):
             label=self.label,
             ecolor=self.color,
             mec=self.color,
+        )
+
+
+class FigureScatterInstruction(FigureInstruction):
+    """Add error bar to figure."""
+
+    def __init__(  # pylint: disable=too-many-arguments
+        self,
+        x: Union[np.ndarray, List[float]],
+        y: Union[np.ndarray, List[float]],
+        label: Optional[str] = None,
+        color: Optional[str] = None,
+    ):
+        """
+        Instruction constructor.
+
+        :param x: X values of the error bar
+        :type x: floats list or numpy.ndarray
+        :param y: Y values of the error bar
+        :type y: floats list or numpy.ndarray
+        :param label: Label of the error bar to add to the legend.
+        :type label: str
+        :param color: Color of the error bar.
+        :type color: str
+        """
+        super().__init__(name="scatter")
+        self.x = x  # pylint: disable=invalid-name
+        self.y = y  # pylint: disable=invalid-name
+        self.label = label
+        self.color = color
+
+    def add_to_figure(self, fig: Figure):
+        """
+        Add this instruction to figure.
+
+        :param fig: Figure to add element to
+        :type fig: Figure
+        """
+        fig.ax.scatter(
+            x=self.x,
+            y=self.y,
+            marker="o",
+            s=2,
+            linestyle="None",
+            label=self.label,
+            color=self.color,
         )
 
 
@@ -490,9 +536,9 @@ class FigureBuilder:  # pylint: disable=too-many-instance-attributes
     def add_error_bar(  # pylint: disable=invalid-name,too-many-arguments
         self,
         x: Union[np.ndarray, List[float]],
-        xerr: Union[np.ndarray, List[float]],
+        xerr: Union[np.ndarray, List[float], None],
         y: Union[np.ndarray, List[float]],
-        yerr: Union[np.ndarray, List[float]],
+        yerr: Union[np.ndarray, List[float], None],
         label: Optional[str] = None,
         color: Optional[str] = None,
     ):
@@ -523,6 +569,59 @@ class FigureBuilder:  # pylint: disable=too-many-instance-attributes
                 label=label,
                 color=color,
             )
+        )
+
+    def add_scatter(  # pylint: disable=invalid-name
+        self,
+        x: Union[np.ndarray, List[float]],
+        y: Union[np.ndarray, List[float]],
+        label: Optional[str] = None,
+        color: Optional[str] = None,
+    ):
+        """
+        Add scatter to figure.
+
+        :param x: X values of the error bar
+        :type x: floats list or numpy.ndarray
+        :param y: Y values of the error bar
+        :type y: floats list or numpy.ndarray
+        :param label: Label of the error bar to add to the legend.
+        :type label: str
+        :param color: Color of the error bar.
+        :type color: str
+        :return: self
+        :rtype: FigureBuilder
+        """
+        return self.add_instruction(
+            FigureScatterInstruction(x=x, y=y, label=label, color=color)
+        )
+
+    def add_data(
+        self,
+        data: FittingData,
+        label: Optional[str] = None,
+        color: Optional[str] = None,
+    ):
+        """
+        Add scatter to figure.
+
+        :param data: Data to plot
+        :param label: Label of the error bar to add to the legend.
+        :type label: str
+        :param color: Color of the error bar.
+        :type color: str
+        :return: self
+        :rtype: FigureBuilder
+        :raises PlottingError: Raised when data doesn't have x or y values
+        """
+        x, y = data.x, data.y  # pylint: disable=invalid-name
+        if x is None or y is None:
+            raise PlottingError("Can't plot data without x or y values")
+        xerr, yerr = data.xerr, data.yerr
+        if xerr is None and yerr is None:
+            return self.add_scatter(x=x, y=y, label=label, color=color)
+        return self.add_error_bar(
+            x=x, xerr=xerr, y=y, yerr=yerr, label=label, color=color
         )
 
     def add_plot(  # pylint: disable=invalid-name,too-many-arguments

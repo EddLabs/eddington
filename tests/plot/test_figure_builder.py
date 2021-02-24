@@ -1,7 +1,10 @@
+from collections import OrderedDict
+
 import numpy as np
 import pytest
 from pytest_cases import fixture, parametrize_with_cases
 
+from eddington import FittingData
 from eddington.exceptions import PlottingError
 from eddington.interval import Interval
 from eddington.plot.figure_builder import FigureBuilder, FigureInstruction
@@ -368,6 +371,172 @@ def case_add_two_error_bars(mock_figure):
     )
 
 
+def case_add_scatter(mock_figure):
+    size = 20
+    x, y = np.random.uniform(0, 1, size=size), np.random.uniform(0, 1, size=size)
+    figure_builder = FigureBuilder()
+    figure_builder.add_scatter(x=x, y=y)
+    yield figure_builder
+    assert_calls(
+        mock_figure.ax.scatter,
+        [
+            (
+                [],
+                dict(
+                    x=x, y=y, label=None, color=None, s=2, marker="o", linestyle="None"
+                ),
+            )
+        ],
+        rel=EPSILON,
+    )
+
+
+def case_add_scatter_with_additional_args(mock_figure):
+    size = 20
+    x, y = np.random.uniform(0, 1, size=size), np.random.uniform(0, 1, size=size)
+    label = "I am a label"
+    color = "green"
+    figure_builder = FigureBuilder()
+    figure_builder.add_scatter(x=x, y=y, label=label, color=color)
+    yield figure_builder
+    assert_calls(
+        mock_figure.ax.scatter,
+        [
+            (
+                [],
+                dict(
+                    x=x,
+                    y=y,
+                    label=label,
+                    color=color,
+                    s=2,
+                    marker="o",
+                    linestyle="None",
+                ),
+            )
+        ],
+        rel=EPSILON,
+    )
+
+
+def case_add_scatter_twice(mock_figure):
+    size = 20
+    x1, y1, x2, y2 = (
+        np.random.uniform(0, 1, size=size),
+        np.random.uniform(0, 1, size=size),
+        np.random.uniform(0, 1, size=size),
+        np.random.uniform(0, 1, size=size),
+    )
+    figure_builder = FigureBuilder()
+    figure_builder.add_scatter(x=x1, y=y1)
+    figure_builder.add_scatter(x=x2, y=y2)
+    yield figure_builder
+    assert_calls(
+        mock_figure.ax.scatter,
+        [
+            (
+                [],
+                dict(
+                    x=x1,
+                    y=y1,
+                    label=None,
+                    color=None,
+                    s=2,
+                    marker="o",
+                    linestyle="None",
+                ),
+            ),
+            (
+                [],
+                dict(
+                    x=x2,
+                    y=y2,
+                    label=None,
+                    color=None,
+                    s=2,
+                    marker="o",
+                    linestyle="None",
+                ),
+            ),
+        ],
+        rel=EPSILON,
+    )
+
+
+def case_add_data_with_errors(mock_figure):
+    size = 20
+    data = FittingData(
+        data=OrderedDict(
+            [
+                ("x", np.random.uniform(0, 1, size=size)),
+                ("xerr", np.random.uniform(0, 1, size=size)),
+                ("y", np.random.uniform(0, 1, size=size)),
+                ("yerr", np.random.uniform(0, 1, size=size)),
+            ]
+        )
+    )
+    figure_builder = FigureBuilder()
+    figure_builder.add_data(data=data)
+    yield figure_builder
+    assert_calls(
+        mock_figure.ax.errorbar,
+        [
+            (
+                [],
+                dict(
+                    x=data.x,
+                    xerr=data.xerr,
+                    y=data.y,
+                    yerr=data.yerr,
+                    label=None,
+                    ecolor=None,
+                    mec=None,
+                    markersize=1,
+                    marker="o",
+                    linestyle="None",
+                ),
+            )
+        ],
+        rel=EPSILON,
+    )
+
+
+def case_add_data_without_errors(mock_figure):
+    size = 20
+    data = FittingData(
+        data=OrderedDict(
+            [
+                ("x", np.random.uniform(0, 1, size=size)),
+                ("y", np.random.uniform(0, 1, size=size)),
+            ]
+        ),
+        x_column="x",
+        y_column="y",
+        search=False,
+    )
+    figure_builder = FigureBuilder()
+    figure_builder.add_data(data=data)
+    yield figure_builder
+    assert_calls(
+        mock_figure.ax.scatter,
+        [
+            (
+                [],
+                dict(
+                    x=data.x,
+                    y=data.y,
+                    label=None,
+                    color=None,
+                    s=2,
+                    marker="o",
+                    linestyle="None",
+                ),
+            )
+        ],
+        rel=EPSILON,
+    )
+
+
 @parametrize_with_cases(argnames="figure_builder", cases=".")
 def test_figure_builder_build_recipe(mock_figure, figure_builder):
     actual_figure = figure_builder.build()
@@ -448,3 +617,41 @@ def test_figure_builder_fail_to_add_y_log_scale_twice(mock_figure):
 
     with pytest.raises(PlottingError, match="^Cannot set y_scale twice.$"):
         figure_builder.add_y_log_scale()
+
+
+def test_figure_builder_fail_to_add_data_without_x(mock_figure):
+    figure_builder = FigureBuilder()
+
+    with pytest.raises(PlottingError, match="^Can't plot data without x or y values$"):
+        size = 20
+        figure_builder.add_data(
+            data=FittingData(
+                OrderedDict(
+                    [
+                        ("x", np.random.uniform(0, 1, size=size)),
+                        ("y", np.random.uniform(0, 1, size=size)),
+                    ]
+                ),
+                y_column="y",
+                search=False,
+            )
+        )
+
+
+def test_figure_builder_fail_to_add_data_without_y(mock_figure):
+    figure_builder = FigureBuilder()
+
+    with pytest.raises(PlottingError, match="^Can't plot data without x or y values$"):
+        size = 20
+        figure_builder.add_data(
+            data=FittingData(
+                OrderedDict(
+                    [
+                        ("x", np.random.uniform(0, 1, size=size)),
+                        ("y", np.random.uniform(0, 1, size=size)),
+                    ]
+                ),
+                x_column="x",
+                search=False,
+            )
+        )
