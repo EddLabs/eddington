@@ -7,7 +7,7 @@ from eddington.exceptions import FittingFunctionLoadError, FittingFunctionSaveEr
 class FittingFunctionsRegistry:  # noqa: D415,D213,D205
     """A singleton class containing all saved :class:`FittingFunction` instances."""
 
-    __name_to_func_dict = dict()  # type: ignore
+    __name_to_func_dict = {}  # type: ignore
 
     @classmethod
     def add(cls, func):  # type: ignore

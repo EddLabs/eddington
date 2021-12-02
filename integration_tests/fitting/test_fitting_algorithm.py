@@ -15,7 +15,7 @@ def cases_paths():
 
 @parametrize(idgen="case {case_path.stem}", case_path=cases_paths())
 def case_fitting(case_path):  # pylint:disable=too-many-locals
-    with open(str(case_path), mode="r") as json_file:
+    with open(str(case_path), mode="r", encoding="utf-8") as json_file:
         json_obj = json.load(json_file)
     func_name = json_obj["fit_function"]
     func = FittingFunctionsRegistry.load(func_name)
@@ -25,7 +25,7 @@ def case_fitting(case_path):  # pylint:disable=too-many-locals
             func.fix(index, value)
     data_dict = json_obj["data"]
     raw_data = OrderedDict()
-    kwargs = dict()
+    kwargs = {}
     for column_name in ["x", "xerr", "y", "yerr"]:
         column = data_dict.get(column_name, None)
         if column is not None:
