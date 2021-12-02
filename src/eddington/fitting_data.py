@@ -761,7 +761,7 @@ class FittingData:  # pylint: disable=R0902,R0904
         """
         if isinstance(filepath, str):
             filepath = Path(filepath)
-        with open(filepath, mode="r") as csv_file:
+        with open(filepath, mode="r", encoding="utf-8") as csv_file:
             csv_obj = csv.reader(csv_file)
             rows = list(csv_obj)
         return cls.__build_from_rows(
@@ -803,7 +803,7 @@ class FittingData:  # pylint: disable=R0902,R0904
         """
         if isinstance(filepath, str):
             filepath = Path(filepath)
-        with open(filepath, mode="r") as file:
+        with open(filepath, mode="r", encoding="utf-8") as file:
             data = json.load(file, object_pairs_hook=OrderedDict)
         # fmt: off
         return FittingData(

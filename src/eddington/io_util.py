@@ -58,6 +58,6 @@ def save_as_csv(
     """
     path = Path(output_directory / Path(f"{file_name}.csv"))
 
-    with open(path, mode="w+", newline="") as csv_file:
+    with open(path, mode="w+", newline="", encoding="utf-8") as csv_file:
         writer = csv.writer(csv_file)
         writer.writerows(content)

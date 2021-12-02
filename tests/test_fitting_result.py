@@ -261,7 +261,7 @@ def test_export_to_text_file(expected, fitting_result):
     mock_open_obj = mock.mock_open()
     with mock.patch("eddington.fitting_result.open", mock_open_obj):
         fitting_result.save_txt(path)
-        mock_open_obj.assert_called_once_with(path, mode="w")
+        mock_open_obj.assert_called_once_with(path, mode="w", encoding="utf-8")
         mock_open_obj.return_value.write.assert_called_once_with(
             expected["repr_string"]
         )
@@ -275,7 +275,7 @@ def test_export_to_json_file(expected, fitting_result, json_dumps_mock):
     mock_open_obj = mock.mock_open()
     with mock.patch("eddington.fitting_result.open", mock_open_obj):
         fitting_result.save_json(path)
-        mock_open_obj.assert_called_once_with(path, mode="w")
+        mock_open_obj.assert_called_once_with(path, mode="w", encoding="utf-8")
         assert_calls(
             json_dumps_mock,
             [
