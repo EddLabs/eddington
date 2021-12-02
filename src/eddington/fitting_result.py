@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import List, Optional, Union
 
 import numpy as np
-import scipy.stats as stats
+from scipy import stats
 
 from eddington.consts import DEFAULT_PRECISION
 from eddington.print_util import (
@@ -72,7 +72,7 @@ class FittingResult:  # pylint: disable=too-many-instance-attributes
             console.
         :type file_path: ``str`` or ``Path``
         """
-        with open(file_path, mode="w") as output_file:
+        with open(file_path, mode="w", encoding="utf-8") as output_file:
             output_file.write(self.pretty_string)
 
     def save_json(self, file_path: Union[str, Path]) -> None:
@@ -83,7 +83,7 @@ class FittingResult:  # pylint: disable=too-many-instance-attributes
             console.
         :type file_path: ``str`` or ``Path``
         """
-        with open(file_path, mode="w") as output_file:
+        with open(file_path, mode="w", encoding="utf-8") as output_file:
             output_file.write(self.json_string)
 
     @property

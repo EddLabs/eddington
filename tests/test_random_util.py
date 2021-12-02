@@ -38,7 +38,7 @@ def normal(mocker):
 
 
 def generate_values_dict(n, measurements=DEFAULT_MEASUREMENTS):
-    values = dict()
+    values = {}
     values["a"] = np.arange(1, n + 1)
     values["x"] = np.arange(1, measurements + 1)
     values["xerr"] = np.arange(1, measurements + 1) * 0.1

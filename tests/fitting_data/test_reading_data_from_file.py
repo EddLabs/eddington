@@ -47,7 +47,7 @@ def mock_csv_reader(mocker):
 
 
 def case_no_additional_args():
-    kwargs = dict()
+    kwargs = {}
     columns = Columns(x="a", xerr="b", y="c", yerr="d")
     return kwargs, columns
 
@@ -123,7 +123,7 @@ def test_reading_data_from_csv_with_file_successful(
     mock_open = mock.mock_open()
     with mock.patch("eddington.fitting_data.open", mock_open):
         data = FittingData.read_from_csv(CSV_PATH, **kwargs)
-    mock_open.assert_called_once_with(CSV_PATH, mode="r")
+    mock_open.assert_called_once_with(CSV_PATH, mode="r", encoding="utf-8")
     mock_csv_reader.assert_called_with(mock_open.return_value)
     assert_fitting_data(fitting_data=data, columns=columns)
 
@@ -135,7 +135,7 @@ def test_reading_data_from_csv_with_str_successful(
     mock_open = mock.mock_open()
     with mock.patch("eddington.fitting_data.open", mock_open):
         data = FittingData.read_from_csv(str(CSV_PATH), **kwargs)
-    mock_open.assert_called_once_with(CSV_PATH, mode="r")
+    mock_open.assert_called_once_with(CSV_PATH, mode="r", encoding="utf-8")
     mock_csv_reader.assert_called_with(mock_open.return_value)
     assert_fitting_data(fitting_data=data, columns=columns)
 
@@ -148,7 +148,7 @@ def test_reading_data_from_json_with_file_successful(
     mock_open = mock.mock_open()
     with mock.patch("eddington.fitting_data.open", mock_open):
         data = FittingData.read_from_json(JSON_PATH, **kwargs)
-    mock_open.assert_called_once_with(JSON_PATH, mode="r")
+    mock_open.assert_called_once_with(JSON_PATH, mode="r", encoding="utf-8")
     mock_load_json.assert_called_with(
         mock_open.return_value, object_pairs_hook=OrderedDict
     )
@@ -163,7 +163,7 @@ def test_reading_data_from_json_with_str_successful(
     mock_open = mock.mock_open()
     with mock.patch("eddington.fitting_data.open", mock_open):
         data = FittingData.read_from_json(str(JSON_PATH), **kwargs)
-    mock_open.assert_called_once_with(JSON_PATH, mode="r")
+    mock_open.assert_called_once_with(JSON_PATH, mode="r", encoding="utf-8")
     mock_load_json.assert_called_with(
         mock_open.return_value, object_pairs_hook=OrderedDict
     )

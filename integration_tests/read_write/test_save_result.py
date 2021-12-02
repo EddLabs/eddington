@@ -16,7 +16,7 @@ def test_save_result_as_text(tmpdir):
 
     assert output_path.exists(), "Output text file was not written"
 
-    with open(output_path, mode="r") as fd:
+    with open(output_path, mode="r", encoding="utf-8") as fd:
         content = "".join(fd.readlines())
     assert FIT_RESULT.pretty_string == content
 
@@ -27,6 +27,6 @@ def test_save_result_as_json(tmpdir):
 
     assert output_path.exists(), "Output json file was not written"
 
-    with open(output_path, mode="r") as fd:
+    with open(output_path, mode="r", encoding="utf-8") as fd:
         content = "".join(fd.readlines())
     assert FIT_RESULT.json_string == content
