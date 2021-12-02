@@ -14,6 +14,7 @@ install_requires = [
     "numpy >= 1.19.5",
     "openpyxl >= 3.0.6",
     "matplotlib >= 3.3.3",
+    "types-mock >= 4.0.4",
 ]
 
 if os.environ.get("READTHEDOCS") == "True":
