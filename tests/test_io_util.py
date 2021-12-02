@@ -72,6 +72,6 @@ def test_save_as_csv(mock_csv_writer):
             content=CONTENT, file_name=file_name, output_directory=output_directory
         )
     mock_open.assert_called_once_with(
-        Path("/path/to/directory/data.csv"), mode="w+", newline=""
+        Path("/path/to/directory/data.csv"), mode="w+", newline="", encoding="utf-8"
     )
     mock_csv_writer.return_value.writerows.assert_called_once_with(CONTENT)
