@@ -4,9 +4,10 @@ from typing import Dict, List, Optional, Union
 
 import numpy as np
 
-from eddington import FittingData, FittingFunction
 from eddington.consts import DEFAULT_TICKS
 from eddington.exceptions import PlottingError
+from eddington.fitting_data import FittingData
+from eddington.fitting_function_class import FittingFunction
 from eddington.interval import Interval
 from eddington.plot.figure import Figure
 from eddington.plot.line_style import LineStyle

@@ -46,7 +46,7 @@ def test_all_interval_constructor():
 
 
 @parametrize(
-    argnames=["min_val", "max_val"],
+    argnames="min_val,max_val",
     argvalues=[
         (0, 10),
         (0, None),
@@ -62,7 +62,7 @@ def test_interval_unpacking(min_val, max_val):
 
 
 @parametrize(
-    argnames=["interval", "min_val", "result"],
+    argnames="interval,min_val,result",
     argvalues=[
         (Interval.all(), 3, Interval(3, None)),
         (Interval(0.5, 7), 2, Interval(2, 7)),
@@ -80,7 +80,7 @@ def test_interval_successful_set_minimum(interval, min_val, result):
 
 
 @parametrize(
-    argnames=["interval", "max_val", "result"],
+    argnames="interval,max_val,result",
     argvalues=[
         (Interval.all(), 3, Interval(None, 3)),
         (Interval(0.5, 7), 2, Interval(0.5, 2)),
@@ -98,7 +98,7 @@ def test_interval_successful_set_maximum(interval, max_val, result):
 
 
 @parametrize(
-    argnames=["interval", "size"],
+    argnames="interval,size",
     argvalues=[
         (Interval(0.5, 7), 6.5),
         (Interval.all(), None),
@@ -111,7 +111,7 @@ def test_interval_size(interval, size):
 
 
 @parametrize(
-    argnames=["interval", "value"],
+    argnames="interval,value",
     argvalues=[
         (Interval(0.5, 7), 3),
         (Interval(0.5, 7), 0.5),
@@ -130,7 +130,7 @@ def test_interval_contains(interval, value):
 
 
 @parametrize(
-    argnames=["interval", "value"],
+    argnames="interval,value",
     argvalues=[
         (Interval(0.5, 7), -3),
         (Interval(0.5, 7), 9),
@@ -143,7 +143,7 @@ def test_interval_not_contains(interval, value):
 
 
 @parametrize(
-    argnames=["smaller", "bigger"],
+    argnames="smaller,bigger",
     argvalues=[
         (Interval(2.5, 5), Interval(0.5, 7)),
         (Interval(2.5, 5), Interval(0.5, None)),
@@ -173,7 +173,7 @@ def test_intervals_gt_lt_relations(smaller, bigger):
 
 
 @parametrize(
-    argnames=["interval1", "interval2"],
+    argnames="interval1,interval2",
     argvalues=[
         (Interval(2.5, 5), Interval(2.5, 5)),
         (Interval(2.5, None), Interval(2.5, None)),
@@ -192,7 +192,7 @@ def test_interval_not_equal_to_tuple():
 
 
 @parametrize(
-    argnames=["interval", "val", "result"],
+    argnames="interval,val,result",
     argvalues=[
         (Interval(2.5, 5), 0, Interval(2.5, 5)),
         (Interval(2.5, 5), 1, Interval(3.5, 6)),
@@ -217,7 +217,7 @@ def test_intervals_add(interval, val, result):
 
 
 @parametrize(
-    argnames=["interval", "val", "result"],
+    argnames="interval,val,result",
     argvalues=[
         (Interval(2.5, 5), 0, Interval(2.5, 5)),
         (Interval(2.5, 5), 1, Interval(1.5, 4)),
@@ -241,7 +241,7 @@ def test_intervals_subtract(interval, val, result):
 
 
 @parametrize(
-    argnames=["interval", "val", "result"],
+    argnames="interval,val,result",
     argvalues=[
         (Interval(2.5, 5), 0, Interval(3.75, 3.75)),
         (Interval(2.5, 5), 1, Interval(2.5, 5)),
@@ -259,7 +259,7 @@ def test_intervals_multiply(interval, val, result):
 
 
 @parametrize(
-    argnames=["interval", "val", "result"],
+    argnames="interval,val,result",
     argvalues=[
         (Interval(2.5, 5), 1, Interval(2.5, 5)),
         (Interval(2.5, 5), 2, Interval(3.125, 4.375)),
@@ -275,7 +275,7 @@ def test_intervals_divide(interval, val, result):
 
 
 @parametrize(
-    argnames=["interval", "num", "ticks"],
+    argnames="interval,num,ticks",
     argvalues=[
         (Interval(0, 1), 2, np.array([0, 1])),
         (Interval(0, 1), 3, np.array([0, 0.5, 1])),
@@ -291,7 +291,7 @@ def test_intervals_ticks(interval, num, ticks):
 
 
 @parametrize(
-    argnames=["midpoint", "size", "result"],
+    argnames="midpoint,size,result",
     argvalues=[
         (2.5, 1, Interval(2, 3)),
         (2, 6, Interval(-1, 5)),
@@ -302,7 +302,7 @@ def test_neighbourhood_interval(midpoint, size, result):
 
 
 @parametrize(
-    argnames=["intervals", "result"],
+    argnames="intervals,result",
     argvalues=[
         ([Interval(2.5, 5)], Interval(2.5, 5)),
         ([Interval(2.5, 5), Interval(1.5, 4)], Interval(2.5, 4)),
@@ -321,7 +321,7 @@ def test_intervals_intersect(intervals, result):
 
 
 @parametrize(
-    argnames=["intervals", "result"],
+    argnames="intervals,result",
     argvalues=[
         ([Interval(2.5, 5)], Interval(2.5, 5)),
         ([Interval(2.5, 5), Interval(1.5, 4)], Interval(1.5, 5)),
@@ -411,7 +411,7 @@ def test_negative_ticks_num_failure():
 
 
 @parametrize(
-    argnames=["intervals"],
+    argnames="intervals",
     argvalues=[
         ([Interval(2.5, 5), Interval(6, 8)]),
         ([Interval(2.5, 5), Interval(1.5, 4), Interval(6, 8)]),

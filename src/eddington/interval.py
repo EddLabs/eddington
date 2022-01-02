@@ -416,10 +416,14 @@ class Interval:
         :return: Unification interval
         :rtype: Interval
         """
-        min_vals = [interval.min_val for interval in intervals]
-        max_vals = [interval.max_val for interval in intervals]
-        min_val = None if None in min_vals else np.min(min_vals)
-        max_val = None if None in max_vals else np.max(max_vals)
+        min_vals = [
+            interval.min_val for interval in intervals if interval.min_val is not None
+        ]
+        max_vals = [
+            interval.max_val for interval in intervals if interval.max_val is not None
+        ]
+        min_val = None if len(min_vals) < len(intervals) else np.min(min_vals)
+        max_val = None if len(max_vals) < len(intervals) else np.max(max_vals)
         return Interval(min_val=min_val, max_val=max_val)
 
     def __set_from_interval(self, other: "Interval"):
