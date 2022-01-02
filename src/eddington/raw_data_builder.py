@@ -2,7 +2,7 @@
 import collections
 from typing import List, Optional, Union
 
-from eddington import FittingDataInvalidFile
+from eddington.exceptions import FittingDataInvalidFile
 
 
 class RawDataBuilder:

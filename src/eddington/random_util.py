@@ -4,7 +4,6 @@ from typing import Optional
 
 import numpy as np
 
-from eddington import FittingData
 from eddington.consts import (
     DEFAULT_MAX_COEFF,
     DEFAULT_MEASUREMENTS,
@@ -14,6 +13,7 @@ from eddington.consts import (
     DEFAULT_XSIGMA,
     DEFAULT_YSIGMA,
 )
+from eddington.fitting_data import FittingData
 
 
 def random_data(  # pylint: disable=invalid-name,too-many-arguments,too-many-locals

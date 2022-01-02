@@ -2,19 +2,42 @@
 parent = "standard"
 help = "Don't check duplications in pylint"
 
-[commands.pylint.no_duplicate]
-# This is a bummer...
-# Waiting for https://github.com/PyCQA/pylint/issues/748 to be resolved.
-add_args = ["--disable=duplicate-code"]
-
 [commands.flake8]
-args = ["--max-line-length=88", "--ignore=DAR"]
+args = [ "--max-line-length=88", "--ignore=DAR",]
+version = "4.0.1"
+
+[commands.pylint]
+version = "2.12.2"
+
+[commands.black]
+version = "21.12b0"
+
+[commands.isort]
+version = "5.10.1"
+
+[commands.mypy]
+version = "0.930"
+
+[commands.bandit]
+version = "1.7.1"
+
+[commands.pydocstyle]
+version = "6.1.1"
+
+[commands.darglint]
+version = "1.8.1"
+
+[commands.autoflake]
+version = "1.4"
 
 [sources.src]
-contexts = ["no_duplicate"]
+contexts = [ "no_duplicate",]
 
 [sources.tests]
-contexts = ["test"]
+contexts = [ "test",]
 
 [sources.integration_tests]
-contexts = ["test"]
+contexts = [ "test",]
+
+[commands.pylint.no_duplicate]
+add_args = [ "--disable=duplicate-code",]

@@ -249,6 +249,14 @@ def test_get_column_domain_only_selected(header_name):
     assert_float_equal(domain.max_val, np.max(values), rel=EPSILON)
 
 
+def test_get_column_domain_of_none_raises_value_error():
+    fitting_data = FittingData(COLUMNS)
+    with pytest.raises(
+        ValueError, match="^Column must be specified correctly to get its domain.$"
+    ):
+        fitting_data.column_domain(None)
+
+
 @parametrize("header_name", COLUMNS_NAMES)
 def test_get_column_domain_all_records(header_name):
     fitting_data = FittingData(COLUMNS)

@@ -881,8 +881,11 @@ class FittingData:  # pylint: disable=R0902,R0904
         :type only_selected: bool
         :returns: Minimal interval containing column values
         :rtype: Interval
+        :raises ValueError: if column_name is None, raising Value error
         """
         values = self.column_data(column_name=column_name, only_selected=only_selected)
+        if values is None:
+            raise ValueError("Column must be specified correctly to get its domain.")
         return Interval(min_val=np.min(values), max_val=np.max(values))
 
     def statistics(self, column_name: str) -> Optional[Statistics]:
