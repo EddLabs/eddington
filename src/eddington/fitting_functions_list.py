@@ -52,7 +52,7 @@ def constant(a: np.ndarray, x: Union[np.ndarray, float]) -> Union[np.ndarray, fl
     n=3,
     syntax="a[0] + a[1] * x + a[2] * x ^ 2",
     x_derivative=lambda a, x: a[1] + 2 * a[2] * x,
-    a_derivative=lambda a, x: np.stack([np.ones(shape=np.shape(x)), x, x ** 2]),
+    a_derivative=lambda a, x: np.stack([np.ones(shape=np.shape(x)), x, x**2]),
 )  # pylint: disable=C0103
 def parabolic(a: np.ndarray, x: Union[np.ndarray, float]) -> Union[np.ndarray, float]:
     """
@@ -65,7 +65,7 @@ def parabolic(a: np.ndarray, x: Union[np.ndarray, float]) -> Union[np.ndarray, f
     :return: evaluation value or values
     :rtype: float or np.ndarray
     """
-    return a[0] + a[1] * x + a[2] * x ** 2
+    return a[0] + a[1] * x + a[2] * x**2
 
 
 @fitting_function(
@@ -312,10 +312,10 @@ def polynomial(n: int) -> FittingFunction:  # pylint: disable=C0103
         name=f"polynomial_{n}",
         syntax=syntax,
         x_derivative=lambda a, x: polynomial(n - 1)(arange * a[1:], x),
-        a_derivative=lambda a, x: np.stack([x ** i for i in range(n + 1)]),
+        a_derivative=lambda a, x: np.stack([x**i for i in range(n + 1)]),
         save=False,
     )  # pylint: disable=C0103
     def func(a: np.ndarray, x: Union[np.ndarray, float]) -> Union[np.ndarray, float]:
-        return sum([a[i] * x ** i for i in range(n + 1)])
+        return sum([a[i] * x**i for i in range(n + 1)])
 
     return func

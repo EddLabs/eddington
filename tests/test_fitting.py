@@ -19,22 +19,22 @@ def dummy_func_x_derivative(a, x):
 
 
 def dummy_func_a_derivative(a, x):  # pylint: disable=W0613
-    return np.stack([x ** 2, np.ones(shape=x.shape)])
+    return np.stack([x**2, np.ones(shape=x.shape)])
 
 
 @fitting_function(n=2, save=False)
 def dummy_func(a, x):
-    return a[0] * x ** 2 + a[1]
+    return a[0] * x**2 + a[1]
 
 
 @fitting_function(n=2, x_derivative=dummy_func_x_derivative, save=False)
 def dummy_func_with_x_derivative(a, x):
-    return a[0] * x ** 2 + a[1]
+    return a[0] * x**2 + a[1]
 
 
 @fitting_function(n=2, a_derivative=dummy_func_a_derivative, save=False)
 def dummy_func_with_a_derivative(a, x):
-    return a[0] * x ** 2 + a[1]
+    return a[0] * x**2 + a[1]
 
 
 @fitting_function(
@@ -44,7 +44,7 @@ def dummy_func_with_a_derivative(a, x):
     save=False,
 )
 def dummy_func_with_both_derivatives(a, x):
-    return a[0] * x ** 2 + a[1]
+    return a[0] * x**2 + a[1]
 
 
 @pytest.fixture
