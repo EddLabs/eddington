@@ -267,7 +267,7 @@ class FigurePlotInstruction(FigureInstruction):
         """
         super().__init__(name="plot")
         self.interval = interval
-        self.a = a  # pylint: disable=invalid-name
+        self.a = a
         self.func = func
         self.label = label
         self.color = color
@@ -281,8 +281,8 @@ class FigurePlotInstruction(FigureInstruction):
         :param fig: Figure to add element to
         :type fig: Figure
         """
-        x = self.interval.ticks(self.ticks)  # pylint: disable=invalid-name
-        y = self.func(self.a, x)  # pylint: disable=invalid-name
+        x = self.interval.ticks(self.ticks)
+        y = self.func(self.a, x)
         fig.ax.plot(
             x, y, label=self.label, color=self.color, linestyle=self.linestyle.value
         )
@@ -317,9 +317,9 @@ class FigureErrorBarInstruction(FigureInstruction):
         :type color: str
         """
         super().__init__(name="errorbar")
-        self.x = x  # pylint: disable=invalid-name
-        self.xerr = xerr  # pylint: disable=invalid-name
-        self.y = y  # pylint: disable=invalid-name
+        self.x = x
+        self.xerr = xerr
+        self.y = y
         self.yerr = yerr
         self.label = label
         self.color = color
@@ -348,7 +348,7 @@ class FigureErrorBarInstruction(FigureInstruction):
 class FigureScatterInstruction(FigureInstruction):
     """Add error bar to figure."""
 
-    def __init__(  # pylint: disable=too-many-arguments
+    def __init__(
         self,
         x: Union[np.ndarray, List[float]],
         y: Union[np.ndarray, List[float]],
@@ -368,8 +368,8 @@ class FigureScatterInstruction(FigureInstruction):
         :type color: str
         """
         super().__init__(name="scatter")
-        self.x = x  # pylint: disable=invalid-name
-        self.y = y  # pylint: disable=invalid-name
+        self.x = x
+        self.y = y
         self.label = label
         self.color = color
 
@@ -392,7 +392,7 @@ class FigureScatterInstruction(FigureInstruction):
 
 
 @dataclass
-class FigureBuilder:  # pylint: disable=too-many-instance-attributes
+class FigureBuilder:
     """Builder class for creating a figure."""
 
     instructions: List[FigureInstruction] = field(default_factory=list, init=False)
@@ -534,7 +534,7 @@ class FigureBuilder:  # pylint: disable=too-many-instance-attributes
             )
         )
 
-    def add_error_bar(  # pylint: disable=invalid-name,too-many-arguments
+    def add_error_bar(  # pylint: disable=too-many-arguments
         self,
         x: Union[np.ndarray, List[float]],
         xerr: Union[np.ndarray, List[float], None],
@@ -572,7 +572,7 @@ class FigureBuilder:  # pylint: disable=too-many-instance-attributes
             )
         )
 
-    def add_scatter(  # pylint: disable=invalid-name
+    def add_scatter(
         self,
         x: Union[np.ndarray, List[float]],
         y: Union[np.ndarray, List[float]],
@@ -615,7 +615,7 @@ class FigureBuilder:  # pylint: disable=too-many-instance-attributes
         :rtype: FigureBuilder
         :raises PlottingError: Raised when data doesn't have x or y values
         """
-        x, y = data.x, data.y  # pylint: disable=invalid-name
+        x, y = data.x, data.y
         if x is None or y is None:
             raise PlottingError("Can't plot data without x or y values")
         xerr, yerr = data.xerr, data.yerr
@@ -625,7 +625,7 @@ class FigureBuilder:  # pylint: disable=too-many-instance-attributes
             x=x, xerr=xerr, y=y, yerr=yerr, label=label, color=color
         )
 
-    def add_plot(  # pylint: disable=invalid-name,too-many-arguments
+    def add_plot(  # pylint: disable=too-many-arguments
         self,
         interval: Interval,
         a: Union[np.ndarray, List[float]],

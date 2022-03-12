@@ -16,7 +16,7 @@ from eddington.consts import (
 from eddington.fitting_data import FittingData
 
 
-def random_data(  # pylint: disable=invalid-name,too-many-arguments,too-many-locals
+def random_data(  # pylint: disable=too-many-arguments,too-many-locals
     fit_func,  # type: ignore
     x: Optional[np.ndarray] = None,
     a: Optional[np.ndarray] = None,

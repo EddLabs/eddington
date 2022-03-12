@@ -34,7 +34,7 @@ from eddington.consts import PLOT_DOMAIN_MULTIPLIER
 from eddington.plot.figure_builder import FigureBuilder
 from eddington.plot.line_style import LineStyle
 
-# pylint: disable=invalid-name,too-many-arguments,too-many-locals,duplicate-code
+# pylint: disable=invalid-name,too-many-arguments,too-many-locals
 from eddington.plot.plot_util import build_repr_string
 
 

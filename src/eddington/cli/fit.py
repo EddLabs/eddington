@@ -37,7 +37,7 @@ from eddington.plot.figure_builder import FigureBuilder
 from eddington.plot.line_style import LineStyle
 from eddington.plot.plot_util import build_repr_string, show_or_export
 
-# pylint: disable=invalid-name,too-many-arguments,too-many-locals,duplicate-code
+# pylint: disable=invalid-name,too-many-arguments,too-many-locals
 
 
 @eddington_cli.command("fit")

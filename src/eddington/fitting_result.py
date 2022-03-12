@@ -42,7 +42,7 @@ class FittingResult:  # pylint: disable=too-many-instance-attributes
     """
 
     a0: Union[List[float], np.ndarray]  # pylint: disable=invalid-name
-    a: Union[List[float], np.ndarray]  # pylint: disable=invalid-name
+    a: Union[List[float], np.ndarray]
     aerr: Union[List[float], np.ndarray]
     arerr: Union[List[float], np.ndarray] = field(init=False)
     acov: Union[List[List[float]], np.ndarray]
@@ -156,9 +156,7 @@ P-probability: {to_relevant_precision_string(self.p_probability, self.precision)
         np.set_printoptions(precision=old_precision)
         return repr_string
 
-    def __a_value_string(  # pylint: disable=invalid-name
-        self, i: int, a: float, aerr: float, arerr: float
-    ) -> str:
+    def __a_value_string(self, i: int, a: float, aerr: float, arerr: float) -> str:
         order = min(order_of_magnitude(a), order_of_magnitude(aerr))
         digit = order - self.precision
         a_string = to_digit_string(a, digit)

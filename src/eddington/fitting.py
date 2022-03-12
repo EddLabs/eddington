@@ -51,7 +51,7 @@ def fit(  # pylint: disable=invalid-name
     real_data = RealData(x=data.x, y=data.y, sx=data.xerr, sy=data.yerr)
     odr = ODR(data=real_data, model=model, beta0=a0)
     output = odr.run()
-    a = output.beta  # pylint: disable=invalid-name
+    a = output.beta
     chi2 = output.sum_square  # pylint: disable=no-member
     degrees_of_freedom = len(data.x) - func.active_parameters
     return FittingResult(

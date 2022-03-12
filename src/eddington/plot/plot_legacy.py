@@ -500,7 +500,7 @@ def horizontal_line(  # pylint: disable=C0103
 
 
 @deprecated
-def get_plot_borders(  # pylint: disable=invalid-name
+def get_plot_borders(
     x: np.ndarray, xmin: Optional[float] = None, xmax: Optional[float] = None
 ) -> Tuple[float, float]:
     """
@@ -566,7 +566,7 @@ def get_checkers_list(
     return [__in_bounds(val=val, min_val=min_val, max_val=max_val) for val in values]
 
 
-def __get_a_dict(a):  # pylint: disable=invalid-name
+def __get_a_dict(a):
     if isinstance(a, (dict, OrderedDict)):
         return a
     if isinstance(a, list):
@@ -591,7 +591,7 @@ def __build_values_dict(value, labels, default_value=None):
     return dict(zip(labels, value))
 
 
-def __should_add_legend(legend, a_dict):  # pylint: disable=invalid-name
+def __should_add_legend(legend, a_dict):
     if legend is not None:
         return legend
     if len(a_dict) >= 2:
@@ -599,7 +599,7 @@ def __should_add_legend(legend, a_dict):  # pylint: disable=invalid-name
     return False
 
 
-def __in_bounds(val, min_val=None, max_val=None):  # pylint: disable=invalid-name
+def __in_bounds(val, min_val=None, max_val=None):
     if min_val is not None and val < min_val:
         return False
     if max_val is not None and val > max_val:
