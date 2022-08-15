@@ -50,7 +50,7 @@ copyright = "2020, Sagi Shadur"
 #
 # The full version, including alpha/beta/rc tags.
 
-version = "0.0.23"
+version = "0.0.24.dev0"
 
 autoclass_content = "both"
 
