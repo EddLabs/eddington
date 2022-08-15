@@ -379,7 +379,7 @@ def test_execute_on_single_value(case):
 
 
 @parametrize_with_cases(argnames="case", cases=THIS_MODULE)
-def test_execute_on_array(case):  # pylint: disable=W0613
+def test_execute_on_array(case):
     y_array_calculation = case["func"](case["a"], case["x"])
     assert y_array_calculation == pytest.approx(
         case["y"], rel=case.get("eps", 1e-5)
@@ -396,7 +396,7 @@ def test_execute_x_derivative_on_single_value(case):
 
 
 @parametrize_with_cases(argnames="case", cases=THIS_MODULE)
-def test_execute_x_derivative_on_array(case):  # pylint: disable=W0613
+def test_execute_x_derivative_on_array(case):
     x_derivative = case["func"].x_derivative(case["a"], case["x"])
     assert x_derivative == pytest.approx(
         case["x_derivatives"], rel=case.get("eps", 1e-5)
@@ -404,7 +404,7 @@ def test_execute_x_derivative_on_array(case):  # pylint: disable=W0613
 
 
 @parametrize_with_cases(argnames="case", cases=THIS_MODULE)
-def test_execute_a_derivative_on_single_value(case):  # pylint: disable=W0613
+def test_execute_a_derivative_on_single_value(case):
     for i, (x_val, a_derivative) in enumerate(
         zip(case["x"], case["a_derivatives"]), start=1
     ):
@@ -415,7 +415,7 @@ def test_execute_a_derivative_on_single_value(case):  # pylint: disable=W0613
 
 
 @parametrize_with_cases(argnames="case", cases=THIS_MODULE)
-def test_execute_a_derivative_on_array(case):  # pylint: disable=W0613
+def test_execute_a_derivative_on_array(case):
     a_derivative_array_calculation = case["func"].a_derivative(case["a"], case["x"])
     for i, (expected_a_derivative, actual_a_derivative) in enumerate(
         zip(a_derivative_array_calculation.T, case["a_derivatives"]), start=1

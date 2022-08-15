@@ -10,7 +10,7 @@ from eddington.fitting_functions_registry import FittingFunctionsRegistry
 
 
 @dataclass(unsafe_hash=True)
-class FittingFunction:  # pylint: disable=invalid-name,too-many-instance-attributes
+class FittingFunction:  # pylint: disable=invalid-name
     """
     Fitting function class.
 

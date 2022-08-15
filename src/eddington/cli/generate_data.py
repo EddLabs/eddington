@@ -21,7 +21,7 @@ from eddington.consts import (
 )
 from eddington.random_util import random_data
 
-# pylint: disable=invalid-name,too-many-arguments
+# pylint: disable=too-many-arguments
 
 
 @eddington_cli.command("generate-data")

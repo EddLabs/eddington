@@ -3,7 +3,6 @@ import os
 
 from setuptools import setup
 
-
 version = "0.0.23"
 install_requires = [
     "click >= 7.1.2",

@@ -30,9 +30,9 @@ from eddington.statistics import Statistics
 class Columns:
     """Dataclass for chosen column names."""
 
-    x: Optional[str] = field(default=None)  # pylint: disable=invalid-name
+    x: Optional[str] = field(default=None)
     xerr: Optional[str] = field(default=None)
-    y: Optional[str] = field(default=None)  # pylint: disable=invalid-name
+    y: Optional[str] = field(default=None)
     yerr: Optional[str] = field(default=None)
 
     def __iter__(self) -> Iterator[Optional[str]]:
@@ -253,7 +253,7 @@ class FittingData:  # pylint: disable=R0902,R0904
         )
 
     @property
-    def x(self) -> Optional[np.ndarray]:  # pylint: disable=invalid-name
+    def x(self) -> Optional[np.ndarray]:
         """
         Property of the x values.
 
@@ -273,7 +273,7 @@ class FittingData:  # pylint: disable=R0902,R0904
         return self.column_data(self.xerr_column)
 
     @property
-    def y(self) -> Optional[np.ndarray]:  # pylint: disable=invalid-name
+    def y(self) -> Optional[np.ndarray]:
         """
         Property of the y values.
 
@@ -643,9 +643,7 @@ class FittingData:  # pylint: disable=R0902,R0904
 
     # More functionalities
 
-    def residuals(  # pylint: disable=invalid-name
-        self, fit_func, a: Union[List[float], np.ndarray]
-    ) -> "FittingData":
+    def residuals(self, fit_func, a: Union[List[float], np.ndarray]) -> "FittingData":
         """
         Creates residuals :class:`FittingData` objects.
 

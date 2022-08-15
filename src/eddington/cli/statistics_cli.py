@@ -7,8 +7,6 @@ import click
 from eddington.cli.common_flags import data_file_option, output_dir_option, sheet_option
 from eddington.cli.main_cli import eddington_cli
 from eddington.cli.util import load_data_file
-
-# pylint: disable=too-many-arguments
 from eddington.statistics import Statistics
 
 
