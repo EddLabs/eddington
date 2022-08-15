@@ -316,6 +316,6 @@ def polynomial(n: int) -> FittingFunction:  # pylint: disable=invalid-name
         save=False,
     )
     def func(a: np.ndarray, x: Union[np.ndarray, float]) -> Union[np.ndarray, float]:
-        return sum([a[i] * x**i for i in range(n + 1)])
+        return sum(a[i] * x**i for i in range(n + 1))
 
     return func
