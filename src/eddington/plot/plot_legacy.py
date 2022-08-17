@@ -39,7 +39,7 @@ def deprecated(func):
 
 
 @deprecated
-def plot_residuals(  # pylint: disable=invalid-name,too-many-arguments,too-many-locals
+def plot_residuals(  # pylint: disable=too-many-arguments,too-many-locals
     func,
     data: FittingData,
     a: np.ndarray,
@@ -109,7 +109,7 @@ def plot_residuals(  # pylint: disable=invalid-name,too-many-arguments,too-many-
 
 
 @deprecated
-def plot_fitting(  # pylint: disable=C0103,R0913,R0914
+def plot_fitting(  # pylint: disable=too-many-arguments,too-many-locals
     func,
     data: FittingData,
     a: Union[np.ndarray, List[np.ndarray], Dict[str, np.ndarray]],
@@ -250,7 +250,7 @@ def plot_data(  # pylint: disable=too-many-arguments
     :returns: ``matplotlib.pyplot.Figure``
     """
     __validate_all_columns_exist(data)
-    ax, fig = get_figure(  # pylint: disable=invalid-name
+    ax, fig = get_figure(
         title_name=title_name,
         xlabel=xlabel,
         ylabel=ylabel,
@@ -310,9 +310,7 @@ def get_figure(  # pylint: disable=too-many-arguments
 
 
 @deprecated
-def title(
-    ax: plt.Axes, title_name: Optional[str]
-):  # pylint: disable=invalid-name  # pragma: no cover
+def title(ax: plt.Axes, title_name: Optional[str]):  # pragma: no cover
     """
     Add/remove title to figure.
 
@@ -326,9 +324,7 @@ def title(
 
 
 @deprecated
-def label_axes(  # pylint: disable=invalid-name
-    ax: plt.Axes, xlabel: Optional[str], ylabel: Optional[str]
-):
+def label_axes(ax: plt.Axes, xlabel: Optional[str], ylabel: Optional[str]):
     """
     Add/remove labels to figure.
 
@@ -346,7 +342,7 @@ def label_axes(  # pylint: disable=invalid-name
 
 
 @deprecated
-def limit_axes(  # pylint: disable=invalid-name
+def limit_axes(
     ax: plt.Axes, xmin: Optional[float] = None, xmax: Optional[float] = None
 ):  # pragma: no cover
     """
@@ -366,7 +362,7 @@ def limit_axes(  # pylint: disable=invalid-name
 
 
 @deprecated
-def add_grid(ax: plt.Axes, is_grid: bool):  # pylint: disable=invalid-name
+def add_grid(ax: plt.Axes, is_grid: bool):
     """
     Add/remove grid to figure.
 
@@ -379,7 +375,7 @@ def add_grid(ax: plt.Axes, is_grid: bool):  # pylint: disable=invalid-name
 
 
 @deprecated
-def add_legend(ax: plt.Axes, is_legend: bool):  # pylint: disable=invalid-name
+def add_legend(ax: plt.Axes, is_legend: bool):
     """
     Add/remove legend to figure.
 
@@ -393,9 +389,7 @@ def add_legend(ax: plt.Axes, is_legend: bool):  # pylint: disable=invalid-name
 
 
 @deprecated
-def set_scales(  # pylint: disable=invalid-name
-    ax: plt.Axes, is_x_log_scale: bool, is_y_log_scale: bool
-):
+def set_scales(ax: plt.Axes, is_x_log_scale: bool, is_y_log_scale: bool):
     """
     Change x axis scale to logarithmic.
 
@@ -413,7 +407,7 @@ def set_scales(  # pylint: disable=invalid-name
 
 
 @deprecated
-def add_plot(  # pylint: disable=invalid-name,too-many-arguments
+def add_plot(  # pylint: disable=too-many-arguments
     ax: plt.Axes,
     x: Union[np.ndarray, List[float]],
     y: Union[np.ndarray, List[float]],
@@ -441,7 +435,7 @@ def add_plot(  # pylint: disable=invalid-name,too-many-arguments
 
 
 @deprecated
-def add_errorbar(  # pylint: disable=invalid-name,too-many-arguments
+def add_errorbar(  # pylint: disable=too-many-arguments
     ax: plt.Axes,
     x: Union[np.ndarray, List[float]],
     xerr: Union[np.ndarray, List[float]],
@@ -483,9 +477,7 @@ def add_errorbar(  # pylint: disable=invalid-name,too-many-arguments
 
 
 @deprecated
-def horizontal_line(  # pylint: disable=C0103
-    ax: plt.Axes, xmin: float, xmax: float, y: float = 0
-):
+def horizontal_line(ax: plt.Axes, xmin: float, xmax: float, y: float = 0):
     """
     Add horizontal line to figure.
 

@@ -12,10 +12,10 @@ class Figure:
     def __init__(self):
         """Figure constructor."""
         self._raw_figure = plt.figure()
-        self.ax = self._raw_figure.add_subplot()  # pylint: disable=invalid-name
+        self.ax = self._raw_figure.add_subplot()
 
     @property
-    def ax(self) -> plt.Axes:  # pylint: disable=invalid-name
+    def ax(self) -> plt.Axes:
         """
         Axes object getter.
 
@@ -25,7 +25,7 @@ class Figure:
         return self._ax
 
     @ax.setter
-    def ax(self, ax: plt.Axes):  # pylint: disable=invalid-name
+    def ax(self, ax: plt.Axes):
         """
         Axes object setter.
 
