@@ -686,6 +686,9 @@ class FigureBuilder:
         """
         Build figure.
 
+        :param figure: Optional. If given, add the instruction to that figure.
+            If not, creates a new figure.
+        :type figure: Optional[Figure]
         :return: Built figure item
         :rtype: Figure
         """
