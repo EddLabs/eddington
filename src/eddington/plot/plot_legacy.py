@@ -310,7 +310,9 @@ def get_figure(  # pylint: disable=too-many-arguments
 
 
 @deprecated
-def title(ax: plt.Axes, title_name: Optional[str]):  # pylint: disable=invalid-name
+def title(
+    ax: plt.Axes, title_name: Optional[str]
+):  # pylint: disable=invalid-name  # pragma: no cover
     """
     Add/remove title to figure.
 
@@ -346,7 +348,7 @@ def label_axes(  # pylint: disable=invalid-name
 @deprecated
 def limit_axes(  # pylint: disable=invalid-name
     ax: plt.Axes, xmin: Optional[float] = None, xmax: Optional[float] = None
-):
+):  # pragma: no cover
     """
     Set limits on axes.
 
