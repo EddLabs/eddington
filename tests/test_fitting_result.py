@@ -1,3 +1,5 @@
+from typing import Any, Dict
+
 import mock
 import numpy as np
 import pytest
@@ -179,35 +181,35 @@ P-probability: 2.633e-8
 
 
 @parametrize_with_cases(argnames="expected, fitting_result", cases=THIS_MODULE)
-def test_a0(expected, fitting_result):
+def test_a0(expected: Dict[str, Any], fitting_result: FittingResult):
     assert fitting_result.a0 == pytest.approx(
         expected["a0"], rel=expected["delta"]
     ), "Initial Guess is different than expected"
 
 
 @parametrize_with_cases(argnames="expected, fitting_result", cases=THIS_MODULE)
-def test_a(expected, fitting_result):
+def test_a(expected: Dict[str, Any], fitting_result: FittingResult):
     assert fitting_result.a == pytest.approx(
         expected["a"], rel=expected["delta"]
     ), "Calculated parameters are different than expected"
 
 
 @parametrize_with_cases(argnames="expected, fitting_result", cases=THIS_MODULE)
-def test_aerr(expected, fitting_result):
+def test_aerr(expected: Dict[str, Any], fitting_result: FittingResult):
     assert fitting_result.aerr == pytest.approx(
         expected["aerr"], rel=expected["delta"]
     ), "Parameters errors are different than expected"
 
 
 @parametrize_with_cases(argnames="expected, fitting_result", cases=THIS_MODULE)
-def test_arerr(expected, fitting_result):
+def test_arerr(expected: Dict[str, Any], fitting_result: FittingResult):
     assert fitting_result.arerr == pytest.approx(
         expected["arerr"], rel=expected["delta"]
     ), "Parameters relative errors are different than expected"
 
 
 @parametrize_with_cases(argnames="expected, fitting_result", cases=THIS_MODULE)
-def test_acov(expected, fitting_result):
+def test_acov(expected: Dict[str, Any], fitting_result: FittingResult):
     expected_acov = np.array(expected["acov"])
     actual_acov = fitting_result.acov
     assert actual_acov.shape == expected_acov.shape
@@ -218,35 +220,35 @@ def test_acov(expected, fitting_result):
 
 
 @parametrize_with_cases(argnames="expected, fitting_result", cases=THIS_MODULE)
-def test_chi2(expected, fitting_result):
+def test_chi2(expected: Dict[str, Any], fitting_result: FittingResult):
     assert fitting_result.chi2 == pytest.approx(
         expected["chi2"], rel=expected["delta"]
     ), "Chi2 is different than expected"
 
 
 @parametrize_with_cases(argnames="expected, fitting_result", cases=THIS_MODULE)
-def test_chi2_reduced(expected, fitting_result):
+def test_chi2_reduced(expected: Dict[str, Any], fitting_result: FittingResult):
     assert fitting_result.chi2_reduced == pytest.approx(
         expected["chi2_reduced"], rel=expected["delta"]
     ), "Chi2 reduced is different than expected"
 
 
 @parametrize_with_cases(argnames="expected, fitting_result", cases=THIS_MODULE)
-def test_degrees_of_freedom(expected, fitting_result):
+def test_degrees_of_freedom(expected: Dict[str, Any], fitting_result: FittingResult):
     assert (
         fitting_result.degrees_of_freedom == expected["degrees_of_freedom"]
     ), "Degrees of freedom are different than expected"
 
 
 @parametrize_with_cases(argnames="expected, fitting_result", cases=THIS_MODULE)
-def test_p_probability(expected, fitting_result):
+def test_p_probability(expected: Dict[str, Any], fitting_result: FittingResult):
     assert fitting_result.p_probability == pytest.approx(
         expected["p_probability"], rel=expected["delta"]
     ), "Chi2 reduced is different than expected"
 
 
 @parametrize_with_cases(argnames="expected, fitting_result", cases=THIS_MODULE)
-def test_representation(expected, fitting_result):
+def test_representation(expected: Dict[str, Any], fitting_result: FittingResult):
     expected_repr = expected["repr_string"].split("\n")
     actual_repr = str(fitting_result).split("\n")
     for i, (expected_line, actual_line) in enumerate(zip(expected_repr, actual_repr)):
@@ -256,7 +258,13 @@ def test_representation(expected, fitting_result):
 
 
 @parametrize_with_cases(argnames="expected, fitting_result", cases=THIS_MODULE)
-def test_export_to_text_file(expected, fitting_result):
+def test_representation_twice(expected: Dict[str, Any], fitting_result: FittingResult):
+    assert str(fitting_result) == expected["repr_string"]
+    assert str(fitting_result) == expected["repr_string"]
+
+
+@parametrize_with_cases(argnames="expected, fitting_result", cases=THIS_MODULE)
+def test_export_to_text_file(expected: Dict[str, Any], fitting_result: FittingResult):
     path = "/path/to/output.txt"
     mock_open_obj = mock.mock_open()
     with mock.patch("eddington.fitting_result.open", mock_open_obj):
@@ -268,7 +276,9 @@ def test_export_to_text_file(expected, fitting_result):
 
 
 @parametrize_with_cases(argnames="expected, fitting_result", cases=THIS_MODULE)
-def test_export_to_json_file(expected, fitting_result, json_dumps_mock):
+def test_export_to_json_file(
+    expected: Dict[str, Any], fitting_result: FittingResult, json_dumps_mock
+):
     json_string = "This is a json string"
     json_dumps_mock.return_value = json_string
     path = "/path/to/output.json"

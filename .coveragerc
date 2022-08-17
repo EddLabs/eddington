@@ -3,6 +3,7 @@ source = src/eddington
 omit =
     src/eddington/__main__.py
     src/eddington/cli/*.py
+branch = True
 
 [report]
 show_missing = True
