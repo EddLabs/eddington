@@ -1,4 +1,6 @@
 """Module containing figure wrapper class."""
+from typing import Optional
+
 import matplotlib.pyplot as plt
 
 
@@ -9,9 +11,16 @@ class Figure:
     It releases the memory when the figure is no longer in use.
     """
 
-    def __init__(self):
-        """Figure constructor."""
-        self._raw_figure = plt.figure()
+    def __init__(self, raw_figure: Optional[plt.Figure] = None):
+        """
+        Figure constructor.
+
+        :param raw_figure: Raw figure that this class wraps
+        :type raw_figure: plt.Figure
+        """
+        if raw_figure is None:
+            raw_figure = plt.figure()
+        self._raw_figure = raw_figure
         self.ax = self._raw_figure.add_subplot()
 
     @property

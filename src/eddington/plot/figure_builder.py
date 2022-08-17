@@ -682,16 +682,17 @@ class FigureBuilder:
             self.instructions.append(instruction)
         return self
 
-    def build(self) -> Figure:
+    def build(self, figure: Optional[Figure] = None) -> Figure:
         """
         Build figure.
 
         :return: Built figure item
         :rtype: Figure
         """
-        fig = Figure()
+        if figure is None:
+            figure = Figure()
         for instruction in self.instructions:
-            instruction.add_to_figure(fig)
+            instruction.add_to_figure(figure)
         for instruction in self.unique_instructions.values():
-            instruction.add_to_figure(fig)
-        return fig
+            instruction.add_to_figure(figure)
+        return figure
