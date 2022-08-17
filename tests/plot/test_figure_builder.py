@@ -543,6 +543,12 @@ def test_figure_builder_build_recipe(mock_figure, figure_builder):
     assert actual_figure == mock_figure
 
 
+@parametrize_with_cases(argnames="figure_builder", cases=".")
+def test_figure_builder_build_recipe_with_existing_figure(mock_figure, figure_builder):
+    actual_figure = figure_builder.build(mock_figure)
+    assert actual_figure == mock_figure
+
+
 # Failed
 
 
