@@ -682,16 +682,20 @@ class FigureBuilder:
             self.instructions.append(instruction)
         return self
 
-    def build(self) -> Figure:
+    def build(self, figure: Optional[Figure] = None) -> Figure:
         """
         Build figure.
 
+        :param figure: Optional. If given, add the instruction to that figure.
+            If not, creates a new figure.
+        :type figure: Optional[Figure]
         :return: Built figure item
         :rtype: Figure
         """
-        fig = Figure()
+        if figure is None:
+            figure = Figure()
         for instruction in self.instructions:
-            instruction.add_to_figure(fig)
+            instruction.add_to_figure(figure)
         for instruction in self.unique_instructions.values():
-            instruction.add_to_figure(fig)
-        return fig
+            instruction.add_to_figure(figure)
+        return figure
