@@ -5,15 +5,13 @@ from setuptools import setup
 
 version = "0.0.24.dev1"
 install_requires = [
-    "click >= 7.1.2",
-    "prettytable >= 2.0.0",
-    'dataclasses >= 0.8; python_version == "3.6"',
-    'scipy >= 1.6.0; python_version > "3.6"',
-    'scipy >= 1.5.4, < 1.6; python_version == "3.6"',
-    "numpy >= 1.19.5",
-    "openpyxl >= 3.0.6",
-    "matplotlib >= 3.3.3",
-    "types-mock >= 4.0.4",
+    "click >= 8.1.3",
+    "prettytable >= 3.4.0",
+    "scipy >= 1.9.1",
+    "numpy >= 1.23.2",
+    "openpyxl >= 3.0.10",
+    "matplotlib >= 3.5.3",
+    "types-mock >= 4.0.15",
 ]
 
 if os.environ.get("READTHEDOCS") == "True":
