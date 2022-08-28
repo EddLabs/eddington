@@ -641,6 +641,31 @@ class FittingData:  # pylint: disable=R0902,R0904
         if index != self.yerr_index:
             self.yerr_index = index
 
+    def serialize(self) -> Dict[str, Any]:
+        """
+        Represent the data as serializable dictionary that can be saved as json.
+
+        :return: Fitting data as serializable dictionary
+        :rtype: Dict[str, Any]
+        """
+        serializable_data = OrderedDict(
+            [
+                (
+                    column,
+                    self.column_data(column_name=column, only_selected=False).tolist(),
+                )
+                for column in self.all_columns
+            ]
+        )
+        return OrderedDict(
+            data=serializable_data,
+            x_column=self.x_column,
+            xerr_column=self.xerr_column,
+            y_column=self.y_column,
+            yerr_column=self.yerr_column,
+            indices=list(self.records_indices),
+        )
+
     # More functionalities
 
     def residuals(self, fit_func, a: Union[List[float], np.ndarray]) -> "FittingData":
@@ -811,6 +836,29 @@ class FittingData:  # pylint: disable=R0902,R0904
             search=search,
         )
         # fmt: on
+
+    @classmethod
+    def deserialize(cls, serialized_data: Dict[str, Any]) -> "FittingData":
+        """
+        Deserialize a serialization dictionary into a fitting data.
+
+        This is the reverse function of `FittingData.serialize`
+
+        :param serialized_data: The serialize data to be deserializer
+        :type serialized_data: Dict[str, Any]
+        :return: Fitting functions
+        :rtype: FittingData
+        """
+        fitting_data = FittingData(
+            data=serialized_data["data"],
+            x_column=serialized_data["x_column"],
+            xerr_column=serialized_data["xerr_column"],
+            y_column=serialized_data["y_column"],
+            yerr_column=serialized_data["yerr_column"],
+            search=False,
+        )
+        fitting_data.records_indices = serialized_data["indices"]
+        return fitting_data
 
     # Getter methods
 
