@@ -260,7 +260,7 @@ class FittingData:  # pylint: disable=R0902,R0904
         :return: values of the x column
         :rtype: np.ndarray
         """
-        return self.column_data(self.x_column)
+        return self.__safe_column_data(self.x_column)
 
     @property
     def xerr(self) -> Optional[np.ndarray]:
@@ -270,7 +270,7 @@ class FittingData:  # pylint: disable=R0902,R0904
         :return: values of the x error column
         :rtype: np.ndarray
         """
-        return self.column_data(self.xerr_column)
+        return self.__safe_column_data(self.xerr_column)
 
     @property
     def y(self) -> Optional[np.ndarray]:
@@ -280,7 +280,7 @@ class FittingData:  # pylint: disable=R0902,R0904
         :return: values of the y column
         :rtype: np.ndarray
         """
-        return self.column_data(self.y_column)
+        return self.__safe_column_data(self.y_column)
 
     @property
     def yerr(self) -> Optional[np.ndarray]:
@@ -290,7 +290,7 @@ class FittingData:  # pylint: disable=R0902,R0904
         :return: values of the y error column
         :rtype: np.ndarray
         """
-        return self.column_data(self.yerr_column)
+        return self.__safe_column_data(self.yerr_column)
 
     @property
     def x_domain(self) -> Interval:
@@ -641,6 +641,31 @@ class FittingData:  # pylint: disable=R0902,R0904
         if index != self.yerr_index:
             self.yerr_index = index
 
+    def serialize(self) -> Dict[str, Any]:
+        """
+        Represent the data as serializable dictionary that can be saved as json.
+
+        :return: Fitting data as serializable dictionary
+        :rtype: Dict[str, Any]
+        """
+        serializable_data = OrderedDict(
+            [
+                (
+                    column,
+                    self.column_data(column_name=column, only_selected=False).tolist(),
+                )
+                for column in self.all_columns
+            ]
+        )
+        return OrderedDict(
+            data=serializable_data,
+            x_column=self.x_column,
+            xerr_column=self.xerr_column,
+            y_column=self.y_column,
+            yerr_column=self.yerr_column,
+            indices=list(self.records_indices),
+        )
+
     # More functionalities
 
     def residuals(self, fit_func, a: Union[List[float], np.ndarray]) -> "FittingData":
@@ -812,11 +837,32 @@ class FittingData:  # pylint: disable=R0902,R0904
         )
         # fmt: on
 
+    @classmethod
+    def deserialize(cls, serialized_data: Dict[str, Any]) -> "FittingData":
+        """
+        Deserialize a serialization dictionary into a fitting data.
+
+        This is the reverse function of `FittingData.serialize`
+
+        :param serialized_data: The serialize data to be deserializer
+        :type serialized_data: Dict[str, Any]
+        :return: Fitting functions
+        :rtype: FittingData
+        """
+        fitting_data = FittingData(
+            data=serialized_data["data"],
+            x_column=serialized_data["x_column"],
+            xerr_column=serialized_data["xerr_column"],
+            y_column=serialized_data["y_column"],
+            yerr_column=serialized_data["yerr_column"],
+            search=False,
+        )
+        fitting_data.records_indices = serialized_data["indices"]
+        return fitting_data
+
     # Getter methods
 
-    def column_data(
-        self, column_name: Optional[str], only_selected: bool = True
-    ) -> Optional[np.ndarray]:
+    def column_data(self, column_name: str, only_selected: bool = True) -> np.ndarray:
         """
         Get the data of a column.
 
@@ -829,8 +875,6 @@ class FittingData:  # pylint: disable=R0902,R0904
         :returns: The data of the given column
         :rtype: numpy.ndarray or None
         """
-        if column_name is None:
-            return None
         self.__validate_column_name(column_name)
         values = self.data[column_name]
         if only_selected:
@@ -881,7 +925,9 @@ class FittingData:  # pylint: disable=R0902,R0904
         :rtype: Interval
         :raises ValueError: if column_name is None, raising Value error
         """
-        values = self.column_data(column_name=column_name, only_selected=only_selected)
+        values = self.__safe_column_data(
+            column_name=column_name, only_selected=only_selected
+        )
         if values is None:
             raise ValueError("Column must be specified correctly to get its domain.")
         return Interval(min_val=np.min(values), max_val=np.max(values))
@@ -1007,6 +1053,13 @@ class FittingData:  # pylint: disable=R0902,R0904
             self._statistics_map[column] = Statistics.from_array(
                 self.column_data(column)
             )
+
+    def __safe_column_data(
+        self, column_name: Optional[str], only_selected: bool = True
+    ) -> Optional[np.ndarray]:
+        if column_name is None:
+            return None
+        return self.column_data(column_name=column_name, only_selected=only_selected)
 
     def __get_column_index(self, column_name):
         if column_name is None:
