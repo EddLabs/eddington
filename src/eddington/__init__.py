@@ -47,7 +47,7 @@ from eddington.plot.plot_util import build_repr_string, show_or_export
 from eddington.print_util import to_relevant_precision_string
 from eddington.random_util import random_data
 
-__version__ = "0.0.24.dev1"
+__version__ = "0.0.24.dev2"
 
 __all__ = [
     "__version__",
