@@ -21,6 +21,10 @@ class IntervalIntersectionError(IntervalError):  # noqa: D101
 # Fitting Function Errors
 
 
+class FittingFunctionParsingError(EddingtonException):  # noqa: D101
+    pass
+
+
 class FittingFunctionLoadError(EddingtonException):  # noqa: D101
     pass
 
