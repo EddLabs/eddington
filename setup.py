@@ -9,6 +9,7 @@ install_requires = [
     "prettytable >= 3.4.0",
     "scipy >= 1.9.1",
     "numpy >= 1.23.2",
+    "sympy >= 1.11",
     "openpyxl >= 3.0.10",
     "matplotlib >= 3.5.3",
     "types-mock >= 4.0.15",

@@ -10,7 +10,7 @@ from eddington.fitting_functions_registry import FittingFunctionsRegistry
 
 
 @dataclass(unsafe_hash=True)
-class FittingFunction:  # pylint: disable=invalid-name
+class FittingFunction:
     """
     Fitting function class.
 
@@ -203,7 +203,7 @@ class FittingFunction:  # pylint: disable=invalid-name
         return a
 
 
-def fitting_function(  # pylint: disable=invalid-name,too-many-arguments
+def fitting_function(  # pylint: disable=too-many-arguments
     n: int,
     name: Optional[str] = None,
     syntax: Optional[str] = None,
