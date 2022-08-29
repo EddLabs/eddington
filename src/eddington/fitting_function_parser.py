@@ -84,6 +84,7 @@ def _validate_variables(variable_names, n):
             'please use the out-of-the-box "constant" function.'
         )
     if len(invalid_indices) > 0:
+        invalid_indices.sort()
         raise FittingFunctionParsingError(
             f'"a" variable coordinates should be between 0 and {n - 1} (included). '
             f"the following indices are invalid: {', '.join(invalid_indices)}"
