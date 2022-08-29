@@ -283,7 +283,7 @@ def poisson(a: np.ndarray, x: Union[np.ndarray, float]) -> Union[np.ndarray, flo
     return a[0] * np.power(a[1], x) * np.exp(-a[1]) / scipy.special.gamma(x + 1) + a[2]
 
 
-def polynomial(n: int) -> FittingFunction:  # pylint: disable=invalid-name
+def polynomial(n: int) -> FittingFunction:
     """
     Creates a polynomial fitting function with parameters as coefficients.
 
